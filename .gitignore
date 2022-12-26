@@ -9,12 +9,8 @@ node_modules
 coverage
 
 # database
-prisma/db.sqlite
-prisma/db.sqlite-journal
-
-# next.js
-.next/
-out/
+db.sqlite
+db.sqlite-journal
 
 # expo
 .expo/
