@@ -24,7 +24,8 @@ export function createServer() {
 
     try {
       await server.listen({ port, host })
-      console.log("listening on port", port)
+      if (process.env.NODE_ENV === "development")
+        console.log(`listening on ${host}:${port}`)
     } catch (err) {
       server.log.error("err", err)
       process.exit(1)
