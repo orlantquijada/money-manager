@@ -1,6 +1,6 @@
 import fastify from "fastify"
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
-import { createContext, appRouter } from "@acme/api"
+import { createContext, appRouter } from "api"
 import { getHostIP } from "./utils"
 
 export function createServer() {

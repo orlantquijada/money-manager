@@ -1,4 +1,4 @@
-import { prisma } from "@acme/db"
+import { prisma } from "db"
 import { type inferAsyncReturnType } from "@trpc/server"
 
 type Session = {

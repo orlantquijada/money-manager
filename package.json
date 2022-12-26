@@ -1,5 +1,5 @@
 {
-  "name": "@acme/",
+  "name": "money-manager",
   "private": true,
   "packageManager": "pnpm@7.19.0",
   "scripts": {

@@ -1,9 +1,10 @@
 {
-  "name": "@acme/server",
+  "name": "server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "clean": "rm -rf .turbo node_modules",
     "build": "tsc",
     "dev": "tsx watch src",
     "start": "node dist/server/index.js"
@@ -12,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@acme/api": "*",
+    "api": "*",
     "@trpc/server": "^10.7.0",
     "fastify": "^4.10.2"
   },

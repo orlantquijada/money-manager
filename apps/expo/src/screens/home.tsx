@@ -5,7 +5,7 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { FlashList } from "@shopify/flash-list"
 import type { inferProcedureOutput } from "@trpc/server"
-import type { AppRouter } from "@acme/api"
+import type { AppRouter } from "api"
 
 import { trpc } from "~/utils/trpc"
 
