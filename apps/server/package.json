@@ -13,8 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "api": "*",
     "@trpc/server": "^10.7.0",
+    "api": "*",
     "fastify": "^4.10.2"
   },
   "devDependencies": {
