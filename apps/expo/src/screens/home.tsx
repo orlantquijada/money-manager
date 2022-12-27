@@ -13,9 +13,9 @@ const PostCard: React.FC<{
   post: inferProcedureOutput<AppRouter["post"]["all"]>[number]
 }> = ({ post }) => {
   return (
-    <View className="rounded-lg border border-gray-400 p-4">
-      <Text className="font-satoshi text-xl text-gray-900">{post.title}</Text>
-      <Text className="font-satoshi text-gray-400">{post.content}</Text>
+    <View className="border-mauve4 rounded-lg border p-4">
+      <Text className="font-satoshi text-mauve12 text-xl">{post.title}</Text>
+      <Text className="font-satoshi text-mauve9">{post.content}</Text>
     </View>
   )
 }
@@ -49,8 +49,7 @@ const CreatePost: React.FC = () => {
         placeholder="Content"
       />
       <TouchableOpacity
-        // arbitrary values work!
-        className="rounded bg-[#333] p-2"
+        className="bg-violet10 rounded p-2"
         activeOpacity={0.8}
         onPress={() => {
           mutate({
@@ -59,7 +58,7 @@ const CreatePost: React.FC = () => {
           })
         }}
       >
-        <Text className="font-semibold text-white">Publish post</Text>
+        <Text className="text-mauve1 font-semibold">Publish post</Text>
       </TouchableOpacity>
     </View>
   )
@@ -67,21 +66,24 @@ const CreatePost: React.FC = () => {
 
 export const HomeScreen = ({
   onLayout,
-}: Pick<ComponentProps<typeof SafeAreaView>, "onLayout">) => {
+  children,
+}: Pick<ComponentProps<typeof SafeAreaView>, "onLayout" | "children">) => {
   const postQuery = trpc.post.all.useQuery()
   const [showPost, setShowPost] = React.useState<string | null>(null)
 
   return (
-    <SafeAreaView onLayout={onLayout}>
+    <SafeAreaView onLayout={onLayout} className="bg-violet1">
       <View className="h-full w-full p-4">
         <View className="py-2">
           {showPost ? (
-            <Text className="font-satoshi text-gray-900">
-              <Text className="font-satoshi-bold">Selected post id: </Text>
+            <Text className="font-satoshi text-mauve12">
+              <Text className="font-satoshi-bold text-mauve12">
+                Selected post id:{" "}
+              </Text>
               {showPost}
             </Text>
           ) : (
-            <Text className="font-satoshi-bold-italic text-gray-900">
+            <Text className="font-satoshi-bold-italic text-mauve12">
               Press on a post
             </Text>
           )}
@@ -104,6 +106,7 @@ export const HomeScreen = ({
 
         <CreatePost />
       </View>
+      {children}
     </SafeAreaView>
   )
 }
