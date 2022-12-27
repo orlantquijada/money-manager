@@ -1,4 +1,4 @@
-import React from "react"
+import React, { ComponentProps } from "react"
 
 import { Text, TextInput, TouchableOpacity, View } from "react-native"
 
@@ -14,8 +14,8 @@ const PostCard: React.FC<{
 }> = ({ post }) => {
   return (
     <View className="rounded-lg border border-gray-400 p-4">
-      <Text className="text-xl text-gray-900">{post.title}</Text>
-      <Text className="text-gray-400">{post.content}</Text>
+      <Text className="font-satoshi text-xl text-gray-900">{post.title}</Text>
+      <Text className="font-satoshi text-gray-400">{post.content}</Text>
     </View>
   )
 }
@@ -65,21 +65,23 @@ const CreatePost: React.FC = () => {
   )
 }
 
-export const HomeScreen = () => {
+export const HomeScreen = ({
+  onLayout,
+}: Pick<ComponentProps<typeof SafeAreaView>, "onLayout">) => {
   const postQuery = trpc.post.all.useQuery()
   const [showPost, setShowPost] = React.useState<string | null>(null)
 
   return (
-    <SafeAreaView>
+    <SafeAreaView onLayout={onLayout}>
       <View className="h-full w-full p-4">
         <View className="py-2">
           {showPost ? (
-            <Text className="text-gray-900">
-              <Text className="font-semibold">Selected post id: </Text>
+            <Text className="font-satoshi text-gray-900">
+              <Text className="font-satoshi-bold">Selected post id: </Text>
               {showPost}
             </Text>
           ) : (
-            <Text className="font-semibold italic text-gray-900">
+            <Text className="font-satoshi-bold-italic text-gray-900">
               Press on a post
             </Text>
           )}
