@@ -16,7 +16,7 @@
     "@trpc/client": "^10.7.0",
     "@trpc/react-query": "^10.7.0",
     "@trpc/server": "^10.7.0",
-    "api": "*",
+    "api": "workspace:*",
     "expo": "~47.0.6",
     "expo-dev-client": "~2.0.1",
     "expo-font": "~11.0.1",
@@ -27,7 +27,7 @@
     "react-dom": "18.2.0",
     "react-native": "0.71.0-rc.0",
     "react-native-safe-area-context": "4.4.1",
-    "tailwind-config": "*"
+    "tailwind-config": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
