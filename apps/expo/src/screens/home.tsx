@@ -7,13 +7,15 @@ import { FlashList } from "@shopify/flash-list"
 import type { inferProcedureOutput } from "@trpc/server"
 import type { AppRouter } from "api"
 
+import Plus from "../../assets/icons/plus-rec.svg"
+
 import { trpc } from "~/utils/trpc"
 
 const PostCard: React.FC<{
   post: inferProcedureOutput<AppRouter["post"]["all"]>[number]
 }> = ({ post }) => {
   return (
-    <View className="border-mauve4 rounded-lg border p-4">
+    <View className="border-mauve4 rounded-lg border bg-white p-4 shadow-2xl">
       <Text className="font-satoshi text-mauve12 text-xl">{post.title}</Text>
       <Text className="font-satoshi text-mauve9">{post.content}</Text>
     </View>
@@ -35,21 +37,21 @@ const CreatePost: React.FC = () => {
   const [content, onChangeContent] = React.useState("")
 
   return (
-    <View className="flex flex-col border-t border-gray-400 py-4">
+    <View className="border-mauve4 flex flex-col border-t py-4">
       <TextInput
         value={title}
-        className="mb-2 rounded border border-gray-400 p-2 text-gray-900"
+        className="border-mauve4 font-satoshi text-mauve12 focus:border-mauve8 mb-2 rounded border p-2"
         onChangeText={onChangeTitle}
         placeholder="Title"
       />
       <TextInput
         value={content}
-        className="mb-2 rounded border border-gray-400 p-2 text-gray-900"
+        className="border-mauve4 font-satoshi text-mauve12 focus:border-mauve8 mb-2 rounded border p-2"
         onChangeText={onChangeContent}
         placeholder="Content"
       />
       <TouchableOpacity
-        className="bg-violet10 rounded p-2"
+        className="bg-violet5 h-9 items-center justify-center rounded px-4"
         activeOpacity={0.8}
         onPress={() => {
           mutate({
@@ -58,7 +60,9 @@ const CreatePost: React.FC = () => {
           })
         }}
       >
-        <Text className="text-mauve1 font-semibold">Publish post</Text>
+        <Text className="font-satoshi text-violet11 text-sm">
+          Publish post <Plus />
+        </Text>
       </TouchableOpacity>
     </View>
   )
