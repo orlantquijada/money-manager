@@ -40,12 +40,14 @@ importers:
       '@types/react-native': ~0.70.8
       api: workspace:*
       babel-plugin-module-resolver: ^4.1.0
+      clsx: ^1.2.1
       eslint: ^8.29.0
       eslint-plugin-react: ^7.31.11
       eslint-plugin-react-hooks: ^4.6.0
       expo: ~47.0.6
       expo-dev-client: ~2.0.1
       expo-font: ~11.0.1
+      expo-linear-gradient: ~12.0.1
       expo-splash-screen: ~0.17.5
       expo-status-bar: ~1.4.2
       nativewind: ^2.0.11
@@ -69,6 +71,7 @@ importers:
       expo: 47.0.6_@babel+core@7.19.3
       expo-dev-client: 2.0.1_expo@47.0.6
       expo-font: 11.0.1_expo@47.0.6
+      expo-linear-gradient: 12.0.1_expo@47.0.6
       expo-splash-screen: 0.17.5_expo@47.0.6
       expo-status-bar: 1.4.2
       nativewind: 2.0.11_dpx3ezyh7vrtb4aufvxbx6obrq
@@ -85,6 +88,7 @@ importers:
       '@types/react': 18.0.25
       '@types/react-native': 0.70.8
       babel-plugin-module-resolver: 4.1.0
+      clsx: 1.2.1
       eslint: 8.29.0
       eslint-plugin-react: 7.31.11_eslint@8.29.0
       eslint-plugin-react-hooks: 4.6.0_eslint@8.29.0
@@ -3679,6 +3683,11 @@ packages:
     engines: {node: '>=0.8'}
     dev: false
 
+  /clsx/1.2.1:
+    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
+    engines: {node: '>=6'}
+    dev: true
+
   /collection-visit/1.0.0:
     resolution: {integrity: sha512-lNkKvzEeMBBjUGHZ+q6z9pSJla0KWAQPvtzhEV9+iGyQYG+pBpl7xKDhxoNSOZH2hhv0v5k0y2yAM4o4SjoSkw==}
     engines: {node: '>=0.10.0'}
@@ -4896,6 +4905,14 @@ packages:
 
   /expo-keep-awake/11.0.1_expo@47.0.6:
     resolution: {integrity: sha512-44ZjgLE4lnce2d40Pv8xsjMVc6R5GvgHOwZfkLYtGmgYG9TYrEJeEj5UfSeweXPL3pBFhXKfFU8xpGYMaHdP0A==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 47.0.6_@babel+core@7.19.3
+    dev: false
+
+  /expo-linear-gradient/12.0.1_expo@47.0.6:
+    resolution: {integrity: sha512-TMl/wBTVQOliL4S3DS5Aa3UFfVySr0mdJEHLG6kfBdMCLkr+tfLI2rGyJ+scS7xgMsvhTIaurhf1+Z0sL3aLCg==}
     peerDependencies:
       expo: '*'
     dependencies:
