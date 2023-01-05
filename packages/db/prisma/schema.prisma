@@ -48,30 +48,16 @@ model Folder {
 
 model Category {
   id             Int      @id @default(autoincrement())
+  // TODO: unique together with useId
   name           String
   budgetedAmount Decimal? @default(0)
   assignedAmount Decimal? @default(0)
 
   transactions Transaction[]
-  target       Target?
+  // target       Target?
 
   Folder   Folder @relation(fields: [folderId], references: [id])
   folderId Int
-}
-
-model Target {
-  id           Int      @id @default(autoincrement())
-  timeMode     TimeMode
-  targetAmount Decimal
-
-  // recurring targets
-  weeklyTarget     WeeklyTarget?
-  monthlyTarget    Int?
-  // non-recurring targets for targets with no specific total or end date
-  eventuallyTarget DateTime?
-
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId Int      @unique
 }
 
 enum TimeMode {
@@ -80,12 +66,33 @@ enum TimeMode {
   EVENTUALLY
 }
 
-enum WeeklyTarget {
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-  SATURDAY
-  SUNDAY
-}
+// model Target {
+//   id           Int      @id @default(autoincrement())
+//   timeMode     TimeMode
+//   targetAmount Decimal
+
+//   // recurring targets
+//   weeklyTarget     WeeklyTarget?
+//   monthlyTarget    Int?
+//   // non-recurring targets for targets with no specific total or end date
+//   eventuallyTarget DateTime?
+
+//   category   Category @relation(fields: [categoryId], references: [id])
+//   categoryId Int      @unique
+// }
+
+// enum TimeMode {
+//   WEEKLY
+//   MONTHLY
+//   EVENTUALLY
+// }
+
+// enum WeeklyTarget {
+//   MONDAY
+//   TUESDAY
+//   WEDNESDAY
+//   THURSDAY
+//   FRIDAY
+//   SATURDAY
+//   SUNDAY
+// }
