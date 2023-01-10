@@ -4,7 +4,7 @@ import {
   BottomTabBarProps,
   BottomTabNavigationOptions,
 } from "@react-navigation/bottom-tabs"
-import { MotiView } from "moti"
+import { Text } from "react-native"
 
 import Home2 from "~/screens/home2"
 
@@ -18,6 +18,9 @@ import PlusRecFilledIcon from "../../assets/icons/plus-rec-filled-dark.svg"
 
 import ActivityIcon from "../../assets/icons/activity-rec-duo-dark.svg"
 import ActivityFilledIcon from "../../assets/icons/activity-rec-filled-dark.svg"
+import { FlashList } from "@shopify/flash-list"
+import Presence from "~/components/Presence"
+import Folder from "~/components/Folder"
 
 const Tab = createBottomTabNavigator<RootBottomTabParamList>()
 
@@ -106,5 +109,29 @@ function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 }
 
 function PlaceHolderScreen() {
-  return <View className="bg-violet8 h-full w-full"></View>
+  return (
+    <View className="bg-violet8 h-full w-full">
+      <FlashList
+        data={[
+          { name: "Folder 1", amountLeft: 241.5 },
+          { name: "Bills", amountLeft: 3500 },
+          { name: "Quality of Life", amountLeft: 83 },
+        ]}
+        showsVerticalScrollIndicator={false}
+        estimatedItemSize={5}
+        ListHeaderComponent={
+          <Text className="font-satoshi-medium text-mauve12 mt-8 mb-4 text-xl">
+            Budgets
+          </Text>
+        }
+        ItemSeparatorComponent={() => <View className="h-2" />}
+        contentContainerStyle={{ paddingBottom: 40 }}
+        renderItem={(p) => (
+          <Presence delayMultiplier={p.index + 1}>
+            <Folder name={p.item.name} amountLeft={p.item.amountLeft} />
+          </Presence>
+        )}
+      />
+    </View>
+  )
 }

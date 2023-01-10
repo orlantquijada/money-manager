@@ -2,6 +2,7 @@ import { FlashList } from "@shopify/flash-list"
 import { View, Text, SafeAreaView } from "react-native"
 
 import Folder from "~/components/Folder"
+import Presence from "~/components/Presence"
 
 import Plus from "../../assets/icons/plus.svg"
 import Stripes from "../../assets/icons/stripes.svg"
@@ -47,8 +48,10 @@ export default function Home2() {
           }
           ItemSeparatorComponent={() => <View className="h-2" />}
           contentContainerStyle={{ paddingBottom: 40 }}
-          renderItem={(p) => (
-            <Folder name={p.item.name} amountLeft={p.item.amountLeft} />
+          renderItem={({ index, item }) => (
+            <Presence delayMultiplier={index + 1}>
+              <Folder name={item.name} amountLeft={item.amountLeft} />
+            </Presence>
           )}
         />
       </View>
