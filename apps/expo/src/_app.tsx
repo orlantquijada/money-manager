@@ -12,6 +12,7 @@ import { useFonts } from "./utils/hooks/useFonts"
 // import Home2 from "./screens/home2"
 import RootTabs from "./navigation/tabs"
 import { violet } from "~/utils/colors"
+import { GestureHandlerRootView } from "react-native-gesture-handler"
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync()
@@ -26,15 +27,17 @@ export const App = () => {
 
   return (
     <TRPCProvider>
-      <NavigationContainer>
-        <SafeAreaProvider
-          onLayout={onLayoutRootView}
-          style={{ backgroundColor: violet.violet1 }}
-        >
-          <RootTabs />
-          <StatusBar style="dark" />
-        </SafeAreaProvider>
-      </NavigationContainer>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer>
+          <SafeAreaProvider
+            onLayout={onLayoutRootView}
+            style={{ backgroundColor: violet.violet1 }}
+          >
+            <RootTabs />
+            <StatusBar style="dark" />
+          </SafeAreaProvider>
+        </NavigationContainer>
+      </GestureHandlerRootView>
     </TRPCProvider>
   )
 }
