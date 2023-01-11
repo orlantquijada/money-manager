@@ -28,11 +28,7 @@ export default function RootTabs() {
   return (
     <Tab.Navigator
       tabBar={(props) => <TabBar {...props} />}
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: { backgroundColor: "red" },
-      }}
-      sceneContainerStyle={{ backgroundColor: "#00000" }}
+      screenOptions={{ headerShown: false }}
     >
       <Tab.Screen
         name="Home"
@@ -64,7 +60,10 @@ export default function RootTabs() {
 
 function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   return (
-    <View className="bg-mauve12 mx-4 mb-4 h-[72px] flex-row items-center justify-center rounded-2xl">
+    <View
+      className="bg-mauve12 absolute bottom-3 left-0 right-0 mx-4 mb-4 h-[72px] flex-row items-center justify-center rounded-2xl"
+      style={{ zIndex: 10 }}
+    >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key] as {
           options: BottomTabNavigationOptions
@@ -98,6 +97,7 @@ function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             onLongPress={onLongPress}
             style={index === 0 ? {} : { marginLeft: 40 }}
             key={route.key}
+            hitSlop={15}
           >
             {/* @ts-expect-error annoyting to handle (just check https://reactnavigation.org/docs/bottom-tab-navigator/) */}
             {Icon ? <Icon focused={isFocused} /> : null}
