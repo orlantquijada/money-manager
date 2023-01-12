@@ -5,6 +5,7 @@ import { StatusBar } from "expo-status-bar"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { NavigationContainer } from "@react-navigation/native"
 import * as SplashScreen from "expo-splash-screen"
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 
 import { TRPCProvider } from "./utils/trpc"
 // import { HomeScreen } from "./screens/home"
@@ -33,8 +34,10 @@ export const App = () => {
             onLayout={onLayoutRootView}
             style={{ backgroundColor: violet.violet1 }}
           >
-            <RootTabs />
-            <StatusBar style="dark" />
+            <BottomSheetModalProvider>
+              <RootTabs />
+              <StatusBar style="dark" />
+            </BottomSheetModalProvider>
           </SafeAreaProvider>
         </NavigationContainer>
       </GestureHandlerRootView>

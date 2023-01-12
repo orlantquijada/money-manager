@@ -60,10 +60,7 @@ export default function RootTabs() {
 
 function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   return (
-    <View
-      className="bg-mauve12 absolute bottom-3 left-0 right-0 mx-4 mb-4 h-[72px] flex-row items-center justify-center rounded-2xl"
-      style={{ zIndex: 10 }}
-    >
+    <View className="bg-mauve12 absolute bottom-3 left-0 right-0 mx-4 mb-4 h-[72px] flex-row items-center justify-center rounded-2xl">
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key] as {
           options: BottomTabNavigationOptions
