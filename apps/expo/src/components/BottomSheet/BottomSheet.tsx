@@ -1,13 +1,15 @@
 import { forwardRef } from "react"
+import { Easing } from "react-native-reanimated"
 import {
   BottomSheetModal as GBottomSheetModal,
   BottomSheetModalProps,
   useBottomSheetSpringConfigs,
   useBottomSheetTimingConfigs,
 } from "@gorhom/bottom-sheet"
+
 import { mauve } from "~/utils/colors"
+
 import BottomSheetBackdrop from "./Backdrop"
-import { Easing } from "react-native-reanimated"
 
 export const BottomSheetModal = forwardRef<
   GBottomSheetModal,
