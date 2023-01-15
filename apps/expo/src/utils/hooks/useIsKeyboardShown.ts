@@ -5,12 +5,12 @@ export function useIsKeyboardShown() {
   const [shown, setShown] = useState(false)
 
   useEffect(() => {
-    const handleKeyboardDidShow = () => setShown(true)
-    const handleKeyboardDidHide = () => setShown(false)
+    const handleKeyboardShow = () => setShown(true)
+    const handleKeyboardHide = () => setShown(false)
 
     const subscriptions = [
-      Keyboard.addListener("keyboardDidShow", handleKeyboardDidShow),
-      Keyboard.addListener("keyboardDidHide", handleKeyboardDidHide),
+      Keyboard.addListener("keyboardDidShow", handleKeyboardShow),
+      Keyboard.addListener("keyboardDidHide", handleKeyboardHide),
     ]
 
     return () => {
