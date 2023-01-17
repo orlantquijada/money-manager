@@ -10,89 +10,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id      String @id @default(cuid())
-  title   String
-  content String
-}
+model User {
+  id   String  @id @default(cuid())
+  name String?
 
-model Account {
-  id     Int     @id @default(autoincrement())
-  amount Decimal
-}
-
-model Payee {
-  id Int @id @default(autoincrement())
-
-  // TODO: unique together with userId
-  name String @unique
-}
-
-model Transaction {
-  id         String   @id @default(cuid())
-  date       DateTime @default(now())
-  note       String?
-  amount     Decimal
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
+  folders Folder[]
 }
 
 model Folder {
-  id Int @id @default(autoincrement())
+  id   Int    @id @default(autoincrement())
+  name String
 
-  // TODO: unique together with userId
-  name String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
-  categories Category[]
+  funds Fund[]
+
+  @@unique([userId, name])
 }
 
-model Category {
+model Fund {
   id             Int      @id @default(autoincrement())
-  // TODO: unique together with useId
   name           String
   budgetedAmount Decimal? @default(0)
-  assignedAmount Decimal? @default(0)
 
   transactions Transaction[]
-  // target       Target?
 
-  Folder   Folder @relation(fields: [folderId], references: [id])
+  folder   Folder @relation(fields: [folderId], references: [id])
   folderId Int
+
+  @@unique([folderId, name])
 }
 
-enum TimeMode {
-  WEEKLY
-  MONTHLY
-  EVENTUALLY
+model Transaction {
+  id     String    @id @default(cuid())
+  amount Decimal?  @default(0)
+  date   DateTime? @default(now())
+  note   String?
+
+  fund   Fund @relation(fields: [fundId], references: [id])
+  fundId Int
 }
-
-// model Target {
-//   id           Int      @id @default(autoincrement())
-//   timeMode     TimeMode
-//   targetAmount Decimal
-
-//   // recurring targets
-//   weeklyTarget     WeeklyTarget?
-//   monthlyTarget    Int?
-//   // non-recurring targets for targets with no specific total or end date
-//   eventuallyTarget DateTime?
-
-//   category   Category @relation(fields: [categoryId], references: [id])
-//   categoryId Int      @unique
-// }
-
-// enum TimeMode {
-//   WEEKLY
-//   MONTHLY
-//   EVENTUALLY
-// }
-
-// enum WeeklyTarget {
-//   MONDAY
-//   TUESDAY
-//   WEDNESDAY
-//   THURSDAY
-//   FRIDAY
-//   SATURDAY
-//   SUNDAY
-// }

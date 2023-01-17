@@ -1,6 +1,5 @@
 import { router, publicProcedure } from "../trpc"
 import { z } from "zod"
-import { prisma } from "db"
 
 export const transactionsRouter = router({
   all: publicProcedure.query(({ ctx }) => {
@@ -10,8 +9,17 @@ export const transactionsRouter = router({
     return ctx.prisma.transaction.findFirst({ where: { id: input } })
   }),
   create: publicProcedure
-    .input(z.object({ title: z.string(), content: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.post.create({ data: input })
+    .input(
+      z.object({
+        fundId: z.number().positive(),
+        amount: z.number().default(0),
+        date: z.string().datetime().optional(),
+        note: z.string().default(""),
+      }),
+    )
+    .mutation(({ ctx, input: { date, ...input } }) => {
+      return ctx.prisma.transaction.create({
+        data: date ? { date, ...input } : { ...input },
+      })
     }),
 })
