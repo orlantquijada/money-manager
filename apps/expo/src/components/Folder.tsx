@@ -51,7 +51,7 @@ export default function Folder({
       </Pressable>
       {open ? (
         <View>
-          <Category name="Groceries" isFirstChild />
+          <Category name="Groceries" />
           <Category name="Electric Bill" />
           <Category name="Internet" />
           <Category name="Water" />

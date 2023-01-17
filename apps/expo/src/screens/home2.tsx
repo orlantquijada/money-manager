@@ -95,9 +95,7 @@ export default function Home2() {
           detached
           style={{ marginHorizontal: 16 }}
         >
-          <View className="bg-violet1 flex-1 items-center">
-            <Text>modal 1</Text>
-          </View>
+          <Text>modal 1</Text>
         </BottomSheetModal>
       </View>
     </SafeAreaView>
