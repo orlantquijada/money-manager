@@ -29,6 +29,23 @@ const light = {
   },
 }
 
+const dark = {
+  mauve: {
+    mauveDark1: "hsl(246, 6.0%, 9.0%)",
+    mauveDark2: "hsl(240, 5.1%, 11.6%)",
+    mauveDark3: "hsl(241, 5.0%, 14.3%)",
+    mauveDark4: "hsl(242, 4.9%, 16.5%)",
+    mauveDark5: "hsl(243, 4.9%, 18.8%)",
+    mauveDark6: "hsl(244, 4.9%, 21.5%)",
+    mauveDark7: "hsl(245, 4.9%, 25.4%)",
+    mauveDark8: "hsl(247, 4.8%, 32.5%)",
+    mauveDark9: "hsl(252, 4.0%, 45.2%)",
+    mauveDark10: "hsl(247, 3.4%, 50.7%)",
+    mauveDark11: "hsl(253, 4.0%, 63.7%)",
+    mauveDark12: "hsl(256, 6.0%, 93.2%)",
+  },
+}
+
 /** @type {import("tailwindcss").Config} */
 module.exports = {
   presets: [require("tailwind-config")],
@@ -41,6 +58,7 @@ module.exports = {
       colors: {
         ...light.violet,
         ...light.mauve,
+        ...dark.mauve,
       },
     },
     fontFamily: {
