@@ -26,7 +26,7 @@ export default function TabBar({
 
   return (
     <MotiView
-      className="bg-mauve12 flex-row items-center justify-center rounded-xl"
+      className="bg-mauve12 flex-row items-center justify-center rounded-[20px]"
       // className="bg-mauve12 left-0 right-0 bottom-0 mx-4 mb-4 h-[72px] flex-row items-center justify-center rounded-2xl"
       // animate={{ opacity: shown ? 0 : 1, translateY: shown ? 72 : 0 }}
       animate={
@@ -41,8 +41,8 @@ export default function TabBar({
           : {
               bottom: 16,
               marginHorizontal: screenPadding,
-              borderBottomLeftRadius: 16,
-              borderBottomRightRadius: 16,
+              borderBottomLeftRadius: 20,
+              borderBottomRightRadius: 20,
               height: 72,
             }
       }
