@@ -3,14 +3,13 @@ import { View, Text, SafeAreaView, Pressable } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 import { FlashList } from "@shopify/flash-list"
 
-import { violet } from "~/utils/colors"
-
 import Folder from "~/components/Folder"
 import Presence from "~/components/Presence"
 import BottomSheetModal from "~/components/BottomSheet"
 
 import Plus from "../../assets/icons/plus.svg"
 import Stripes from "../../assets/icons/stripes.svg"
+import DashboardCreateBottomSheet from "~/components/dashboard/CreateBottomSheet"
 
 export default function Home2() {
   const focused = useIsFocused()
@@ -87,16 +86,7 @@ export default function Home2() {
           )}
         />
 
-        <BottomSheetModal
-          backgroundStyle={{ backgroundColor: violet.violet1 }}
-          ref={bottomSheetModalRef}
-          snapPoints={snapPoints}
-          onChange={handleSheetChanges}
-          detached
-          style={{ marginHorizontal: 16 }}
-        >
-          <Text>modal 1</Text>
-        </BottomSheetModal>
+        <DashboardCreateBottomSheet ref={bottomSheetModalRef} />
       </View>
     </SafeAreaView>
   )
