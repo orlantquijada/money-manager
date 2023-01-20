@@ -41,7 +41,7 @@ export const BottomSheetModal = forwardRef<
       {...props}
       ref={ref}
     >
-      {/* @ts-ignore https://gorhom.github.io/react-native-bottom-sheet/props/#children */}
+      {/* @ts-expect-error https://gorhom.github.io/react-native-bottom-sheet/props/#children */}
       <View className="bg-violet1 flex-1">{props.children}</View>
     </GBottomSheetModal>
   )
