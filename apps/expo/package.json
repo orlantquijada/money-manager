@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^4.4.5",
+    "@react-native-masked-view/masked-view": "^0.2.8",
     "@react-navigation/bottom-tabs": "^6.5.2",
     "@react-navigation/native": "^6.1.1",
+    "@react-navigation/stack": "^6.3.11",
     "@shopify/flash-list": "^1.4.0",
     "@tanstack/react-query": "^4.20.4",
     "@trpc/client": "^10.7.0",
