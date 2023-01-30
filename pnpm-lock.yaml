@@ -69,6 +69,7 @@ importers:
       react-native-shared-element: ^0.8.8
       react-native-svg: 13.4.0
       react-native-svg-transformer: ^1.0.0
+      react-navigation-shared-element: ^3.1.3
       tailwind-config: workspace:*
       tailwindcss: ^3.2.4
       typescript: ^4.9.4
@@ -102,6 +103,7 @@ importers:
       react-native-screens: 3.18.2_6dzswgw3yaswvbertf2cdslpzq
       react-native-shared-element: 0.8.8
       react-native-svg: 13.4.0_6dzswgw3yaswvbertf2cdslpzq
+      react-navigation-shared-element: 3.1.3_qm5rj5qdq4zbkp3tsb7yb5aiqi
       tailwind-config: link:../../packages/config/tailwind
     devDependencies:
       '@babel/core': 7.19.3
@@ -8350,6 +8352,19 @@ packages:
       - encoding
       - supports-color
       - utf-8-validate
+
+  /react-navigation-shared-element/3.1.3_qm5rj5qdq4zbkp3tsb7yb5aiqi:
+    resolution: {integrity: sha512-U1BZp7dEdcTNHggfkq3WEBlJeg4HwFhFdj7a0i0Uql/7mg2IHQg/bZaqM2jQvJITkABge6Hz5fZixIF8jyzpkg==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+      react-native-shared-element: '*'
+    dependencies:
+      hoist-non-react-statics: 3.3.2
+      react: 18.2.0
+      react-native: 0.71.0-rc.0_lqcevrx4tjhiunpymlqp2zoalm
+      react-native-shared-element: 0.8.8
+    dev: false
 
   /react-refresh/0.4.3:
     resolution: {integrity: sha512-Hwln1VNuGl/6bVwnd0Xdn1e84gT/8T9aYNL+HAKDArLCS7LWjwr7StE30IEYbIkx0Vi3vs+coQxe+SQDbGbbpA==}
