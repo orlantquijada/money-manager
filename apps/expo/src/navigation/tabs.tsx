@@ -15,6 +15,7 @@ import ActivityIcon from "../../assets/icons/activity-rec-duo-dark.svg"
 import ActivityFilledIcon from "../../assets/icons/activity-rec-filled-dark.svg"
 
 import TabBar from "./TabBar"
+import { violet } from "~/utils/colors"
 
 const Tab = createBottomTabNavigator<RootBottomTabParamList>()
 
@@ -23,6 +24,7 @@ export default function RootTabs() {
     <Tab.Navigator
       tabBar={(props) => <TabBar {...props} />}
       screenOptions={{ headerShown: false, tabBarHideOnKeyboard: true }}
+      sceneContainerStyle={{ backgroundColor: violet.violet12 }}
     >
       <Tab.Screen
         name="Home"

@@ -2,16 +2,15 @@ import { useCallback } from "react"
 import { StatusBar } from "expo-status-bar"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { NavigationContainer } from "@react-navigation/native"
-import * as SplashScreen from "expo-splash-screen"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
-
-import { TRPCProvider } from "./utils/trpc"
-// import { HomeScreen } from "./screens/home"
-import { useFonts } from "./utils/hooks/useFonts"
-// import Home2 from "./screens/home2"
-import RootTabs from "./navigation/tabs"
-import { violet } from "~/utils/colors"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
+import * as SplashScreen from "expo-splash-screen"
+
+import { violet } from "~/utils/colors"
+
+import Routes from "./navigation"
+import { TRPCProvider } from "./utils/trpc"
+import { useFonts } from "./utils/hooks/useFonts"
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync()
@@ -33,7 +32,7 @@ export const App = () => {
             style={{ backgroundColor: violet.violet1 }}
           >
             <BottomSheetModalProvider>
-              <RootTabs />
+              <Routes />
               <StatusBar style="dark" />
             </BottomSheetModalProvider>
           </SafeAreaProvider>

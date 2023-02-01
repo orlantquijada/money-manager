@@ -1,43 +1,34 @@
-import { useCallback, useMemo, useRef } from "react"
-import { View, Text, SafeAreaView, Pressable } from "react-native"
+import { useCallback, useRef } from "react"
+import { View, Text, Pressable } from "react-native"
 import { useIsFocused } from "@react-navigation/native"
 import { FlashList } from "@shopify/flash-list"
+import { SafeAreaView } from "react-native-safe-area-context"
 
 import Folder from "~/components/Folder"
 import Presence from "~/components/Presence"
 import BottomSheetModal from "~/components/BottomSheet"
+import DashboardCreateBottomSheet from "~/components/dashboard/CreateBottomSheet"
 
 import Plus from "../../assets/icons/plus.svg"
 import Stripes from "../../assets/icons/stripes.svg"
-import DashboardCreateBottomSheet from "~/components/dashboard/CreateBottomSheet"
 
 export default function Home2() {
   const focused = useIsFocused()
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-
-  // variables
-  const snapPoints = useMemo(() => ["25%", "50%"], [])
-
-  // callbacks
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index)
+  const handlePresentModalPress = useCallback(() => {
+    bottomSheetModalRef.current?.present()
   }, [])
 
   return (
     <SafeAreaView className="bg-violet1 flex-1">
-      <View className="h-full w-full flex-1 p-4 pb-0">
+      <View className="h-full w-full flex-1 px-4">
         {/* header */}
-        <View className="w-full flex-row items-center justify-between pt-20">
+        <View className="w-full flex-row items-center justify-between pt-12">
           <Text className="font-satoshi-medium text-mauve12 text-3xl">
             Dashboard
           </Text>
-          <Pressable
-            hitSlop={40}
-            onPress={() => {
-              console.log("wow")
-              bottomSheetModalRef.current?.present()
-            }}
-          >
+          <Pressable hitSlop={40} onPress={handlePresentModalPress}>
             <Plus className="bg-mauve12" />
           </Pressable>
         </View>
