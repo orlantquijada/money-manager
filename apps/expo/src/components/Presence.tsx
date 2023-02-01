@@ -3,7 +3,7 @@ import { ComponentProps, PropsWithChildren } from "react"
 
 // https://twitter.com/FernandoTheRojo/status/1520186163339968514
 
-const DELAY = 40
+const DELAY = 80
 const defaultAnimation: ComponentProps<typeof View> = {
   from: { opacity: 0, translateY: 4 },
   animate: { opacity: 1, translateY: 0 },
