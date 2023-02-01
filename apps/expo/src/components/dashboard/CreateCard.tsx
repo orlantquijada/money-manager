@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react"
+import { ComponentProps, FC, useMemo } from "react"
 import { View, Text } from "react-native"
 import { SvgProps } from "react-native-svg"
 import { MotiPressable } from "moti/interactions"
@@ -8,11 +8,16 @@ type Props = {
   Icon: FC<SvgProps>
   title: string
   description: string
-}
+} & Pick<ComponentProps<typeof MotiPressable>, "onPress">
 
 const StyledMotiPressable = styled(MotiPressable)
 
-export default function CreateCard({ Icon, title, description }: Props) {
+export default function CreateCard({
+  Icon,
+  title,
+  description,
+  onPress,
+}: Props) {
   return (
     <StyledMotiPressable
       className="bg-mauveDark1 flex-row gap-x-4 px-6 py-4"
@@ -29,6 +34,7 @@ export default function CreateCard({ Icon, title, description }: Props) {
           },
         [],
       )}
+      onPress={onPress}
     >
       <View className="pt-[6px]">
         <Icon width={16} height={16} />
