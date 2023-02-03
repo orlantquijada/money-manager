@@ -63,7 +63,7 @@ export default function Home2() {
             contentContainerStyle={{ paddingBottom: 40 }}
             keyExtractor={({ id }) => id.toString()}
             renderItem={({ index, item }) => (
-              <Presence delayMultiplier={index + 1}>
+              <Presence delayMultiplier={index + 1} delay={40}>
                 <Budget
                   folderName={item.name}
                   folderId={item.id}

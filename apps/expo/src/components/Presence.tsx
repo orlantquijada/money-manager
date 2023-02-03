@@ -14,6 +14,7 @@ type Props = PropsWithChildren<{
   style?: ComponentProps<typeof View>["style"]
   delayMultiplier?: number
   delay?: number
+  exitDelayMultiplier?: number
 }>
 
 export default function Presence({
@@ -21,9 +22,19 @@ export default function Presence({
   children,
   delayMultiplier = 0,
   delay = DELAY,
+  exitDelayMultiplier = 1,
 }: Props) {
   return (
-    <View style={style} delay={delayMultiplier * delay} {...defaultAnimation}>
+    <View
+      style={style}
+      delay={delayMultiplier * delay}
+      {...defaultAnimation}
+      exitTransition={
+        exitDelayMultiplier === undefined
+          ? { delay: delay * exitDelayMultiplier }
+          : {}
+      }
+    >
       {children}
     </View>
   )

@@ -11,7 +11,15 @@ import ShoppingBagIcon from "../../../assets/icons/shopping-bag.svg"
 import LockIcon from "../../../assets/icons/lock.svg"
 import GPSIcon from "../../../assets/icons/gps.svg"
 
-export default function FundInfo() {
+const DELAY = 40
+
+export default function FundInfo({
+  onPress,
+  onBackPress,
+}: {
+  onPress: () => void
+  onBackPress: () => void
+}) {
   return (
     <>
       <ScrollView
@@ -19,7 +27,7 @@ export default function FundInfo() {
         contentContainerStyle={{ paddingBottom: 16 }}
       >
         <View className="flex gap-y-8">
-          <Presence delayMultiplier={3}>
+          <Presence delayMultiplier={5} delay={DELAY} exitDelayMultiplier={1}>
             <View className="gap-[10px]">
               <Text className="text-mauveDark12 font-satoshi-medium text-lg">
                 What's the name of your fund?
@@ -29,14 +37,18 @@ export default function FundInfo() {
           </Presence>
 
           <View className="gap-y-[10px]">
-            <Presence delayMultiplier={4}>
+            <Presence delayMultiplier={6} delay={DELAY} exitDelayMultiplier={2}>
               <Text className="text-mauveDark12 font-satoshi-medium text-lg">
                 Choose a fund type
               </Text>
             </Presence>
 
             <View>
-              <Presence delayMultiplier={5}>
+              <Presence
+                delayMultiplier={7}
+                delay={DELAY}
+                exitDelayMultiplier={3}
+              >
                 <FundCard
                   Icon={ShoppingBagIcon}
                   label="For Spending"
@@ -46,7 +58,11 @@ export default function FundInfo() {
                 />
               </Presence>
 
-              <Presence delayMultiplier={6}>
+              <Presence
+                delayMultiplier={8}
+                delay={DELAY}
+                exitDelayMultiplier={4}
+              >
                 <FundCard
                   Icon={LockIcon}
                   label="Non-negotiables"
@@ -54,7 +70,11 @@ export default function FundInfo() {
                 />
               </Presence>
 
-              <Presence delayMultiplier={7}>
+              <Presence
+                delayMultiplier={9}
+                delay={DELAY}
+                exitDelayMultiplier={5}
+              >
                 <FundCard
                   Icon={GPSIcon}
                   label="Targets"
@@ -65,7 +85,7 @@ export default function FundInfo() {
           </View>
         </View>
       </ScrollView>
-      <CreateFooter />
+      <CreateFooter onContinuePress={onPress} onBackPress={onBackPress} />
     </>
   )
 }

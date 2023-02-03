@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native"
+import { View, Text } from "react-native"
 
 import Button from "./Button"
 import ScaleDownPressable from "./ScaleDownPressable"
@@ -6,21 +6,23 @@ import ScaleDownPressable from "./ScaleDownPressable"
 type Props = {
   disabled?: boolean
   loading?: boolean
+  onBackPress?: () => void
   onContinuePress?: () => void
 }
 
 export default function CreateFooter({
   disabled = false,
   loading = false,
+  onBackPress,
   onContinuePress,
 }: Props) {
   return (
     <View className="border-t-mauveDark8 bg-mauveDark1 flex flex-row justify-between border-t p-4">
-      <Pressable className="h-8 justify-center">
+      <ScaleDownPressable className="h-8 justify-center" onPress={onBackPress}>
         <Text className="font-satoshi-medium text-mauveDark12 text-sm">
           Back
         </Text>
-      </Pressable>
+      </ScaleDownPressable>
       <ScaleDownPressable
         disabled={disabled || loading}
         onPress={onContinuePress}
