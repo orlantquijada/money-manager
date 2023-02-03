@@ -78,7 +78,7 @@ function CreateBackdrop(props: ComponentProps<typeof Backdrop>) {
       {...props}
       appearsOnIndex={0}
       disappearsOnIndex={-1}
-      style={[{ backgroundColor: mauveA.mauveA10 }, props.style]}
+      style={[{ backgroundColor: mauveA.mauveA12 }, props.style]}
     />
   )
 }
