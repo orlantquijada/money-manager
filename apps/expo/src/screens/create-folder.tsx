@@ -1,12 +1,15 @@
+import { useState } from "react"
 import { View, Pressable, ScrollView, Text } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
+import { trpc } from "~/utils/trpc"
 
-import CrossIcon from "../../assets/icons/cross.svg"
 import Presence from "~/components/Presence"
 import TextInput from "~/components/TextInput"
-import Footer from "~/components/create-fund/footer"
+import CreateFooter from "~/components/CreateFooter"
+
+import CrossIcon from "../../assets/icons/cross.svg"
 
 export default function CreateFolder() {
   return (
@@ -15,6 +18,19 @@ export default function CreateFolder() {
         <Close />
       </View>
 
+      <Form />
+    </SafeAreaView>
+  )
+}
+
+function Form() {
+  const [folderName, setFolderName] = useState("")
+  const { mutate, status } = trpc.folder.create.useMutation()
+  const navigation = useRootStackNavigation()
+  const utils = trpc.useContext()
+
+  return (
+    <>
       <ScrollView
         className="p-4 pt-0"
         contentContainerStyle={{ paddingBottom: 16 }}
@@ -23,15 +39,34 @@ export default function CreateFolder() {
           <Presence delayMultiplier={3}>
             <View className="gap-[10px]">
               <Text className="text-mauveDark12 font-satoshi-medium text-lg">
-                What's the name of your fund?
+                What's the name of your folder?
               </Text>
-              <TextInput placeholder="new-fund" autoFocus />
+              <TextInput
+                placeholder="new-fund"
+                autoFocus
+                value={folderName}
+                onChangeText={setFolderName}
+              />
             </View>
           </Presence>
         </View>
       </ScrollView>
-      <Footer />
-    </SafeAreaView>
+      <CreateFooter
+        disabled={!folderName.length}
+        loading={status === "loading"}
+        onContinuePress={() =>
+          mutate(
+            { name: folderName, userId: "clcu8wkkg0000rfzh9sbowx69" },
+            {
+              onSuccess: async () => {
+                await utils.folder.listWithFunds.invalidate()
+                navigation.navigate("Root", { screen: "Home" })
+              },
+            },
+          )
+        }
+      />
+    </>
   )
 }
 
