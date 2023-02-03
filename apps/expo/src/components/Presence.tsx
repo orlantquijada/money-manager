@@ -11,17 +11,19 @@ const defaultAnimation: ComponentProps<typeof View> = {
 }
 
 type Props = PropsWithChildren<{
-  delayMultiplier?: number
   style?: ComponentProps<typeof View>["style"]
+  delayMultiplier?: number
+  delay?: number
 }>
 
 export default function Presence({
   style,
   children,
   delayMultiplier = 0,
+  delay = DELAY,
 }: Props) {
   return (
-    <View style={style} delay={delayMultiplier * DELAY} {...defaultAnimation}>
+    <View style={style} delay={delayMultiplier * delay} {...defaultAnimation}>
       {children}
     </View>
   )
