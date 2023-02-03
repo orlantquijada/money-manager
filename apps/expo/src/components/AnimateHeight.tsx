@@ -1,9 +1,11 @@
-import { View } from "react-native"
-import { MotiView, useDynamicAnimation } from "moti"
-import { useDerivedValue, useSharedValue } from "react-native-reanimated"
-import { styled } from "nativewind"
 import { ComponentProps, PropsWithChildren } from "react"
+import { View } from "react-native"
+import { useDerivedValue, useSharedValue } from "react-native-reanimated"
+import { MotiView, useDynamicAnimation } from "moti"
+import { styled } from "nativewind"
 import clsx from "clsx"
+
+import { transitions } from "~/utils/motion"
 
 type Props = PropsWithChildren<
   {
@@ -39,10 +41,7 @@ export function AnimateHeight(props: Props) {
     <StyledMotiView
       {...rest}
       state={state}
-      transition={{
-        stiffness: 200,
-        damping: 30,
-      }}
+      transition={transitions.snappy}
       className={clsx("overflow-hidden", className)}
       style={style}
     >
