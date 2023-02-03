@@ -5,7 +5,7 @@ import { FlashList } from "@shopify/flash-list"
 import { RootBottomTabParamList } from "~/types"
 import Home2 from "~/screens/home2"
 import Presence from "~/components/Presence"
-import Folder from "~/components/Folder"
+import Budget from "~/components/Budget"
 
 import HomeIcon from "../../assets/icons/home-duo-dark.svg"
 import HomeFilledIcon from "../../assets/icons/home-filled-dark.svg"
@@ -86,7 +86,12 @@ function PlaceHolderScreen() {
         contentContainerStyle={{ paddingBottom: 40 }}
         renderItem={(p) => (
           <Presence delayMultiplier={p.index + 1}>
-            <Folder name={p.item.name} amountLeft={p.item.amountLeft} />
+            <Budget
+              folderId={1}
+              folderName={p.item.name}
+              amountLeft={p.item.amountLeft}
+              funds={[]}
+            />
           </Presence>
         )}
       />
