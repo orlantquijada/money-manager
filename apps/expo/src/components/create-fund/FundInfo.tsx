@@ -1,6 +1,8 @@
 import { ComponentProps, FC, useState } from "react"
 import { View, Text, ScrollView } from "react-native"
+import { useDerivedValue, useSharedValue } from "react-native-reanimated"
 import { SvgProps } from "react-native-svg"
+import { useDynamicAnimation } from "moti"
 import clsx from "clsx"
 
 import { transitions } from "~/utils/motion"
@@ -17,15 +19,8 @@ import ShoppingBagIcon from "../../../assets/icons/shopping-bag.svg"
 import LockIcon from "../../../assets/icons/lock.svg"
 import GPSIcon from "../../../assets/icons/gps.svg"
 
+type FundType = Fund["fundType"]
 const DELAY = 40
-const FUND_CARD_HEIGHT = 65
-const FUND_CARD_GAP = 8
-
-const translateY: Record<Fund["fundType"], number> = {
-  SPENDING: 0,
-  NON_NEGOTIABLE: FUND_CARD_GAP + FUND_CARD_HEIGHT,
-  TARGET: (FUND_CARD_GAP + FUND_CARD_HEIGHT) * 2,
-}
 const presenceProps = {
   SPENDING: {
     delayMultiplier: 7,
@@ -51,10 +46,13 @@ export default function FundInfo({
   onPress: () => void
   onBackPress: () => void
 }) {
-  const [selectedType, setSelectedType] = useState<Fund["fundType"]>("SPENDING")
+  const [selectedType, setSelectedType] = useState<FundType>("SPENDING")
   const [fundName, setFundName] = useState("")
 
   const disabled = !fundName || !selectedType
+
+  const { targetHeight, spendingHeight, nonNegotiableHeight, state } =
+    useAnimations(selectedType)
 
   return (
     <>
@@ -87,9 +85,9 @@ export default function FundInfo({
             <View className="relative">
               <Presence {...presenceProps[selectedType]}>
                 <StyledMotiView
-                  className="bg-mauveDark4 absolute top-0 left-0 right-0 h-[65px] rounded-xl"
-                  animate={{ translateY: translateY[selectedType] }}
+                  className="bg-mauveDark4 absolute left-0 right-0 rounded-xl"
                   transition={transitions.snappy}
+                  state={state}
                 />
               </Presence>
               <Presence {...presenceProps["SPENDING"]}>
@@ -97,9 +95,11 @@ export default function FundInfo({
                   <FundCard
                     Icon={ShoppingBagIcon}
                     label="For Spending"
-                    description="Description"
-                    selected={selectedType === "SPENDING"}
+                    description="Usually for groceries, transportation"
                     className="mb-2"
+                    onLayout={({ nativeEvent }) => {
+                      spendingHeight.value = nativeEvent.layout.height
+                    }}
                   />
                 </ScaleDownPressable>
               </Presence>
@@ -111,9 +111,11 @@ export default function FundInfo({
                   <FundCard
                     Icon={LockIcon}
                     label="Non-negotiables"
-                    description="Description"
-                    selected={selectedType === "NON_NEGOTIABLE"}
+                    description="Automatically set aside money for this budget. Usually for rent, electricity"
                     className="mb-2"
+                    onLayout={({ nativeEvent }) => {
+                      nonNegotiableHeight.value = nativeEvent.layout.height
+                    }}
                   />
                 </ScaleDownPressable>
               </Presence>
@@ -123,8 +125,10 @@ export default function FundInfo({
                   <FundCard
                     Icon={GPSIcon}
                     label="Targets"
-                    description="Description"
-                    selected={selectedType === "TARGET"}
+                    description="Set a target amount to build up over time. Usually for savings, big purchases"
+                    onLayout={({ nativeEvent }) => {
+                      targetHeight.value = nativeEvent.layout.height
+                    }}
                   />
                 </ScaleDownPressable>
               </Presence>
@@ -147,24 +151,23 @@ function FundCard({
   Icon,
   className,
   style,
+  onLayout,
 }: {
-  selected?: boolean
   label: string
   description: string
   Icon: FC<SvgProps>
-  className?: string
-  style?: ComponentProps<typeof View>["style"]
-}) {
+} & Pick<ComponentProps<typeof View>, "style" | "className" | "onLayout">) {
   return (
     <StyledMotiView
       className={clsx("flex flex-row rounded-xl py-3 px-4", className)}
       style={style}
+      onLayout={onLayout}
     >
       <View className="mt-[6px] mr-4">
         <Icon />
       </View>
 
-      <View>
+      <View className="flex-shrink">
         <Text className="text-mauveDark12 font-satoshi-medium text-base">
           {label}
         </Text>
@@ -174,4 +177,33 @@ function FundCard({
       </View>
     </StyledMotiView>
   )
+}
+
+const FUND_CARD_GAP = 8
+function useAnimations(selectedType: FundType) {
+  const spendingHeight = useSharedValue(0)
+  const nonNegotiableHeight = useSharedValue(0)
+  const targetHeight = useSharedValue(0)
+
+  const translateY: Record<FundType, number> = {
+    SPENDING: 0,
+    NON_NEGOTIABLE: FUND_CARD_GAP + spendingHeight.value,
+    TARGET:
+      FUND_CARD_GAP * 2 + nonNegotiableHeight.value + spendingHeight.value,
+  }
+
+  const state = useDynamicAnimation()
+
+  useDerivedValue(() => {
+    let height = spendingHeight.value
+    if (selectedType === "NON_NEGOTIABLE") height = nonNegotiableHeight.value
+    else if (selectedType === "TARGET") height = targetHeight.value
+
+    state.animateTo({
+      height,
+      translateY: translateY[selectedType],
+    })
+  }, [selectedType])
+
+  return { state, nonNegotiableHeight, spendingHeight, targetHeight }
 }
