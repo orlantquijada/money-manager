@@ -5,7 +5,7 @@ import clsx from "clsx"
 
 import Presence from "~/components/Presence"
 import TextInput from "~/components/TextInput"
-import Footer from "~/components/create-fund/footer"
+import CreateFooter from "~/components/CreateFooter"
 
 import ShoppingBagIcon from "../../../assets/icons/shopping-bag.svg"
 import LockIcon from "../../../assets/icons/lock.svg"
@@ -65,7 +65,7 @@ export default function FundInfo() {
           </View>
         </View>
       </ScrollView>
-      <Footer />
+      <CreateFooter />
     </>
   )
 }

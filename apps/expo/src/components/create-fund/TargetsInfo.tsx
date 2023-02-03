@@ -1,9 +1,10 @@
 import { View, Text } from "react-native"
 import { ScrollView } from "react-native-gesture-handler"
+
 import Presence from "../Presence"
 import TextInput from "../TextInput"
+import CreateFooter from "../CreateFooter"
 import Choice from "./Choice"
-import Footer from "./footer"
 
 export default function TargetsInfo() {
   return (
@@ -44,7 +45,7 @@ export default function TargetsInfo() {
           </Presence>
         </View>
       </ScrollView>
-      <Footer />
+      <CreateFooter />
     </>
   )
 }

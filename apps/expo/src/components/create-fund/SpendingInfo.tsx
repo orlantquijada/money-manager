@@ -4,7 +4,7 @@ import { ScrollView } from "react-native-gesture-handler"
 import Presence from "../Presence"
 import TextInput from "../TextInput"
 import Choice from "./Choice"
-import Footer from "./footer"
+import CreateFooter from "../CreateFooter"
 
 export default function SpendingInfo() {
   return (
@@ -49,7 +49,7 @@ export default function SpendingInfo() {
           </Presence>
         </View>
       </ScrollView>
-      <Footer />
+      <CreateFooter />
     </>
   )
 }
