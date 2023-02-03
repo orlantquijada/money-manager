@@ -25,8 +25,6 @@ model Folder {
   userId String
 
   funds Fund[]
-
-  @@unique([userId, name])
 }
 
 model Fund {
