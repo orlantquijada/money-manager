@@ -4,6 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context"
 
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 import { trpc } from "~/utils/trpc"
+import { getRandomChoice } from "~/utils/functions"
+import { COMMON_FOLDER_NAMES } from "~/utils/constants"
 
 import Presence from "~/components/Presence"
 import TextInput from "~/components/TextInput"
@@ -42,7 +44,7 @@ function Form() {
                 What's the name of your folder?
               </Text>
               <TextInput
-                placeholder="new-fund"
+                placeholder={getRandomChoice(COMMON_FOLDER_NAMES)}
                 autoFocus
                 value={folderName}
                 onChangeText={setFolderName}
