@@ -12,6 +12,7 @@ const TextInput = forwardRef<RNTextInput, ComponentProps<typeof RNTextInput>>(
           "bg-mauveDark4 font-satoshi text-mauveDark12 h-[42px] items-start justify-center rounded-xl px-4 text-base",
           props.className,
         )}
+        style={[{ lineHeight: undefined }, props.style]}
         placeholderTextColor={mauveDark.mauve9}
         cursorColor={mauveDark.mauve12}
         ref={ref}
