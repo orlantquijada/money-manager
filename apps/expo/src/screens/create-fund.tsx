@@ -23,14 +23,14 @@ export default function CreateFund() {
           <FundInfo
             onPress={() => setScreen("spendingInfo")}
             onBackPress={() => setScreen("fundInfo")}
-            key="asd"
+            key="fundInfo"
           />
         )}
         {screen === "spendingInfo" && (
           <SpendingInfo
             onPress={() => setScreen("fundInfo")}
             onBackPress={() => setScreen("fundInfo")}
-            key="qwe"
+            key="spendingInfo"
           />
         )}
       </AnimatePresence>
