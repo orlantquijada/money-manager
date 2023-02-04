@@ -14,6 +14,7 @@ import CreateFooter from "~/components/CreateFooter"
 import ScaleDownPressable from "../ScaleDownPressable"
 import StyledMotiView from "../StyledMotiView"
 import { type Fund } from ".prisma/client"
+import { useFormData } from "./context"
 
 import ShoppingBagIcon from "../../../assets/icons/shopping-bag.svg"
 import LockIcon from "../../../assets/icons/lock.svg"
@@ -46,13 +47,16 @@ export default function FundInfo({
   onPress: () => void
   onBackPress: () => void
 }) {
-  const [selectedType, setSelectedType] = useState<FundType>("SPENDING")
-  const [fundName, setFundName] = useState("")
-
-  const disabled = !fundName || !selectedType
-
+  const { setFormValues, formData } = useFormData()
+  const [selectedType, setSelectedType] = useState<FundType>(
+    formData.fundType || "SPENDING",
+  )
+  const [fundName, setFundName] = useState(formData.name || "")
   const { targetHeight, spendingHeight, nonNegotiableHeight, state } =
     useAnimations(selectedType)
+
+  const disabled = !fundName || !selectedType
+  const dirty = Boolean(fundName)
 
   return (
     <>
@@ -70,7 +74,7 @@ export default function FundInfo({
                 placeholder="new-fund"
                 value={fundName}
                 onChangeText={setFundName}
-                autoFocus
+                autoFocus={!dirty}
               />
             </View>
           </Presence>
@@ -128,6 +132,7 @@ export default function FundInfo({
                     description="Set a target amount to build up over time. Usually for savings, big purchases"
                     onLayout={({ nativeEvent }) => {
                       targetHeight.value = nativeEvent.layout.height
+                      console.log(nativeEvent.layout)
                     }}
                   />
                 </ScaleDownPressable>
@@ -138,7 +143,11 @@ export default function FundInfo({
       </ScrollView>
       <CreateFooter
         disabled={disabled}
-        onContinuePress={onPress}
+        hideBackButton
+        onContinuePress={() => {
+          onPress()
+          setFormValues({ name: fundName, fundType: selectedType })
+        }}
         onBackPress={onBackPress}
       />
     </>
@@ -185,13 +194,6 @@ function useAnimations(selectedType: FundType) {
   const nonNegotiableHeight = useSharedValue(0)
   const targetHeight = useSharedValue(0)
 
-  const translateY: Record<FundType, number> = {
-    SPENDING: 0,
-    NON_NEGOTIABLE: FUND_CARD_GAP + spendingHeight.value,
-    TARGET:
-      FUND_CARD_GAP * 2 + nonNegotiableHeight.value + spendingHeight.value,
-  }
-
   const state = useDynamicAnimation()
 
   useDerivedValue(() => {
@@ -199,11 +201,23 @@ function useAnimations(selectedType: FundType) {
     if (selectedType === "NON_NEGOTIABLE") height = nonNegotiableHeight.value
     else if (selectedType === "TARGET") height = targetHeight.value
 
+    const translateY = {
+      SPENDING: 0,
+      NON_NEGOTIABLE: FUND_CARD_GAP + spendingHeight.value,
+      TARGET:
+        FUND_CARD_GAP * 2 + nonNegotiableHeight.value + spendingHeight.value,
+    }
+
     state.animateTo({
       height,
       translateY: translateY[selectedType],
     })
   }, [selectedType])
 
-  return { state, nonNegotiableHeight, spendingHeight, targetHeight }
+  return {
+    state,
+    nonNegotiableHeight,
+    spendingHeight,
+    targetHeight,
+  }
 }
