@@ -58,10 +58,9 @@ export default function Choice({
             >
               <Text
                 className={clsx(
-                  "font-satoshi-bold text-mauveDark1 text-sm",
+                  "font-satoshi-bold text-mauveDark1 flex items-center justify-center text-center text-sm leading-[18px]",
                   selected && "text-mauveDark12",
                 )}
-                style={{ lineHeight: 16 }}
               >
                 {choiceLabel}
               </Text>

@@ -7,6 +7,7 @@ import CreateFund from "~/screens/create-fund"
 import CreateFolder from "~/screens/create-folder"
 
 import RootTabs from "./tabs"
+import { Platform } from "react-native"
 
 const RootStack = createStackNavigator<RootStackParamList>()
 
@@ -25,12 +26,18 @@ export default function Routes() {
       <RootStack.Screen
         name="CreateFund"
         component={CreateFund}
-        options={{ cardStyle: { backgroundColor: mauveDark.mauve1 } }}
+        options={{
+          cardStyle: { backgroundColor: mauveDark.mauve1 },
+          presentation: Platform.OS === "ios" ? "modal" : "card",
+        }}
       />
       <RootStack.Screen
         name="CreateFolder"
         component={CreateFolder}
-        options={{ cardStyle: { backgroundColor: mauveDark.mauve1 } }}
+        options={{
+          cardStyle: { backgroundColor: mauveDark.mauve1 },
+          presentation: Platform.OS === "ios" ? "modal" : "card",
+        }}
       />
     </RootStack.Navigator>
   )
