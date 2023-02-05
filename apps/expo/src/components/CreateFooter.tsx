@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import { View, Text } from "react-native"
 
 import Button from "./Button"
@@ -8,17 +9,23 @@ type Props = {
   loading?: boolean
   onBackPress?: () => void
   onContinuePress?: () => void
+  hideBackButton?: boolean
 }
 
 export default function CreateFooter({
   disabled = false,
   loading = false,
+  hideBackButton = false,
   onBackPress,
   onContinuePress,
 }: Props) {
   return (
     <View className="border-t-mauveDark8 bg-mauveDark1 flex flex-row justify-between border-t p-4">
-      <ScaleDownPressable className="h-8 justify-center" onPress={onBackPress}>
+      <ScaleDownPressable
+        disabled={hideBackButton}
+        className={clsx("h-8 justify-center", hideBackButton && "opacity-0")}
+        onPress={onBackPress}
+      >
         <Text className="font-satoshi-medium text-mauveDark12 text-sm">
           Back
         </Text>
