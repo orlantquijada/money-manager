@@ -1,10 +1,11 @@
-import { View, Text } from "react-native"
+import { View, Text, BackHandler } from "react-native"
 import { ScrollView } from "react-native-gesture-handler"
 
 import Presence from "../Presence"
 import TextInput from "../TextInput"
 import Choice from "./Choice"
 import CreateFooter from "../CreateFooter"
+import { useEffect } from "react"
 
 const DELAY = 40
 
@@ -15,6 +16,18 @@ export default function SpendingInfo({
   onPress: () => void
   onBackPress: () => void
 }) {
+  useEffect(() => {
+    const handleOnBackPress = () => {
+      onBackPress()
+      return true
+    }
+
+    BackHandler.addEventListener("hardwareBackPress", handleOnBackPress)
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", handleOnBackPress)
+    }
+  }, [])
+
   return (
     <>
       <ScrollView
@@ -57,7 +70,12 @@ export default function SpendingInfo({
           </Presence>
         </View>
       </ScrollView>
-      <CreateFooter onContinuePress={onPress} onBackPress={onBackPress} />
+      <CreateFooter
+        onContinuePress={() => {
+          onPress()
+        }}
+        onBackPress={onBackPress}
+      />
     </>
   )
 }
