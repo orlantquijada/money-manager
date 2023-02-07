@@ -2,7 +2,7 @@ import { View, Text, BackHandler } from "react-native"
 import { ScrollView } from "react-native-gesture-handler"
 
 import Presence from "../Presence"
-import TextInput from "../TextInput"
+import { CurrencyInput } from "../TextInput"
 import Choice from "./Choice"
 import CreateFooter from "../CreateFooter"
 import { useEffect } from "react"
@@ -65,7 +65,7 @@ export default function SpendingInfo({
               <Text className="text-mauveDark12 font-satoshi-medium text-lg">
                 How much wil you allocate?
               </Text>
-              <TextInput placeholder="new-fund" />
+              <CurrencyInput keyboardType="number-pad" />
             </View>
           </Presence>
         </View>

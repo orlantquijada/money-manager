@@ -5,6 +5,7 @@ import { AnimatePresence } from "moti"
 
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 
+import { FormProvider } from "~/components/create-fund/context"
 import SpendingInfo from "~/components/create-fund/SpendingInfo"
 import FundInfo from "~/components/create-fund/FundInfo"
 
@@ -18,22 +19,24 @@ export default function CreateFund() {
         <Close />
       </View>
 
-      <AnimatePresence exitBeforeEnter>
-        {screen === "fundInfo" && (
-          <FundInfo
-            onPress={() => setScreen("spendingInfo")}
-            onBackPress={() => setScreen("fundInfo")}
-            key="fundInfo"
-          />
-        )}
-        {screen === "spendingInfo" && (
-          <SpendingInfo
-            onPress={() => setScreen("fundInfo")}
-            onBackPress={() => setScreen("fundInfo")}
-            key="spendingInfo"
-          />
-        )}
-      </AnimatePresence>
+      <FormProvider>
+        <AnimatePresence exitBeforeEnter>
+          {screen === "fundInfo" && (
+            <FundInfo
+              onPress={() => setScreen("spendingInfo")}
+              onBackPress={() => setScreen("fundInfo")}
+              key="fundInfo"
+            />
+          )}
+          {screen === "spendingInfo" && (
+            <SpendingInfo
+              onPress={() => setScreen("fundInfo")}
+              onBackPress={() => setScreen("fundInfo")}
+              key="spendingInfo"
+            />
+          )}
+        </AnimatePresence>
+      </FormProvider>
     </SafeAreaView>
   )
 }
