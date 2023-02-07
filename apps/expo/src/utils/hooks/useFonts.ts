@@ -8,6 +8,7 @@ export function useFonts() {
     "Satoshi-MediumItalic": require("../../../assets/fonts/Satoshi/Satoshi-MediumItalic.ttf"),
     "Satoshi-Bold": require("../../../assets/fonts/Satoshi/Satoshi-Bold.ttf"),
     "Satoshi-BoldItalic": require("../../../assets/fonts/Satoshi/Satoshi-BoldItalic.ttf"),
+    "AzeretMono-Regular": require("../../../assets/fonts/AzeretMono/AzeretMono-Regular.ttf"),
   })
 
   return loaded

@@ -68,6 +68,7 @@ module.exports = {
       "satoshi-medium-italic": ["Satoshi-MediumItalic"],
       "satoshi-bold": ["Satoshi-Bold"],
       "satoshi-bold-italic": ["Satoshi-BoldItalic"],
+      "azeret-mono-regular": ["AzeretMono-Regular"],
     },
   },
 }
