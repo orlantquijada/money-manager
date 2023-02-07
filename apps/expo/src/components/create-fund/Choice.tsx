@@ -17,7 +17,6 @@ type Props = PropsWithChildren<{
 export default function Choice({
   choiceLabel,
   children,
-  // selected = false,
   className,
   style,
   ...rest
@@ -39,7 +38,11 @@ export default function Choice({
         toggle()
       }}
     >
-      <MotiView state={state} transition={{ type: "timing", duration: 120 }}>
+      <MotiView
+        state={state}
+        exit={{ opacity: 1 }}
+        transition={{ type: "timing", duration: 120 }}
+      >
         <View
           className={clsx(
             "bg-mauveDark4 flex h-10 flex-row items-center justify-between rounded-xl px-2",
