@@ -56,6 +56,7 @@ function Form() {
       <CreateFooter
         disabled={!folderName.length}
         loading={status === "loading"}
+        hideBackButton
         onContinuePress={() =>
           mutate(
             { name: folderName, userId: "clcu8wkkg0000rfzh9sbowx69" },

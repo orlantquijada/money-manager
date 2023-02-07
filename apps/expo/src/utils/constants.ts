@@ -8,4 +8,5 @@ export const COMMON_FOLDER_NAMES = [
   "Spending",
   "Non-negotiable",
   "Entertainment",
+  "Subscriptions",
 ]

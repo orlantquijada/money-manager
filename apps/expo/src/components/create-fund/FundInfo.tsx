@@ -132,7 +132,6 @@ export default function FundInfo({
                     description="Set a target amount to build up over time. Usually for savings, big purchases"
                     onLayout={({ nativeEvent }) => {
                       targetHeight.value = nativeEvent.layout.height
-                      console.log(nativeEvent.layout)
                     }}
                   />
                 </ScaleDownPressable>
