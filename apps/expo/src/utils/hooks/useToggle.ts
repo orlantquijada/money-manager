@@ -15,7 +15,7 @@ export default function useToggle(props: UseToggleProps = {}) {
   const on = useCallback(() => handleToggle(true), [])
   const off = useCallback(() => handleToggle(false), [])
   // bypass typescript
-  const toggle = useCallback(() => handleToggle(undefined as any), [])
+  const toggle = useCallback(() => handleToggle(undefined as never), [])
 
   return [state, { on, off, toggle }] as const
 }
