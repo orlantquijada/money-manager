@@ -17,4 +17,5 @@ export const foldersRouter = router({
       },
     }),
   ),
+  list: publicProcedure.query(({ ctx }) => ctx.prisma.folder.findMany()),
 })
