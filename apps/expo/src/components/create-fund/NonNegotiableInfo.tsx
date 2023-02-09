@@ -3,9 +3,13 @@ import { ScrollView } from "react-native-gesture-handler"
 import Presence from "../Presence"
 import TextInput from "../TextInput"
 import Choice from "./Choice"
-import Footer from "./footer"
+import Footer from "../CreateFooter"
 
-export default function NonNegotiableInfo() {
+export default function NonNegotiableInfo({
+  onBackPress,
+}: {
+  onBackPress: () => void
+}) {
   return (
     <>
       <ScrollView
@@ -39,7 +43,7 @@ export default function NonNegotiableInfo() {
           </Presence>
         </View>
       </ScrollView>
-      <Footer />
+      <Footer onBackPress={onBackPress} />
     </>
   )
 }

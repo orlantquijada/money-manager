@@ -10,6 +10,7 @@ import { transitions } from "~/utils/motion"
 import Presence from "~/components/Presence"
 import TextInput from "~/components/TextInput"
 import CreateFooter from "~/components/CreateFooter"
+import { setScreen, type CreateFundScreens } from "~/screens/create-fund"
 
 import ScaleDownPressable from "../ScaleDownPressable"
 import StyledMotiView from "../StyledMotiView"
@@ -40,13 +41,11 @@ const presenceProps = {
   },
 } as const
 
-export default function FundInfo({
-  onPress,
-  onBackPress,
-}: {
-  onPress: () => void
-  onBackPress: () => void
-}) {
+type Props = {
+  setScreen: setScreen
+}
+
+export default function FundInfo({ setScreen }: Props) {
   const { setFormValues, formData } = useFormData()
   const [selectedType, setSelectedType] = useState<FundType>(
     formData.fundType || "SPENDING",
@@ -68,7 +67,7 @@ export default function FundInfo({
           <Presence delayMultiplier={5} delay={DELAY} exitDelayMultiplier={1}>
             <View className="gap-[10px]">
               <Text className="text-mauveDark12 font-satoshi-medium text-lg">
-                What's the name of your fund?
+                What&apos;s the name of your fund?
               </Text>
               <TextInput
                 placeholder="new-fund"
@@ -144,10 +143,14 @@ export default function FundInfo({
         disabled={disabled}
         hideBackButton
         onContinuePress={() => {
-          onPress()
+          const screens: Record<FundType, CreateFundScreens> = {
+            SPENDING: "spendingInfo",
+            NON_NEGOTIABLE: "nonNegotiableInfo",
+            TARGET: "targetsInfo",
+          }
+          setScreen(screens[selectedType])
           setFormValues({ name: fundName, fundType: selectedType })
         }}
-        onBackPress={onBackPress}
       />
     </>
   )

@@ -6,7 +6,11 @@ import TextInput from "../TextInput"
 import CreateFooter from "../CreateFooter"
 import Choice from "./Choice"
 
-export default function TargetsInfo() {
+export default function TargetsInfo({
+  onBackPress,
+}: {
+  onBackPress: () => void
+}) {
   return (
     <>
       <ScrollView
@@ -45,7 +49,7 @@ export default function TargetsInfo() {
           </Presence>
         </View>
       </ScrollView>
-      <CreateFooter />
+      <CreateFooter onBackPress={onBackPress} />
     </>
   )
 }

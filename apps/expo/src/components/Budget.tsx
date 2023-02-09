@@ -1,9 +1,10 @@
-import { type Folder, type Fund } from ".prisma/client"
-import { useReducer } from "react"
+import { useEffect, useRef } from "react"
 import { Pressable, PressableProps, View, Text } from "react-native"
 
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
+import useToggle from "~/utils/hooks/useToggle"
 
+import { type Folder, type Fund } from ".prisma/client"
 import ScaleDownPressable from "./ScaleDownPressable"
 import Category from "./Category"
 import { AnimateHeight } from "./AnimateHeight"
@@ -17,6 +18,13 @@ type Props = {
   folderName: Folder["name"]
   amountLeft: number
   funds: Fund[]
+  defaultOpen?: boolean
+  /*
+   * handles animation on focusing recently added fund
+   * accepts `true`, `false`, and `undefined`
+   * `true` opens the budget, `false` closes it and `undefined` does nothing
+   */
+  forceOpen?: boolean | undefined
 }
 
 export default function Budget({
@@ -24,10 +32,22 @@ export default function Budget({
   folderName,
   amountLeft,
   funds,
+  defaultOpen = false,
+  forceOpen,
   ...rest
 }: PressableProps & Props) {
-  const [open, toggle] = useReducer((open) => !open, false)
+  const [open, { toggle, on, off }] = useToggle(defaultOpen)
   const navigation = useRootStackNavigation()
+
+  // handles delay
+  const finishedForceOpen = useRef(false)
+
+  useEffect(() => {
+    if (forceOpen) {
+      on()
+      finishedForceOpen.current = true
+    } else if (forceOpen === false) off()
+  }, [forceOpen, on, off])
 
   const Icon = open ? FolderOpen : FolderClosed
 
@@ -37,6 +57,7 @@ export default function Budget({
         {...rest}
         onPress={(...args) => {
           toggle()
+          finishedForceOpen.current = false
           rest.onPress?.(...args)
         }}
       >
@@ -61,7 +82,10 @@ export default function Budget({
           </StyledMotiView>
         </View>
       </Pressable>
-      <AnimateHeight hide={!open}>
+      <AnimateHeight
+        hide={!open}
+        delay={finishedForceOpen.current && forceOpen ? 500 : 0}
+      >
         {funds.length ? (
           funds.map((fund) => <Category name={fund.name} key={fund.id} />)
         ) : (

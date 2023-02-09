@@ -4,6 +4,7 @@ import { FlashList } from "@shopify/flash-list"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 import { trpc } from "~/utils/trpc"
+import { useRootBottomTabRoute } from "~/utils/hooks/useRootBottomTabRoute"
 
 import Budget from "~/components/Budget"
 import Presence from "~/components/Presence"
@@ -16,11 +17,12 @@ import Stripes from "../../assets/icons/stripes.svg"
 
 export default function Home2() {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+  const route = useRootBottomTabRoute("Home")
+  const { data, status } = trpc.folder.listWithFunds.useQuery()
+
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present()
   }, [])
-
-  const { data, status } = trpc.folder.listWithFunds.useQuery()
 
   return (
     <SafeAreaView className="bg-violet1 flex-1">
@@ -69,6 +71,12 @@ export default function Home2() {
                   folderId={item.id}
                   amountLeft={242}
                   funds={item.funds}
+                  // defaultOpen={index === 0}
+                  forceOpen={
+                    route.params?.recentlyAddedToFolderId
+                      ? route.params.recentlyAddedToFolderId === item.id
+                      : undefined
+                  }
                 />
               </Presence>
             )}

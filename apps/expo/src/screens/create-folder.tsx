@@ -41,7 +41,7 @@ function Form() {
           <Presence delayMultiplier={3}>
             <View className="gap-[10px]">
               <Text className="text-mauveDark12 font-satoshi-medium text-lg">
-                What's the name of your folder?
+                What&apos;s the name of your folder?
               </Text>
               <TextInput
                 placeholder={getRandomChoice(COMMON_FOLDER_NAMES)}
@@ -59,7 +59,7 @@ function Form() {
         hideBackButton
         onContinuePress={() =>
           mutate(
-            { name: folderName, userId: "clcu8wkkg0000rfzh9sbowx69" },
+            { name: folderName, userId: "clduzx6z10000zqqsagx1dk6u" },
             {
               onSuccess: async () => {
                 await utils.folder.listWithFunds.invalidate()
