@@ -1,12 +1,6 @@
 import { useCallback, useReducer } from "react"
 
-type UseToggleProps = {
-  initial?: boolean
-}
-
-export default function useToggle(props: UseToggleProps = {}) {
-  const { initial = false } = props
-
+export default function useToggle(initial = false) {
   const [state, handleToggle] = useReducer(
     (prev: boolean, next: boolean) => (next == null ? !prev : next),
     initial,
