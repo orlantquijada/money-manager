@@ -1,9 +1,8 @@
 import clsx from "clsx"
-import { MotiView, useAnimationState } from "moti"
+import { MotiView } from "moti"
 import { MotiPressable } from "moti/interactions"
 import { ComponentProps, PropsWithChildren } from "react"
 import { View, Text, Pressable } from "react-native"
-import useToggle from "~/utils/hooks/useToggle"
 
 import CheckboxIcon from "../../../assets/icons/checkbox-circle.svg"
 
@@ -17,29 +16,14 @@ type Props = PropsWithChildren<{
 export default function Choice({
   choiceLabel,
   children,
-  className,
-  style,
+  selected,
   ...rest
 }: Props) {
-  const [selected, { toggle }] = useToggle()
-
-  const state = useAnimationState({
-    from: { opacity: 1 },
-    select: { opacity: [0.7, 1, 0.7, 1] },
-    unselect: {},
-  })
-
   return (
-    <Pressable
-      onPress={() => {
-        if (state.current === "select") state.transitionTo("unselect")
-        else state.transitionTo("select")
-
-        toggle()
-      }}
-    >
+    <Pressable {...rest}>
       <MotiView
-        state={state}
+        from={{ opacity: 1 }}
+        animate={selected ? { opacity: [0.7, 1, 0.7, 1] } : {}}
         exit={{ opacity: 1 }}
         transition={{ type: "timing", duration: 120 }}
       >
@@ -47,10 +31,7 @@ export default function Choice({
           className={clsx(
             "bg-mauveDark4 flex h-10 flex-row items-center justify-between rounded-xl px-2",
             selected && "bg-mauveDark12",
-            className,
           )}
-          style={style}
-          {...rest}
         >
           <View className="flex flex-row">
             <View
