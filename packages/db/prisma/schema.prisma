@@ -38,8 +38,6 @@ model Fund {
 
   folder   Folder @relation(fields: [folderId], references: [id])
   folderId Int
-
-  @@unique([folderId, name])
 }
 
 model Transaction {
