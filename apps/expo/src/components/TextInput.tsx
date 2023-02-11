@@ -31,7 +31,7 @@ const TextInput = forwardRef<RNTextInput, ComponentProps<typeof RNTextInput>>(
 )
 TextInput.displayName = "TextInput"
 
-type OptionalProps = "value" | "onChangeValue"
+type OptionalProps = "value" | "onChangeValue" | "defaultValue"
 export type CurrencyInput = { getValue: () => number | null }
 export const CurrencyInput = forwardRef<
   CurrencyInput,
@@ -39,7 +39,9 @@ export const CurrencyInput = forwardRef<
     Partial<Pick<CurrencyInputProps, OptionalProps>>
 >((props, ref) => {
   const [formattedText, setFormattedText] = useState("")
-  const [value, setValue] = useState<number | null>(props.value || null)
+  const [value, setValue] = useState<number | null>(
+    props.defaultValue ? +props.defaultValue : null,
+  )
 
   useImperativeHandle(
     ref,
