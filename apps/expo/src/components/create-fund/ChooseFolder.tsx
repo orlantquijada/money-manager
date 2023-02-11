@@ -25,8 +25,13 @@ export default function ChooseFolder({ onBackPress }: Props) {
   const { data } = trpc.folder.list.useQuery()
   const utils = trpc.useContext()
   const navigation = useRootStackNavigation()
-  const { formData } = useFormData()
-  const [selectedId, setSelectedId] = useState<Folder["id"]>()
+  const { formData, setFormValues } = useFormData()
+  const [selectedId, setSelectedId] = useState<Folder["id"]>(formData.folderId)
+
+  const handleBackPress = () => {
+    onBackPress()
+    setFormValues({ folderId: selectedId })
+  }
 
   const disabled = !selectedId
 
@@ -73,7 +78,7 @@ export default function ChooseFolder({ onBackPress }: Props) {
         </View>
       </ScrollView>
       <CreateFooter
-        onBackPress={onBackPress}
+        onBackPress={handleBackPress}
         disabled={disabled}
         onContinuePress={() => {
           if (selectedId)

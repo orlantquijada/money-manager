@@ -100,6 +100,11 @@ function Wrapper({
   const { mutate } = trpc.fund.create.useMutation()
   const utils = trpc.useContext()
 
+  const handleBackPress = () => {
+    onBackPress()
+    setFormValues({ budgetedAmount: currencyInputRef.current?.getValue() || 0 })
+  }
+
   return (
     <>
       <ScrollView
@@ -112,7 +117,10 @@ function Wrapper({
             <Text className="text-mauveDark12 font-satoshi-medium text-lg">
               How much will you allocate?
             </Text>
-            <CurrencyInput ref={currencyInputRef} />
+            <CurrencyInput
+              ref={currencyInputRef}
+              defaultValue={formData.budgetedAmount?.toString()}
+            />
           </View>
         </Presence>
       </ScrollView>
@@ -141,7 +149,7 @@ function Wrapper({
             },
           )
         }}
-        onBackPress={onBackPress}
+        onBackPress={handleBackPress}
       />
     </>
   )
