@@ -1,10 +1,12 @@
+import { FundType, TimeMode } from ".prisma/client"
 import { createContext, ReactNode, useContext, useState } from "react"
 
 type FormData = {
   budgetedAmount?: number | undefined
   name: string
-  fundType: "SPENDING" | "NON_NEGOTIABLE" | "TARGET"
+  fundType: FundType
   folderId: number
+  timeMode: TimeMode
 }
 
 export const FormContext = createContext<{

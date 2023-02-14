@@ -1,6 +1,7 @@
-import { View, Text } from "react-native"
+import { View, Text, ViewProps } from "react-native"
 
 import Stripes from "@assets/icons/stripes-small.svg"
+import clsx from "clsx"
 
 type Props = {
   name: string
@@ -16,17 +17,34 @@ export default function Category({ name }: Props) {
 
         {/* different text format per target type */}
         <Text className="font-satoshi text-mauve9 mt-1 text-xs">
-          ₱{(252).toFixed(2)} left to spend
+          ₱{(252).toFixed(2)} left this week
         </Text>
       </View>
 
-      {/* progress bar */}
-      <View className="relative mt-2 w-full overflow-hidden rounded-full ">
-        <View className="bg-mauve2 border-mauve3 h-2 w-full border" />
+      <View className="mt-2 flex-row gap-x-2">
+        <ProgressBar />
+        <ProgressBar />
+      </View>
+    </View>
+  )
+}
 
-        <View className="absolute inset-0 z-0">
-          <Stripes />
-        </View>
+function ProgressBar({
+  className,
+  style,
+}: Pick<ViewProps, "className" | "style">) {
+  return (
+    <View
+      className={clsx(
+        "relative flex-1 overflow-hidden rounded-full",
+        className,
+      )}
+      style={style}
+    >
+      <View className="bg-mauve2 border-mauve3 h-2 w-full border" />
+
+      <View className="absolute inset-0 z-0">
+        <Stripes />
       </View>
     </View>
   )
