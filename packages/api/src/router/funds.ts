@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { router, publicProcedure } from "../trpc"
-import { fundTypeSchema } from "../utils/enums"
+import { fundTypeSchema, timeModeSchema } from "../utils/enums"
 
 export const fundsRouter = router({
   create: publicProcedure
@@ -10,6 +10,7 @@ export const fundsRouter = router({
         budgetedAmount: z.number().default(0),
         fundType: fundTypeSchema,
         folderId: z.number(),
+        timeMode: timeModeSchema,
       }),
     )
     .mutation(({ input, ctx }) => ctx.prisma.fund.create({ data: input })),

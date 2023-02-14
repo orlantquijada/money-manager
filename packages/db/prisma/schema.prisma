@@ -33,6 +33,7 @@ model Fund {
   budgetedAmount Decimal? @default(0)
   fundType       FundType @default(SPENDING)
   enabled        Boolean  @default(true)
+  timeMode       TimeMode
 
   transactions Transaction[]
 
@@ -54,4 +55,11 @@ enum FundType {
   SPENDING
   NON_NEGOTIABLE
   TARGET
+}
+
+enum TimeMode {
+  WEEKLY
+  MONTHLY
+  BIMONTHLY
+  EVENTUALLY
 }
