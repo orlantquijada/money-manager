@@ -5,17 +5,20 @@ import Presence from "../Presence"
 import { CurrencyInput } from "../TextInput"
 import Choice from "./Choice"
 import CreateFooter from "../CreateFooter"
-import { ReactNode, useRef, useState } from "react"
+import { forwardRef, ReactNode, useRef, useState } from "react"
 import { useFormData } from "./context"
 import { useHardwareBackPress } from "~/utils/hooks/useHardwareBackPress"
 import { useRootStackRoute } from "~/utils/hooks/useRootStackRoute"
 import { setScreen } from "~/screens/create-fund"
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 import { trpc } from "~/utils/trpc"
+import { TimeMode } from ".prisma/client"
+import { AnimatePresence, MotiText, MotiView } from "moti"
+import { styled } from "nativewind"
+import StyledMotiView from "../StyledMotiView"
+import { transitions } from "~/utils/motion"
 
 const DELAY = 40
-
-type Choices = "weekly" | "monthly" | "bimonthly"
 
 export default function SpendingInfo({
   onBackPress,
@@ -26,14 +29,16 @@ export default function SpendingInfo({
 }) {
   useHardwareBackPress(onBackPress)
 
-  const [selectedChoice, setSelectedChoice] = useState<Choices>()
-  const disabled = !selectedChoice
+  const { formData } = useFormData()
+  const [selectedChoice, setSelectedChoice] = useState<TimeMode>(
+    formData.timeMode,
+  )
 
   return (
     <Wrapper
       onBackPress={onBackPress}
-      disabled={disabled}
       setScreen={setScreen}
+      selectedTimeMode={selectedChoice}
     >
       <View className="mb-8">
         <Presence delayMultiplier={1} delay={DELAY}>
@@ -47,8 +52,8 @@ export default function SpendingInfo({
             <Choice
               choiceLabel="A"
               className="mb-2"
-              onPress={() => setSelectedChoice("weekly")}
-              selected={selectedChoice === "weekly"}
+              onPress={() => setSelectedChoice("WEEKLY")}
+              selected={selectedChoice === "WEEKLY"}
             >
               Weekly
             </Choice>
@@ -57,8 +62,8 @@ export default function SpendingInfo({
             <Choice
               choiceLabel="B"
               className="mb-2"
-              onPress={() => setSelectedChoice("monthly")}
-              selected={selectedChoice === "monthly"}
+              onPress={() => setSelectedChoice("MONTHLY")}
+              selected={selectedChoice === "MONTHLY"}
             >
               Monthly
             </Choice>
@@ -67,8 +72,8 @@ export default function SpendingInfo({
           <Presence delayMultiplier={4} delay={DELAY}>
             <Choice
               choiceLabel="C"
-              onPress={() => setSelectedChoice("bimonthly")}
-              selected={selectedChoice === "bimonthly"}
+              onPress={() => setSelectedChoice("BIMONTHLY")}
+              selected={selectedChoice === "BIMONTHLY"}
             >
               Twice a Month
             </Choice>
@@ -79,31 +84,51 @@ export default function SpendingInfo({
   )
 }
 
+const readableTimeModeMap: Record<TimeMode, string> = {
+  WEEKLY: "weekly",
+  MONTHLY: "monthly",
+  BIMONTHLY: "twice a month",
+  EVENTUALLY: "",
+}
+
+type WrapperProps = {
+  children: ReactNode
+  onBackPress: () => void
+  setScreen: setScreen
+  selectedTimeMode?: TimeMode
+}
 // necessary Wrapper component since <Choice/> always animates on rerender
 // ^ controlled TextInput below triggers rerender
 function Wrapper({
   children,
   onBackPress,
   setScreen,
-  disabled,
-}: {
-  children: ReactNode
-  onBackPress: () => void
-  setScreen: setScreen
-  disabled: boolean
-}) {
+  selectedTimeMode,
+}: WrapperProps) {
   const currencyInputRef = useRef<CurrencyInput>(null)
   const { setFormValues, formData } = useFormData()
   const route = useRootStackRoute("CreateFund")
   const navigation = useRootStackNavigation()
-
-  const { mutate } = trpc.fund.create.useMutation()
+  const { mutate, status } = trpc.fund.create.useMutation()
   const utils = trpc.useContext()
+  const [didSubmit, setDidSubmit] = useState(false)
+
+  const handleSetFormValues = () => {
+    const budgetedAmount = currencyInputRef.current?.getValue() || 0
+    setFormValues(
+      selectedTimeMode
+        ? { budgetedAmount, timeMode: selectedTimeMode }
+        : { budgetedAmount },
+    )
+  }
 
   const handleBackPress = () => {
     onBackPress()
-    setFormValues({ budgetedAmount: currencyInputRef.current?.getValue() || 0 })
+    handleSetFormValues()
   }
+
+  const loading = status === "loading" || didSubmit
+  const disabled = !selectedTimeMode || loading
 
   return (
     <>
@@ -112,45 +137,88 @@ function Wrapper({
         contentContainerStyle={{ paddingBottom: 16 }}
       >
         {children}
-        <Presence delayMultiplier={5} delay={DELAY}>
-          <View className="gap-[10px]">
-            <Text className="text-mauveDark12 font-satoshi-medium text-lg">
-              How much will you allocate?
-            </Text>
-            <CurrencyInput
-              ref={currencyInputRef}
-              defaultValue={formData.budgetedAmount?.toString()}
-            />
-          </View>
-        </Presence>
+        {selectedTimeMode ? (
+          <Presence delayMultiplier={5} delay={DELAY}>
+            <View className="gap-[10px]">
+              <View className="w-full flex-row">
+                <Text
+                  className="text-mauveDark12 font-satoshi-medium text-lg"
+                  style={{ lineHeight: undefined }}
+                >
+                  How much will you allocate{" "}
+                </Text>
+                <View className="relative flex-1">
+                  <AnimatePresence initial={false}>
+                    <TimeModeText
+                      timeMode={selectedTimeMode}
+                      key={selectedTimeMode}
+                    />
+                  </AnimatePresence>
+                </View>
+              </View>
+              <CurrencyInput
+                ref={currencyInputRef}
+                defaultValue={formData.budgetedAmount?.toString()}
+              />
+            </View>
+          </Presence>
+        ) : null}
       </ScrollView>
       <CreateFooter
         disabled={disabled}
+        loading={loading}
         onContinuePress={() => {
           const folderId = route.params?.folderId
           const budgetedAmount = currencyInputRef.current?.getValue() || 0
           if (!folderId) {
-            setFormValues({ budgetedAmount })
+            handleSetFormValues()
             setScreen("chooseFolder")
             return
           }
 
-          mutate(
-            { ...formData, budgetedAmount, folderId },
-            {
-              onSuccess: () => {
-                utils.folder.listWithFunds.invalidate().then(() => {
-                  navigation.navigate("Root", {
-                    screen: "Home",
-                    params: { recentlyAddedToFolderId: folderId },
-                  })
-                })
+          if (selectedTimeMode) {
+            setDidSubmit(true)
+            mutate(
+              {
+                ...formData,
+                budgetedAmount,
+                folderId,
+                timeMode: selectedTimeMode,
               },
-            },
-          )
+              {
+                onSuccess: () => {
+                  utils.folder.listWithFunds.invalidate().then(() => {
+                    navigation.navigate("Root", {
+                      screen: "Home",
+                      params: { recentlyAddedToFolderId: folderId },
+                    })
+                  })
+                },
+              },
+            )
+          }
         }}
         onBackPress={handleBackPress}
       />
     </>
+  )
+}
+
+function TimeModeText({ timeMode }: { timeMode: TimeMode }) {
+  return (
+    <StyledMotiView
+      from={{ translateY: 20, opacity: 1 }}
+      animate={{ translateY: 0 }}
+      exit={{ translateY: -20, opacity: 0 }}
+      className="absolute left-0 top-0"
+      transition={transitions.snappy}
+    >
+      <Text
+        className="text-mauveDark12 font-satoshi-medium text-lg"
+        style={{ lineHeight: undefined }}
+      >
+        {readableTimeModeMap[timeMode]}?
+      </Text>
+    </StyledMotiView>
   )
 }

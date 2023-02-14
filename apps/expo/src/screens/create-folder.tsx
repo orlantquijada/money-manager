@@ -31,6 +31,10 @@ function Form() {
   const navigation = useRootStackNavigation()
   const utils = trpc.useContext()
 
+  const [didSubmit, setDidSubmit] = useState(false)
+  const loading = status === "loading" || didSubmit
+  const disabled = !folderName.length || loading
+
   return (
     <>
       <ScrollView
@@ -54,20 +58,25 @@ function Form() {
         </View>
       </ScrollView>
       <CreateFooter
-        disabled={!folderName.length}
-        loading={status === "loading"}
+        disabled={disabled}
+        loading={loading}
         hideBackButton
-        onContinuePress={() =>
+        onContinuePress={() => {
+          setDidSubmit(true)
           mutate(
             { name: folderName, userId: "clduzx6z10000zqqsagx1dk6u" },
             {
-              onSuccess: async () => {
-                await utils.folder.listWithFunds.invalidate()
-                navigation.navigate("Root", { screen: "Home" })
+              onSuccess: (folder) => {
+                utils.folder.listWithFunds.invalidate().then(() =>
+                  navigation.navigate("Root", {
+                    screen: "Home",
+                    params: { recentlyAddedToFolderId: folder.id },
+                  }),
+                )
               },
             },
           )
-        }
+        }}
       />
     </>
   )

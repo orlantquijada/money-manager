@@ -21,7 +21,7 @@ type Props = {
 }
 
 export default function ChooseFolder({ onBackPress }: Props) {
-  const { mutate } = trpc.fund.create.useMutation()
+  const { mutate, status } = trpc.fund.create.useMutation()
   const { data } = trpc.folder.list.useQuery()
   const utils = trpc.useContext()
   const navigation = useRootStackNavigation()
@@ -33,7 +33,10 @@ export default function ChooseFolder({ onBackPress }: Props) {
     setFormValues({ folderId: selectedId })
   }
 
-  const disabled = !selectedId
+  const [didSubmit, setDidSubmit] = useState(false)
+
+  const loading = status === "loading" || didSubmit
+  const disabled = !selectedId || loading || didSubmit
 
   return (
     <>
@@ -80,8 +83,10 @@ export default function ChooseFolder({ onBackPress }: Props) {
       <CreateFooter
         onBackPress={handleBackPress}
         disabled={disabled}
+        loading={loading}
         onContinuePress={() => {
-          if (selectedId)
+          if (selectedId) {
+            setDidSubmit(true)
             mutate(
               { ...formData, folderId: selectedId },
               {
@@ -95,6 +100,7 @@ export default function ChooseFolder({ onBackPress }: Props) {
                 },
               },
             )
+          }
         }}
       />
     </>
