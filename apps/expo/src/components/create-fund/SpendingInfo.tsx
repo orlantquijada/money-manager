@@ -1,22 +1,21 @@
-import { View, Text } from "react-native"
-import { ScrollView } from "react-native-gesture-handler"
+import { ReactNode, useRef, useState } from "react"
+import { View, Text, ScrollView } from "react-native"
+import { AnimatePresence } from "moti"
 
+import { useHardwareBackPress } from "~/utils/hooks/useHardwareBackPress"
+import { useRootStackRoute } from "~/utils/hooks/useRootStackRoute"
+import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
+import { trpc } from "~/utils/trpc"
+import { transitions } from "~/utils/motion"
+
+import { setScreen } from "~/screens/create-fund"
+import { TimeMode } from ".prisma/client"
+import { useFormData } from "./context"
 import Presence from "../Presence"
 import { CurrencyInput } from "../TextInput"
 import Choice from "./Choice"
 import CreateFooter from "../CreateFooter"
-import { forwardRef, ReactNode, useRef, useState } from "react"
-import { useFormData } from "./context"
-import { useHardwareBackPress } from "~/utils/hooks/useHardwareBackPress"
-import { useRootStackRoute } from "~/utils/hooks/useRootStackRoute"
-import { setScreen } from "~/screens/create-fund"
-import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
-import { trpc } from "~/utils/trpc"
-import { TimeMode } from ".prisma/client"
-import { AnimatePresence, MotiText, MotiView } from "moti"
-import { styled } from "nativewind"
 import StyledMotiView from "../StyledMotiView"
-import { transitions } from "~/utils/motion"
 
 const DELAY = 40
 
@@ -187,12 +186,17 @@ function Wrapper({
               },
               {
                 onSuccess: () => {
-                  utils.folder.listWithFunds.invalidate().then(() => {
-                    navigation.navigate("Root", {
-                      screen: "Home",
-                      params: { recentlyAddedToFolderId: folderId },
+                  utils.folder.listWithFunds
+                    .invalidate()
+                    .then(() => {
+                      navigation.navigate("Root", {
+                        screen: "Home",
+                        params: { recentlyAddedToFolderId: folderId },
+                      })
                     })
-                  })
+                    .catch(() => {
+                      return
+                    })
                 },
               },
             )

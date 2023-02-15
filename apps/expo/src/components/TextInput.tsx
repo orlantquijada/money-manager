@@ -40,7 +40,7 @@ export const CurrencyInput = forwardRef<
 >((props, ref) => {
   const [formattedText, setFormattedText] = useState("")
   const [value, setValue] = useState<number | null>(
-    props.defaultValue ? +props.defaultValue : null,
+    props.defaultValue ? Number(props.defaultValue) : null,
   )
 
   useImperativeHandle(

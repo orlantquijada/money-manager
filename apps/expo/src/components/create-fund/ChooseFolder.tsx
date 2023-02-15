@@ -91,12 +91,17 @@ export default function ChooseFolder({ onBackPress }: Props) {
               { ...formData, folderId: selectedId },
               {
                 onSuccess: () => {
-                  utils.folder.listWithFunds.invalidate().then(() => {
-                    navigation.navigate("Root", {
-                      screen: "Home",
-                      params: { recentlyAddedToFolderId: selectedId },
+                  utils.folder.listWithFunds
+                    .invalidate()
+                    .then(() => {
+                      navigation.navigate("Root", {
+                        screen: "Home",
+                        params: { recentlyAddedToFolderId: selectedId },
+                      })
                     })
-                  })
+                    .catch(() => {
+                      return
+                    })
                 },
               },
             )

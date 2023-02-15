@@ -67,12 +67,17 @@ function Form() {
             { name: folderName, userId: "clduzx6z10000zqqsagx1dk6u" },
             {
               onSuccess: (folder) => {
-                utils.folder.listWithFunds.invalidate().then(() =>
-                  navigation.navigate("Root", {
-                    screen: "Home",
-                    params: { recentlyAddedToFolderId: folder.id },
-                  }),
-                )
+                utils.folder.listWithFunds
+                  .invalidate()
+                  .then(() =>
+                    navigation.navigate("Root", {
+                      screen: "Home",
+                      params: { recentlyAddedToFolderId: folder.id },
+                    }),
+                  )
+                  .catch(() => {
+                    return
+                  })
               },
             },
           )

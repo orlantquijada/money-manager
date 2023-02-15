@@ -13,12 +13,17 @@ import { TRPCProvider } from "./utils/trpc"
 import { useFonts } from "./utils/hooks/useFonts"
 
 // Keep the splash screen visible while we fetch resources
-SplashScreen.preventAutoHideAsync()
+SplashScreen.preventAutoHideAsync().catch(() => {
+  return
+})
 
 export const App = () => {
   const fontsLoaded = useFonts()
   const onLayoutRootView = useCallback(() => {
-    if (fontsLoaded) SplashScreen.hideAsync()
+    if (fontsLoaded)
+      SplashScreen.hideAsync().catch(() => {
+        return
+      })
   }, [fontsLoaded])
 
   if (!fontsLoaded) return null
