@@ -46,6 +46,7 @@ importers:
       api: workspace:*
       babel-plugin-module-resolver: ^4.1.0
       clsx: ^1.2.1
+      date-fns: ^2.29.3
       eslint: ^8.29.0
       eslint-plugin-react: ^7.31.11
       eslint-plugin-react-hooks: ^4.6.0
@@ -85,6 +86,7 @@ importers:
       '@trpc/react-query': 10.7.0_x4ie6nhblo2vtx2aafrgzlfqy4
       '@trpc/server': 10.7.0
       api: link:../../packages/api
+      date-fns: 2.29.3
       expo: 47.0.6_@babel+core@7.19.3
       expo-dev-client: 2.0.1_expo@47.0.6
       expo-font: 11.0.1_expo@47.0.6
@@ -4224,6 +4226,11 @@ packages:
 
   /dag-map/1.0.2:
     resolution: {integrity: sha512-+LSAiGFwQ9dRnRdOeaj7g47ZFJcOUPukAP8J3A3fuZ1g9Y44BG+P1sgApjLXTQPOzC4+7S9Wr8kXsfpINM4jpw==}
+    dev: false
+
+  /date-fns/2.29.3:
+    resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
+    engines: {node: '>=0.11'}
     dev: false
 
   /dayjs/1.11.5:
