@@ -8,6 +8,7 @@ import { clamp } from "~/utils/functions"
 import { transitions } from "~/utils/motion"
 
 import StyledMotiView from "./StyledMotiView"
+import { violet } from "~/utils/colors"
 
 type ProgressBarProps = {
   /*
@@ -16,12 +17,14 @@ type ProgressBarProps = {
    */
   progress: number
   Stripes: FC<SvgProps>
+  color: keyof typeof violet
 } & ComponentProps<typeof StyledMotiView>
 
 export default function ProgressBar({
   progress: progressProp,
   className,
   Stripes,
+  color,
   ...props
 }: ProgressBarProps) {
   const width = useSharedValue(0)
@@ -38,13 +41,14 @@ export default function ProgressBar({
     <StyledMotiView
       {...props}
       className={clsx("relative h-2 w-full overflow-hidden", className)}
+      style={{ backgroundColor: violet[color] }}
       onLayout={(e) => {
         width.value = e.nativeEvent.layout.width
         props.onLayout?.(e)
       }}
     >
       <StyledMotiView
-        className="absolute inset-0"
+        className="bg-violet5 absolute inset-0 opacity-5"
         state={state}
         transition={transitions.soft}
       >

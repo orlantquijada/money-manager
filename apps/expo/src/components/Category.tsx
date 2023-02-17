@@ -14,18 +14,13 @@ const helperTextTimeModeMap: Record<TimeMode, string> = {
   BIMONTHLY: "",
   EVENTUALLY: "",
 }
-const progressBarsPerTimeMode: Record<TimeMode, number> = {
-  WEEKLY: getWeeksInMonth(new Date()),
-  BIMONTHLY: 2,
-  MONTHLY: 1,
-  EVENTUALLY: 1,
-}
 
 type CategoryProps = {
   fund: Fund
 }
 export default function Category({ fund }: CategoryProps) {
   console.log(getWeeksInMonth(new Date()))
+  const fundProgress = useFundProgress(fund, 35)
   return (
     <View className="py-2 px-4">
       <View className="flex-row justify-between">
@@ -42,67 +37,54 @@ export default function Category({ fund }: CategoryProps) {
       </View>
 
       <View className="mt-2 flex-row gap-x-1">
-        {range(progressBarsPerTimeMode[fund.timeMode]).map((_, index) => (
-          <CategoryProgressBar key={index.toString() + fund.id} />
+        {fundProgress.map((progress, index) => (
+          <CategoryProgressBar
+            key={index.toString() + fund.id}
+            progress={progress}
+          />
         ))}
       </View>
     </View>
   )
 }
 
-function Foo({ fund, totalSpent }: { totalSpent: number; fund: Fund }) {
-  return <View></View>
-}
-
-const getProgress = (fund: Fund, totalSpent: number) => {
-  const progressBarFullAmount =
-    fund.budgetedAmount.toNumber() / progressBarsPerTimeMode[fund.timeMode]
-
-  return range(progressBarsPerTimeMode[fund.timeMode]).reduceRight(
-    (acc, current) => {
-      return acc
-    },
-    totalSpent,
-  )
-}
-
 function CategoryProgressBar({
   className,
   style,
-}: Pick<ViewProps, "className" | "style">) {
-  // return (
-  //   <View
-  //     className={clsx(
-  //       "bg-violet4 relative h-2 w-full flex-1 overflow-hidden rounded-full",
-  //       className,
-  //     )}
-  //     style={style}
-  //     onLayout={({ nativeEvent }) => {
-  //       width.current = nativeEvent.layout.width
-  //     }}
-  //   >
-  //     <View className="absolute inset-0 z-0 translate-x-full">
-  //       <Stripes />
-  //     </View>
-  //   </View>
-  // )
-  //
+  progress,
+}: Pick<ViewProps, "className" | "style"> & { progress: number }) {
   return (
     <ProgressBar
-      progress={Math.random() * 100}
-      // progress={80}
+      progress={progress}
       Stripes={Stripes}
-      className={clsx("bg-violet3 flex-1 rounded-full", className)}
+      className={clsx("bg-violet6 flex-1 rounded-full", className)}
+      // className={clsx("flex-1 rounded-full", className)}
+      // color="violet5"
       style={style}
     />
   )
 }
 
-// how do i calculate the total progress of a budget based on how many weeks it is divided by
-// budget amount per week - 100
-// total spent - 35
-// weeks - 5
-// result should be
-// 100 100 100 100 65
-//
-// budgeted amount is the total amount per week na
+function useFundProgress(fund: Fund, totalSpent: number) {
+  const progressBarsPerTimeMode: Record<TimeMode, number> = {
+    WEEKLY: getWeeksInMonth(new Date()),
+    BIMONTHLY: 2,
+    MONTHLY: 1,
+    EVENTUALLY: 1,
+  }
+
+  const budgetedAmount = Number(fund.budgetedAmount)
+  let left = totalSpent
+  const progresses: number[] = []
+  for (const _ of range(progressBarsPerTimeMode[fund.timeMode])) {
+    if (left >= budgetedAmount) {
+      progresses.push(0)
+      left -= budgetedAmount
+    } else {
+      progresses.push(100 - (left / budgetedAmount) * 100)
+      left = 0
+    }
+  }
+
+  return progresses.reverse()
+}
