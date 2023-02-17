@@ -10,3 +10,9 @@ export const clamp = (num: number, min: number, max: number) => {
   "worklet"
   return Math.min(Math.max(num, min), max)
 }
+
+export const pesoFormatter = new Intl.NumberFormat("en-PH", {
+  style: "currency",
+  currency: "PHP",
+})
+export const toCurrency = (amount: number) => pesoFormatter.format(amount)
