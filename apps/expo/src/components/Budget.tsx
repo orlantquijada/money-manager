@@ -12,6 +12,7 @@ import StyledMotiView from "./StyledMotiView"
 
 import FolderClosed from "../../assets/icons/folder-duo.svg"
 import FolderOpen from "../../assets/icons/folder-open-duo.svg"
+import { toCurrency } from "~/utils/functions"
 
 type Props = {
   folderId: Folder["id"]
@@ -74,7 +75,7 @@ export default function Budget({
             animate={{ opacity: open ? 0 : 1 }}
           >
             <Text className="font-satoshi-medium text-violet12 text-sm opacity-80">
-              ₱{amountLeft.toFixed(2)}{" "}
+              {toCurrency(amountLeft)}{" "}
             </Text>
             <Text className="font-satoshi text-violet12 text-sm opacity-50">
               left
@@ -87,7 +88,7 @@ export default function Budget({
         delay={finishedForceOpen.current && forceOpen ? 500 : 0}
       >
         {funds.length ? (
-          funds.map((fund) => <Category name={fund.name} key={fund.id} />)
+          funds.map((fund) => <Category fund={fund} key={fund.id} />)
         ) : (
           <ScaleDownPressable
             className="h-10 w-full items-center justify-center"

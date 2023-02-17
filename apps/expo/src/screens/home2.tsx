@@ -55,7 +55,7 @@ export default function Home2() {
               <Budget
                 folderName={item.name}
                 folderId={item.id}
-                amountLeft={242}
+                amountLeft={Math.random() * 1000}
                 funds={item.funds}
                 // defaultOpen={index === 0}
                 forceOpen={
