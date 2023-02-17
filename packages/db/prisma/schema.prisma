@@ -30,7 +30,7 @@ model Folder {
 model Fund {
   id             Int      @id @default(autoincrement())
   name           String
-  budgetedAmount Decimal? @default(0)
+  budgetedAmount Decimal  @default(0) @db.Decimal(12, 2)
   fundType       FundType @default(SPENDING)
   enabled        Boolean  @default(true)
   timeMode       TimeMode
