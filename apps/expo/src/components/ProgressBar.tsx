@@ -27,13 +27,18 @@ export default function ProgressBar({
   color,
   ...props
 }: ProgressBarProps) {
-  const width = useSharedValue(0)
+  const fullWidth = useSharedValue(0)
   const state = useDynamicAnimation()
 
   useDerivedValue(() => {
     const clampedProgress = clamp(progressProp, 0, 100)
     state.animateTo({
-      translateX: width.value * (clampedProgress / 100),
+      translateX: -(
+        fullWidth.value -
+        fullWidth.value * (clampedProgress / 100)
+      ),
+      // translateX: fullWidth.value * (clampedProgress / 100),
+      // translateX: 0,
     })
   }, [progressProp])
 
@@ -41,18 +46,27 @@ export default function ProgressBar({
     <StyledMotiView
       {...props}
       className={clsx("relative h-2 w-full overflow-hidden", className)}
-      style={{ backgroundColor: violet[color] }}
+      // style={{ backgroundColor: violet[color] }}
+      //
       onLayout={(e) => {
-        width.value = e.nativeEvent.layout.width
+        fullWidth.value = e.nativeEvent.layout.width
         props.onLayout?.(e)
       }}
     >
       <StyledMotiView
-        className="bg-violet5 absolute inset-0 opacity-5"
-        state={state}
-        transition={transitions.soft}
+        // className="bg-mauve3 absolute inset-0"
+        className="bg-violet6 absolute inset-0 opacity-30"
       >
         <Stripes />
+      </StyledMotiView>
+
+      {/* thumb */}
+      <StyledMotiView
+        state={state}
+        transition={transitions.soft}
+        className="bg-violet6 h-full rounded-full"
+      >
+        {/* <Text>asd</Text> */}
       </StyledMotiView>
     </StyledMotiView>
   )

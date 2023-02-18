@@ -15,12 +15,15 @@ const helperTextTimeModeMap: Record<TimeMode, string> = {
   EVENTUALLY: "",
 }
 
+const totalSpent = 150
+
 type CategoryProps = {
   fund: Fund
 }
 export default function Category({ fund }: CategoryProps) {
   console.log(getWeeksInMonth(new Date()))
-  const fundProgress = useFundProgress(fund, 35)
+  const fundProgress = useFundProgress(fund, totalSpent)
+
   return (
     <View className="py-2 px-4">
       <View className="flex-row justify-between">
@@ -30,7 +33,10 @@ export default function Category({ fund }: CategoryProps) {
 
         {/* different text format per target type */}
         <Text className="font-satoshi text-mauve9 mt-1 text-xs">
-          {`${toCurrency(Math.random() * 1000)} left ${
+          {/* {`${toCurrency(Math.random() * 1000)} left ${ */}
+          {/*   helperTextTimeModeMap[fund.timeMode] */}
+          {/* }`.trim()} */}
+          {`${toCurrency(Number(fund.budgetedAmount) - totalSpent)} left ${
             helperTextTimeModeMap[fund.timeMode]
           }`.trim()}
         </Text>
@@ -57,7 +63,8 @@ function CategoryProgressBar({
     <ProgressBar
       progress={progress}
       Stripes={Stripes}
-      className={clsx("bg-violet6 flex-1 rounded-full", className)}
+      // className={clsx("bg-violet6 flex-1 rounded-full", className)}
+      className={clsx("flex-1 rounded-full", className)}
       // className={clsx("flex-1 rounded-full", className)}
       // color="violet5"
       style={style}
