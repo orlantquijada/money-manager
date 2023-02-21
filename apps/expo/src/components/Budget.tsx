@@ -3,6 +3,8 @@ import { Pressable, PressableProps, View, Text } from "react-native"
 
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 import useToggle from "~/utils/hooks/useToggle"
+import { toCurrency } from "~/utils/functions"
+import { pink } from "~/utils/colors"
 
 import { type Folder, type Fund } from ".prisma/client"
 import ScaleDownPressable from "./ScaleDownPressable"
@@ -12,7 +14,8 @@ import StyledMotiView from "./StyledMotiView"
 
 import FolderClosed from "../../assets/icons/folder-duo.svg"
 import FolderOpen from "../../assets/icons/folder-open-duo.svg"
-import { toCurrency } from "~/utils/functions"
+
+const overspentColor = pink.pink10
 
 type Props = {
   folderId: Folder["id"]
@@ -51,6 +54,8 @@ export default function Budget({
   }, [forceOpen, on, off])
 
   const Icon = open ? FolderOpen : FolderClosed
+  // const overspent = Boolean(Math.round(Math.random()))
+  const overspent = false
 
   return (
     <View>
@@ -74,12 +79,18 @@ export default function Budget({
             className="flex-row items-end"
             animate={{ opacity: open ? 0 : 1 }}
           >
-            <Text className="font-satoshi-medium text-violet12 text-sm opacity-80">
+            <Text
+              className="font-satoshi-medium text-violet12 text-sm opacity-80"
+              style={overspent ? { color: overspentColor } : {}}
+            >
+              {overspent ? "-" : ""}
               {toCurrency(amountLeft)}{" "}
             </Text>
-            <Text className="font-satoshi text-violet12 text-sm opacity-50">
-              left
-            </Text>
+            {!overspent ? (
+              <Text className="font-satoshi text-violet12 text-sm opacity-50">
+                left
+              </Text>
+            ) : null}
           </StyledMotiView>
         </View>
       </Pressable>

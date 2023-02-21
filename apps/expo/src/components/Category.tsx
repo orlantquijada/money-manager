@@ -1,12 +1,12 @@
-import { View, Text, ViewProps } from "react-native"
-import clsx from "clsx"
+import { View, Text } from "react-native"
 import { getWeeksInMonth } from "date-fns"
 
-import { range, toCurrency } from "~/utils/functions"
+import { toCurrency } from "~/utils/functions"
 import { Fund, TimeMode } from ".prisma/client"
 import ProgressBar from "./ProgressBar"
 
-import Stripes from "@assets/icons/stripes-small.svg"
+import Stripes from "@assets/icons/stripes-small-violet.svg"
+import { useMemo } from "react"
 
 const helperTextTimeModeMap: Record<TimeMode, string> = {
   WEEKLY: "this week",
@@ -21,9 +21,6 @@ type CategoryProps = {
   fund: Fund
 }
 export default function Category({ fund }: CategoryProps) {
-  console.log(getWeeksInMonth(new Date()))
-  const fundProgress = useFundProgress(fund, totalSpent)
-
   return (
     <View className="py-2 px-4">
       <View className="flex-row justify-between">
@@ -42,56 +39,50 @@ export default function Category({ fund }: CategoryProps) {
         </Text>
       </View>
 
-      <View className="mt-2 flex-row gap-x-1">
-        {fundProgress.map((progress, index) => (
-          <CategoryProgressBar
-            key={index.toString() + fund.id}
-            progress={progress}
-          />
-        ))}
-      </View>
+      <CategoryProgressBar fund={fund} />
     </View>
   )
 }
 
-function CategoryProgressBar({
-  className,
-  style,
-  progress,
-}: Pick<ViewProps, "className" | "style"> & { progress: number }) {
+function CategoryProgressBar({ fund }: { fund: Fund }) {
+  const fundProgress = useFundProgress(fund, totalSpent)
+
   return (
-    <ProgressBar
-      progress={progress}
-      Stripes={Stripes}
-      // className={clsx("bg-violet6 flex-1 rounded-full", className)}
-      className={clsx("flex-1 rounded-full", className)}
-      // className={clsx("flex-1 rounded-full", className)}
-      // color="violet5"
-      style={style}
-    />
+    <View className="mt-2 flex-row gap-x-1">
+      {fundProgress.map((progress, index) => (
+        <ProgressBar
+          key={index + fund.id}
+          progress={progress}
+          Stripes={Stripes}
+          className={"flex-1 rounded-full"}
+        />
+      ))}
+    </View>
   )
 }
 
 function useFundProgress(fund: Fund, totalSpent: number) {
-  const progressBarsPerTimeMode: Record<TimeMode, number> = {
-    WEEKLY: getWeeksInMonth(new Date()),
-    BIMONTHLY: 2,
-    MONTHLY: 1,
-    EVENTUALLY: 1,
-  }
-
-  const budgetedAmount = Number(fund.budgetedAmount)
-  let left = totalSpent
-  const progresses: number[] = []
-  for (const _ of range(progressBarsPerTimeMode[fund.timeMode])) {
-    if (left >= budgetedAmount) {
-      progresses.push(0)
-      left -= budgetedAmount
-    } else {
-      progresses.push(100 - (left / budgetedAmount) * 100)
-      left = 0
+  return useMemo(() => {
+    const progressBarsPerTimeMode: Record<TimeMode, number> = {
+      WEEKLY: getWeeksInMonth(new Date()),
+      BIMONTHLY: 2,
+      MONTHLY: 1,
+      EVENTUALLY: 1,
     }
-  }
 
-  return progresses.reverse()
+    const budgetProgress: number[] = []
+    const budgetedAmount = Number(fund.budgetedAmount)
+    let left = totalSpent
+    for (let i = progressBarsPerTimeMode[fund.timeMode] - 1; i >= 0; i--) {
+      if (left >= budgetedAmount) {
+        budgetProgress[i] = 0
+        left -= budgetedAmount
+      } else {
+        budgetProgress[i] = 100 - (left / budgetedAmount) * 100
+        left = 0
+      }
+    }
+
+    return budgetProgress
+  }, [fund, totalSpent])
 }
