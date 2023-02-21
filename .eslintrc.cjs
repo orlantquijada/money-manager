@@ -18,5 +18,6 @@ module.exports = {
   ],
   rules: {
     "no-implicit-coercion": "error",
+    "@typescript-eslint/no-unused-vars": [2, { argsIgnorePattern: "^_" }],
   },
 }
