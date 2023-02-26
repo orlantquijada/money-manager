@@ -139,14 +139,14 @@ function Wrapper({
         {selectedTimeMode ? (
           <Presence delayMultiplier={5} delay={DELAY}>
             <View className="gap-[10px]">
-              <View className="w-full flex-row">
+              <View className="flex-row">
                 <Text
                   className="text-mauveDark12 font-satoshi-medium text-lg"
                   style={{ lineHeight: undefined }}
                 >
                   How much will you allocate{" "}
                 </Text>
-                <View className="relative flex-1">
+                <View className="relative">
                   <AnimatePresence initial={false}>
                     <TimeModeText
                       timeMode={selectedTimeMode}
