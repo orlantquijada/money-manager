@@ -1,5 +1,7 @@
 import { useFonts as useExpoFonts } from "expo-font"
 
+// TODO: add Nunito as number font
+// https://www.npmjs.com/package/@expo-google-fonts/nunito
 export function useFonts() {
   const [loaded] = useExpoFonts({
     "Satoshi-Regular": require("../../../assets/fonts/Satoshi/Satoshi-Regular.ttf"),
