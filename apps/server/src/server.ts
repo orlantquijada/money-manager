@@ -20,7 +20,8 @@ export function createServer() {
 
   const stop = () => server.close()
   const start = async () => {
-    const host = getHostIP()
+    const host =
+      process.env.NODE_ENV === "development" ? getHostIP() : "0.0.0.0"
 
     try {
       await server.listen({ port, host })
