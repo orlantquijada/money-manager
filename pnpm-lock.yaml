@@ -128,6 +128,7 @@ importers:
       '@trpc/server': ^10.7.0
       '@types/node': ^18.11.17
       api: workspace:*
+      dotenv-cli: ^6.0.0
       fastify: ^4.10.2
       tsup: ^6.7.0
       tsx: ^3.12.1
@@ -138,6 +139,7 @@ importers:
       fastify: 4.10.2
     devDependencies:
       '@types/node': 18.11.17
+      dotenv-cli: 6.0.0
       tsup: 6.7.0_typescript@4.9.4
       tsx: 3.12.1
       typescript: 4.9.4
