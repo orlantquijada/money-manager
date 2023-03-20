@@ -6,6 +6,7 @@
     "preinstall": "npx -y only-allow pnpm",
     "build": "turbo build",
     "clean": "rm -rf node_modules",
+    "start": "turbo start",
     "clean:workspaces": "turbo clean",
     "db:generate": "turbo db:generate",
     "db:push": "turbo db:push db:generate",
