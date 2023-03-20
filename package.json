@@ -13,7 +13,9 @@
     "dev": "turbo dev --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo lint && manypkg check",
-    "type-check": "turbo type-check"
+    "type-check": "turbo type-check",
+    "build:server": "pnpm build --filter=server",
+    "start:server": "pnpm start --filter=server"
   },
   "dependencies": {
     "@manypkg/cli": "^0.19.2",
