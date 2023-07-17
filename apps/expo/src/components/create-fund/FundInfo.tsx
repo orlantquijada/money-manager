@@ -1,6 +1,10 @@
 import { ComponentProps, FC, useState } from "react"
 import { View, Text, ScrollView } from "react-native"
-import { useDerivedValue, useSharedValue } from "react-native-reanimated"
+import {
+  SharedValue,
+  useDerivedValue,
+  useSharedValue,
+} from "react-native-reanimated"
 import { SvgProps } from "react-native-svg"
 import { useDynamicAnimation } from "moti"
 import clsx from "clsx"
@@ -47,9 +51,8 @@ type Props = {
 
 export default function FundInfo({ setScreen }: Props) {
   const { setFormValues, formData } = useFormData()
-  const [selectedType, setSelectedType] = useState<FundType>(
-    formData.fundType || "SPENDING",
-  )
+  const selectedType = useSharedValue(formData.fundType || "SPENDING")
+
   const [fundName, setFundName] = useState(formData.name || "")
   const { targetHeight, spendingHeight, nonNegotiableHeight, state } =
     useAnimations(selectedType)
@@ -86,7 +89,7 @@ export default function FundInfo({ setScreen }: Props) {
             </Presence>
 
             <View className="relative">
-              <Presence {...presenceProps[selectedType]}>
+              <Presence {...presenceProps[selectedType.value]}>
                 <StyledMotiView
                   className="bg-mauveDark4 absolute left-0 right-0 rounded-xl"
                   transition={transitions.snappy}
@@ -94,7 +97,11 @@ export default function FundInfo({ setScreen }: Props) {
                 />
               </Presence>
               <Presence {...presenceProps["SPENDING"]}>
-                <ScaleDownPressable onPress={() => setSelectedType("SPENDING")}>
+                <ScaleDownPressable
+                  onPressIn={() => {
+                    selectedType.value = "SPENDING"
+                  }}
+                >
                   <FundCard
                     Icon={ShoppingBagIcon}
                     label="For Spending"
@@ -109,7 +116,9 @@ export default function FundInfo({ setScreen }: Props) {
 
               <Presence {...presenceProps["NON_NEGOTIABLE"]}>
                 <ScaleDownPressable
-                  onPress={() => setSelectedType("NON_NEGOTIABLE")}
+                  onPressIn={() => {
+                    selectedType.value = "NON_NEGOTIABLE"
+                  }}
                 >
                   <FundCard
                     Icon={LockIcon}
@@ -124,7 +133,11 @@ export default function FundInfo({ setScreen }: Props) {
               </Presence>
 
               <Presence {...presenceProps["TARGET"]}>
-                <ScaleDownPressable onPress={() => setSelectedType("TARGET")}>
+                <ScaleDownPressable
+                  onPressIn={() => {
+                    selectedType.value = "TARGET"
+                  }}
+                >
                   <FundCard
                     Icon={GPSIcon}
                     label="Targets"
@@ -148,8 +161,8 @@ export default function FundInfo({ setScreen }: Props) {
             NON_NEGOTIABLE: "nonNegotiableInfo",
             TARGET: "targetsInfo",
           }
-          setScreen(screens[selectedType])
-          setFormValues({ name: fundName, fundType: selectedType })
+          setScreen(screens[selectedType.value])
+          setFormValues({ name: fundName, fundType: selectedType.value })
         }}
       />
     </>
@@ -191,7 +204,7 @@ function FundCard({
 }
 
 const FUND_CARD_GAP = 8
-function useAnimations(selectedType: FundType) {
+function useAnimations(selectedType: SharedValue<FundType>) {
   const spendingHeight = useSharedValue(0)
   const nonNegotiableHeight = useSharedValue(0)
   const targetHeight = useSharedValue(0)
@@ -200,8 +213,9 @@ function useAnimations(selectedType: FundType) {
 
   useDerivedValue(() => {
     let height = spendingHeight.value
-    if (selectedType === "NON_NEGOTIABLE") height = nonNegotiableHeight.value
-    else if (selectedType === "TARGET") height = targetHeight.value
+    if (selectedType.value === "NON_NEGOTIABLE")
+      height = nonNegotiableHeight.value
+    else if (selectedType.value === "TARGET") height = targetHeight.value
 
     const translateY = {
       SPENDING: 0,
@@ -212,9 +226,9 @@ function useAnimations(selectedType: FundType) {
 
     state.animateTo({
       height,
-      translateY: translateY[selectedType],
+      translateY: translateY[selectedType.value],
     })
-  }, [selectedType])
+  })
 
   return {
     state,
