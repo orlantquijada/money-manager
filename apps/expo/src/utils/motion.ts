@@ -8,7 +8,11 @@ export const transitions = {
     damping: 30,
   },
   snappy: {
-    stiffness: 200,
+    stiffness: 300,
     damping: 30,
   },
-}
+  noTransition: {
+    type: "timing",
+    duration: 0,
+  },
+} as const

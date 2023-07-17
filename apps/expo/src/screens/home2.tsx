@@ -1,6 +1,5 @@
 import { useCallback, useRef } from "react"
-import { View, Text, Pressable } from "react-native"
-import { FlashList } from "@shopify/flash-list"
+import { View, Text, Pressable, FlatList } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 import { trpc } from "~/utils/trpc"
@@ -38,10 +37,10 @@ export default function Home2() {
 
         <HeaderProgressBar progress={Math.random() * 100} />
 
-        <FlashList
+        <FlatList
           data={data}
           showsVerticalScrollIndicator={false}
-          estimatedItemSize={50}
+          // estimatedItemSize={50}
           ListHeaderComponent={
             <Text className="font-satoshi-medium text-mauve12 mt-8 mb-4 text-xl">
               Budgets
@@ -57,8 +56,8 @@ export default function Home2() {
                 folderId={item.id}
                 amountLeft={Math.random() * 1000}
                 funds={item.funds}
-                // defaultOpen={index === 0}
-                forceOpen={
+                defaultOpen={index === 0}
+                isRecentlyAdded={
                   route.params?.recentlyAddedToFolderId
                     ? route.params.recentlyAddedToFolderId === item.id
                     : undefined
