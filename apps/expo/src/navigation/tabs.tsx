@@ -1,11 +1,12 @@
 import { View, Text } from "react-native"
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs"
 import { FlashList } from "@shopify/flash-list"
 
 import { RootBottomTabParamList } from "~/types"
 import Home2 from "~/screens/home2"
 import Presence from "~/components/Presence"
 import Budget from "~/components/Budget"
+import { violet } from "~/utils/colors"
 
 import HomeIcon from "../../assets/icons/home-duo-dark.svg"
 import HomeFilledIcon from "../../assets/icons/home-filled-dark.svg"
@@ -15,34 +16,24 @@ import ActivityIcon from "../../assets/icons/activity-rec-duo-dark.svg"
 import ActivityFilledIcon from "../../assets/icons/activity-rec-filled-dark.svg"
 
 import TabBar from "./TabBar"
-import { violet } from "~/utils/colors"
 
-const Tab = createBottomTabNavigator<RootBottomTabParamList>()
+const Tab = createMaterialTopTabNavigator<RootBottomTabParamList>()
+
+const size = 24
 
 export default function RootTabs() {
   return (
     <Tab.Navigator
       tabBar={(props) => <TabBar {...props} />}
-      screenOptions={{ headerShown: false, tabBarHideOnKeyboard: true }}
+      tabBarPosition="bottom"
       sceneContainerStyle={{ backgroundColor: violet.violet12 }}
+      initialRouteName="Home"
     >
-      <Tab.Screen
-        name="Home"
-        component={Home2}
-        options={{
-          tabBarIcon: ({ focused, size }) =>
-            focused ? (
-              <HomeFilledIcon width={size} height={size} />
-            ) : (
-              <HomeIcon width={size} height={size} />
-            ),
-        }}
-      />
       <Tab.Screen
         name="AddTransaction"
         component={PlaceHolderScreen}
         options={{
-          tabBarIcon: ({ focused, size }) =>
+          tabBarIcon: ({ focused }) =>
             focused ? (
               <PlusRecFilledIcon width={size} height={size} />
             ) : (
@@ -51,10 +42,22 @@ export default function RootTabs() {
         }}
       />
       <Tab.Screen
+        name="Home"
+        component={Home2}
+        options={{
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <HomeFilledIcon width={size} height={size} />
+            ) : (
+              <HomeIcon width={size} height={size} />
+            ),
+        }}
+      />
+      <Tab.Screen
         name="Transactions"
         component={PlaceHolderScreen}
         options={{
-          tabBarIcon: ({ focused, size }) =>
+          tabBarIcon: ({ focused }) =>
             focused ? (
               <ActivityFilledIcon width={size} height={size} />
             ) : (

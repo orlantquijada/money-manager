@@ -1,9 +1,10 @@
 import { Pressable } from "react-native"
-import {
-  BottomTabBarProps,
-  BottomTabNavigationOptions,
-} from "@react-navigation/bottom-tabs"
 import { MotiView, TransitionConfig } from "moti"
+import {
+  MaterialTopTabBarProps,
+  MaterialTopTabNavigationOptions,
+} from "@react-navigation/material-top-tabs"
+
 import { screenPadding } from "~/utils/constants"
 import { useIsKeyboardShown } from "~/utils/hooks/useIsKeyboardShown"
 
@@ -21,7 +22,7 @@ export default function TabBar({
   state,
   descriptors,
   navigation,
-}: BottomTabBarProps) {
+}: MaterialTopTabBarProps) {
   const shown = useIsKeyboardShown()
 
   return (
@@ -52,7 +53,7 @@ export default function TabBar({
     >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key] as {
-          options: BottomTabNavigationOptions
+          options: MaterialTopTabNavigationOptions
         }
         const Icon = options.tabBarIcon
 
