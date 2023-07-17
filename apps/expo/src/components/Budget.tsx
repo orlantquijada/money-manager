@@ -1,16 +1,17 @@
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 import { Pressable, PressableProps, View, Text } from "react-native"
+import { useDerivedValue, useSharedValue } from "react-native-reanimated"
 
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
-import useToggle from "~/utils/hooks/useToggle"
 import { toCurrency } from "~/utils/functions"
 import { pink } from "~/utils/colors"
+import { transitions } from "~/utils/motion"
 
 import { type Folder, type Fund } from ".prisma/client"
 import ScaleDownPressable from "./ScaleDownPressable"
 import Category from "./Category"
-import { AnimateHeight } from "./AnimateHeight"
 import StyledMotiView from "./StyledMotiView"
+import { AnimateHeight } from "./AnimateHeight"
 
 import FolderClosed from "../../assets/icons/folder-duo.svg"
 import FolderOpen from "../../assets/icons/folder-open-duo.svg"
@@ -24,11 +25,10 @@ type Props = {
   funds: Fund[]
   defaultOpen?: boolean
   /*
-   * handles animation on focusing recently added fund
-   * accepts `true`, `false`, and `undefined`
-   * `true` opens the budget, `false` closes it and `undefined` does nothing
+   * prop for animation —
+   * open recently added folder, close everything else
    */
-  forceOpen?: boolean | undefined
+  isRecentlyAdded?: boolean | undefined
 }
 
 export default function Budget({
@@ -37,39 +37,51 @@ export default function Budget({
   amountLeft,
   funds,
   defaultOpen = false,
-  forceOpen,
+  isRecentlyAdded,
   ...rest
 }: PressableProps & Props) {
-  const [open, { toggle, on, off }] = useToggle(defaultOpen)
   const navigation = useRootStackNavigation()
 
-  // handles delay
-  const finishedForceOpen = useRef(false)
-
-  useEffect(() => {
-    if (forceOpen) {
-      on()
-      finishedForceOpen.current = true
-    } else if (forceOpen === false) off()
-  }, [forceOpen, on, off])
-
-  const Icon = open ? FolderOpen : FolderClosed
   // const overspent = Boolean(Math.round(Math.random()))
   const overspent = false
+
+  const open = useSharedValue(defaultOpen)
+
+  useEffect(() => {
+    if (isRecentlyAdded !== undefined) open.value = isRecentlyAdded
+  }, [open, isRecentlyAdded])
 
   return (
     <View>
       <Pressable
         {...rest}
         onPress={(...args) => {
-          toggle()
-          finishedForceOpen.current = false
+          open.value = !open.value
           rest.onPress?.(...args)
         }}
       >
         <View className="bg-violet3 border-violet4 flex-row items-center justify-between rounded-2xl border p-4">
           <View className="flex-row items-center">
-            <Icon width={16} height={16} />
+            <View className="relative h-4 w-4">
+              <StyledMotiView
+                className="absolute inset-0"
+                transition={transitions.noTransition}
+                animate={useDerivedValue(() => ({
+                  opacity: open.value ? 1 : 0,
+                }))}
+              >
+                <FolderOpen width={16} height={16} />
+              </StyledMotiView>
+              <StyledMotiView
+                className="absolute inset-0"
+                transition={transitions.noTransition}
+                animate={useDerivedValue(() => ({
+                  opacity: open.value ? 0 : 1,
+                }))}
+              >
+                <FolderClosed width={16} height={16} />
+              </StyledMotiView>
+            </View>
             <Text className="font-satoshi-medium text-violet12 ml-3 text-base">
               {folderName}
             </Text>
@@ -77,7 +89,10 @@ export default function Budget({
 
           <StyledMotiView
             className="flex-row items-end"
-            animate={{ opacity: open ? 0 : 1 }}
+            animate={useDerivedValue(() => ({
+              opacity: open.value ? 0 : 1,
+            }))}
+            transition={transitions.snappy}
           >
             <Text
               className="font-satoshi-medium text-violet12 text-sm opacity-80"
@@ -94,10 +109,8 @@ export default function Budget({
           </StyledMotiView>
         </View>
       </Pressable>
-      <AnimateHeight
-        hide={!open}
-        delay={finishedForceOpen.current && forceOpen ? 500 : 0}
-      >
+
+      <AnimateHeight open={open}>
         {funds.length ? (
           funds.map((fund) => <Category fund={fund} key={fund.id} />)
         ) : (

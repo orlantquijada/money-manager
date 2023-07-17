@@ -1,15 +1,19 @@
 import { ComponentProps, PropsWithChildren } from "react"
 import { View } from "react-native"
-import { useDerivedValue, useSharedValue } from "react-native-reanimated"
-import { MotiView, useDynamicAnimation } from "moti"
+import { SharedValue } from "react-native-reanimated"
+import { MotiView } from "moti"
 import { styled } from "nativewind"
 import clsx from "clsx"
 
 import { transitions } from "~/utils/motion"
+import {
+  useAnimateHeight,
+  useMeasureHeight,
+} from "~/utils/hooks/useAnimateHeight"
 
 type Props = PropsWithChildren<
   {
-    hide?: boolean
+    open: SharedValue<boolean>
   } & ComponentProps<typeof MotiView>
 >
 
@@ -17,39 +21,22 @@ const StyledMotiView = styled(MotiView)
 const INITIAL_HEIGHT = 0
 
 export function AnimateHeight(props: Props) {
-  const { hide = false, style, className, children, ...rest } = props
+  const { open, style, className, children, ...rest } = props
 
-  const measuredHeight = useSharedValue(INITIAL_HEIGHT)
-  const state = useDynamicAnimation(() => {
-    return {
-      height: INITIAL_HEIGHT,
-      opacity: hide ? 0 : 1,
-    }
-  })
-
-  useDerivedValue(() => {
-    const height = hide ? 0 : Math.ceil(measuredHeight.value)
-    const notVisible = !height || hide
-    state.animateTo({
-      height,
-      opacity: notVisible ? 0 : 1,
-      scale: notVisible ? 0.9 : 1,
-    })
-  }, [hide, measuredHeight])
+  const { measuredHeight, handleOnLayout } = useMeasureHeight(INITIAL_HEIGHT)
+  const { animate } = useAnimateHeight(measuredHeight, { open })
 
   return (
     <StyledMotiView
       {...rest}
-      state={state}
+      animate={animate}
       transition={transitions.snappy}
       className={clsx("overflow-hidden", className)}
       style={style}
     >
       <View
         className="absolute left-0 right-0 bottom-0 top-auto"
-        onLayout={({ nativeEvent }) => {
-          measuredHeight.value = nativeEvent.layout.height
-        }}
+        onLayout={handleOnLayout}
       >
         {children}
       </View>
