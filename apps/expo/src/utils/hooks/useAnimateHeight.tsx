@@ -14,17 +14,16 @@ export function useMeasureHeight(initalHeight = 0) {
   return { measuredHeight, handleOnLayout } as const
 }
 
+export type UseAnimateProps = {
+  defaultOpen?: boolean | undefined
+  open?: SharedValue<boolean> | undefined
+}
+
 export function useAnimateHeight(
   height: SharedValue<number>,
-  {
-    defaultOpen = false,
-    open: openProp,
-  }: {
-    defaultOpen?: boolean
-    open?: SharedValue<boolean>
-  } = {},
+  { defaultOpen = false, open: openProp }: UseAnimateProps = {},
 ) {
-  const open = useSharedValue(defaultOpen)
+  const open = useSharedValue(Boolean(defaultOpen))
   const _open = openProp === undefined ? open : openProp
 
   const animate = useDerivedValue(() => {
