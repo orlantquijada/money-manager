@@ -99,7 +99,7 @@ export default function Budget({
               style={overspent ? { color: overspentColor } : {}}
             >
               {overspent ? "-" : ""}
-              {toCurrency(amountLeft)}{" "}
+              <Text className="font-nunito">{toCurrency(amountLeft)} </Text>
             </Text>
             {!overspent ? (
               <Text className="font-satoshi text-violet12 text-sm opacity-50">
