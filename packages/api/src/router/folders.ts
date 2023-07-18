@@ -10,10 +10,18 @@ export const foldersRouter = router({
       }),
     )
     .mutation(({ input, ctx }) => ctx.prisma.folder.create({ data: input })),
+  remove: publicProcedure
+    .input(z.number())
+    .mutation(({ input, ctx }) =>
+      ctx.prisma.folder.delete({ where: { id: input } }),
+    ),
   listWithFunds: publicProcedure.query(({ ctx }) =>
     ctx.prisma.folder.findMany({
       include: {
         funds: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     }),
   ),
