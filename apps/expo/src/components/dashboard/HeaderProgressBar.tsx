@@ -1,5 +1,5 @@
 import { styled } from "nativewind"
-import { Dimensions } from "react-native"
+import { Dimensions, View } from "react-native"
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
@@ -53,14 +53,14 @@ export function HeaderProgressBar({
     return { color }
   })
 
-  const amountColor = useAnimatedStyle(() => {
-    const color = interpolateColor(progress.value, progressInput, [
-      mauve.mauve8,
-      mauve.mauve10,
-    ])
-
-    return { color }
-  })
+  // const amountColor = useAnimatedStyle(() => {
+  //   const color = interpolateColor(progress.value, progressInput, [
+  //     mauve.mauve8,
+  //     mauve.mauve10,
+  //   ])
+  //
+  //   return { color }
+  // })
 
   return (
     <StyledMotiView
@@ -79,23 +79,26 @@ export function HeaderProgressBar({
       </StyledMotiView>
 
       <StyledAnimatedText
-        className="font-satoshi text-mauve8"
+        className="font-satoshi-medium text-mauve8"
         style={subtextColor}
       >
         Total Spent this month
       </StyledAnimatedText>
-      <StyledAnimatedText
-        className="font-satoshi-medium text-mauve1 text-2xl"
-        style={amountColor}
-      >
+      <View className="flex-row">
         <StyledAnimatedText
-          className="font-satoshi text-mauve8"
+          className="font-nunito-bold text-base"
+          // style={amountColor}
           style={subtextColor}
         >
           ₱
         </StyledAnimatedText>
-        2,539.50
-      </StyledAnimatedText>
+        <StyledAnimatedText
+          className="font-nunito-bold text-2xl"
+          style={subtextColor}
+        >
+          2,539.50
+        </StyledAnimatedText>
+      </View>
     </StyledMotiView>
   )
 }

@@ -33,9 +33,10 @@ export default function Category({ fund }: CategoryProps) {
           {/* {`${toCurrency(Math.random() * 1000)} left ${ */}
           {/*   helperTextTimeModeMap[fund.timeMode] */}
           {/* }`.trim()} */}
-          {`${toCurrency(Number(fund.budgetedAmount) - totalSpent)} left ${
-            helperTextTimeModeMap[fund.timeMode]
-          }`.trim()}
+          <Text className="font-nunito">
+            {toCurrency(Number(fund.budgetedAmount) - totalSpent)}{" "}
+          </Text>
+          {`left ${helperTextTimeModeMap[fund.timeMode]}`.trim()}
         </Text>
       </View>
 

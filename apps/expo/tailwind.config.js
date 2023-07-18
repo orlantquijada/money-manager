@@ -69,6 +69,11 @@ module.exports = {
       "satoshi-bold": ["Satoshi-Bold"],
       "satoshi-bold-italic": ["Satoshi-BoldItalic"],
       "azeret-mono-regular": ["AzeretMono-Regular"],
+      nunito: ["Nunito_400Regular"],
+      "nunito-medium": ["Nunito_500Medium"],
+      "nunito-semibold": ["Nunito_600SemiBold"],
+      "nunito-bold": ["Nunito_700Bold"],
+      "nunito-extra-bold": ["Nunito_800ExtraBold"],
     },
   },
 }
