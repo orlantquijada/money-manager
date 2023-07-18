@@ -115,7 +115,7 @@ export default function Budget({
           funds.map((fund) => <Category fund={fund} key={fund.id} />)
         ) : (
           <ScaleDownPressable
-            className="h-10 w-full items-center justify-center"
+            className="h-12 w-full items-center justify-center"
             onPress={() => {
               navigation.navigate("CreateFund", { folderId })
             }}

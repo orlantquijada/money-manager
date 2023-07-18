@@ -27,12 +27,12 @@ export default function CreateFolder() {
 
 function Form() {
   const [folderName, setFolderName] = useState("")
-  const { mutate, status } = trpc.folder.create.useMutation()
   const navigation = useRootStackNavigation()
-  const utils = trpc.useContext()
+
+  const createFolder = useCreateFolder()
 
   const [didSubmit, setDidSubmit] = useState(false)
-  const loading = status === "loading" || didSubmit
+  const loading = createFolder.status === "loading" || didSubmit
   const disabled = !folderName.length || loading
 
   return (
@@ -63,21 +63,14 @@ function Form() {
         hideBackButton
         onContinuePress={() => {
           setDidSubmit(true)
-          mutate(
-            { name: folderName, userId: "cle57ii5w0000t7idkmnccmrm" },
+          createFolder.mutate(
+            { name: folderName, userId: "clk7zeudu0000t789z4fylgjc" },
             {
               onSuccess: (folder) => {
-                utils.folder.listWithFunds
-                  .invalidate()
-                  .then(() =>
-                    navigation.navigate("Root", {
-                      screen: "Home",
-                      params: { recentlyAddedToFolderId: folder.id },
-                    }),
-                  )
-                  .catch(() => {
-                    return
-                  })
+                navigation.navigate("Root", {
+                  screen: "Home",
+                  params: { recentlyAddedToFolderId: folder.id },
+                })
               },
             },
           )
@@ -97,4 +90,36 @@ function Close() {
       <CrossIcon />
     </Pressable>
   )
+}
+
+function useCreateFolder() {
+  const utils = trpc.useContext()
+
+  return trpc.folder.create.useMutation({
+    // optimistic update stuff
+    onMutate: async (newFolder) => {
+      await utils.folder.listWithFunds.cancel()
+
+      const previewsFolders = utils.folder.listWithFunds.getData() || []
+      utils.folder.listWithFunds.setData(undefined, [
+        {
+          ...newFolder,
+          // `id` can be hardcoded since it isn't used as `key` in `folder.listWithFunds` flatlist in Dashboard screen
+          id: 12345,
+          createdAt: null,
+          updatedAt: null,
+          funds: [],
+        },
+        ...previewsFolders,
+      ])
+
+      return { previewsFolders, newFolder }
+    },
+    onError(_, __, context) {
+      utils.folder.listWithFunds.setData(undefined, context?.previewsFolders)
+    },
+    onSettled: () => {
+      utils.folder.listWithFunds.invalidate()
+    },
+  })
 }
