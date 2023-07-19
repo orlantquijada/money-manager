@@ -107,7 +107,9 @@ export default function ChooseFolder({ onBackPress }: Props) {
             )
           }
         }}
-      />
+      >
+        Save
+      </CreateFooter>
     </>
   )
 }

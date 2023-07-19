@@ -17,26 +17,24 @@ type Props = {
 // wrap this with a <Pressable /> to have button functionality
 export default function Button(props: Props) {
   const {
-    className,
     children,
     disabled = false,
     loading = false,
     loadingColor = mauveDark.mauve1,
+    transition,
+    animate,
     ...rest
   } = props
   return (
     <StyledMotiView
-      className={clsx(
-        "relative h-8 items-center justify-center rounded-xl px-4 transition-colors",
-        className,
-      )}
+      className="relative h-8 items-center justify-center rounded-xl px-4 transition-colors"
       animate={{
         backgroundColor: disabled ? mauveDark.mauve11 : mauveDark.mauve12,
-        ...rest.animate,
+        ...animate,
       }}
       transition={{
         backgroundColor: { type: "timing", duration: 200 },
-        ...rest.transition,
+        ...transition,
       }}
       {...rest}
     >

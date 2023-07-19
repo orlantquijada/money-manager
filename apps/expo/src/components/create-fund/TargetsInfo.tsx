@@ -49,7 +49,7 @@ export default function TargetsInfo({
           </Presence>
         </View>
       </ScrollView>
-      <CreateFooter onBackPress={onBackPress} />
+      <CreateFooter onBackPress={onBackPress}>Continue</CreateFooter>
     </>
   )
 }

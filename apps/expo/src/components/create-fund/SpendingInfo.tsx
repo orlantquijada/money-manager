@@ -203,7 +203,9 @@ function Wrapper({
           }
         }}
         onBackPress={handleBackPress}
-      />
+      >
+        Continue
+      </CreateFooter>
     </>
   )
 }

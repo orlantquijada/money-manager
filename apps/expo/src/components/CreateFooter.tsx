@@ -1,4 +1,5 @@
 import clsx from "clsx"
+import { PropsWithChildren } from "react"
 import { View, Text } from "react-native"
 
 import Button from "./Button"
@@ -18,7 +19,8 @@ export default function CreateFooter({
   hideBackButton = false,
   onBackPress,
   onContinuePress,
-}: Props) {
+  children,
+}: PropsWithChildren<Props>) {
   return (
     <View className="border-t-mauveDark8 bg-mauveDark1 flex flex-row justify-between border-t p-4">
       <ScaleDownPressable
@@ -34,12 +36,12 @@ export default function CreateFooter({
         disabled={disabled || loading}
         onPress={onContinuePress}
       >
-        <Button disabled={disabled} loading={loading}>
+        <Button disabled={disabled} loading={loading} className="min-w-[80]">
           <Text
             className={"font-satoshi-medium text-mauveDark1 text-sm"}
             style={{ lineHeight: 16 }}
           >
-            Continue
+            {children}
           </Text>
         </Button>
       </ScaleDownPressable>
