@@ -3,10 +3,13 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { FlashList } from "@shopify/flash-list"
 
 import { RootBottomTabParamList } from "~/types"
+import { violet } from "~/utils/colors"
+
 import Home2 from "~/screens/home2"
+import CreateTransaction from "~/screens/create-transaction"
+
 import Presence from "~/components/Presence"
 import Budget from "~/components/Budget"
-import { violet } from "~/utils/colors"
 
 import HomeIcon from "../../assets/icons/home-duo-dark.svg"
 import HomeFilledIcon from "../../assets/icons/home-filled-dark.svg"
@@ -26,12 +29,13 @@ export default function RootTabs() {
     <Tab.Navigator
       tabBar={(props) => <TabBar {...props} />}
       tabBarPosition="bottom"
-      sceneContainerStyle={{ backgroundColor: violet.violet12 }}
+      sceneContainerStyle={{ backgroundColor: violet.violet1 }}
       initialRouteName="Home"
+      backBehavior="history"
     >
       <Tab.Screen
         name="AddTransaction"
-        component={PlaceHolderScreen}
+        component={CreateTransaction}
         options={{
           tabBarIcon: ({ focused }) =>
             focused ? (
