@@ -16,7 +16,7 @@ import CrossIcon from "../../assets/icons/cross.svg"
 export default function CreateFolder() {
   return (
     <SafeAreaView className="bg-mauveDark1 flex-1 pt-4">
-      <View className="mb-8 pl-4">
+      <View className="mx-4 mb-8 self-start">
         <Close />
       </View>
 
@@ -75,7 +75,9 @@ function Form() {
             },
           )
         }}
-      />
+      >
+        Save
+      </CreateFooter>
     </>
   )
 }
