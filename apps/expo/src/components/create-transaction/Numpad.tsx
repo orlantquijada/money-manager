@@ -65,6 +65,9 @@ export function Numpad({ setNumber, ...props }: Props) {
               return prev.slice(0, -1)
             })
           }
+          onLongPress={() => {
+            setNumber(() => "")
+          }}
         >
           <View className="relative">
             <ChevronLeftIcon
