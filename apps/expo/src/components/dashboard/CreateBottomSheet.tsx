@@ -11,8 +11,11 @@ import CreateCard from "./CreateCard"
 
 import FolderIcon from "../../../assets/icons/folder-closed-duo-create.svg"
 import WalletIcon from "../../../assets/icons/wallet-duo.svg"
+import { tabbarBottomInset } from "~/navigation/TabBar"
 
-const snapPoints = [175]
+const bottomSheetHeight = 175
+// extra height so it wouldn't look so clumped up
+const snapPoints = [bottomSheetHeight + 8]
 
 type Routes = Extract<keyof RootStackParamList, "CreateFund" | "CreateFolder">
 
@@ -36,7 +39,7 @@ const DashboardCreateBottomSheet = forwardRef<BottomSheet>((_, ref) => {
       detached
       backdropComponent={CreateBackdrop}
       ref={ref}
-      bottomInset={16}
+      bottomInset={tabbarBottomInset}
       style={{
         marginHorizontal: 16,
         borderRadius: 20,

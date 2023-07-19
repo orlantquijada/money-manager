@@ -20,7 +20,7 @@ export default function CreateCard({
 }: Props) {
   return (
     <StyledMotiPressable
-      className="bg-mauveDark1 flex-row gap-x-4 px-6 py-4"
+      className="bg-mauveDark1 w-full flex-row px-6 py-4"
       transition={{ type: "timing", duration: 200 }}
       animate={useMemo(
         () =>
@@ -36,7 +36,7 @@ export default function CreateCard({
       )}
       onPress={onPress}
     >
-      <View className="pt-[6px]">
+      <View className="mr-4 pt-[6px]">
         <Icon width={16} height={16} />
       </View>
       <View className="flex-1">

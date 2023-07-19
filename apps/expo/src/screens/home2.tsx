@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react"
 import { View, Text, Pressable } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
 
+import SafeAreaView from "~/components/SafeAreaView"
 import BottomSheetModal from "~/components/BottomSheet"
 import DashboardCreateBottomSheet from "~/components/dashboard/CreateBottomSheet"
 import { HeaderProgressBar } from "~/components/dashboard/HeaderProgressBar"
@@ -17,7 +17,7 @@ export default function Home2() {
   }, [])
 
   return (
-    <SafeAreaView className="bg-violet1 relative">
+    <SafeAreaView className="bg-violet1 flex-1">
       <View className="h-full px-4">
         {/* header */}
         <View className="w-full flex-row items-center justify-between pt-12">
