@@ -43,7 +43,7 @@ export default function NonNegotiableInfo({
           </Presence>
         </View>
       </ScrollView>
-      <Footer onBackPress={onBackPress} />
+      <Footer onBackPress={onBackPress}>Continue</Footer>
     </>
   )
 }

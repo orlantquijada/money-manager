@@ -164,7 +164,9 @@ export default function FundInfo({ setScreen }: Props) {
           setScreen(screens[selectedType.value])
           setFormValues({ name: fundName, fundType: selectedType.value })
         }}
-      />
+      >
+        Continue
+      </CreateFooter>
     </>
   )
 }
