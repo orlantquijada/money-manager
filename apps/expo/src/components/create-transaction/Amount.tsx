@@ -15,13 +15,30 @@ const formatter = Intl.NumberFormat("en-PH", {
 const getKey = (formattedIndex: number, formatted: string) => {
   if (formatted[formattedIndex] === ",") return `,-${formattedIndex}`
 
-  let index = 0
+  let nonCommaIndex = 0
   for (let i = 0; i < formattedIndex; i++) {
     if (formatted[i] === ",") continue
-    index++
+    nonCommaIndex++
   }
-  return index
+  return nonCommaIndex
 }
+
+// // slide comma to the right instead of exiting
+// const getKeyV2 = (formattedIndex: number, formatted: string) => {
+//   if (formatted[formattedIndex] === ",") {
+//     let commaIndex = 0
+//     for (let i = 0; i < formattedIndex; i++)
+//       if (formatted[i] === ",") commaIndex++
+//     return commaIndex
+//   }
+//
+//   let nonCommaIndex = 0
+//   for (let i = 0; i < formattedIndex; i++) {
+//     if (formatted[i] === ",") continue
+//     nonCommaIndex++
+//   }
+//   return nonCommaIndex
+// }
 
 export function Amount({ amount }: { amount: number }) {
   const formattedAmount = formatter.format(amount)
@@ -40,6 +57,7 @@ export function Amount({ amount }: { amount: number }) {
         {[...formattedAmount].map((char, i) => (
           <Animated.View
             key={char + getKey(i, formattedAmount)}
+            // key={char + getKeyV2(i, formattedAmount)}
             exiting={
               i === 0
                 ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
