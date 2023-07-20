@@ -12,17 +12,20 @@ import { Amount } from "~/components/create-transaction/Amount"
 import { Numpad } from "~/components/create-transaction/Numpad"
 
 import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg"
+import { trpc } from "~/utils/trpc"
 
 export default function CreateTransaction() {
   // show default insets since tabbar isn't shown on this screen
   const insets = useSafeAreaInsets()
   const navigation = useRootBottomTabNavigation()
 
-  const [number, setNumber] = useState("0")
+  const [amount, setAmount] = useState("0")
+
+  const createTransaction = useCreateTransaction()
 
   return (
     <SafeAreaView
-      className="bg-mauveDark1 flex-1 justify-between p-4 pb-8"
+      className="bg-mauveDark1 flex-1 justify-between px-4 pb-8"
       insets={insets}
     >
       <View className="mt-8 h-10 w-full flex-row items-center justify-between">
@@ -44,7 +47,7 @@ export default function CreateTransaction() {
       </View>
 
       <View className="flex-grow items-center justify-center">
-        <Amount amount={Number(number)} />
+        <Amount amount={Number(amount)} />
       </View>
 
       <View>
@@ -73,9 +76,23 @@ export default function CreateTransaction() {
           </View>
         </View>
 
-        <Numpad setNumber={setNumber} className="mb-8" />
+        <Numpad setAmount={setAmount} className="mb-8" />
 
-        <ScaleDownPressable>
+        <ScaleDownPressable
+          onPress={() => {
+            createTransaction.mutate(
+              {
+                amount: Number(amount),
+                fundId: 7,
+              },
+              {
+                onSuccess: () => {
+                  navigation.navigate("Transactions")
+                },
+              },
+            )
+          }}
+        >
           <Button className="h-12 w-full rounded-2xl">
             <Text className="text-mauveDark1 font-satoshi-bold text-lg leading-6">
               Save
@@ -85,4 +102,24 @@ export default function CreateTransaction() {
       </View>
     </SafeAreaView>
   )
+}
+
+function useCreateTransaction() {
+  const utils = trpc.useContext()
+  return trpc.transaction.create.useMutation({
+    // onMutate: async (newTransaction) => {
+    //   await utils.transaction.all.cancel()
+    //   const previousTransactions = utils.transaction.all.getData() || []
+    //   utils.transaction.all.setData(undefined, [
+    //     {
+    //       ...newTransaction,
+    //       id: "asd",
+    //       date: new Date(),
+    //       amount: newTransaction.amount || null,
+    //     },
+    //     ...previousTransactions,
+    //   ])
+    // },
+    onSuccess: () => utils.transaction.all.invalidate(),
+  })
 }

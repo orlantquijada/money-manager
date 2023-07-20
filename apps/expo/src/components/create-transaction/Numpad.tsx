@@ -7,12 +7,12 @@ import ChevronLeftIcon from "../../../assets/icons/hero-icons/chevron-left.svg"
 import { mauveDark } from "~/utils/colors"
 
 type Props = {
-  setNumber: Dispatch<SetStateAction<string>>
+  setAmount: Dispatch<SetStateAction<string>>
 } & ViewProps
 
-export function Numpad({ setNumber, ...props }: Props) {
+export function Numpad({ setAmount, ...props }: Props) {
   const handleNumberButtonPress = (num: number) => () => {
-    setNumber((prev) =>
+    setAmount((prev) =>
       // limit decimal to hundredths
       prev.includes(".") && prev.split(".")[1]?.length === 2
         ? prev
@@ -46,17 +46,17 @@ export function Numpad({ setNumber, ...props }: Props) {
       <View className="flex-row gap-x-2">
         <NumberButton
           onPress={() => {
-            setNumber((prev) => (prev.includes(".") ? prev : prev + "."))
+            setAmount((prev) => (prev.includes(".") ? prev : prev + "."))
           }}
         >
           .
         </NumberButton>
-        <NumberButton onPress={() => setNumber((prev) => prev + 0)}>
+        <NumberButton onPress={() => setAmount((prev) => prev + 0)}>
           0
         </NumberButton>
         <NumberButton
           onPress={() =>
-            setNumber((prev) => {
+            setAmount((prev) => {
               // include removing decimal point if current number on tenths decimal place
               if (prev.includes(".") && prev.split(".")[1]?.length === 1) {
                 return prev.slice(0, -2)
@@ -66,7 +66,7 @@ export function Numpad({ setNumber, ...props }: Props) {
             })
           }
           onLongPress={() => {
-            setNumber(() => "")
+            setAmount(() => "")
           }}
         >
           <View className="relative">
