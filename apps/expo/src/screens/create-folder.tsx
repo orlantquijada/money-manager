@@ -102,7 +102,7 @@ function useCreateFolder() {
     onMutate: async (newFolder) => {
       await utils.folder.listWithFunds.cancel()
 
-      const previewsFolders = utils.folder.listWithFunds.getData() || []
+      const previousFolders = utils.folder.listWithFunds.getData() || []
       utils.folder.listWithFunds.setData(undefined, [
         {
           ...newFolder,
@@ -112,13 +112,13 @@ function useCreateFolder() {
           updatedAt: null,
           funds: [],
         },
-        ...previewsFolders,
+        ...previousFolders,
       ])
 
-      return { previewsFolders, newFolder }
+      return { previousFolders, newFolder }
     },
     onError(_, __, context) {
-      utils.folder.listWithFunds.setData(undefined, context?.previewsFolders)
+      utils.folder.listWithFunds.setData(undefined, context?.previousFolders)
     },
     onSettled: () => {
       utils.folder.listWithFunds.invalidate()
