@@ -1,5 +1,5 @@
 import { ComponentProps, forwardRef, useRef } from "react"
-import { View } from "react-native"
+import { Platform, Text, View } from "react-native"
 import { useBottomSheetModal } from "@gorhom/bottom-sheet"
 
 import { mauveA, mauveDark } from "~/utils/colors"
@@ -11,13 +11,20 @@ import CreateCard from "./CreateCard"
 
 import FolderIcon from "../../../assets/icons/folder-closed-duo-create.svg"
 import WalletIcon from "../../../assets/icons/wallet-duo.svg"
+import ShoppingBagIcon from "../../../assets/icons/shopping-bag.svg"
 import { tabbarBottomInset } from "~/navigation/TabBar"
 
-const bottomSheetHeight = 175
-// extra height so it wouldn't look so clumped up
-const snapPoints = [bottomSheetHeight + 8]
+const snapPoints = [
+  Platform.select({
+    ios: 320,
+    android: 300,
+  }) || 320,
+]
 
-type Routes = Extract<keyof RootStackParamList, "CreateFund" | "CreateFolder">
+type Routes = Extract<
+  keyof RootStackParamList,
+  "CreateFund" | "CreateFolder" | "Root"
+>
 
 // HACK: navigating directly `onPress` on <CreateCard /> does not work. The bottom sheet reopens after
 // navigating - most probably has to do with rerendering since current impl works —
@@ -50,12 +57,30 @@ const DashboardCreateBottomSheet = forwardRef<BottomSheet>((_, ref) => {
       handleStyle={{ backgroundColor: mauveDark.mauve1 }}
       name="dashboard-create"
       onDismiss={() => {
-        if (to.current) navigation.navigate(to.current)
+        if (to.current === undefined) return
+
+        if (to.current === "Root")
+          navigation.navigate("Root", { screen: "AddTransaction" })
+        else navigation.navigate(to.current)
 
         to.current = undefined
       }}
     >
       <View className="bg-mauveDark1 border-t-mauveDark1 flex-1 border-t">
+        <View className="mb-6 flex-row items-center justify-between px-6">
+          <Text className="text-mauveDark12 font-satoshi-bold text-xl">
+            Create
+          </Text>
+
+          {/* <ScaleDownPressable className="bg-mauveDark4 h-6 w-6 items-center justify-center rounded-md"> */}
+          {/*   <CrossIcon */}
+          {/*     color={mauveDark.mauve8} */}
+          {/*     height={14} */}
+          {/*     width={14} */}
+          {/*     strokeWidth={3} */}
+          {/*   /> */}
+          {/* </ScaleDownPressable> */}
+        </View>
         <CreateCard
           Icon={FolderIcon}
           title="Folder"
@@ -63,11 +88,20 @@ const DashboardCreateBottomSheet = forwardRef<BottomSheet>((_, ref) => {
           onPress={handleCardOnPress("CreateFolder")}
         />
         <View className="bg-mauveDark6 h-px w-full" />
+        {/* TODO: description copy */}
         <CreateCard
           Icon={WalletIcon}
           title="Fund"
           description="Description"
           onPress={handleCardOnPress("CreateFund")}
+        />
+        <View className="bg-mauveDark6 h-px w-full" />
+        {/* TODO: description copy */}
+        <CreateCard
+          Icon={ShoppingBagIcon}
+          title="Transaction"
+          description="Description"
+          onPress={handleCardOnPress("Root")}
         />
       </View>
     </BottomSheet>

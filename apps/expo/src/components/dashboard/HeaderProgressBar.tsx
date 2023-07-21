@@ -65,7 +65,7 @@ export function HeaderProgressBar({
   return (
     <StyledMotiView
       style={cardBackground}
-      className="bg-mauve12 relative mt-6 items-center justify-center overflow-hidden rounded-2xl p-6"
+      className="bg-mauve12 relative mt-6 items-center justify-center overflow-hidden rounded-[20px] p-6"
     >
       <StyledMotiView
         from={{ translateX: 0 }}
