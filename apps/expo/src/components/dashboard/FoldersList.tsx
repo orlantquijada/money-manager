@@ -1,4 +1,6 @@
-import { FlatList, Text, View } from "react-native"
+import { ComponentProps } from "react"
+import { Text, View } from "react-native"
+import Animated from "react-native-reanimated"
 
 import { useRootBottomTabRoute } from "~/utils/hooks/useRootBottomTabRoute"
 import { trpc } from "~/utils/trpc"
@@ -6,21 +8,26 @@ import { trpc } from "~/utils/trpc"
 import Budget from "../Budget"
 import Presence from "../Presence"
 
-export default function FoldersList() {
+export default function FoldersList({
+  onScroll,
+}: {
+  onScroll?: ComponentProps<typeof Animated.FlatList>["onScroll"]
+}) {
   const folders = trpc.folder.listWithFunds.useQuery()
   const route = useRootBottomTabRoute("Home")
 
   return (
-    <FlatList
+    <Animated.FlatList
       data={folders.data}
       showsVerticalScrollIndicator={false}
       ListHeaderComponent={
-        <Text className="font-satoshi-medium text-mauve12 mt-8 mb-4 text-xl">
+        <Text className="font-satoshi-medium text-mauve12 mb-4 text-xl">
           Budgets
         </Text>
       }
+      onScroll={onScroll}
       ItemSeparatorComponent={() => <View className="h-2" />}
-      contentContainerStyle={{ paddingBottom: 40 }}
+      contentContainerStyle={{ paddingBottom: 40, paddingTop: 80 }}
       keyExtractor={({ name }, index) => name + index}
       renderItem={({ item, index }) => (
         <Presence delayMultiplier={index + 1} delay={60}>

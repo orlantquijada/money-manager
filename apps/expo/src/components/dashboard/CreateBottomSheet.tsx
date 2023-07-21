@@ -5,6 +5,7 @@ import { useBottomSheetModal } from "@gorhom/bottom-sheet"
 import { mauveA, mauveDark } from "~/utils/colors"
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 import type { RootStackParamList } from "~/types"
+import { tabbarBottomInset } from "~/navigation/TabBar"
 
 import BottomSheet, { Backdrop } from "../BottomSheet"
 import CreateCard from "./CreateCard"
@@ -12,7 +13,7 @@ import CreateCard from "./CreateCard"
 import FolderIcon from "../../../assets/icons/folder-closed-duo-create.svg"
 import WalletIcon from "../../../assets/icons/wallet-duo.svg"
 import ShoppingBagIcon from "../../../assets/icons/shopping-bag.svg"
-import { tabbarBottomInset } from "~/navigation/TabBar"
+// import ShoppingBagIcon from "../../../assets/icons/money-duo-dark.svg"
 
 const snapPoints = [
   Platform.select({
