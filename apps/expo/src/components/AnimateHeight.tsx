@@ -18,6 +18,9 @@ type Props = PropsWithChildren<
 const StyledMotiView = styled(MotiView)
 const INITIAL_HEIGHT = 0
 
+// NOTE: tried using react state to handle `open`
+// but the delay while toggling is really noticeable
+// and is just bad for UX, especially when the animations are interrupted
 export function AnimateHeight(props: Props) {
   const { open, defaultOpen, style, className, children, ...rest } = props
 
