@@ -20,7 +20,7 @@ export default function Home2() {
     <SafeAreaView className="bg-violet1 flex-1">
       <View className="h-full px-4">
         {/* header */}
-        <View className="w-full flex-row items-center justify-between pt-12">
+        <View className="mt-12 w-full flex-row items-center justify-between">
           <Text className="font-satoshi-medium text-mauve12 text-3xl">
             Dashboard
           </Text>
