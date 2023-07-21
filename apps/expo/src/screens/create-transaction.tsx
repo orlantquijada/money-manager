@@ -29,7 +29,7 @@ export default function CreateTransaction() {
       insets={insets}
     >
       <View className="mt-8 h-10 w-full flex-row items-center justify-between">
-        <Text className="font-satoshi-bold text-mauveDark12 text-xl">
+        <Text className="font-satoshi-bold text-mauveDark12 text-2xl">
           Add Expense
         </Text>
 
