@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { View, Text } from "react-native"
 import Animated, { Layout } from "react-native-reanimated"
 
@@ -39,6 +40,12 @@ const getKey = (formattedIndex: number, formatted: string) => {
 //   }
 //   return nonCommaIndex
 // }
+
+export function useAmount(initialAmount = 0) {
+  const [amount, setAmount] = useState(() => initialAmount.toString())
+
+  return [Number(amount), setAmount] as const
+}
 
 export function Amount({ amount }: { amount: number }) {
   const formattedAmount = formatter.format(amount)
