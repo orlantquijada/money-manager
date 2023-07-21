@@ -110,6 +110,9 @@ importers:
       expo-status-bar:
         specifier: ~1.4.4
         version: 1.4.4
+      expo-updates:
+        specifier: ~0.16.4
+        version: 0.16.4(expo@48.0.20)
       moti:
         specifier: ^0.23.7
         version: 0.23.7(react-dom@18.2.0)(react-native-reanimated@2.14.4)(react@18.2.0)
@@ -6341,6 +6344,10 @@ packages:
       semver: 7.3.8
     dev: false
 
+  /expo-eas-client@0.5.1:
+    resolution: {integrity: sha512-i3L/iwhI6cFhSUpVsCxSU5qehNznL/rQFYoof6qUIh3CMyijCuTEwjEhwbw2a5W6obPBzQUXbomMSFDO6D5/0Q==}
+    dev: false
+
   /expo-file-system@15.2.2(expo@48.0.20):
     resolution: {integrity: sha512-LFkOLcWwlmnjkURxZ3/0ukS35OswX8iuQknLHRHeyk8mUA8fpRPPelD/a1lS+yclqfqavMJmTXVKM1Nsq5XVMA==}
     peerDependencies:
@@ -6430,12 +6437,39 @@ packages:
     resolution: {integrity: sha512-5DV0hIEWgatSC3UgQuAZBoQeaS9CqeWRZ3vzBR9R/+IUD87Adbi4FGhU10nymRqFXOizGsureButGZIXPs7zEA==}
     dev: false
 
+  /expo-structured-headers@3.1.2:
+    resolution: {integrity: sha512-UjVKwKeq6Ya4FWweDyfeaB2a2FY6BzrgF/c2uRMUDRVbUZIkhmc6BNYHKmfS2bnYWOc3bqp/REX5YFLSQfqvOg==}
+    dev: false
+
   /expo-updates-interface@0.9.3(expo@48.0.20):
     resolution: {integrity: sha512-zBkJmLP5Bmcz2s14PZDcHFzRjnyiG/TwlQfIvpnV4NS+EYyR4vgbC0J3zUEi7Vvhm5m4gjsTpU6X1oKn6br+HQ==}
     peerDependencies:
       expo: '*'
     dependencies:
       expo: 48.0.20(@babel/core@7.20.7)
+    dev: false
+
+  /expo-updates@0.16.4(expo@48.0.20):
+    resolution: {integrity: sha512-hEUotP10sBiYn6dvkYC2rIa+kAmsBuaMp32sIVNAYEwKMQJqEwqNAKTU6CpJ4Aoc//BYL2Hv8qNo/UsT4rATRg==}
+    hasBin: true
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      '@expo/code-signing-certificates': 0.0.5
+      '@expo/config': 8.0.5
+      '@expo/config-plugins': 6.0.2
+      '@expo/metro-config': 0.7.1
+      arg: 4.1.0
+      expo: 48.0.20(@babel/core@7.20.7)
+      expo-eas-client: 0.5.1
+      expo-manifests: 0.5.2
+      expo-structured-headers: 3.1.2
+      expo-updates-interface: 0.9.3(expo@48.0.20)
+      fbemitter: 3.0.0
+      resolve-from: 5.0.0
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
     dev: false
 
   /expo@48.0.20(@babel/core@7.20.7):
