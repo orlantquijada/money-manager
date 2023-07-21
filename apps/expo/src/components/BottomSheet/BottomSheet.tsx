@@ -1,14 +1,15 @@
 import { forwardRef } from "react"
 import { View } from "react-native"
-import { Easing } from "react-native-reanimated"
 import {
   BottomSheetModal as GBottomSheetModal,
   BottomSheetModalProps,
+  // BottomSheetView,
   useBottomSheetSpringConfigs,
-  useBottomSheetTimingConfigs,
 } from "@gorhom/bottom-sheet"
+// import { styled } from "nativewind"
 
-import { mauve, violet } from "~/utils/colors"
+import { transitions } from "~/utils/motion"
+import { mauve } from "~/utils/colors"
 
 import BottomSheetBackdrop from "./Backdrop"
 
@@ -16,17 +17,7 @@ export const BottomSheetModal = forwardRef<
   GBottomSheetModal,
   BottomSheetModalProps
 >(({ handleIndicatorStyle = {}, backgroundStyle = {}, ...props }, ref) => {
-  const timingConfigs = useBottomSheetTimingConfigs({
-    duration: 500,
-    easing: Easing.bezier(0.16, 1, 0.3, 1),
-  })
-  const springConfigs = useBottomSheetSpringConfigs({
-    damping: 90,
-    overshootClamping: true,
-    restDisplacementThreshold: 0.1,
-    restSpeedThreshold: 0.1,
-    stiffness: 10,
-  })
+  const springConfigs = useBottomSheetSpringConfigs(transitions.snappier)
 
   return (
     <GBottomSheetModal
@@ -34,18 +25,22 @@ export const BottomSheetModal = forwardRef<
         { backgroundColor: mauve.mauve5 },
         handleIndicatorStyle,
       ]}
-      backgroundStyle={[{ backgroundColor: violet.violet1 }, backgroundStyle]}
+      backgroundStyle={[{ backgroundColor: "transparent" }, backgroundStyle]}
       backdropComponent={BottomSheetBackdrop}
-      animationConfigs={{ ...timingConfigs, ...springConfigs }}
+      animationConfigs={springConfigs}
       index={1}
       {...props}
       ref={ref}
     >
-      {/* @ts-expect-error https://gorhom.github.io/react-native-bottom-sheet/props/#children */}
-      <View className="bg-violet1 flex-1">{props.children}</View>
+      <View className="flex-1">
+        {/* @ts-expect-error https://gorhom.github.io/react-native-bottom-sheet/props/#children */}
+        {props.children}
+      </View>
     </GBottomSheetModal>
   )
 })
 BottomSheetModal.displayName = "BottomSheetModal"
+
+// const StyledBottomSheetView = styled(BottomSheetView)
 
 export type BottomSheetModal = GBottomSheetModal

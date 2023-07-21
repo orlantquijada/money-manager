@@ -37,7 +37,7 @@ export default function CreateCard({
       onPress={onPress}
     >
       <View className="mr-4 pt-[6px]">
-        <Icon width={16} height={16} />
+        <Icon width={18} height={18} />
       </View>
       <View className="flex-1">
         <Text className="text-mauveDark12 font-satoshi-medium text-base">
