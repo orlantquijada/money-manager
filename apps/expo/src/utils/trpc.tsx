@@ -30,9 +30,16 @@ const getBaseUrl = () => {
  * Use only in _app.tsx
  */
 import React from "react"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { QueryClient } from "@tanstack/react-query"
 import { httpBatchLink } from "@trpc/client"
 import { transformer } from "api/transformer"
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+
+const asyncStoragePersister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+})
 
 export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -51,7 +58,12 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister: asyncStoragePersister }}
+      >
+        {children}
+      </PersistQueryClientProvider>
     </trpc.Provider>
   )
 }
