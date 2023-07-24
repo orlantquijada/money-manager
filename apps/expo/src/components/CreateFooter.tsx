@@ -38,7 +38,7 @@ export default function CreateFooter({
       >
         <Button disabled={disabled} loading={loading} className="min-w-[80]">
           <Text
-            className={"font-satoshi-medium text-mauveDark1 text-sm"}
+            className="font-satoshi-medium text-mauveDark1 text-sm"
             style={{ lineHeight: 16 }}
           >
             {children}
