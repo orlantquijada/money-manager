@@ -1,5 +1,9 @@
 import { useCallback, useRef } from "react"
 import { View, Text, Pressable } from "react-native"
+import {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated"
 
 import SafeAreaView from "~/components/SafeAreaView"
 import BottomSheetModal from "~/components/BottomSheet"
@@ -8,10 +12,6 @@ import { HeaderProgressBar } from "~/components/dashboard/HeaderProgressBar"
 import FoldersList from "~/components/dashboard/FoldersList"
 
 import Plus from "../../assets/icons/plus.svg"
-import {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated"
 
 export default function Home2() {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)

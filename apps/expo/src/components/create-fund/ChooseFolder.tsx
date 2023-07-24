@@ -119,17 +119,12 @@ type FolderCardProps = {
   selected?: boolean
 } & Omit<ComponentProps<typeof ScaleDownPressable>, "children">
 
-function FolderCard({
-  folder,
-  className,
-  selected = false,
-  ...rest
-}: FolderCardProps) {
+function FolderCard({ folder, selected = false, ...rest }: FolderCardProps) {
   const Icon = selected ? FolderOpen : FolderClosed
 
   return (
     <ScaleDownPressable
-      className={clsx("flex-row items-center rounded-xl p-4", className)}
+      className="flex-row items-center rounded-xl p-4"
       animate={{
         backgroundColor: selected ? mauveDark.mauve12 : mauveDark.mauve4,
       }}
@@ -138,9 +133,10 @@ function FolderCard({
       <Icon width={16} height={16} />
       <Text
         className={clsx(
-          "font-satoshi-medium text-mauveDark12 ml-2 text-base",
+          "font-satoshi-medium text-mauveDark12 ml-2 shrink text-base",
           selected && "text-mauveDark1",
         )}
+        numberOfLines={1}
       >
         {folder.name}
       </Text>
