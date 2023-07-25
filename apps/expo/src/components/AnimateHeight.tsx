@@ -1,7 +1,6 @@
 import { ComponentProps, PropsWithChildren } from "react"
 import { View } from "react-native"
 import { MotiView } from "moti"
-import { styled } from "nativewind"
 
 import { transitions } from "~/utils/motion"
 import {
@@ -14,25 +13,23 @@ type Props = PropsWithChildren<
   UseAnimateProps & ComponentProps<typeof MotiView>
 >
 
-const StyledMotiView = styled(MotiView)
 const INITIAL_HEIGHT = 0
 
 // NOTE: tried using react state to handle `open`
 // but the delay while toggling is really noticeable
 // and is just bad for UX, especially when the animations are interrupted
 export function AnimateHeight(props: Props) {
-  const { open, defaultOpen, style, children, ...rest } = props
+  const { open, defaultOpen, children, ...rest } = props
 
   const { measuredHeight, handleOnLayout } = useMeasureHeight(INITIAL_HEIGHT)
   const { animate } = useAnimateHeight(measuredHeight, { open, defaultOpen })
 
   return (
-    <StyledMotiView
-      transition={transitions.snappy}
+    <MotiView
       {...rest}
-      animate={animate}
       className="overflow-hidden"
-      style={style}
+      animate={animate}
+      transition={transitions.snappy}
     >
       <View
         className="absolute left-0 right-0 bottom-0 top-auto"
@@ -40,6 +37,6 @@ export function AnimateHeight(props: Props) {
       >
         {children}
       </View>
-    </StyledMotiView>
+    </MotiView>
   )
 }

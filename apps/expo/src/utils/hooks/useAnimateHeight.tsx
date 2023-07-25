@@ -1,4 +1,5 @@
-import { ViewProps } from "react-native"
+import { useCallback } from "react"
+import { LayoutChangeEvent } from "react-native"
 import {
   SharedValue,
   useDerivedValue,
@@ -7,9 +8,12 @@ import {
 
 export function useMeasureHeight(initalHeight = 0) {
   const measuredHeight = useSharedValue(initalHeight)
-  const handleOnLayout: ViewProps["onLayout"] = ({ nativeEvent }) => {
-    measuredHeight.value = nativeEvent.layout.height
-  }
+  const handleOnLayout = useCallback(
+    ({ nativeEvent }: LayoutChangeEvent) => {
+      measuredHeight.value = nativeEvent.layout.height
+    },
+    [measuredHeight],
+  )
 
   return { measuredHeight, handleOnLayout } as const
 }
@@ -26,8 +30,8 @@ export function useAnimateHeight(
   const open = useSharedValue(Boolean(defaultOpen))
   const _open = openProp === undefined ? open : openProp
 
-  const animate = useDerivedValue(() => {
-    return _open.value
+  const animate = useDerivedValue(() =>
+    _open.value
       ? {
           height: height.value,
           scale: 1,
@@ -36,9 +40,9 @@ export function useAnimateHeight(
       : {
           height: 0,
           scale: 0.9,
-          opacity: 1,
-        }
-  })
+          opacity: 0,
+        },
+  )
 
   return { animate, open: _open } as const
 }

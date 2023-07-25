@@ -2,16 +2,14 @@ import { type ComponentProps } from "react"
 import { View, ActivityIndicator } from "react-native"
 import clsx from "clsx"
 import { MotiView } from "moti"
-import { styled } from "nativewind"
 
 import { mauveDark } from "~/utils/colors"
 
-const StyledMotiView = styled(MotiView)
 type Props = {
   disabled?: boolean
   loading?: boolean
   loadingColor?: string
-} & ComponentProps<typeof StyledMotiView>
+} & ComponentProps<typeof MotiView>
 
 // only a UI comp does not actually do what a button does
 // wrap this with a <Pressable /> to have button functionality
@@ -26,7 +24,7 @@ export default function Button(props: Props) {
     ...rest
   } = props
   return (
-    <StyledMotiView
+    <MotiView
       className="relative h-8 items-center justify-center rounded-xl px-4 transition-colors"
       animate={{
         backgroundColor: disabled ? mauveDark.mauve11 : mauveDark.mauve12,
@@ -46,6 +44,6 @@ export default function Button(props: Props) {
           color={loadingColor}
         />
       )}
-    </StyledMotiView>
+    </MotiView>
   )
 }
