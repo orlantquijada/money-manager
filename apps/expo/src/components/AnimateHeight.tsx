@@ -2,7 +2,6 @@ import { ComponentProps, PropsWithChildren } from "react"
 import { View } from "react-native"
 import { MotiView } from "moti"
 import { styled } from "nativewind"
-import clsx from "clsx"
 
 import { transitions } from "~/utils/motion"
 import {
@@ -22,17 +21,17 @@ const INITIAL_HEIGHT = 0
 // but the delay while toggling is really noticeable
 // and is just bad for UX, especially when the animations are interrupted
 export function AnimateHeight(props: Props) {
-  const { open, defaultOpen, style, className, children, ...rest } = props
+  const { open, defaultOpen, style, children, ...rest } = props
 
   const { measuredHeight, handleOnLayout } = useMeasureHeight(INITIAL_HEIGHT)
   const { animate } = useAnimateHeight(measuredHeight, { open, defaultOpen })
 
   return (
     <StyledMotiView
+      transition={transitions.snappy}
       {...rest}
       animate={animate}
-      transition={transitions.snappy}
-      className={clsx("overflow-hidden", className)}
+      className="overflow-hidden"
       style={style}
     >
       <View
