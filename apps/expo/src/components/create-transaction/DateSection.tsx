@@ -1,6 +1,7 @@
 import { memo, MutableRefObject, useCallback, useState } from "react"
 import { View, Text, Pressable, Dimensions, Platform } from "react-native"
 import DateTimePicker, {
+  DateTimePickerAndroid,
   IOSNativeProps,
 } from "@react-native-community/datetimepicker"
 import { format, formatRelative } from "date-fns"
@@ -20,24 +21,25 @@ import CalendarIcon from "../../../assets/icons/calendar-duo-dark.svg"
 type IOSMode = NonNullable<IOSNativeProps["mode"]>
 const { width } = Dimensions.get("screen")
 
+// HACK: save createdDate as a ref bec rerendering `AnimateHeight` causes the app to freeze
 export default function DateSection({
   createdDate,
 }: {
   createdDate: MutableRefObject<Date>
 }) {
-  const [sDate, setSDate] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(new Date())
   const show = useSharedValue(false)
   const currentMode = useSharedValue<IOSMode>("date")
 
-  const setSelectedDate = useCallback(
+  const handleSelectedDateChange = useCallback(
     (date: Date) => {
       createdDate.current = date
-      setSDate(date)
+      setSelectedDate(date)
     },
     [createdDate],
   )
 
-  const formattedDate = formatRelative(sDate, new Date())
+  const formattedDate = formatRelative(selectedDate, new Date())
   const [date, time] = formattedDate.split(" at ")
 
   return (
@@ -53,10 +55,20 @@ export default function DateSection({
         <View className="ml-4 h-full grow flex-row items-center justify-between">
           <Pressable
             onPress={() => {
-              currentMode.value = "date"
-              show.value = !(show.value && currentMode.value === "date")
+              if (Platform.OS === "ios") {
+                currentMode.value = "date"
+                show.value = !(show.value && currentMode.value === "date")
+              } else if (Platform.OS === "android") {
+                DateTimePickerAndroid.open({
+                  mode: "date",
+                  value: selectedDate,
+                  onChange: (_, date) => {
+                    if (date) handleSelectedDateChange(date)
+                  },
+                })
+              }
             }}
-            className="h-full w-1/3 justify-center"
+            className="h-full w-1/4 justify-center"
           >
             <Text className="font-satoshi-medium text-mauveDark12 text-base capitalize">
               {date}
@@ -64,13 +76,23 @@ export default function DateSection({
           </Pressable>
           <Pressable
             onPress={() => {
-              currentMode.value = "time"
-              show.value = !(show.value && currentMode.value === "time")
+              if (Platform.OS === "ios") {
+                currentMode.value = "time"
+                show.value = !(show.value && currentMode.value === "time")
+              } else if (Platform.OS === "android") {
+                DateTimePickerAndroid.open({
+                  mode: "time",
+                  value: selectedDate,
+                  onChange: (_, date) => {
+                    if (date) handleSelectedDateChange(date)
+                  },
+                })
+              }
             }}
-            className="h-full w-1/3 items-end justify-center"
+            className="h-full w-1/4 items-end justify-center"
           >
             <Text className="font-satoshi-medium text-mauveDark12 text-base">
-              {time || format(sDate, "K:mm aa")}
+              {time || format(selectedDate, "K:mm aa")}
             </Text>
           </Pressable>
         </View>
@@ -78,7 +100,7 @@ export default function DateSection({
 
       {Platform.OS === "ios" ? (
         <IOSDateTimePicker
-          setSelectedDate={setSelectedDate}
+          setSelectedDate={handleSelectedDateChange}
           show={show}
           currentMode={currentMode}
         />
