@@ -1,17 +1,6 @@
 import { View, Text, SectionList } from "react-native"
 import SafeAreaView from "~/components/SafeAreaView"
-// import { toCurrency } from "~/utils/functions"
-
-// hide decimal if walay decimal ang amount
-const toCurrency = (amount: number) => {
-  const formatter = new Intl.NumberFormat("en-PH", {
-    style: "currency",
-    currency: "PHP",
-    minimumFractionDigits: amount % 1 ? 2 : 0,
-    maximumFractionDigits: 2,
-  })
-  return formatter.format(amount)
-}
+import { toCurrencyNarrow } from "~/utils/functions"
 
 export default function TransactionsScreen() {
   return (
@@ -69,7 +58,7 @@ function TransactionsList() {
               </View>
 
               <Text className="text-mauve11 font-nunito-semibold text-base">
-                {toCurrency(item.amount)}
+                {toCurrencyNarrow(item.amount)}
               </Text>
             </View>
           </View>
