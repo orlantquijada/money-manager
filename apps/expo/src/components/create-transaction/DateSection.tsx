@@ -68,7 +68,7 @@ export default function DateSection({
                 })
               }
             }}
-            className="h-full w-1/4 justify-center"
+            className="h-full min-w-[25%] justify-center pr-6"
           >
             <Text className="font-satoshi-medium text-mauveDark12 text-base capitalize">
               {date}
@@ -89,7 +89,7 @@ export default function DateSection({
                 })
               }
             }}
-            className="h-full w-1/4 items-end justify-center"
+            className="h-full min-w-[25%] items-end justify-center pl-6"
           >
             <Text className="font-satoshi-medium text-mauveDark12 text-base">
               {time || format(selectedDate, "K:mm aa")}
@@ -103,6 +103,7 @@ export default function DateSection({
           setSelectedDate={handleSelectedDateChange}
           show={show}
           currentMode={currentMode}
+          createdDate={createdDate}
         />
       ) : null}
     </Pressable>
@@ -116,10 +117,12 @@ const IOSDateTimePicker = memo(
     setSelectedDate,
     currentMode,
     show,
+    createdDate,
   }: {
     setSelectedDate: (date: Date) => void
     currentMode: SharedValue<IOSMode>
     show: SharedValue<boolean>
+    createdDate: MutableRefObject<Date>
   }) => {
     return (
       <AnimateHeight open={show}>
@@ -136,8 +139,17 @@ const IOSDateTimePicker = memo(
               testID="date-picker"
               value={new Date()}
               mode="date"
-              onChange={(_, selectedDate) => {
-                if (selectedDate) setSelectedDate(selectedDate)
+              onChange={(_, date) => {
+                if (date) {
+                  const newDate = new Date(
+                    date.getFullYear(),
+                    date.getMonth(),
+                    date.getDate(),
+                    createdDate.current.getHours(),
+                    createdDate.current.getMinutes(),
+                  )
+                  setSelectedDate(newDate)
+                }
               }}
               display="inline"
               themeVariant="dark"
@@ -152,8 +164,17 @@ const IOSDateTimePicker = memo(
               mode="time"
               display="spinner"
               themeVariant="dark"
-              onChange={(_, selectedDate) => {
-                if (selectedDate) setSelectedDate(selectedDate)
+              onChange={(_, date) => {
+                if (date) {
+                  const newDate = new Date(
+                    createdDate.current.getFullYear(),
+                    createdDate.current.getMonth(),
+                    createdDate.current.getDate(),
+                    date.getHours(),
+                    date.getMinutes(),
+                  )
+                  setSelectedDate(newDate)
+                }
               }}
             />
           </View>
