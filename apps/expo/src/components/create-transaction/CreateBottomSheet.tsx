@@ -1,9 +1,8 @@
-import { ComponentProps, forwardRef, useMemo, useRef, useState } from "react"
-import { Text, TextInput, View } from "react-native"
+import { ComponentProps, forwardRef, useMemo } from "react"
+import { View } from "react-native"
 import {
   BottomSheetBackdropProps,
   BottomSheetHandleProps,
-  useBottomSheetModal,
   useBottomSheetSpringConfigs,
 } from "@gorhom/bottom-sheet"
 import Animated, {
@@ -17,13 +16,8 @@ import Animated, {
 import { mauveDark } from "~/utils/colors"
 
 import BottomSheet, { Backdrop } from "../BottomSheet"
-import Button from "../Button"
-import ScaleDownPressable from "../ScaleDownPressable"
-import DateSection from "./DateSection"
-
-import CrossIcon from "../../../assets/icons/hero-icons/x-mark.svg"
-import WalletIcon from "../../../assets/icons/wallet-duo.svg"
-import NoteIcon from "../../../assets/icons/note-duo-dark.svg"
+import BottomSheetForm from "./BottomSheetForm"
+import { useFormData } from "./context"
 
 // const snapPoints = ["25%", "94%"]
 // 184 = handle + header + payee + fund height
@@ -36,10 +30,9 @@ const TransactionCreateBottomSheet = forwardRef<BottomSheet>((_, ref) => {
     stiffness: 350,
   })
 
-  const { dismissAll } = useBottomSheetModal()
-
-  const [note, setNote] = useState("")
-  const createdDate = useRef(new Date())
+  // NOTE: no idea why `useFormData` returns undefined on `<BottomSheetForm />`
+  // its probably because `BottomSheet` portals to top most component in the tree?
+  const { setFormValues, formData } = useFormData()
 
   return (
     <BottomSheet
@@ -58,57 +51,7 @@ const TransactionCreateBottomSheet = forwardRef<BottomSheet>((_, ref) => {
         overflow: "hidden",
       }}
     >
-      <View className="flex-1">
-        <View className="flex-row items-center justify-between px-4">
-          <ScaleDownPressable onPress={dismissAll}>
-            <CrossIcon
-              color={mauveDark.mauve12}
-              width={20}
-              height={20}
-              strokeWidth={3}
-            />
-          </ScaleDownPressable>
-
-          <Button>
-            <Text className="font-satoshi-medium text-mauve12 text-base">
-              Save
-            </Text>
-          </Button>
-        </View>
-
-        <View className="border-b-mauveDark4 h-16 flex-row items-center border-b px-4">
-          <View className="aspect-square w-5" />
-          <TextInput
-            className="font-satoshi-medium text-mauveDark12 ml-4 h-full grow text-xl"
-            placeholder="Store or Item"
-            placeholderTextColor={mauveDark.mauve10}
-          />
-        </View>
-
-        <View className="border-b-mauveDark4 h-16 flex-row items-center border-b px-4">
-          <WalletIcon width={20} height={20} />
-          <TextInput
-            className="font-satoshi-medium text-mauveDark12 ml-4 h-full grow"
-            style={{ fontSize: 16 }}
-            placeholder="Select Fund"
-            placeholderTextColor={mauveDark.mauve10}
-          />
-        </View>
-
-        <DateSection createdDate={createdDate} />
-
-        <View className="border-b-mauveDark4 h-16 flex-row items-center border-b px-4">
-          <NoteIcon width={20} height={20} />
-          <TextInput
-            className="font-satoshi-medium text-mauveDark12 ml-4 h-full grow"
-            style={{ fontSize: 16 }}
-            placeholder="Add Note"
-            placeholderTextColor={mauveDark.mauve10}
-            value={note}
-            onChangeText={setNote}
-          />
-        </View>
-      </View>
+      <BottomSheetForm setFormValues={setFormValues} formData={formData} />
     </BottomSheet>
   )
 })
