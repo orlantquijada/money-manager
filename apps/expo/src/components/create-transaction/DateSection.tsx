@@ -22,8 +22,12 @@ import CalendarIcon from "../../../assets/icons/calendar-duo-dark.svg"
 type IOSMode = NonNullable<IOSNativeProps["mode"]>
 const { width } = Dimensions.get("screen")
 
-export default function DateSection({ setFormValues, formData }: FormContext) {
-  const show = useSharedValue(false)
+export default function DateSection({
+  setFormValues,
+  formData,
+  defaultOpen,
+}: FormContext & { defaultOpen: boolean }) {
+  const show = useSharedValue(defaultOpen)
   const currentMode = useSharedValue<IOSMode>("date")
   // HACK: save createdAt as a ref bec rerendering `AnimateHeight` causes the app to freeze
   const createdAtRef = useRef(formData.createdAt)

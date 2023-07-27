@@ -14,6 +14,9 @@ type FormData = {
   createdAt: Date
 }
 
+export type BottomSheetData = keyof FormData | undefined
+export type HandlePresentModalPress = (data?: BottomSheetData) => void
+
 export type FormContext = {
   formData: FormData
   setFormValues: (values: Partial<FormData>) => void
