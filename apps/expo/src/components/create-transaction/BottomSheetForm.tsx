@@ -1,6 +1,9 @@
 import { RefObject, useMemo } from "react"
 import { Text, TextInput, View } from "react-native"
-import { useBottomSheetModal } from "@gorhom/bottom-sheet"
+import {
+  useBottomSheetModal,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet"
 
 import { mauveDark } from "~/utils/colors"
 import { debounce } from "~/utils/functions"
@@ -24,7 +27,7 @@ export default function BottomSheetForm({
   const { dismissAll } = useBottomSheetModal()
 
   return (
-    <View className="flex-1">
+    <BottomSheetScrollView>
       <View className="flex-row items-center justify-between px-4">
         <ScaleDownPressable onPress={dismissAll}>
           <CrossIcon
@@ -70,9 +73,10 @@ export default function BottomSheetForm({
       <NoteSection
         setFormValues={setFormValues}
         formData={formData}
-        autoFocus={bottomSheetDataRef.current === "note"}
+        // NOTE: toggle this feature (honestly think its annoying to open keyboard directly)
+        // autoFocus={bottomSheetDataRef.current === "note"}
       />
-    </View>
+    </BottomSheetScrollView>
   )
 }
 
@@ -87,7 +91,7 @@ function NoteSection({
         setFormValues({
           note: text,
         })
-      }, 1000),
+      }, 500),
     [setFormValues],
   )
 
