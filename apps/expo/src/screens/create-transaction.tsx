@@ -1,11 +1,18 @@
-import { useCallback, useRef } from "react"
+import { RefObject, useCallback, useRef } from "react"
 import { Pressable, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomSheetModal } from "@gorhom/bottom-sheet"
+import { format, formatRelative } from "date-fns"
+import clsx from "clsx"
 
 import { mauveDark } from "~/utils/colors"
 import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation"
 // import { trpc } from "~/utils/trpc"
+import { capitalize } from "~/utils/functions"
+import {
+  FormProvider,
+  useFormData,
+} from "~/components/create-transaction/context"
 
 import SafeAreaView from "~/components/SafeAreaView"
 import ScaleDownPressable from "~/components/ScaleDownPressable"
@@ -21,8 +28,6 @@ export default function CreateTransaction() {
   const insets = useSafeAreaInsets()
   const navigation = useRootBottomTabNavigation()
 
-  const [amount, setAmount] = useAmount(0)
-
   // const createTransaction = useCreateTransaction()
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
@@ -33,7 +38,7 @@ export default function CreateTransaction() {
 
   return (
     <SafeAreaView className="bg-mauveDark1 flex-1" insets={insets}>
-      <View className="flex-1 justify-between px-4 pb-8">
+      <View className="flex-1 px-4 pb-8">
         <View className="mt-8 h-10 w-full flex-row items-center justify-between">
           <Text className="font-satoshi-bold text-mauveDark12 text-2xl">
             Add Expense
@@ -52,65 +57,96 @@ export default function CreateTransaction() {
           </Pressable>
         </View>
 
-        <View className="flex-grow items-center justify-center">
-          <Amount amount={amount} />
-        </View>
+        <CreateTransactionForm bottomSheetModalRef={bottomSheetModalRef} />
 
-        <View>
-          <View className="mb-4">
-            <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
-              <Text className="text-mauveDark12 font-satoshi-bold text-base leading-6">
-                Today at 10:08 AM
-              </Text>
-              <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
-                ·
-              </Text>
-              <Text className="text-mauveDark11 font-satoshi-bold text-base leading-6">
-                Add Note
-              </Text>
-            </View>
-            <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
-              <Text className="text-mauveDark11 font-satoshi-bold text-base leading-6">
-                Store
-              </Text>
-              <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
-                ·
-              </Text>
-              <Text className="text-mauveDark11 font-satoshi-bold text-base leading-6">
-                Fund
-              </Text>
-            </View>
-          </View>
-
-          <Numpad setAmount={setAmount} className="mb-8" />
-
-          <ScaleDownPressable
-            onPress={() => {
-              handlePresentModalPress()
-              // createTransaction.mutate(
-              //   {
-              //     amount: Number(amount),
-              //     fundId: 7,
-              //   },
-              //   {
-              //     onSuccess: () => {
-              //       navigation.navigate("Transactions")
-              //     },
-              //   },
-              // )
-            }}
-          >
-            <Button className="h-12 w-full rounded-2xl">
-              <Text className="text-mauveDark1 font-satoshi-bold text-lg leading-6">
-                Save
-              </Text>
-            </Button>
-          </ScaleDownPressable>
-        </View>
-
-        <TransactionCreateBottomSheet ref={bottomSheetModalRef} />
+        <ScaleDownPressable
+          onPress={() => {
+            handlePresentModalPress()
+            // createTransaction.mutate(
+            //   {
+            //     amount: Number(amount),
+            //     fundId: 7,
+            //   },
+            //   {
+            //     onSuccess: () => {
+            //       navigation.navigate("Transactions")
+            //     },
+            //   },
+            // )
+          }}
+        >
+          <Button className="h-12 w-full rounded-2xl">
+            <Text className="text-mauveDark1 font-satoshi-bold text-lg leading-6">
+              Save
+            </Text>
+          </Button>
+        </ScaleDownPressable>
       </View>
     </SafeAreaView>
+  )
+}
+
+function CreateTransactionForm({
+  bottomSheetModalRef,
+}: {
+  bottomSheetModalRef: RefObject<BottomSheetModal>
+}) {
+  const [amount, setAmount] = useAmount(0)
+  return (
+    <FormProvider>
+      <View className="flex-grow items-center justify-center">
+        <Amount amount={amount} />
+      </View>
+
+      <FormDetailsPreview />
+
+      <Numpad setAmount={setAmount} className="mb-8" />
+
+      <TransactionCreateBottomSheet ref={bottomSheetModalRef} />
+    </FormProvider>
+  )
+}
+
+function FormDetailsPreview() {
+  const { formData } = useFormData()
+  const formattedDate = formatRelative(formData.createdAt, new Date())
+  let [date, time] = formattedDate.split(" at ")
+
+  // NOTE: does not include year
+  // TODO: include year if not this year
+  date = date?.includes("/") ? format(formData.createdAt, "MMM d") : date
+  time = time || format(formData.createdAt, "K:mm aa")
+
+  return (
+    <View className="mb-4">
+      <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
+        <Text className="text-mauveDark12 font-satoshi-bold text-base leading-6">
+          {capitalize(date || "")} at {time}
+        </Text>
+        <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
+          ·
+        </Text>
+        <Text
+          className={clsx(
+            "font-satoshi-bold text-base leading-6",
+            formData.note ? "text-mauveDark12" : "text-mauveDark11",
+          )}
+        >
+          {formData.note || "Add Note"}
+        </Text>
+      </View>
+      <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
+        <Text className="text-mauveDark11 font-satoshi-bold text-base leading-6">
+          Store
+        </Text>
+        <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
+          ·
+        </Text>
+        <Text className="text-mauveDark11 font-satoshi-bold text-base leading-6">
+          Fund
+        </Text>
+      </View>
+    </View>
   )
 }
 

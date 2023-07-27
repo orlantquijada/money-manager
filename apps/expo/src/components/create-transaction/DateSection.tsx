@@ -1,4 +1,4 @@
-import { memo, MutableRefObject, useCallback, useState } from "react"
+import { memo, MutableRefObject, useCallback, useRef } from "react"
 import { View, Text, Pressable, Dimensions, Platform } from "react-native"
 import DateTimePicker, {
   DateTimePickerAndroid,
@@ -15,31 +15,28 @@ import { MotiView } from "moti"
 import { transitions } from "~/utils/motion"
 
 import { AnimateHeight } from "../AnimateHeight"
+import { FormContext } from "./context"
 
 import CalendarIcon from "../../../assets/icons/calendar-duo-dark.svg"
 
 type IOSMode = NonNullable<IOSNativeProps["mode"]>
 const { width } = Dimensions.get("screen")
 
-// HACK: save createdDate as a ref bec rerendering `AnimateHeight` causes the app to freeze
-export default function DateSection({
-  createdDate,
-}: {
-  createdDate: MutableRefObject<Date>
-}) {
-  const [selectedDate, setSelectedDate] = useState(new Date())
+export default function DateSection({ setFormValues, formData }: FormContext) {
   const show = useSharedValue(false)
   const currentMode = useSharedValue<IOSMode>("date")
+  // HACK: save createdAt as a ref bec rerendering `AnimateHeight` causes the app to freeze
+  const createdAtRef = useRef(formData.createdAt)
 
   const handleSelectedDateChange = useCallback(
     (date: Date) => {
-      createdDate.current = date
-      setSelectedDate(date)
+      createdAtRef.current = date
+      setFormValues({ createdAt: date })
     },
-    [createdDate],
+    [setFormValues],
   )
 
-  const formattedDate = formatRelative(selectedDate, new Date())
+  const formattedDate = formatRelative(formData.createdAt, new Date())
   const [date, time] = formattedDate.split(" at ")
 
   return (
@@ -61,7 +58,7 @@ export default function DateSection({
               } else if (Platform.OS === "android") {
                 DateTimePickerAndroid.open({
                   mode: "date",
-                  value: selectedDate,
+                  value: formData.createdAt,
                   onChange: (_, date) => {
                     if (date) handleSelectedDateChange(date)
                   },
@@ -82,7 +79,7 @@ export default function DateSection({
               } else if (Platform.OS === "android") {
                 DateTimePickerAndroid.open({
                   mode: "time",
-                  value: selectedDate,
+                  value: formData.createdAt,
                   onChange: (_, date) => {
                     if (date) handleSelectedDateChange(date)
                   },
@@ -92,7 +89,7 @@ export default function DateSection({
             className="h-full min-w-[25%] items-end justify-center pl-6"
           >
             <Text className="font-satoshi-medium text-mauveDark12 text-base">
-              {time || format(selectedDate, "K:mm aa")}
+              {time || format(formData.createdAt, "K:mm aa")}
             </Text>
           </Pressable>
         </View>
@@ -103,7 +100,7 @@ export default function DateSection({
           setSelectedDate={handleSelectedDateChange}
           show={show}
           currentMode={currentMode}
-          createdDate={createdDate}
+          createdAtRef={createdAtRef}
         />
       ) : null}
     </Pressable>
@@ -117,12 +114,12 @@ const IOSDateTimePicker = memo(
     setSelectedDate,
     currentMode,
     show,
-    createdDate,
+    createdAtRef,
   }: {
     setSelectedDate: (date: Date) => void
     currentMode: SharedValue<IOSMode>
     show: SharedValue<boolean>
-    createdDate: MutableRefObject<Date>
+    createdAtRef: MutableRefObject<Date>
   }) => {
     return (
       <AnimateHeight open={show}>
@@ -137,7 +134,7 @@ const IOSDateTimePicker = memo(
           <View className="w-1/2">
             <DateTimePicker
               testID="date-picker"
-              value={new Date()}
+              value={createdAtRef.current}
               mode="date"
               onChange={(_, date) => {
                 if (date) {
@@ -145,8 +142,8 @@ const IOSDateTimePicker = memo(
                     date.getFullYear(),
                     date.getMonth(),
                     date.getDate(),
-                    createdDate.current.getHours(),
-                    createdDate.current.getMinutes(),
+                    createdAtRef.current.getHours(),
+                    createdAtRef.current.getMinutes(),
                   )
                   setSelectedDate(newDate)
                 }
@@ -160,16 +157,16 @@ const IOSDateTimePicker = memo(
           <View className="w-1/2">
             <DateTimePicker
               testID="date-picker"
-              value={new Date()}
+              value={createdAtRef.current}
               mode="time"
               display="spinner"
               themeVariant="dark"
               onChange={(_, date) => {
                 if (date) {
                   const newDate = new Date(
-                    createdDate.current.getFullYear(),
-                    createdDate.current.getMonth(),
-                    createdDate.current.getDate(),
+                    createdAtRef.current.getFullYear(),
+                    createdAtRef.current.getMonth(),
+                    createdAtRef.current.getDate(),
                     date.getHours(),
                     date.getMinutes(),
                   )
