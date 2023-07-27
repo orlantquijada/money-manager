@@ -26,6 +26,7 @@ import TransactionCreateBottomSheet from "~/components/create-transaction/Create
 
 import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg"
 import ChevronUpIcon from "../../assets/icons/hero-icons/chevron-up.svg"
+import StoreListBottomSheet from "~/components/create-transaction/StoreBottomSheet"
 
 export default function CreateTransaction() {
   // show default insets since tabbar isn't shown on this screen
@@ -110,6 +111,8 @@ function CreateTransactionForm({
   handlePresentModalPress: HandlePresentModalPress
 }) {
   const [amount, setAmount] = useAmount(0)
+  const storeListBottomSheetRef = useRef<BottomSheetModal>(null)
+
   return (
     <FormProvider>
       <View className="flex-grow items-center justify-center">
@@ -122,6 +125,12 @@ function CreateTransactionForm({
 
       <TransactionCreateBottomSheet
         ref={bottomSheetModalRef}
+        bottomSheetDataRef={bottomSheetDataRef}
+        storeListBottomSheetRef={storeListBottomSheetRef}
+      />
+
+      <StoreListBottomSheet
+        ref={storeListBottomSheetRef}
         bottomSheetDataRef={bottomSheetDataRef}
       />
     </FormProvider>
