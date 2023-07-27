@@ -1,11 +1,10 @@
-import { useMemo } from "react"
+import { RefObject, useMemo } from "react"
 import { Text, TextInput, View } from "react-native"
-import { BottomSheetTextInput, useBottomSheetModal } from "@gorhom/bottom-sheet"
-import { styled } from "nativewind"
+import { useBottomSheetModal } from "@gorhom/bottom-sheet"
 
 import { mauveDark } from "~/utils/colors"
 import { debounce } from "~/utils/functions"
-import { FormContext } from "./context"
+import { BottomSheetData, FormContext } from "./context"
 
 import Button from "../Button"
 import ScaleDownPressable from "../ScaleDownPressable"
@@ -15,12 +14,13 @@ import CrossIcon from "../../../assets/icons/hero-icons/x-mark.svg"
 import WalletIcon from "../../../assets/icons/wallet-duo.svg"
 import NoteIcon from "../../../assets/icons/note-duo-dark.svg"
 
-const StyledBottomSheetTextInput = styled(BottomSheetTextInput)
-
 export default function BottomSheetForm({
   setFormValues,
   formData,
-}: FormContext) {
+  bottomSheetDataRef,
+}: FormContext & {
+  bottomSheetDataRef: RefObject<BottomSheetData>
+}) {
   const { dismissAll } = useBottomSheetModal()
 
   return (
@@ -61,14 +61,26 @@ export default function BottomSheetForm({
         />
       </View>
 
-      <DateSection setFormValues={setFormValues} formData={formData} />
+      <DateSection
+        setFormValues={setFormValues}
+        formData={formData}
+        defaultOpen={bottomSheetDataRef.current === "createdAt"}
+      />
 
-      <NoteSection setFormValues={setFormValues} formData={formData} />
+      <NoteSection
+        setFormValues={setFormValues}
+        formData={formData}
+        autoFocus={bottomSheetDataRef.current === "note"}
+      />
     </View>
   )
 }
 
-function NoteSection({ setFormValues, formData }: FormContext) {
+function NoteSection({
+  setFormValues,
+  formData,
+  autoFocus,
+}: FormContext & { autoFocus?: boolean }) {
   const handleDeferredSetNote = useMemo(
     () =>
       debounce((text: string) => {
@@ -82,7 +94,8 @@ function NoteSection({ setFormValues, formData }: FormContext) {
   return (
     <View className="border-b-mauveDark4 min-h-[64px] flex-row items-center border-b px-4">
       <NoteIcon width={20} height={20} />
-      <StyledBottomSheetTextInput
+      <TextInput
+        autoFocus={autoFocus}
         className="font-satoshi-medium text-mauveDark12 ml-4 h-full shrink grow"
         style={{ fontSize: 16 }}
         placeholder="Add Note"

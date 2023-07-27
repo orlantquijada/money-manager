@@ -1,9 +1,10 @@
-import { ComponentProps, forwardRef, useMemo } from "react"
+import { ComponentProps, forwardRef, RefObject, useMemo } from "react"
 import { View } from "react-native"
 import {
   BottomSheetBackdropProps,
   BottomSheetHandleProps,
   useBottomSheetSpringConfigs,
+  BottomSheetModal,
 } from "@gorhom/bottom-sheet"
 import Animated, {
   Extrapolate,
@@ -15,16 +16,21 @@ import Animated, {
 
 import { mauveDark } from "~/utils/colors"
 
-import BottomSheet, { Backdrop } from "../BottomSheet"
+import { Backdrop } from "../BottomSheet"
 import BottomSheetForm from "./BottomSheetForm"
-import { useFormData } from "./context"
+import { BottomSheetData, useFormData } from "./context"
 
 // const snapPoints = ["25%", "94%"]
 // 184 = handle + header + payee + fund height
 const snapPoints = [184, "94%"]
 const backgroundColor = mauveDark.mauve2
 
-const TransactionCreateBottomSheet = forwardRef<BottomSheet>((_, ref) => {
+const TransactionCreateBottomSheet = forwardRef<
+  BottomSheetModal,
+  {
+    bottomSheetDataRef: RefObject<BottomSheetData>
+  }
+>(({ bottomSheetDataRef }, ref) => {
   const springConfig = useBottomSheetSpringConfigs({
     damping: 80,
     stiffness: 350,
@@ -35,7 +41,7 @@ const TransactionCreateBottomSheet = forwardRef<BottomSheet>((_, ref) => {
   const { setFormValues, formData } = useFormData()
 
   return (
-    <BottomSheet
+    <BottomSheetModal
       snapPoints={snapPoints}
       stackBehavior="push"
       backdropComponent={CustomBackdrop}
@@ -51,8 +57,12 @@ const TransactionCreateBottomSheet = forwardRef<BottomSheet>((_, ref) => {
         overflow: "hidden",
       }}
     >
-      <BottomSheetForm setFormValues={setFormValues} formData={formData} />
-    </BottomSheet>
+      <BottomSheetForm
+        setFormValues={setFormValues}
+        formData={formData}
+        bottomSheetDataRef={bottomSheetDataRef}
+      />
+    </BottomSheetModal>
   )
 })
 TransactionCreateBottomSheet.displayName = "TransactionCreateBottomSheet"
@@ -118,5 +128,5 @@ function useBackgroundColor(animatedIndex: SharedValue<number>) {
   }))
 }
 
-export type TransactionCreateBottomSheet = BottomSheet
+export type TransactionCreateBottomSheet = BottomSheetModal
 export default TransactionCreateBottomSheet
