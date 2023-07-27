@@ -20,8 +20,9 @@ const TransactionCreateBottomSheet = forwardRef<
   BottomSheetModal,
   {
     bottomSheetDataRef: RefObject<BottomSheetData>
+    storeListBottomSheetRef: RefObject<BottomSheetModal>
   }
->(({ bottomSheetDataRef }, ref) => {
+>(({ bottomSheetDataRef, storeListBottomSheetRef }, ref) => {
   const springConfig = useBottomSheetSpringConfigs({
     damping: 80,
     stiffness: 350,
@@ -34,7 +35,6 @@ const TransactionCreateBottomSheet = forwardRef<
   return (
     <BottomSheetModal
       snapPoints={snapPoints}
-      stackBehavior="push"
       backdropComponent={CustomBackdrop}
       ref={ref}
       index={1}
@@ -52,6 +52,7 @@ const TransactionCreateBottomSheet = forwardRef<
         setFormValues={setFormValues}
         formData={formData}
         bottomSheetDataRef={bottomSheetDataRef}
+        storeListBottomSheetRef={storeListBottomSheetRef}
       />
     </BottomSheetModal>
   )

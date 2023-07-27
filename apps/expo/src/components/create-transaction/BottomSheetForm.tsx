@@ -1,8 +1,9 @@
 import { RefObject, useMemo } from "react"
-import { Text, TextInput, View } from "react-native"
+import { Pressable, Text, TextInput, View } from "react-native"
 import {
   useBottomSheetModal,
   BottomSheetScrollView,
+  BottomSheetModal,
 } from "@gorhom/bottom-sheet"
 
 import { mauveDark } from "~/utils/colors"
@@ -21,8 +22,10 @@ export default function BottomSheetForm({
   setFormValues,
   formData,
   bottomSheetDataRef,
+  storeListBottomSheetRef,
 }: FormContext & {
   bottomSheetDataRef: RefObject<BottomSheetData>
+  storeListBottomSheetRef: RefObject<BottomSheetModal>
 }) {
   const { dismissAll } = useBottomSheetModal()
 
@@ -47,11 +50,21 @@ export default function BottomSheetForm({
 
       <View className="border-b-mauveDark4 h-16 flex-row items-center border-b px-4">
         <View className="aspect-square w-5" />
-        <TextInput
-          className="font-satoshi-medium text-mauveDark12 ml-4 h-full grow text-xl"
-          placeholder="Store or Item"
-          placeholderTextColor={mauveDark.mauve10}
-        />
+        <Pressable
+          className="ml-4 h-full grow justify-center"
+          onPress={() => {
+            storeListBottomSheetRef.current?.present()
+          }}
+        >
+          <Text className="font-satoshi-medium text-mauveDark10 text-xl">
+            Store or Item
+          </Text>
+        </Pressable>
+        {/* <TextInput */}
+        {/*   className="font-satoshi-medium text-mauveDark12 ml-4 h-full grow bg-red-200 text-xl" */}
+        {/*   placeholder="Store or Item" */}
+        {/*   placeholderTextColor={mauveDark.mauve10} */}
+        {/* /> */}
       </View>
 
       <View className="border-b-mauveDark4 h-16 flex-row items-center border-b px-4">
