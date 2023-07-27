@@ -29,3 +29,22 @@ export const toCurrencyNarrow = (amount: number) => {
   })
   return formatter.format(amount)
 }
+
+export const debounce = <T extends unknown[]>(
+  callback: (...args: T) => void,
+  wait: number,
+) => {
+  let timeoutId: number | undefined = undefined
+
+  return (...args: T) => {
+    window.clearTimeout(timeoutId)
+
+    timeoutId = window.setTimeout(() => {
+      callback(...args)
+    }, wait)
+  }
+}
+
+export function capitalize<T extends string>(str: T) {
+  return `${str[0]?.toUpperCase()}${str.slice(1)}` as Capitalize<T>
+}
