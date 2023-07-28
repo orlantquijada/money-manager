@@ -15,11 +15,29 @@ export const transactionsRouter = router({
         amount: z.number().default(0),
         date: z.string().datetime().optional(),
         note: z.string().default(""),
+        store: z.string(),
+        userId: z.string(),
       }),
     )
-    .mutation(({ ctx, input: { date, ...input } }) => {
+    .mutation(async ({ ctx, input: { date, store, userId, ...input } }) => {
+      const createdStore = await ctx.prisma.store.upsert({
+        where: {
+          userId_name: {
+            name: store,
+            userId,
+          },
+        },
+        update: {},
+        create: {
+          name: store,
+          userId,
+        },
+      })
+
       return ctx.prisma.transaction.create({
-        data: date ? { date, ...input } : { ...input },
+        data: date
+          ? { date, ...input, storeId: createdStore.id }
+          : { ...input, storeId: createdStore.id },
       })
     }),
 })
