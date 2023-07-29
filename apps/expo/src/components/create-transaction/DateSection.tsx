@@ -15,32 +15,27 @@ import { MotiView } from "moti"
 import { transitions } from "~/utils/motion"
 
 import { AnimateHeight } from "../AnimateHeight"
-import { FormContext } from "./context"
 
 import CalendarIcon from "../../../assets/icons/calendar-duo-dark.svg"
+import { useTransactionStore } from "~/utils/hooks/useTransactionStore"
 
 type IOSMode = NonNullable<IOSNativeProps["mode"]>
 const { width } = Dimensions.get("screen")
 
-export default function DateSection({
-  setFormValues,
-  formData,
-  defaultOpen,
-}: FormContext & { defaultOpen: boolean }) {
+export default function DateSection({ defaultOpen }: { defaultOpen: boolean }) {
   const show = useSharedValue(defaultOpen)
+  const createdAt = useTransactionStore((s) => s.createdAt)
+
   const currentMode = useSharedValue<IOSMode>("date")
   // HACK: save createdAt as a ref bec rerendering `AnimateHeight` causes the app to freeze
-  const createdAtRef = useRef(formData.createdAt)
+  const createdAtRef = useRef(createdAt)
 
-  const handleSelectedDateChange = useCallback(
-    (date: Date) => {
-      createdAtRef.current = date
-      setFormValues({ createdAt: date })
-    },
-    [setFormValues],
-  )
+  const handleSelectedDateChange = useCallback((date: Date) => {
+    createdAtRef.current = date
+    useTransactionStore.setState({ createdAt: date })
+  }, [])
 
-  const formattedDate = formatRelative(formData.createdAt, new Date())
+  const formattedDate = formatRelative(createdAt, new Date())
   const [date, time] = formattedDate.split(" at ")
 
   return (
@@ -62,7 +57,7 @@ export default function DateSection({
               } else if (Platform.OS === "android") {
                 DateTimePickerAndroid.open({
                   mode: "date",
-                  value: formData.createdAt,
+                  value: createdAt,
                   onChange: (_, date) => {
                     if (date) handleSelectedDateChange(date)
                   },
@@ -83,7 +78,7 @@ export default function DateSection({
               } else if (Platform.OS === "android") {
                 DateTimePickerAndroid.open({
                   mode: "time",
-                  value: formData.createdAt,
+                  value: createdAt,
                   onChange: (_, date) => {
                     if (date) handleSelectedDateChange(date)
                   },
@@ -93,7 +88,7 @@ export default function DateSection({
             className="h-full min-w-[25%] items-end justify-center pl-6"
           >
             <Text className="font-satoshi-medium text-mauveDark12 text-base">
-              {time || format(formData.createdAt, "K:mm aa")}
+              {time || format(createdAt, "K:mm aa")}
             </Text>
           </Pressable>
         </View>

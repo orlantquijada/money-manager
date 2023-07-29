@@ -11,11 +11,10 @@ import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNaviga
 // import { trpc } from "~/utils/trpc"
 import { capitalize } from "~/utils/functions"
 import {
-  FormProvider,
-  useFormData,
-  HandlePresentModalPress,
   BottomSheetData,
-} from "~/components/create-transaction/context"
+  HandlePresentModalPress,
+  useTransactionStore,
+} from "~/utils/hooks/useTransactionStore"
 
 import SafeAreaView from "~/components/SafeAreaView"
 import ScaleDownPressable from "~/components/ScaleDownPressable"
@@ -113,7 +112,7 @@ function CreateTransactionForm({
   const storeListBottomSheetRef = useRef<BottomSheetModal>(null)
 
   return (
-    <FormProvider>
+    <>
       <View className="flex-grow items-center justify-center">
         <Amount amount={amount} />
       </View>
@@ -132,7 +131,7 @@ function CreateTransactionForm({
       />
 
       <StoreListBottomSheet ref={storeListBottomSheetRef} />
-    </FormProvider>
+    </>
   )
 }
 
@@ -143,7 +142,11 @@ function FormDetailsPreview({
   handlePresentModalPress: HandlePresentModalPress
   storeListBottomSheetRef: RefObject<BottomSheetModal>
 }) {
-  const { formData } = useFormData()
+  const formData = useTransactionStore(({ createdAt, note, store }) => ({
+    store,
+    note,
+    createdAt,
+  }))
   const formattedDate = formatRelative(formData.createdAt, new Date())
   let [date, time] = formattedDate.split(" at ")
 
@@ -257,6 +260,4 @@ function FormDetailsPreview({
 //     //     ...previousTransactions,
 //     //   ])
 //     // },
-//     onSuccess: () => utils.transaction.all.invalidate(),
-//   })
-// }
+//     onSuccess: () => utils.transactio

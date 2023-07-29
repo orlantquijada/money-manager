@@ -5,35 +5,38 @@ import {
   BottomSheetScrollView,
   BottomSheetModal,
 } from "@gorhom/bottom-sheet"
+import clsx from "clsx"
 
 import { mauveDark } from "~/utils/colors"
 import { debounce } from "~/utils/functions"
-import { BottomSheetData, FormContext } from "./context"
+import {
+  BottomSheetData,
+  useTransactionStore,
+} from "~/utils/hooks/useTransactionStore"
 
 import Button from "../Button"
 import ScaleDownPressable from "../ScaleDownPressable"
 import DateSection from "./DateSection"
 
-import CrossIcon from "../../../assets/icons/hero-icons/x-mark.svg"
+import ChevronDownIcon from "../../../assets/icons/hero-icons/chevron-down.svg"
 import WalletIcon from "../../../assets/icons/wallet-duo.svg"
 import NoteIcon from "../../../assets/icons/note-duo-dark.svg"
 
 export default function BottomSheetForm({
-  setFormValues,
-  formData,
   bottomSheetDataRef,
   storeListBottomSheetRef,
-}: FormContext & {
+}: {
   bottomSheetDataRef: RefObject<BottomSheetData>
   storeListBottomSheetRef: RefObject<BottomSheetModal>
 }) {
   const { dismissAll } = useBottomSheetModal()
+  const store = useTransactionStore((s) => s.store)
 
   return (
     <BottomSheetScrollView>
       <View className="flex-row items-center justify-between px-4">
         <ScaleDownPressable onPress={dismissAll}>
-          <CrossIcon
+          <ChevronDownIcon
             color={mauveDark.mauve12}
             width={20}
             height={20}
@@ -56,15 +59,15 @@ export default function BottomSheetForm({
             storeListBottomSheetRef.current?.present()
           }}
         >
-          <Text className="font-satoshi-medium text-mauveDark10 text-xl">
-            Store or Item
+          <Text
+            className={clsx(
+              "font-satoshi-medium text-xl",
+              store ? "text-mauveDark12" : "text-mauveDark10",
+            )}
+          >
+            {store || "Store"}
           </Text>
         </Pressable>
-        {/* <TextInput */}
-        {/*   className="font-satoshi-medium text-mauveDark12 ml-4 h-full grow bg-red-200 text-xl" */}
-        {/*   placeholder="Store or Item" */}
-        {/*   placeholderTextColor={mauveDark.mauve10} */}
-        {/* /> */}
       </View>
 
       <View className="border-b-mauveDark4 h-16 flex-row items-center border-b px-4">
@@ -77,35 +80,27 @@ export default function BottomSheetForm({
         />
       </View>
 
-      <DateSection
-        setFormValues={setFormValues}
-        formData={formData}
-        defaultOpen={bottomSheetDataRef.current === "createdAt"}
-      />
+      <DateSection defaultOpen={bottomSheetDataRef.current === "createdAt"} />
 
       <NoteSection
-        setFormValues={setFormValues}
-        formData={formData}
-        // NOTE: toggle this feature (honestly think its annoying to open keyboard directly)
-        // autoFocus={bottomSheetDataRef.current === "note"}
+      // NOTE: toggle this feature (honestly think its annoying to open keyboard directly)
+      // autoFocus={bottomSheetDataRef.current === "note"}
       />
     </BottomSheetScrollView>
   )
 }
 
-function NoteSection({
-  setFormValues,
-  formData,
-  autoFocus,
-}: FormContext & { autoFocus?: boolean }) {
+function NoteSection({ autoFocus }: { autoFocus?: boolean }) {
+  const note = useTransactionStore((s) => s.note)
+
   const handleDeferredSetNote = useMemo(
     () =>
       debounce((text: string) => {
-        setFormValues({
+        useTransactionStore.setState({
           note: text,
         })
       }, 500),
-    [setFormValues],
+    [],
   )
 
   return (
@@ -117,7 +112,7 @@ function NoteSection({
         style={{ fontSize: 16 }}
         placeholder="Add Note"
         placeholderTextColor={mauveDark.mauve10}
-        defaultValue={formData.note}
+        defaultValue={note}
         onChangeText={handleDeferredSetNote}
       />
     </View>
