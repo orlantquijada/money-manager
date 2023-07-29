@@ -31,7 +31,6 @@ import StoreListBottomSheet from "~/components/create-transaction/StoreBottomShe
 export default function CreateTransaction() {
   // show default insets since tabbar isn't shown on this screen
   const insets = useSafeAreaInsets()
-  const insetsRef = useRef(insets)
   const navigation = useRootBottomTabNavigation()
 
   // const createTransaction = useCreateTransaction()
@@ -48,7 +47,7 @@ export default function CreateTransaction() {
   )
 
   return (
-    <SafeAreaView className="bg-mauveDark1 flex-1" insets={insetsRef.current}>
+    <SafeAreaView className="bg-mauveDark1 flex-1" insets={insets}>
       <View className="flex-1 px-4 pb-8">
         <View className="mt-8 h-10 w-full flex-row items-center justify-between">
           <Text className="font-satoshi-bold text-mauveDark12 text-2xl">
@@ -119,7 +118,10 @@ function CreateTransactionForm({
         <Amount amount={amount} />
       </View>
 
-      <FormDetailsPreview handlePresentModalPress={handlePresentModalPress} />
+      <FormDetailsPreview
+        handlePresentModalPress={handlePresentModalPress}
+        storeListBottomSheetRef={storeListBottomSheetRef}
+      />
 
       <Numpad setAmount={setAmount} className="mb-8" />
 
@@ -129,18 +131,17 @@ function CreateTransactionForm({
         storeListBottomSheetRef={storeListBottomSheetRef}
       />
 
-      <StoreListBottomSheet
-        ref={storeListBottomSheetRef}
-        bottomSheetDataRef={bottomSheetDataRef}
-      />
+      <StoreListBottomSheet ref={storeListBottomSheetRef} />
     </FormProvider>
   )
 }
 
 function FormDetailsPreview({
   handlePresentModalPress,
+  storeListBottomSheetRef,
 }: {
   handlePresentModalPress: HandlePresentModalPress
+  storeListBottomSheetRef: RefObject<BottomSheetModal>
 }) {
   const { formData } = useFormData()
   const formattedDate = formatRelative(formData.createdAt, new Date())
@@ -213,9 +214,22 @@ function FormDetailsPreview({
         </Pressable>
       </View>
       <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
-        <Text className="text-mauveDark11 font-satoshi-bold text-base leading-6">
-          Store
-        </Text>
+        <Pressable
+          className="h-full justify-center"
+          onPress={() => {
+            storeListBottomSheetRef.current?.present()
+          }}
+        >
+          <Text
+            className={clsx(
+              "font-satoshi-bold text-base leading-6",
+              formData.store ? "text-mauveDark12" : "text-mauveDark11",
+            )}
+          >
+            {formData.store || "Store"}
+          </Text>
+        </Pressable>
+
         <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
           ·
         </Text>
