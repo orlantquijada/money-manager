@@ -1,8 +1,4 @@
-import {
-  BottomSheetBackdropProps,
-  BottomSheetHandleProps,
-} from "@gorhom/bottom-sheet"
-import { ComponentProps, useMemo } from "react"
+import { useMemo } from "react"
 import { View } from "react-native"
 import Animated, {
   interpolate,
@@ -10,14 +6,17 @@ import Animated, {
   SharedValue,
   useAnimatedStyle,
 } from "react-native-reanimated"
+import {
+  BottomSheetBackdropProps,
+  BottomSheetHandleProps,
+  BottomSheetBackdrop,
+} from "@gorhom/bottom-sheet"
 
 import { mauveDark } from "~/utils/colors"
 
-import { Backdrop } from "../BottomSheet"
-
 const backgroundColor = mauveDark.mauve2
 
-export function CustomBackdrop(props: ComponentProps<typeof Backdrop>) {
+export function CustomBackdrop(props: BottomSheetBackdropProps) {
   const { animatedIndex } = props
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
@@ -25,7 +24,7 @@ export function CustomBackdrop(props: ComponentProps<typeof Backdrop>) {
   }))
 
   return (
-    <Backdrop
+    <BottomSheetBackdrop
       {...props}
       appearsOnIndex={1}
       disappearsOnIndex={-1}

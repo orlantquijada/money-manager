@@ -4,8 +4,9 @@ import {
   BottomSheetModal,
 } from "@gorhom/bottom-sheet"
 
+import { BottomSheetData } from "~/utils/hooks/useTransactionStore"
+
 import BottomSheetForm from "./BottomSheetForm"
-import { BottomSheetData, useFormData } from "./context"
 import {
   CustomBackdrop,
   CustomBackground,
@@ -28,10 +29,6 @@ const TransactionCreateBottomSheet = forwardRef<
     stiffness: 350,
   })
 
-  // NOTE: no idea why `useFormData` returns undefined on `<BottomSheetForm />`
-  // its probably because `BottomSheet` portals to top most component in the tree?
-  const { setFormValues, formData } = useFormData()
-
   return (
     <BottomSheetModal
       snapPoints={snapPoints}
@@ -49,8 +46,6 @@ const TransactionCreateBottomSheet = forwardRef<
       }}
     >
       <BottomSheetForm
-        setFormValues={setFormValues}
-        formData={formData}
         bottomSheetDataRef={bottomSheetDataRef}
         storeListBottomSheetRef={storeListBottomSheetRef}
       />

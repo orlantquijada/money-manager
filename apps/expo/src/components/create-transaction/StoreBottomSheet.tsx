@@ -1,65 +1,53 @@
-import { forwardRef, RefObject } from "react"
-import { Text, View } from "react-native"
+import { forwardRef, useMemo } from "react"
+import { View } from "react-native"
 import {
   useBottomSheetSpringConfigs,
   BottomSheetModal,
-  BottomSheetScrollView,
-  useBottomSheetModal,
-  BottomSheetFlatList,
+  BottomSheetBackdropProps,
+  BottomSheetHandleProps,
+  BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet"
+import Animated, {
+  interpolate,
+  interpolateColor,
+  SharedValue,
+  useAnimatedStyle,
+} from "react-native-reanimated"
 
 import { mauveDark } from "~/utils/colors"
 
-import { BottomSheetData, useFormData } from "./context"
-import {
-  CustomBackdrop,
-  CustomBackground,
-  CustomHandle,
-} from "./BottomSheetCustomComponents"
-import ScaleDownPressable from "../ScaleDownPressable"
-import Button from "../Button"
-
-// import CrossIcon from "../../../assets/icons/hero-icons/x-mark.svg"
-import CrossIcon from "../../../assets/icons/hero-icons/chevron-left.svg"
-import { TextInput } from "react-native-gesture-handler"
+import { StoreBottomSheetContent } from "./StoreBottomSheetContent"
 
 // const snapPoints = ["25%", "94%"]
-// 184 = handle + header + payee + fund height
-const snapPoints = ["50%", "94%"]
-const bottomSheetName = "store-list"
+const snapPoints = ["94%"]
+export const storeBottomSheetName = "store-list"
 
-const StoreListBottomSheet = forwardRef<
-  BottomSheetModal,
-  {
-    bottomSheetDataRef: RefObject<BottomSheetData>
-  }
->(({ bottomSheetDataRef }, ref) => {
+const StoreListBottomSheet = forwardRef<BottomSheetModal>((_, ref) => {
   const springConfig = useBottomSheetSpringConfigs({
     damping: 80,
     stiffness: 350,
   })
-
-  // NOTE: no idea why `useFormData` returns undefined on `<BottomSheetForm />`
-  // its probably because `BottomSheet` portals to top most component in the tree?
-  const { setFormValues, formData } = useFormData()
 
   return (
     <BottomSheetModal
       snapPoints={snapPoints}
       backdropComponent={CustomBackdrop}
       ref={ref}
-      index={1}
+      stackBehavior="push"
+      index={0}
       handleComponent={CustomHandle}
       animationConfigs={springConfig}
       backgroundComponent={CustomBackground}
-      name={bottomSheetName}
+      name={storeBottomSheetName}
+      key={storeBottomSheetName}
       style={{
         borderTopStartRadius: 15,
         borderTopEndRadius: 15,
         overflow: "hidden",
       }}
+      enablePanDownToClose
     >
-      <StoreList />
+      <StoreBottomSheetContent />
     </BottomSheetModal>
   )
 })
@@ -67,57 +55,65 @@ StoreListBottomSheet.displayName = "StoreListBottomSheet"
 export type StoreListBottomSheet = BottomSheetModal
 export default StoreListBottomSheet
 
-function StoreList() {
-  const { dismiss } = useBottomSheetModal()
+const backgroundColor = mauveDark.mauve2
+
+export function CustomBackdrop(props: BottomSheetBackdropProps) {
+  const { animatedIndex } = props
+
+  const containerAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(animatedIndex.value, [-1, 0], [0, 1]),
+  }))
 
   return (
-    <View>
-      <View className="flex-row items-center justify-between px-4">
-        <ScaleDownPressable
-          onPress={() => {
-            dismiss(bottomSheetName)
-          }}
-        >
-          <CrossIcon
-            color={mauveDark.mauve12}
-            width={20}
-            height={20}
-            strokeWidth={3}
-          />
-        </ScaleDownPressable>
-
-        <TextInput
-          className="font-satoshi-medium text-mauveDark12 ml-4 h-full grow text-xl"
-          placeholder="Find or add Item"
-          placeholderTextColor={mauveDark.mauve10}
-        />
-
-        <ScaleDownPressable>
-          <Button>
-            <Text className="font-satoshi-medium text-mauve12 text-base">
-              Done
-            </Text>
-          </Button>
-        </ScaleDownPressable>
-      </View>
-
-      <Text className="text-mauveDark12 font-satoshi-bold text-2xl">
-        Hello World
-      </Text>
-
-      <BottomSheetFlatList
-        data={[
-          { id: 1, name: "Mcdo" },
-          { id: 2, name: "Abaca" },
-          { id: 3, name: "Jollibee" },
-        ]}
-        keyExtractor={(item) => item.name}
-        renderItem={({ item }) => (
-          <Text className="text-mauveDark12 font-satoshi-medium text-base">
-            {item.name}
-          </Text>
-        )}
-      />
-    </View>
+    <BottomSheetBackdrop
+      {...props}
+      appearsOnIndex={0}
+      disappearsOnIndex={-1}
+      opacity={1}
+      style={[{ backgroundColor }, props.style, containerAnimatedStyle]}
+    />
   )
+}
+
+export function CustomBackground({
+  animatedIndex,
+  style,
+}: BottomSheetBackdropProps) {
+  const containerAnimatedStyle = useBackgroundColor(animatedIndex, [-1, 0])
+  const containerStyle = useMemo(
+    () => [style, containerAnimatedStyle],
+    [style, containerAnimatedStyle],
+  )
+
+  return <Animated.View pointerEvents="none" style={containerStyle} />
+}
+
+export function CustomHandle({ animatedIndex }: BottomSheetHandleProps) {
+  const containerAnimatedStyle = useBackgroundColor(animatedIndex, [-1, 0])
+  const containerStyle = useMemo(
+    () => [containerAnimatedStyle],
+    [containerAnimatedStyle],
+  )
+
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={containerStyle}
+      className="h-6 items-center justify-center"
+    >
+      <View className="bg-mauveDark8 h-1 w-[27px] rounded-full" />
+    </Animated.View>
+  )
+}
+
+function useBackgroundColor(
+  animatedIndex: SharedValue<number>,
+  inputValues: number[],
+) {
+  return useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(animatedIndex.value, inputValues, [
+      mauveDark.mauve3,
+      backgroundColor,
+    ]),
+  }))
 }
