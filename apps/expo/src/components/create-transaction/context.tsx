@@ -9,7 +9,7 @@ import { Fund } from ".prisma/client"
 
 type FormData = {
   note: string
-  itemId: number
+  store: string
   fundId: Fund["id"]
   createdAt: Date
 }
