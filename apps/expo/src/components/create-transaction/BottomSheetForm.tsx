@@ -14,7 +14,6 @@ import {
   useTransactionStore,
 } from "~/utils/hooks/useTransactionStore"
 
-import Button from "../Button"
 import ScaleDownPressable from "../ScaleDownPressable"
 import DateSection from "./DateSection"
 
@@ -34,7 +33,7 @@ export default function BottomSheetForm({
 
   return (
     <BottomSheetScrollView>
-      <View className="flex-row items-center justify-between px-4">
+      <View className="h-8 flex-row items-center justify-between px-4">
         <ScaleDownPressable onPress={dismissAll}>
           <ChevronDownIcon
             color={mauveDark.mauve12}
@@ -43,12 +42,6 @@ export default function BottomSheetForm({
             strokeWidth={3}
           />
         </ScaleDownPressable>
-
-        <Button>
-          <Text className="font-satoshi-medium text-mauve12 text-base">
-            Save
-          </Text>
-        </Button>
       </View>
 
       <View className="border-b-mauveDark4 h-16 flex-row items-center border-b px-4">
