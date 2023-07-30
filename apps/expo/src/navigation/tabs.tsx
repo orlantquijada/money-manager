@@ -3,7 +3,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 // import { FlashList } from "@shopify/flash-list"
 
 import { RootBottomTabParamList } from "~/types"
-import { violet } from "~/utils/colors"
+import { mauveDark, violet } from "~/utils/colors"
 
 import Home2 from "~/screens/home2"
 import CreateTransaction from "~/screens/create-transaction"
@@ -40,7 +40,11 @@ export default function RootTabs() {
         options={{
           tabBarIcon: ({ focused }) =>
             focused ? (
-              <PlusRecFilledIcon width={size} height={size} />
+              <PlusRecFilledIcon
+                width={size}
+                height={size}
+                color={mauveDark.mauve12}
+              />
             ) : (
               <PlusRecIcon width={size} height={size} />
             ),
