@@ -7,6 +7,7 @@ import { memo, useMemo, useState } from "react"
 import { Pressable, Text, TextInput, View } from "react-native"
 import { MotiPressable } from "moti/interactions"
 import { MotiView } from "moti"
+import { Skeleton } from "moti/skeleton"
 import clsx from "clsx"
 
 import { debounce } from "~/utils/functions"
@@ -52,7 +53,7 @@ export function StoreBottomSheetContent() {
 
         <TextInput
           className="font-satoshi-medium text-mauveDark12 ml-4 h-full grow text-xl"
-          placeholder="Find or add Item"
+          placeholder="Find or add Store"
           placeholderTextColor={mauveDark.mauve10}
           onChangeText={(text) => {
             setInput(text)
@@ -80,18 +81,11 @@ export function StoreBottomSheetContent() {
 }
 
 const StoreList = memo(({ searchText }: { searchText: string }) => {
-  const { data } = trpc.store.listFromUserId.useQuery(
+  const { data, status } = trpc.store.listFromUserId.useQuery(
     "clk7zeudu0000t789z4fylgjc",
   )
 
   const store = useTransactionStore((s) => s.store)
-
-  const filteredData =
-    data && searchText
-      ? data.filter(({ name }) =>
-          name.toLowerCase().includes(searchText.toLowerCase()),
-        )
-      : data
 
   const animate = useMemo(
     () =>
@@ -107,10 +101,53 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
 
   const { forceClose } = useBottomSheet()
 
+  if (status !== "success")
+    return (
+      <View>
+        <View className="h-12 justify-center px-4">
+          <Skeleton
+            width={200}
+            height={20}
+            colorMode="light"
+            colors={[mauveDark.mauve4, mauveDark.mauve6]}
+          />
+        </View>
+        <View className="h-12 justify-center px-4">
+          <Skeleton
+            width={180}
+            height={20}
+            colorMode="light"
+            colors={[mauveDark.mauve4, mauveDark.mauve6]}
+          />
+        </View>
+        <View className="h-12 justify-center px-4">
+          <Skeleton
+            width={240}
+            height={20}
+            colorMode="light"
+            colors={[mauveDark.mauve4, mauveDark.mauve6]}
+          />
+        </View>
+      </View>
+    )
+
+  const filteredData = searchText
+    ? data.filter(({ name }) =>
+        name.toLowerCase().includes(searchText.toLowerCase()),
+      )
+    : data
+
+  const finalData =
+    !searchText && store && !data.some(({ name }) => name === store)
+      ? [...filteredData, { id: -1, name: store }]
+      : filteredData
+
+  const hasNoStore = data.length === 0
+
   return (
     <BottomSheetFlatList
       keyboardShouldPersistTaps="always"
-      data={filteredData}
+      data={finalData}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => {
         const selected = item.name === store
@@ -138,24 +175,46 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
         )
       }}
       ListEmptyComponent={() => (
-        <MotiPressable
-          onPress={() => {
-            new Promise((resolve) => {
-              useTransactionStore.setState({ store: searchText })
-              resolve(undefined)
-            }).then(() => forceClose())
-          }}
-          animate={animate}
-          transition={{ type: "timing", duration: 250 }}
-        >
-          <View className="h-16 flex-row items-center px-4">
-            <PlusIcon width={20} height={20} color={violet.violet8} />
+        <View>
+          {hasNoStore ? (
+            <View className="mb-4 px-4">
+              <Text className="text-mauveDark12 font-satoshi text-base">
+                <Text className="font-satoshi-bold underline">Stores</Text> give
+                you a little more information about an expense; It can be what
+                you bought, or where you had it, like{" "}
+                <Text className="font-satoshi-bold-italic text-mauveDark11">
+                  Jollibee
+                </Text>
+                .
+              </Text>
 
-            <Text className="text-violet8 font-satoshi-medium ml-2 text-base">
-              Add &quot;{searchText}&quot; Store
-            </Text>
-          </View>
-        </MotiPressable>
+              <Text className="text-mauveDark12 font-satoshi mt-4 text-base">
+                Start typing to add a store.
+              </Text>
+            </View>
+          ) : null}
+
+          {searchText ? (
+            <MotiPressable
+              onPress={() => {
+                new Promise((resolve) => {
+                  useTransactionStore.setState({ store: searchText })
+                  resolve(undefined)
+                }).then(() => forceClose())
+              }}
+              animate={animate}
+              transition={{ type: "timing", duration: 250 }}
+            >
+              <View className="h-16 flex-row items-center px-4">
+                <PlusIcon width={20} height={20} color={violet.violet8} />
+
+                <Text className="text-violet8 font-satoshi-medium ml-2 text-base">
+                  Add &quot;{searchText}&quot; Store
+                </Text>
+              </View>
+            </MotiPressable>
+          ) : null}
+        </View>
       )}
     />
   )
