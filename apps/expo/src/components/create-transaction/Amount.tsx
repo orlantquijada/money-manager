@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { View, Text } from "react-native"
 import Animated, { Layout } from "react-native-reanimated"
 
@@ -44,7 +44,12 @@ const getKey = (formattedIndex: number, formatted: string) => {
 export function useAmount(initialAmount = 0) {
   const [amount, setAmount] = useState(() => initialAmount.toString())
 
-  return [Number(amount), setAmount] as const
+  const reset = useCallback(
+    () => setAmount(() => initialAmount.toString()),
+    [initialAmount],
+  )
+
+  return [Number(amount), setAmount, reset] as const
 }
 
 export function Amount({ amount }: { amount: number }) {

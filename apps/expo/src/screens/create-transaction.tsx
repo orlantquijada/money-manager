@@ -1,15 +1,12 @@
-import { RefObject, useCallback, useRef } from "react"
+import { useCallback, useEffect, useRef } from "react"
 import { Pressable, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomSheetModal } from "@gorhom/bottom-sheet"
-import { format, formatRelative } from "date-fns"
-import { MotiView } from "moti"
-import clsx from "clsx"
+import { shallow } from "zustand/shallow"
 
 import { mauveDark } from "~/utils/colors"
 import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation"
-// import { trpc } from "~/utils/trpc"
-import { capitalize } from "~/utils/functions"
+import { trpc } from "~/utils/trpc"
 import {
   BottomSheetData,
   HandlePresentModalPress,
@@ -24,27 +21,14 @@ import { Numpad } from "~/components/create-transaction/Numpad"
 import TransactionCreateBottomSheet from "~/components/create-transaction/CreateBottomSheet"
 import StoreListBottomSheet from "~/components/create-transaction/StoreBottomSheet"
 import FundListBottomSheet from "~/components/create-transaction/FundListBottomSheet"
+import { FormDetailsPreview } from "~/components/create-transaction/FormDetailsPreview"
 
 import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg"
-import ChevronUpIcon from "../../assets/icons/hero-icons/chevron-up.svg"
 
 export default function CreateTransaction() {
   // show default insets since tabbar isn't shown on this screen
   const insets = useSafeAreaInsets()
   const navigation = useRootBottomTabNavigation()
-
-  // const createTransaction = useCreateTransaction()
-
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const bottomSheetDataRef = useRef<BottomSheetData>()
-
-  const handlePresentModalPress: HandlePresentModalPress = useCallback(
-    (data) => {
-      bottomSheetModalRef.current?.present()
-      bottomSheetDataRef.current = data
-    },
-    [],
-  )
 
   return (
     <SafeAreaView className="bg-mauveDark1 flex-1" insets={insets}>
@@ -67,59 +51,36 @@ export default function CreateTransaction() {
           </Pressable>
         </View>
 
-        <CreateTransactionForm
-          bottomSheetModalRef={bottomSheetModalRef}
-          handlePresentModalPress={handlePresentModalPress}
-          bottomSheetDataRef={bottomSheetDataRef}
-        />
-
-        <ScaleDownPressable
-          onPress={() => {
-            handlePresentModalPress(undefined)
-            // createTransaction.mutate(
-            //   {
-            //     amount: Number(amount),
-            //     fundId: 7,
-            //   },
-            //   {
-            //     onSuccess: () => {
-            //       navigation.navigate("Transactions")
-            //     },
-            //   },
-            // )
-          }}
-        >
-          <Button className="h-12 w-full rounded-2xl">
-            <Text className="text-mauveDark1 font-satoshi-bold text-lg leading-6">
-              Save
-            </Text>
-          </Button>
-        </ScaleDownPressable>
+        <CreateTransactionForm />
       </View>
     </SafeAreaView>
   )
 }
 
-function CreateTransactionForm({
-  bottomSheetModalRef,
-  handlePresentModalPress,
-  bottomSheetDataRef,
-}: {
-  bottomSheetModalRef: RefObject<BottomSheetModal>
-  bottomSheetDataRef: RefObject<BottomSheetData>
-  handlePresentModalPress: HandlePresentModalPress
-}) {
-  const [amount, setAmount] = useAmount(0)
+function CreateTransactionForm() {
+  const handlePresentModalPress: HandlePresentModalPress = useCallback(
+    (data) => {
+      bottomSheetModalRef.current?.present()
+      bottomSheetDataRef.current = data
+    },
+    [],
+  )
+  const [amount, setAmount, resetAmount] = useAmount(0)
   const storeListBottomSheetRef = useRef<BottomSheetModal>(null)
   const fundListBottomSheetRef = useRef<BottomSheetModal>(null)
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+  const bottomSheetDataRef = useRef<BottomSheetData>()
 
-  const openFundListBottomSheet = () => {
+  const openFundListBottomSheet = useCallback(() => {
     fundListBottomSheetRef.current?.present()
-  }
-
-  const openStoreListBottomSheet = () => {
+  }, [])
+  const openStoreListBottomSheet = useCallback(() => {
     storeListBottomSheetRef.current?.present()
-  }
+  }, [])
+
+  useEffect(() => {
+    useTransactionStore.setState({ amount })
+  }, [amount])
 
   return (
     <>
@@ -135,6 +96,8 @@ function CreateTransactionForm({
 
       <Numpad setAmount={setAmount} className="mb-8" />
 
+      <CreateTransactionButton resetAmount={resetAmount} />
+
       <TransactionCreateBottomSheet
         ref={bottomSheetModalRef}
         bottomSheetDataRef={bottomSheetDataRef}
@@ -148,133 +111,52 @@ function CreateTransactionForm({
   )
 }
 
-function FormDetailsPreview({
-  handlePresentModalPress,
-  openStoreListBottomSheet,
-  openFundListBottomSheet,
-}: {
-  handlePresentModalPress: HandlePresentModalPress
-  openFundListBottomSheet: () => void
-  openStoreListBottomSheet: () => void
-}) {
-  const formData = useTransactionStore(({ createdAt, note, store, fund }) => ({
-    store,
-    note,
-    createdAt,
-    fund,
-  }))
-  const formattedDate = formatRelative(formData.createdAt, new Date())
-  let [date, time] = formattedDate.split(" at ")
-
-  // NOTE: does not include year
-  // TODO: include year if not this year
-  date = date?.includes("/") ? format(formData.createdAt, "MMM d") : date
-  time = time || format(formData.createdAt, "K:mm aa")
+function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
+  const formValues = useTransactionStore(
+    ({ note, store, createdAt, fund, amount }) => ({
+      note,
+      store,
+      date: createdAt.toJSON(),
+      fundId: fund?.id,
+      amount,
+    }),
+    shallow,
+  )
+  const reset = useTransactionStore((s) => s.reset)
+  const createTransaction = useCreateTransaction()
+  const navigation = useRootBottomTabNavigation()
 
   return (
-    <View className="relative mb-4 items-center">
-      <MotiView
-        className="absolute -top-6"
-        from={{
-          translateY: -10,
-        }}
-        animate={{ translateY: 0 }}
-        transition={{
-          loop: true,
-          type: "timing",
-          duration: 1700,
-          delay: 500,
-        }}
-      >
-        <Pressable
-          onPress={() => {
-            handlePresentModalPress()
-          }}
-          hitSlop={32}
-        >
-          <ChevronUpIcon
-            color={mauveDark.mauve11}
-            height={24}
-            width={24}
-            strokeWidth={3}
-          />
-        </Pressable>
-      </MotiView>
-
-      <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
-        <Pressable
-          className="h-full justify-center"
-          onPress={() => {
-            handlePresentModalPress("createdAt")
-          }}
-        >
-          <Text className="text-mauveDark12 font-satoshi-bold text-base leading-6">
-            {capitalize(date || "")} at {time}
-          </Text>
-        </Pressable>
-        <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
-          ·
+    <ScaleDownPressable
+      onPress={() => {
+        useTransactionStore.setState({ didSumit: true })
+        if (formValues.fundId) {
+          createTransaction.mutate(
+            {
+              ...formValues,
+              fundId: formValues.fundId,
+              userId: "clkqj34q70000t7wc7me5srpq",
+            },
+            {
+              onSuccess: () => {
+                reset()
+                resetAmount()
+                navigation.navigate("Transactions")
+              },
+            },
+          )
+        }
+      }}
+    >
+      <Button className="h-12 w-full rounded-2xl">
+        <Text className="text-mauveDark1 font-satoshi-bold text-lg leading-6">
+          Save
         </Text>
-        <Pressable
-          className="h-full shrink justify-center"
-          onPress={() => {
-            handlePresentModalPress("note")
-          }}
-        >
-          <Text
-            numberOfLines={1}
-            className={clsx(
-              "font-satoshi-bold shrink text-base leading-6",
-              formData.note ? "text-mauveDark12" : "text-mauveDark11",
-            )}
-          >
-            {formData.note || "Add Note"}
-          </Text>
-        </Pressable>
-      </View>
-      <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
-        <Pressable
-          className="h-full justify-center"
-          onPress={openStoreListBottomSheet}
-        >
-          <Text
-            className={clsx(
-              "font-satoshi-bold text-base leading-6",
-              formData.store ? "text-mauveDark12" : "text-mauveDark11",
-            )}
-          >
-            {formData.store || "Store"}
-          </Text>
-        </Pressable>
-
-        <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
-          ·
-        </Text>
-        <Pressable
-          className="h-full justify-center"
-          onPress={openFundListBottomSheet}
-        >
-          <Text
-            className={clsx(
-              "font-satoshi-bold text-base leading-6",
-              formData.fund ? "text-mauveDark12" : "text-mauveDark11",
-            )}
-          >
-            {formData.fund?.name || "Fund"}
-          </Text>
-        </Pressable>
-      </View>
-    </View>
+      </Button>
+    </ScaleDownPressable>
   )
 }
 
-// function useCreateTransaction() {
-//   const utils = trpc.useContext()
-//   return trpc.transaction.create.useMutation({
-//     // onMutate: async (newTransaction) => {
-//     //   await utils.transaction.all.cancel()
-//     //   const previousTransactions = utils.transaction.all.getData() || []
-//     //   utils.transaction.all.setData(undefined, [
-//     //     {
-//     //       ...newTransaction,
-//     //       id: "asd
+function useCreateTransaction() {
+  return trpc.transaction.create.useMutation()
+}
