@@ -22,10 +22,11 @@ import Button from "~/components/Button"
 import { Amount, useAmount } from "~/components/create-transaction/Amount"
 import { Numpad } from "~/components/create-transaction/Numpad"
 import TransactionCreateBottomSheet from "~/components/create-transaction/CreateBottomSheet"
+import StoreListBottomSheet from "~/components/create-transaction/StoreBottomSheet"
+import FundListBottomSheet from "~/components/create-transaction/FundListBottomSheet"
 
 import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg"
 import ChevronUpIcon from "../../assets/icons/hero-icons/chevron-up.svg"
-import StoreListBottomSheet from "~/components/create-transaction/StoreBottomSheet"
 
 export default function CreateTransaction() {
   // show default insets since tabbar isn't shown on this screen
@@ -110,6 +111,15 @@ function CreateTransactionForm({
 }) {
   const [amount, setAmount] = useAmount(0)
   const storeListBottomSheetRef = useRef<BottomSheetModal>(null)
+  const fundListBottomSheetRef = useRef<BottomSheetModal>(null)
+
+  const openFundListBottomSheet = () => {
+    fundListBottomSheetRef.current?.present()
+  }
+
+  const openStoreListBottomSheet = () => {
+    storeListBottomSheetRef.current?.present()
+  }
 
   return (
     <>
@@ -119,7 +129,8 @@ function CreateTransactionForm({
 
       <FormDetailsPreview
         handlePresentModalPress={handlePresentModalPress}
-        storeListBottomSheetRef={storeListBottomSheetRef}
+        openStoreListBottomSheet={openStoreListBottomSheet}
+        openFundListBottomSheet={openFundListBottomSheet}
       />
 
       <Numpad setAmount={setAmount} className="mb-8" />
@@ -127,25 +138,30 @@ function CreateTransactionForm({
       <TransactionCreateBottomSheet
         ref={bottomSheetModalRef}
         bottomSheetDataRef={bottomSheetDataRef}
-        storeListBottomSheetRef={storeListBottomSheetRef}
+        openStoreListBottomSheet={openStoreListBottomSheet}
+        openFundListBottomSheet={openFundListBottomSheet}
       />
 
       <StoreListBottomSheet ref={storeListBottomSheetRef} />
+      <FundListBottomSheet ref={fundListBottomSheetRef} />
     </>
   )
 }
 
 function FormDetailsPreview({
   handlePresentModalPress,
-  storeListBottomSheetRef,
+  openStoreListBottomSheet,
+  openFundListBottomSheet,
 }: {
   handlePresentModalPress: HandlePresentModalPress
-  storeListBottomSheetRef: RefObject<BottomSheetModal>
+  openFundListBottomSheet: () => void
+  openStoreListBottomSheet: () => void
 }) {
-  const formData = useTransactionStore(({ createdAt, note, store }) => ({
+  const formData = useTransactionStore(({ createdAt, note, store, fund }) => ({
     store,
     note,
     createdAt,
+    fund,
   }))
   const formattedDate = formatRelative(formData.createdAt, new Date())
   let [date, time] = formattedDate.split(" at ")
@@ -219,9 +235,7 @@ function FormDetailsPreview({
       <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
         <Pressable
           className="h-full justify-center"
-          onPress={() => {
-            storeListBottomSheetRef.current?.present()
-          }}
+          onPress={openStoreListBottomSheet}
         >
           <Text
             className={clsx(
@@ -236,9 +250,19 @@ function FormDetailsPreview({
         <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
           ·
         </Text>
-        <Text className="text-mauveDark11 font-satoshi-bold text-base leading-6">
-          Fund
-        </Text>
+        <Pressable
+          className="h-full justify-center"
+          onPress={openFundListBottomSheet}
+        >
+          <Text
+            className={clsx(
+              "font-satoshi-bold text-base leading-6",
+              formData.fund ? "text-mauveDark12" : "text-mauveDark11",
+            )}
+          >
+            {formData.fund?.name || "Fund"}
+          </Text>
+        </Pressable>
       </View>
     </View>
   )
@@ -253,11 +277,4 @@ function FormDetailsPreview({
 //     //   utils.transaction.all.setData(undefined, [
 //     //     {
 //     //       ...newTransaction,
-//     //       id: "asd",
-//     //       date: new Date(),
-//     //       amount: newTransaction.amount || null,
-//     //     },
-//     //     ...previousTransactions,
-//     //   ])
-//     // },
-//     onSuccess: () => utils.transactio
+//     //       id: "asd

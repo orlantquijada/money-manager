@@ -4,7 +4,7 @@ import { create } from "zustand"
 type State = {
   note: string
   store: string
-  fundId?: Fund["id"]
+  fund?: Fund | undefined
   createdAt: Date
 }
 

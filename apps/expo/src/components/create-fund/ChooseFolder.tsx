@@ -88,7 +88,11 @@ export default function ChooseFolder({ onBackPress }: Props) {
           if (selectedId) {
             setDidSubmit(true)
             mutate(
-              { ...formData, folderId: selectedId },
+              {
+                ...formData,
+                folderId: selectedId,
+                userId: "clkqj34q70000t7wc7me5srpq",
+              },
               {
                 onSuccess: () => {
                   utils.folder.listWithFunds

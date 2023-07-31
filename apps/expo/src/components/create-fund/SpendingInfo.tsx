@@ -183,6 +183,7 @@ function Wrapper({
                 budgetedAmount,
                 folderId,
                 timeMode: selectedTimeMode,
+                userId: "clkqj34q70000t7wc7me5srpq",
               },
               {
                 onSuccess: () => {

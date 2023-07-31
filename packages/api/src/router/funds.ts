@@ -1,4 +1,5 @@
 import { z } from "zod"
+
 import { router, publicProcedure } from "../trpc"
 import { fundTypeSchema, timeModeSchema } from "../utils/enums"
 
@@ -11,7 +12,18 @@ export const fundsRouter = router({
         fundType: fundTypeSchema,
         folderId: z.number(),
         timeMode: timeModeSchema,
+        userId: z.string(),
       }),
     )
     .mutation(({ input, ctx }) => ctx.prisma.fund.create({ data: input })),
+  listFromUserId: publicProcedure.input(z.string()).query(({ ctx, input }) => {
+    return ctx.prisma.fund.findMany({
+      where: {
+        userId: input,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    })
+  }),
 })
