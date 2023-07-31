@@ -160,6 +160,7 @@ const IOSDateTimePicker = memo(
               mode="time"
               display="spinner"
               themeVariant="dark"
+              minuteInterval={5}
               onChange={(_, date) => {
                 if (date) {
                   const newDate = new Date(

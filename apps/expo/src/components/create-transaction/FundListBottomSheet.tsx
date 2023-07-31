@@ -26,7 +26,12 @@ const FundListBottomSheet = forwardRef<BottomSheetModal>((_, ref) => {
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
-      <CustomBackdrop {...props} input={[-1, 0]} output={[0, 1]} />
+      <CustomBackdrop
+        {...props}
+        appearsOnIndex={0}
+        input={[-1, 0]}
+        output={[0, 1]}
+      />
     ),
     [],
   )
