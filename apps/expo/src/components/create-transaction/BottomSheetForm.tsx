@@ -30,10 +30,8 @@ export default function BottomSheetForm({
   openStoreListBottomSheet: () => void
 }) {
   const { dismissAll } = useBottomSheetModal()
-  const { fund, store } = useTransactionStore(({ store, fund }) => ({
-    store,
-    fund,
-  }))
+  const store = useTransactionStore((s) => s.store)
+  const fund = useTransactionStore((s) => s.fund)
 
   return (
     <BottomSheetScrollView>
