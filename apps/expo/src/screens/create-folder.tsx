@@ -64,7 +64,7 @@ function Form() {
         onContinuePress={() => {
           setDidSubmit(true)
           createFolder.mutate(
-            { name: folderName, userId: "clk7zeudu0000t789z4fylgjc" },
+            { name: folderName, userId: "clkqj34q70000t7wc7me5srpq" },
             {
               onSuccess: (folder) => {
                 navigation.navigate("Root", {
