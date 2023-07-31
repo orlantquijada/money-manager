@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { startOfMonth, addMonths } from "date-fns"
 
 import { router, publicProcedure } from "../trpc"
 import { fundTypeSchema, timeModeSchema } from "../utils/enums"
@@ -20,6 +21,17 @@ export const fundsRouter = router({
     return ctx.prisma.fund.findMany({
       where: {
         userId: input,
+      },
+      include: {
+        transactions: {
+          select: { id: true, amount: true },
+          where: {
+            date: {
+              gte: startOfMonth(new Date()),
+              lte: startOfMonth(addMonths(new Date(), 1)),
+            },
+          },
+        },
       },
       orderBy: {
         name: "asc",

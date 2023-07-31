@@ -48,3 +48,7 @@ export const debounce = <T extends unknown[]>(
 export function capitalize<T extends string>(str: T) {
   return `${str[0]?.toUpperCase()}${str.slice(1)}` as Capitalize<T>
 }
+
+export function sum(numArray: number[]) {
+  return numArray.reduce((prev, total) => total + prev, 0)
+}

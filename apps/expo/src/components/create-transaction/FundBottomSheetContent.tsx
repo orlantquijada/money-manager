@@ -9,7 +9,7 @@ import { MotiView } from "moti"
 import { Skeleton } from "moti/skeleton"
 import clsx from "clsx"
 
-import { debounce } from "~/utils/functions"
+import { debounce, sum, toCurrencyNarrow } from "~/utils/functions"
 import { mauveDark } from "~/utils/colors"
 import { trpc } from "~/utils/trpc"
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore"
@@ -131,7 +131,10 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
       data={filteredData}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => {
-        const selected = item.name === fund?.name
+        const selected = item.id === fund?.id
+        const moneyLeft =
+          Number(item.budgetedAmount) -
+          sum(item.transactions.map(({ amount }) => Number(amount)))
 
         return (
           <Pressable
@@ -146,9 +149,30 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
             <Text className="text-mauveDark12 font-satoshi-medium text-base">
               {item.name}
             </Text>
-            {selected ? (
-              <CheckIcon color={mauveDark.mauve12} width={20} height={20} />
-            ) : null}
+
+            <View className="flex-row items-center gap-1">
+              <View
+                className={clsx(
+                  "h-8 justify-center rounded-lg px-2",
+                  // moneyLeft > 0 && "bg-lime10",
+                  // moneyLeft < 0 && "bg-red10",
+                )}
+              >
+                <Text
+                  className={clsx(
+                    "font-satoshi-medium text-sm",
+                    moneyLeft > 0 && "text-lime10",
+                    moneyLeft < 0 && "text-red10",
+                  )}
+                >
+                  {toCurrencyNarrow(moneyLeft)}
+                </Text>
+              </View>
+
+              {selected ? (
+                <CheckIcon color={mauveDark.mauve12} width={20} height={20} />
+              ) : null}
+            </View>
           </Pressable>
         )
       }}
