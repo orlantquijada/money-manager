@@ -1,7 +1,10 @@
-import { forwardRef, RefObject } from "react"
+import { forwardRef, RefObject, useCallback } from "react"
 import {
   useBottomSheetSpringConfigs,
   BottomSheetModal,
+  BottomSheetBackdropProps,
+  BottomSheetHandleProps,
+  BottomSheetBackgroundProps,
 } from "@gorhom/bottom-sheet"
 
 import { BottomSheetData } from "~/utils/hooks/useTransactionStore"
@@ -21,37 +24,63 @@ const TransactionCreateBottomSheet = forwardRef<
   BottomSheetModal,
   {
     bottomSheetDataRef: RefObject<BottomSheetData>
-    storeListBottomSheetRef: RefObject<BottomSheetModal>
+    openFundListBottomSheet: () => void
+    openStoreListBottomSheet: () => void
   }
->(({ bottomSheetDataRef, storeListBottomSheetRef }, ref) => {
-  const springConfig = useBottomSheetSpringConfigs({
-    damping: 80,
-    stiffness: 350,
-  })
+>(
+  (
+    { bottomSheetDataRef, openFundListBottomSheet, openStoreListBottomSheet },
+    ref,
+  ) => {
+    const springConfig = useBottomSheetSpringConfigs({
+      damping: 80,
+      stiffness: 350,
+    })
 
-  return (
-    <BottomSheetModal
-      snapPoints={snapPoints}
-      backdropComponent={CustomBackdrop}
-      ref={ref}
-      index={1}
-      handleComponent={CustomHandle}
-      animationConfigs={springConfig}
-      backgroundComponent={CustomBackground}
-      name="transaction-create"
-      style={{
-        borderTopStartRadius: 15,
-        borderTopEndRadius: 15,
-        overflow: "hidden",
-      }}
-    >
-      <BottomSheetForm
-        bottomSheetDataRef={bottomSheetDataRef}
-        storeListBottomSheetRef={storeListBottomSheetRef}
-      />
-    </BottomSheetModal>
-  )
-})
+    const renderBackdrop = useCallback(
+      (props: BottomSheetBackdropProps) => (
+        <CustomBackdrop {...props} input={[-1, 0, 1]} output={[0, 0.2, 1]} />
+      ),
+      [],
+    )
+    const renderHandle = useCallback(
+      (props: BottomSheetHandleProps) => (
+        <CustomHandle {...props} input={[0, 1]} />
+      ),
+      [],
+    )
+    const renderBackground = useCallback(
+      (props: BottomSheetBackgroundProps) => (
+        <CustomBackground {...props} input={[0, 1]} />
+      ),
+      [],
+    )
+
+    return (
+      <BottomSheetModal
+        snapPoints={snapPoints}
+        backdropComponent={renderBackdrop}
+        ref={ref}
+        index={1}
+        handleComponent={renderHandle}
+        animationConfigs={springConfig}
+        backgroundComponent={renderBackground}
+        name="transaction-create"
+        style={{
+          borderTopStartRadius: 15,
+          borderTopEndRadius: 15,
+          overflow: "hidden",
+        }}
+      >
+        <BottomSheetForm
+          bottomSheetDataRef={bottomSheetDataRef}
+          openStoreListBottomSheet={openStoreListBottomSheet}
+          openFundListBottomSheet={openFundListBottomSheet}
+        />
+      </BottomSheetModal>
+    )
+  },
+)
 TransactionCreateBottomSheet.displayName = "TransactionCreateBottomSheet"
 
 export type TransactionCreateBottomSheet = BottomSheetModal

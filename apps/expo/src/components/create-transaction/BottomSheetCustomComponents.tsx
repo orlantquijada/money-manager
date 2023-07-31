@@ -16,11 +16,16 @@ import { mauveDark } from "~/utils/colors"
 
 const backgroundColor = mauveDark.mauve2
 
-export function CustomBackdrop(props: BottomSheetBackdropProps) {
-  const { animatedIndex } = props
+export function CustomBackdrop(
+  props: BottomSheetBackdropProps & {
+    input: number[]
+    output: number[]
+  },
+) {
+  const { animatedIndex, output, input } = props
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(animatedIndex.value, [-1, 0, 1], [0, 0.2, 1]),
+    opacity: interpolate(animatedIndex.value, input, output),
   }))
 
   return (
@@ -37,8 +42,11 @@ export function CustomBackdrop(props: BottomSheetBackdropProps) {
 export function CustomBackground({
   animatedIndex,
   style,
-}: BottomSheetBackdropProps) {
-  const containerAnimatedStyle = useBackgroundColor(animatedIndex)
+  input,
+}: BottomSheetBackdropProps & {
+  input: number[]
+}) {
+  const containerAnimatedStyle = useBackgroundColor(animatedIndex, input)
   const containerStyle = useMemo(
     () => [style, containerAnimatedStyle],
     [style, containerAnimatedStyle],
@@ -47,8 +55,13 @@ export function CustomBackground({
   return <Animated.View pointerEvents="none" style={containerStyle} />
 }
 
-export function CustomHandle({ animatedIndex }: BottomSheetHandleProps) {
-  const containerAnimatedStyle = useBackgroundColor(animatedIndex)
+export function CustomHandle({
+  animatedIndex,
+  input,
+}: BottomSheetHandleProps & {
+  input: number[]
+}) {
+  const containerAnimatedStyle = useBackgroundColor(animatedIndex, input)
   const containerStyle = useMemo(
     () => [containerAnimatedStyle],
     [containerAnimatedStyle],
@@ -65,12 +78,14 @@ export function CustomHandle({ animatedIndex }: BottomSheetHandleProps) {
   )
 }
 
-function useBackgroundColor(animatedIndex: SharedValue<number>) {
+export function useBackgroundColor(
+  animatedIndex: SharedValue<number>,
+  inputValues: number[],
+) {
   return useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(
-      animatedIndex.value,
-      [0, 1],
-      [mauveDark.mauve3, backgroundColor],
-    ),
+    backgroundColor: interpolateColor(animatedIndex.value, inputValues, [
+      mauveDark.mauve3,
+      backgroundColor,
+    ]),
   }))
 }

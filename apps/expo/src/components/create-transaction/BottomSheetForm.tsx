@@ -3,7 +3,6 @@ import { Pressable, Text, TextInput, View } from "react-native"
 import {
   useBottomSheetModal,
   BottomSheetScrollView,
-  BottomSheetModal,
 } from "@gorhom/bottom-sheet"
 import clsx from "clsx"
 
@@ -23,13 +22,18 @@ import NoteIcon from "../../../assets/icons/note-duo-dark.svg"
 
 export default function BottomSheetForm({
   bottomSheetDataRef,
-  storeListBottomSheetRef,
+  openStoreListBottomSheet,
+  openFundListBottomSheet,
 }: {
   bottomSheetDataRef: RefObject<BottomSheetData>
-  storeListBottomSheetRef: RefObject<BottomSheetModal>
+  openFundListBottomSheet: () => void
+  openStoreListBottomSheet: () => void
 }) {
   const { dismissAll } = useBottomSheetModal()
-  const store = useTransactionStore((s) => s.store)
+  const { fund, store } = useTransactionStore(({ store, fund }) => ({
+    store,
+    fund,
+  }))
 
   return (
     <BottomSheetScrollView>
@@ -44,14 +48,12 @@ export default function BottomSheetForm({
         </ScaleDownPressable>
       </View>
 
-      <View className="border-b-mauveDark4 h-16 flex-row items-center border-b px-4">
+      <Pressable
+        className="border-b-mauveDark4 h-16 flex-row items-center border-b px-4"
+        onPress={openStoreListBottomSheet}
+      >
         <View className="aspect-square w-5" />
-        <Pressable
-          className="ml-4 h-full grow justify-center"
-          onPress={() => {
-            storeListBottomSheetRef.current?.present()
-          }}
-        >
+        <View className="ml-4 h-full grow justify-center">
           <Text
             className={clsx(
               "font-satoshi-medium text-xl",
@@ -60,18 +62,25 @@ export default function BottomSheetForm({
           >
             {store || "Store"}
           </Text>
-        </Pressable>
-      </View>
+        </View>
+      </Pressable>
 
-      <View className="border-b-mauveDark4 h-16 flex-row items-center border-b px-4">
+      <Pressable
+        className="border-b-mauveDark4 h-16 flex-row items-center border-b px-4"
+        onPress={openFundListBottomSheet}
+      >
         <WalletIcon width={20} height={20} />
-        <TextInput
-          className="font-satoshi-medium text-mauveDark12 ml-4 h-full grow"
-          style={{ fontSize: 16 }}
-          placeholder="Select Fund"
-          placeholderTextColor={mauveDark.mauve10}
-        />
-      </View>
+        <View className="ml-4 h-full grow justify-center">
+          <Text
+            className={clsx(
+              "font-satoshi-medium text-base",
+              fund ? "text-mauveDark12" : "text-mauveDark10",
+            )}
+          >
+            {fund?.name || "Select Fund"}
+          </Text>
+        </View>
+      </Pressable>
 
       <DateSection defaultOpen={bottomSheetDataRef.current === "createdAt"} />
 

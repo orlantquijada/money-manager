@@ -7,18 +7,18 @@ import {
   BottomSheetBackgroundProps,
 } from "@gorhom/bottom-sheet"
 
-import { StoreBottomSheetContent } from "./StoreBottomSheetContent"
 import {
   CustomBackdrop,
   CustomBackground,
   CustomHandle,
 } from "./BottomSheetCustomComponents"
+import { FundBottomSheetContent } from "./FundBottomSheetContent"
 
 // const snapPoints = ["25%", "94%"]
 const snapPoints = ["94%"]
-export const storeBottomSheetName = "store-list"
+export const fundBottomSheetName = "fund-list"
 
-const StoreListBottomSheet = forwardRef<BottomSheetModal>((_, ref) => {
+const FundListBottomSheet = forwardRef<BottomSheetModal>((_, ref) => {
   const springConfig = useBottomSheetSpringConfigs({
     damping: 80,
     stiffness: 350,
@@ -53,8 +53,8 @@ const StoreListBottomSheet = forwardRef<BottomSheetModal>((_, ref) => {
       backdropComponent={renderBackdrop}
       backgroundComponent={renderBackground}
       animationConfigs={springConfig}
-      name={storeBottomSheetName}
-      key={storeBottomSheetName}
+      name={fundBottomSheetName}
+      key={fundBottomSheetName}
       style={{
         borderTopStartRadius: 15,
         borderTopEndRadius: 15,
@@ -62,10 +62,10 @@ const StoreListBottomSheet = forwardRef<BottomSheetModal>((_, ref) => {
       }}
       enablePanDownToClose
     >
-      <StoreBottomSheetContent />
+      <FundBottomSheetContent />
     </BottomSheetModal>
   )
 })
-StoreListBottomSheet.displayName = "StoreListBottomSheet"
-export type StoreListBottomSheet = BottomSheetModal
-export default StoreListBottomSheet
+FundListBottomSheet.displayName = "FundBottomSheet"
+export type FundBottomSheet = BottomSheetModal
+export default FundListBottomSheet

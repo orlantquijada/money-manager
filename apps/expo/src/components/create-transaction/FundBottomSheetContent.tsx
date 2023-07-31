@@ -1,0 +1,175 @@
+import {
+  BottomSheetFlatList,
+  useBottomSheet,
+  useBottomSheetModal,
+} from "@gorhom/bottom-sheet"
+import { memo, useMemo, useState } from "react"
+import { Pressable, Text, TextInput, View } from "react-native"
+import { MotiView } from "moti"
+import { Skeleton } from "moti/skeleton"
+import clsx from "clsx"
+
+import { debounce } from "~/utils/functions"
+import { mauveDark } from "~/utils/colors"
+import { trpc } from "~/utils/trpc"
+import { useTransactionStore } from "~/utils/hooks/useTransactionStore"
+
+import ScaleDownPressable from "../ScaleDownPressable"
+
+import ChevronDownIcon from "../../../assets/icons/hero-icons/chevron-down.svg"
+import CheckIcon from "../../../assets/icons/checkbox-circle-duo-dark.svg"
+import { Fund } from ".prisma/client"
+
+export function FundBottomSheetContent() {
+  const { dismiss } = useBottomSheetModal()
+
+  const [input, setInput] = useState("")
+  const [deferredInput, setDeferredInput] = useState("")
+
+  const handleDeferredSetInput = useMemo(
+    () =>
+      debounce((text: string) => {
+        setDeferredInput(text)
+      }, 500),
+    [],
+  )
+
+  return (
+    <View className="flex-1">
+      <View className="h-16 flex-row items-center justify-between px-4">
+        <ScaleDownPressable
+          onPress={() => {
+            dismiss()
+          }}
+        >
+          <ChevronDownIcon
+            color={mauveDark.mauve12}
+            width={20}
+            height={20}
+            strokeWidth={3}
+          />
+        </ScaleDownPressable>
+
+        <TextInput
+          className="font-satoshi-medium text-mauveDark12 ml-4 h-full grow text-xl"
+          placeholder="Search Funds"
+          placeholderTextColor={mauveDark.mauve10}
+          onChangeText={(text) => {
+            setInput(text)
+            handleDeferredSetInput(text)
+          }}
+        />
+      </View>
+
+      <MotiView
+        className={"flex-1"}
+        animate={{ opacity: deferredInput !== input ? 0.5 : 1 }}
+      >
+        <FundList searchText={deferredInput} />
+      </MotiView>
+    </View>
+  )
+}
+
+const FundList = memo(({ searchText }: { searchText: string }) => {
+  const { data, status } = trpc.fund.listFromUserId.useQuery(
+    "clkqj34q70000t7wc7me5srpq",
+  )
+
+  const fund = useTransactionStore((s) => s.fund)
+
+  const { forceClose } = useBottomSheet()
+
+  if (status !== "success")
+    return (
+      <View>
+        <View className="h-12 justify-center px-4">
+          <Skeleton
+            width={200}
+            height={20}
+            colorMode="light"
+            colors={[mauveDark.mauve4, mauveDark.mauve6]}
+          />
+        </View>
+        <View className="h-12 justify-center px-4">
+          <Skeleton
+            width={180}
+            height={20}
+            colorMode="light"
+            colors={[mauveDark.mauve4, mauveDark.mauve6]}
+          />
+        </View>
+        <View className="h-12 justify-center px-4">
+          <Skeleton
+            width={240}
+            height={20}
+            colorMode="light"
+            colors={[mauveDark.mauve4, mauveDark.mauve6]}
+          />
+        </View>
+      </View>
+    )
+
+  const filteredData = searchText
+    ? data.filter(({ name }) =>
+        name.toLowerCase().includes(searchText.toLowerCase()),
+      )
+    : data
+
+  const hasNoStore = data.length === 0
+
+  const handleSetStore = (newStore: Fund) => {
+    useTransactionStore.setState({
+      fund: newStore.id === fund?.id ? undefined : newStore,
+    })
+    forceClose()
+  }
+
+  return (
+    <BottomSheetFlatList
+      keyboardShouldPersistTaps="always"
+      data={filteredData}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => {
+        const selected = item.name === fund?.name
+
+        return (
+          <Pressable
+            onPress={() => {
+              handleSetStore(item)
+            }}
+            className={clsx(
+              "h-12 flex-row items-center justify-between px-4",
+              selected ? "bg-mauveDark4" : "bg-transparent",
+            )}
+          >
+            <Text className="text-mauveDark12 font-satoshi-medium text-base">
+              {item.name}
+            </Text>
+            {selected ? (
+              <CheckIcon color={mauveDark.mauve12} width={20} height={20} />
+            ) : null}
+          </Pressable>
+        )
+      }}
+      ListEmptyComponent={() => (
+        <View>
+          {hasNoStore ? (
+            <View className="mb-4 px-4">
+              <Text className="text-mauveDark12 font-satoshi text-base">
+                <Text className="font-satoshi-bold underline">Stores</Text> give
+                you a little more information about an expense; It can be what
+                you bought, or where you had it, like{" "}
+                <Text className="font-satoshi-bold-italic text-mauveDark11">
+                  Jollibee
+                </Text>
+                .
+              </Text>
+            </View>
+          ) : null}
+        </View>
+      )}
+    />
+  )
+})
+FundList.displayName = "StoreList"
