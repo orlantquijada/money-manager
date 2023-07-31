@@ -68,7 +68,7 @@ model Transaction {
   fund    Fund   @relation(fields: [fundId], references: [id])
   fundId  Int
   store   Store? @relation(fields: [storeId], references: [id])
-  storeId Int
+  storeId Int?
 }
 
 enum FundType {
