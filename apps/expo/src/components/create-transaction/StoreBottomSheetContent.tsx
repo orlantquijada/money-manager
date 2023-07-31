@@ -53,7 +53,7 @@ export function StoreBottomSheetContent() {
 
         <TextInput
           className="font-satoshi-medium text-mauveDark12 ml-4 h-full grow text-xl"
-          placeholder="Find or add Store"
+          placeholder="Search or add Store"
           placeholderTextColor={mauveDark.mauve10}
           onChangeText={(text) => {
             setInput(text)
@@ -144,6 +144,13 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
 
   const hasNoStore = data.length === 0
 
+  const handleSetStore = (newStore: string) => {
+    useTransactionStore.setState({
+      store: newStore === store ? "" : newStore,
+    })
+    forceClose()
+  }
+
   return (
     <BottomSheetFlatList
       keyboardShouldPersistTaps="always"
@@ -155,10 +162,7 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
         return (
           <Pressable
             onPress={() => {
-              new Promise((resolve) => {
-                useTransactionStore.setState({ store: item.name })
-                resolve(undefined)
-              }).then(() => forceClose())
+              handleSetStore(item.name)
             }}
             className={clsx(
               "h-12 flex-row items-center justify-between px-4",
@@ -197,10 +201,7 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
           {searchText ? (
             <MotiPressable
               onPress={() => {
-                new Promise((resolve) => {
-                  useTransactionStore.setState({ store: searchText })
-                  resolve(undefined)
-                }).then(() => forceClose())
+                handleSetStore(searchText)
               }}
               animate={animate}
               transition={{ type: "timing", duration: 250 }}
