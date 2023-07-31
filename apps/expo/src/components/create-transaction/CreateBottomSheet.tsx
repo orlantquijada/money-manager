@@ -39,7 +39,12 @@ const TransactionCreateBottomSheet = forwardRef<
 
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
-        <CustomBackdrop {...props} input={[-1, 0, 1]} output={[0, 0.2, 1]} />
+        <CustomBackdrop
+          {...props}
+          appearsOnIndex={1}
+          input={[-1, 0, 1]}
+          output={[0, 0.2, 1]}
+        />
       ),
       [],
     )

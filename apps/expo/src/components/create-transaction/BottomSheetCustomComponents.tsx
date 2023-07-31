@@ -20,9 +20,10 @@ export function CustomBackdrop(
   props: BottomSheetBackdropProps & {
     input: number[]
     output: number[]
+    appearsOnIndex: number
   },
 ) {
-  const { animatedIndex, output, input } = props
+  const { animatedIndex, output, input, appearsOnIndex } = props
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: interpolate(animatedIndex.value, input, output),
@@ -31,7 +32,7 @@ export function CustomBackdrop(
   return (
     <BottomSheetBackdrop
       {...props}
-      appearsOnIndex={1}
+      appearsOnIndex={appearsOnIndex}
       disappearsOnIndex={-1}
       opacity={1}
       style={[{ backgroundColor }, props.style, containerAnimatedStyle]}

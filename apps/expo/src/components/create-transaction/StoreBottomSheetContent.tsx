@@ -82,7 +82,7 @@ export function StoreBottomSheetContent() {
 
 const StoreList = memo(({ searchText }: { searchText: string }) => {
   const { data, status } = trpc.store.listFromUserId.useQuery(
-    "clk7zeudu0000t789z4fylgjc",
+    "clkqj34q70000t7wc7me5srpq",
   )
 
   const store = useTransactionStore((s) => s.store)
