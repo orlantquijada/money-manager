@@ -12,6 +12,7 @@ import {
   HandlePresentModalPress,
   useTransactionStore,
 } from "~/utils/hooks/useTransactionStore"
+import { userId } from "~/utils/constants"
 
 import SafeAreaView from "~/components/SafeAreaView"
 import ScaleDownPressable from "~/components/ScaleDownPressable"
@@ -135,7 +136,7 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
             {
               ...formValues,
               fundId: formValues.fundId,
-              userId: "clkqj34q70000t7wc7me5srpq",
+              userId,
             },
             {
               onSuccess: () => {
