@@ -14,6 +14,7 @@ import { debounce } from "~/utils/functions"
 import { mauveDark, violet } from "~/utils/colors"
 import { trpc } from "~/utils/trpc"
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore"
+import { userId } from "~/utils/constants"
 
 import ScaleDownPressable from "../ScaleDownPressable"
 
@@ -81,9 +82,7 @@ export function StoreBottomSheetContent() {
 }
 
 const StoreList = memo(({ searchText }: { searchText: string }) => {
-  const { data, status } = trpc.store.listFromUserId.useQuery(
-    "clkqj34q70000t7wc7me5srpq",
-  )
+  const { data, status } = trpc.store.listFromUserId.useQuery(userId)
 
   const store = useTransactionStore((s) => s.store)
 

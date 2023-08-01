@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 import { trpc } from "~/utils/trpc"
 import { getRandomChoice } from "~/utils/functions"
-import { COMMON_FOLDER_NAMES } from "~/utils/constants"
+import { COMMON_FOLDER_NAMES, userId } from "~/utils/constants"
 
 import Presence from "~/components/Presence"
 import TextInput from "~/components/TextInput"
@@ -64,7 +64,7 @@ function Form() {
         onContinuePress={() => {
           setDidSubmit(true)
           createFolder.mutate(
-            { name: folderName, userId: "clkqj34q70000t7wc7me5srpq" },
+            { name: folderName, userId },
             {
               onSuccess: (folder) => {
                 navigation.navigate("Root", {

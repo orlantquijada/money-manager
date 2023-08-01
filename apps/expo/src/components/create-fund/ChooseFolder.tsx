@@ -6,6 +6,7 @@ import { FlashList } from "@shopify/flash-list"
 import { mauveDark } from "~/utils/colors"
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 import { trpc } from "~/utils/trpc"
+import { userId } from "~/utils/constants"
 
 import { Folder } from ".prisma/client"
 import CreateFooter from "../CreateFooter"
@@ -91,7 +92,7 @@ export default function ChooseFolder({ onBackPress }: Props) {
               {
                 ...formData,
                 folderId: selectedId,
-                userId: "clkqj34q70000t7wc7me5srpq",
+                userId,
               },
               {
                 onSuccess: () => {

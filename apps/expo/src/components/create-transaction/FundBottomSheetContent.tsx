@@ -13,12 +13,13 @@ import { debounce, sum, toCurrencyNarrow } from "~/utils/functions"
 import { mauveDark } from "~/utils/colors"
 import { trpc } from "~/utils/trpc"
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore"
+import { userId } from "~/utils/constants"
 
 import ScaleDownPressable from "../ScaleDownPressable"
+import { Fund } from ".prisma/client"
 
 import ChevronDownIcon from "../../../assets/icons/hero-icons/chevron-down.svg"
 import CheckIcon from "../../../assets/icons/checkbox-circle-duo-dark.svg"
-import { Fund } from ".prisma/client"
 
 export function FundBottomSheetContent() {
   const { dismiss } = useBottomSheetModal()
@@ -72,9 +73,7 @@ export function FundBottomSheetContent() {
 }
 
 const FundList = memo(({ searchText }: { searchText: string }) => {
-  const { data, status } = trpc.fund.listFromUserId.useQuery(
-    "clkqj34q70000t7wc7me5srpq",
-  )
+  const { data, status } = trpc.fund.listFromUserId.useQuery(userId)
 
   const fund = useTransactionStore((s) => s.fund)
 
@@ -116,11 +115,9 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
       )
     : data
 
-  const hasNoStore = data.length === 0
-
-  const handleSetStore = (newStore: Fund) => {
+  const handleSetFund = (newFund: Fund) => {
     useTransactionStore.setState({
-      fund: newStore.id === fund?.id ? undefined : newStore,
+      fund: newFund.id === fund?.id ? undefined : newFund,
     })
     forceClose()
   }
@@ -139,7 +136,7 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
         return (
           <Pressable
             onPress={() => {
-              handleSetStore(item)
+              handleSetFund(item)
             }}
             className={clsx(
               "h-12 flex-row items-center justify-between px-4",
@@ -176,24 +173,7 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
           </Pressable>
         )
       }}
-      ListEmptyComponent={() => (
-        <View>
-          {hasNoStore ? (
-            <View className="mb-4 px-4">
-              <Text className="text-mauveDark12 font-satoshi text-base">
-                <Text className="font-satoshi-bold underline">Stores</Text> give
-                you a little more information about an expense; It can be what
-                you bought, or where you had it, like{" "}
-                <Text className="font-satoshi-bold-italic text-mauveDark11">
-                  Jollibee
-                </Text>
-                .
-              </Text>
-            </View>
-          ) : null}
-        </View>
-      )}
     />
   )
 })
-FundList.displayName = "StoreList"
+FundList.displayName = "FundList"
