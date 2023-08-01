@@ -12,11 +12,11 @@
     "build": "tsup index.ts --format cjs"
   },
   "dependencies": {
-    "@prisma/client": "^4.8.0"
+    "@prisma/client": "^5.0.0"
   },
   "devDependencies": {
     "dotenv-cli": "^6.0.0",
-    "prisma": "^4.8.0",
+    "prisma": "^5.0.0",
     "tsup": "^6.7.0",
     "typescript": "^4.9.4"
   }
