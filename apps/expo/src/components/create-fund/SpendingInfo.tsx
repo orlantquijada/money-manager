@@ -7,8 +7,10 @@ import { useRootStackRoute } from "~/utils/hooks/useRootStackRoute"
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 import { trpc } from "~/utils/trpc"
 import { transitions } from "~/utils/motion"
+import { userId } from "~/utils/constants"
 
 import { setScreen } from "~/screens/create-fund"
+
 import { TimeMode } from ".prisma/client"
 import { useFormData } from "./context"
 import Presence from "../Presence"
@@ -183,7 +185,7 @@ function Wrapper({
                 budgetedAmount,
                 folderId,
                 timeMode: selectedTimeMode,
-                userId: "clkqj34q70000t7wc7me5srpq",
+                userId,
               },
               {
                 onSuccess: () => {
