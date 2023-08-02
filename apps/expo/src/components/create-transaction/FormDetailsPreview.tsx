@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { Pressable, Text, View } from "react-native"
 import { MotiText, MotiView } from "moti"
 import clsx from "clsx"
@@ -131,41 +132,39 @@ function DateSection({
   )
 }
 
-const FundSection = ({
-  openFundListBottomSheet,
-}: {
-  openFundListBottomSheet: () => void
-}) => {
-  const fund = useTransactionStore((s) => s.fund)
-  const didSumit = useTransactionStore((s) => s.didSumit)
+const FundSection = memo(
+  ({ openFundListBottomSheet }: { openFundListBottomSheet: () => void }) => {
+    const fund = useTransactionStore((s) => s.fund)
+    const didSumit = useTransactionStore((s) => s.didSumit)
 
-  const offset = 4
+    const offset = 4
 
-  return (
-    <Pressable
-      className="h-full justify-center"
-      onPress={openFundListBottomSheet}
-    >
-      <MotiText
-        className="font-satoshi-bold text-base leading-6"
-        animate={
-          didSumit && !fund
-            ? {
-                // @ts-expect-error idk
-                color: redDark.red11,
-                translateX: [0, offset, -offset, offset, 0],
-              }
-            : {
-                color: fund ? mauveDark.mauve12 : mauveDark.mauve11,
-              }
-        }
-        transition={{
-          translateX: { type: "timing", duration: 200 },
-        }}
+    return (
+      <Pressable
+        className="h-full justify-center"
+        onPress={openFundListBottomSheet}
       >
-        {fund?.name || "Fund"}
-      </MotiText>
-    </Pressable>
-  )
-}
+        <MotiText
+          className="font-satoshi-bold text-base leading-6"
+          animate={
+            didSumit && !fund
+              ? {
+                  // @ts-expect-error idk
+                  color: redDark.red11,
+                  translateX: [0, offset, -offset, offset, 0],
+                }
+              : {
+                  color: fund ? mauveDark.mauve12 : mauveDark.mauve11,
+                }
+          }
+          transition={{
+            translateX: { type: "timing", duration: 200 },
+          }}
+        >
+          {fund?.name || "Fund"}
+        </MotiText>
+      </Pressable>
+    )
+  },
+)
 FundSection.displayName = "FundSection"
