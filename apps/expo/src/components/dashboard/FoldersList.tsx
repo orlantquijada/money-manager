@@ -8,6 +8,7 @@ import { trpc } from "~/utils/trpc"
 import Budget from "../Budget"
 import Presence from "../Presence"
 
+// TODO: di mn diay ni need i flatlist kay di mn jd siya in ana ka daghan
 export default function FoldersList({
   onScroll,
 }: {
