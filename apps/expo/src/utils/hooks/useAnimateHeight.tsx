@@ -18,6 +18,18 @@ export function useMeasureHeight(initalHeight = 0) {
   return { measuredHeight, handleOnLayout } as const
 }
 
+export function useMeasureWidth(initalHeight = 0) {
+  const measuredWidth = useSharedValue(initalHeight)
+  const handleOnLayout = useCallback(
+    ({ nativeEvent }: LayoutChangeEvent) => {
+      measuredWidth.value = nativeEvent.layout.width
+    },
+    [measuredWidth],
+  )
+
+  return { measuredWidth, handleOnLayout } as const
+}
+
 export type UseAnimateProps = {
   defaultOpen?: boolean | undefined
   open?: SharedValue<boolean> | undefined
