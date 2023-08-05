@@ -1,14 +1,13 @@
 import clsx from "clsx"
 import { ComponentProps, ReactNode } from "react"
-import { useDerivedValue, useSharedValue } from "react-native-reanimated"
-import { useDynamicAnimation } from "moti"
-import { ColorValue } from "react-native"
+import { ColorValue, View } from "react-native"
 
 import { clamp } from "~/utils/functions"
 import { transitions } from "~/utils/motion"
 
 import StyledMotiView from "./StyledMotiView"
 import { violet } from "~/utils/colors"
+import { useMeasureWidth } from "~/utils/hooks/useAnimateHeight"
 
 type ProgressBarProps = {
   /*
@@ -18,6 +17,7 @@ type ProgressBarProps = {
   progress: number
   Stripes: ReactNode
   color?: ColorValue
+  highlight?: boolean
 } & ComponentProps<typeof StyledMotiView>
 
 // TODO: handle negative progress
@@ -26,42 +26,50 @@ export default function ProgressBar({
   className,
   Stripes,
   color = violet.violet6,
+  highlight,
+  style,
   ...props
 }: ProgressBarProps) {
-  const fullWidth = useSharedValue(0)
-  const state = useDynamicAnimation()
-
-  useDerivedValue(() => {
-    const clampedProgress = clamp(progressProp, 0, 100)
-    state.animateTo({
-      translateX: -(
-        fullWidth.value -
-        fullWidth.value * (clampedProgress / 100)
-      ),
-    })
-  }, [progressProp])
+  const { measuredWidth: fullWidth, handleOnLayout } = useMeasureWidth(0)
 
   return (
     <StyledMotiView
       {...props}
+      style={[{ borderColor: highlight ? color : "transparent" }, style]}
       className={clsx(
-        "relative h-2 w-full overflow-hidden rounded-full",
+        "relative h-2 w-full rounded-full",
+        highlight && "border",
         className,
       )}
-      onLayout={(e) => {
-        fullWidth.value = e.nativeEvent.layout.width
-        props.onLayout?.(e)
-      }}
+      onLayout={handleOnLayout}
     >
-      <StyledMotiView className="absolute inset-0">{Stripes}</StyledMotiView>
+      <View className="absolute inset-0 overflow-hidden">
+        <StyledMotiView className="absolute inset-0">{Stripes}</StyledMotiView>
+      </View>
+
+      {highlight && (
+        <View
+          className="absolute -bottom-2 h-1 w-1 self-center rounded-full"
+          style={{ backgroundColor: color }}
+        />
+      )}
 
       {/* thumb */}
-      <StyledMotiView
-        state={state}
-        transition={transitions.soft}
-        className="bg-violet6 h-full rounded-full"
-        style={{ backgroundColor: color }}
-      />
+      <View className="absolute inset-0 overflow-hidden rounded-full">
+        <StyledMotiView
+          animate={{
+            translateX: -(
+              fullWidth.value -
+              fullWidth.value * (clamp(progressProp, 0, 100) / 100)
+            ),
+          }}
+          // slight delay to wait for
+          delay={350}
+          transition={transitions.soft}
+          className="bg-violet6 h-full rounded-full"
+          style={{ backgroundColor: color }}
+        />
+      </View>
     </StyledMotiView>
   )
 }
