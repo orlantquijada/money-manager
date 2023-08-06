@@ -3,11 +3,12 @@ import { ComponentProps, ReactNode } from "react"
 import { ColorValue, View } from "react-native"
 
 import { clamp } from "~/utils/functions"
-import { transitions } from "~/utils/motion"
 
 import StyledMotiView from "./StyledMotiView"
 import { violet } from "~/utils/colors"
 import { useMeasureWidth } from "~/utils/hooks/useAnimateHeight"
+
+const DELAY = 350
 
 type ProgressBarProps = {
   /*
@@ -18,6 +19,8 @@ type ProgressBarProps = {
   Stripes: ReactNode
   color?: ColorValue
   highlight?: boolean
+  delayMultiplier?: number
+  delay?: number
 } & ComponentProps<typeof StyledMotiView>
 
 // TODO: handle negative progress
@@ -28,6 +31,8 @@ export default function ProgressBar({
   color = violet.violet6,
   highlight,
   style,
+  delayMultiplier = 0,
+  delay = DELAY,
   ...props
 }: ProgressBarProps) {
   const { measuredWidth: fullWidth, handleOnLayout } = useMeasureWidth(0)
@@ -43,7 +48,7 @@ export default function ProgressBar({
       )}
       onLayout={handleOnLayout}
     >
-      <View className="absolute inset-0 overflow-hidden">
+      <View className="absolute inset-0 overflow-hidden rounded-full">
         <StyledMotiView className="absolute inset-0">{Stripes}</StyledMotiView>
       </View>
 
@@ -63,9 +68,9 @@ export default function ProgressBar({
               fullWidth.value * (clamp(progressProp, 0, 100) / 100)
             ),
           }}
-          // slight delay to wait for
-          delay={350}
-          transition={transitions.soft}
+          // slight delay to wait for navigation animation
+          delay={delay * delayMultiplier}
+          transition={{ type: "timing", duration: 550 }}
           className="bg-violet6 h-full rounded-full"
           style={{ backgroundColor: color }}
         />
