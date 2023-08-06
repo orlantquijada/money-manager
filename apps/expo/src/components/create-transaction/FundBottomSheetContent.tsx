@@ -9,7 +9,11 @@ import { MotiView } from "moti"
 import { Skeleton } from "moti/skeleton"
 import clsx from "clsx"
 
-import { debounce, sum, toCurrencyNarrow } from "~/utils/functions"
+import {
+  debounce,
+  getTotalBudgetedAmount,
+  toCurrencyNarrow,
+} from "~/utils/functions"
 import { mauveDark } from "~/utils/colors"
 import { trpc } from "~/utils/trpc"
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore"
@@ -129,9 +133,7 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => {
         const selected = item.id === fund?.id
-        const moneyLeft =
-          Number(item.budgetedAmount) -
-          sum(item.transactions.map(({ amount }) => Number(amount)))
+        const moneyLeft = getTotalBudgetedAmount(item) - item.totalSpent
 
         return (
           <Pressable
