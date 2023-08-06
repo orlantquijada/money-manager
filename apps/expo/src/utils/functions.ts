@@ -1,3 +1,6 @@
+import { Fund } from ".prisma/client"
+import { getWeeksInMonth } from "date-fns"
+
 export const getRandomChoice = <T>(arr: T[]) => {
   return arr[Math.floor(Math.random() * arr.length)] as T
 }
@@ -51,4 +54,13 @@ export function capitalize<T extends string>(str: T) {
 
 export function sum(numArray: number[]) {
   return numArray.reduce((prev, total) => total + prev, 0)
+}
+
+export function getTotalBudgetedAmount(fund: Fund) {
+  const budgetedAmount = Number(fund.budgetedAmount)
+  if (fund.timeMode === "WEEKLY")
+    return getWeeksInMonth(new Date()) * budgetedAmount
+  else if (fund.timeMode === "BIMONTHLY") return budgetedAmount * 2
+
+  return budgetedAmount
 }
