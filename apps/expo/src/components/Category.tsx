@@ -6,27 +6,21 @@ import clsx from "clsx"
 import { toCurrencyNarrow } from "~/utils/functions"
 import { Fund, TimeMode } from ".prisma/client"
 import ProgressBar from "./ProgressBar"
-import { pink } from "~/utils/colors"
+import { mauve, pink } from "~/utils/colors"
 
 import Stripes from "@assets/icons/stripes-small-violet.svg"
 import PinkStripes from "@assets/icons/stripes-pink.svg"
 
-const helperTextTimeModeMap: Record<TimeMode, string> = {
-  WEEKLY: "this week",
-  MONTHLY: "this month",
-  BIMONTHLY: "",
-  EVENTUALLY: "",
-}
-
+type FundWithTotalSpent = Fund & { totalSpent: number }
 type CategoryProps = {
-  fund: Fund
+  fund: FundWithTotalSpent
 }
 export default function Category({ fund }: CategoryProps) {
   const weekOfMonth = getWeekOfMonth(new Date())
-  const overspentValue = weekOfMonth * Number(fund.budgetedAmount) - totalSpent
+  const overspentValue =
+    weekOfMonth * Number(fund.budgetedAmount) - fund.totalSpent
   const didOverspend = overspentValue < 0
 
-  // console.log(overspentValue, didOverspend)
   return (
     <View className="py-2 px-4">
       <View className="flex-row justify-between">
@@ -36,8 +30,8 @@ export default function Category({ fund }: CategoryProps) {
 
         {/* different text format per target type */}
         <Text
-          className={clsx("font-satoshi text-mauve9 mt-1 text-xs")}
-          style={didOverspend ? { color: pink.pink9, opacity: 0.8 } : {}}
+          className={clsx("font-satoshi mt-1 text-xs")}
+          style={{ color: didOverspend ? pink.pink8 : mauve.mauve9 }}
         >
           {/* {`${toCurrency(Math.random() * 1000)} left ${ */}
           {/*   helperTextTimeModeMap[fund.timeMode] */}
@@ -54,7 +48,9 @@ export default function Category({ fund }: CategoryProps) {
           ) : (
             <>
               <Text className="font-nunito-semibold">
-                {toCurrencyNarrow(Number(fund.budgetedAmount) - totalSpent)}{" "}
+                {toCurrencyNarrow(
+                  Number(fund.budgetedAmount) - fund.totalSpent,
+                )}{" "}
               </Text>
               {`left ${helperTextTimeModeMap[fund.timeMode]}`.trim()}
             </>
@@ -67,10 +63,11 @@ export default function Category({ fund }: CategoryProps) {
   )
 }
 
-function CategoryProgressBar({ fund }: { fund: Fund }) {
-  const [fundProgress, overspentProgress] = useFundProgress(fund, totalSpent)
-
-  if (overspentProgress) console.log(overspentProgress, fund.name)
+function CategoryProgressBar({ fund }: { fund: FundWithTotalSpent }) {
+  const [fundProgress, overspentProgress] = useFundProgress(
+    fund,
+    fund.totalSpent,
+  )
 
   return (
     <View className="mt-2 flex-row gap-x-1">
@@ -83,8 +80,8 @@ function CategoryProgressBar({ fund }: { fund: Fund }) {
             </View>
           }
           className="flex-1"
-          color="transparent"
-          // color={pink.pink8}
+          // color="transparent"
+          color={pink.pink8}
           style={{ flexGrow: overspentProgress / 100 }}
         />
       ) : null}
@@ -92,19 +89,35 @@ function CategoryProgressBar({ fund }: { fund: Fund }) {
         <ProgressBar
           key={index + fund.id}
           progress={progress}
+          highlight={getShouldHighlight(fund, fundProgress.length - index)}
+          delayMultiplier={fundProgress.length - index}
           Stripes={
             <View className="opacity-[.15]">
               <Stripes />
             </View>
           }
-          className={"flex-1 rounded-full"}
+          className="flex-1 rounded-full"
         />
       ))}
     </View>
   )
 }
 
-const totalSpent = 500
+const helperTextTimeModeMap: Record<TimeMode, string> = {
+  WEEKLY: "this week",
+  MONTHLY: "this month",
+  BIMONTHLY: "",
+  EVENTUALLY: "",
+}
+
+function getShouldHighlight(fund: Fund, index: number) {
+  if (fund.timeMode === "MONTHLY" || fund.timeMode === "EVENTUALLY")
+    return false
+
+  if (fund.timeMode === "WEEKLY") return getWeekOfMonth(new Date()) === index
+
+  return new Date().getDay() < 15 === !(index - 1)
+}
 
 function useFundProgress(fund: Fund, totalSpent: number) {
   return useMemo(() => {
