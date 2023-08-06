@@ -1,12 +1,9 @@
-import clsx from "clsx"
 import { ComponentProps, ReactNode } from "react"
 import { ColorValue, View } from "react-native"
+import { MotiView } from "moti"
+import clsx from "clsx"
 
-import { clamp } from "~/utils/functions"
-
-import StyledMotiView from "./StyledMotiView"
 import { violet } from "~/utils/colors"
-import { useMeasureWidth } from "~/utils/hooks/useAnimateHeight"
 
 const DELAY = 350
 
@@ -17,11 +14,11 @@ type ProgressBarProps = {
    */
   progress: number
   Stripes: ReactNode
-  color?: ColorValue
+  color?: ColorValue | undefined
   highlight?: boolean
   delayMultiplier?: number
   delay?: number
-} & ComponentProps<typeof StyledMotiView>
+} & ComponentProps<typeof View>
 
 // TODO: handle negative progress
 export default function ProgressBar({
@@ -35,10 +32,8 @@ export default function ProgressBar({
   delay = DELAY,
   ...props
 }: ProgressBarProps) {
-  const { measuredWidth: fullWidth, handleOnLayout } = useMeasureWidth(0)
-
   return (
-    <StyledMotiView
+    <View
       {...props}
       style={[{ borderColor: highlight ? color : "transparent" }, style]}
       className={clsx(
@@ -46,10 +41,9 @@ export default function ProgressBar({
         highlight && "border",
         className,
       )}
-      onLayout={handleOnLayout}
     >
       <View className="absolute inset-0 overflow-hidden rounded-full">
-        <StyledMotiView className="absolute inset-0">{Stripes}</StyledMotiView>
+        <View className="absolute inset-0">{Stripes}</View>
       </View>
 
       {highlight && (
@@ -61,20 +55,15 @@ export default function ProgressBar({
 
       {/* thumb */}
       <View className="absolute inset-0 overflow-hidden rounded-full">
-        <StyledMotiView
-          animate={{
-            translateX: -(
-              fullWidth.value -
-              fullWidth.value * (clamp(progressProp, 0, 100) / 100)
-            ),
-          }}
+        <MotiView
+          animate={{ left: `-${100 - progressProp}%` }}
           // slight delay to wait for navigation animation
           delay={delay * delayMultiplier}
           transition={{ type: "timing", duration: 550 }}
-          className="bg-violet6 h-full rounded-full"
+          className="h-full rounded-full"
           style={{ backgroundColor: color }}
         />
       </View>
-    </StyledMotiView>
+    </View>
   )
 }
