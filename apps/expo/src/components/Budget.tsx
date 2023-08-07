@@ -3,8 +3,8 @@ import { Pressable, PressableProps, View, Text } from "react-native"
 import { useDerivedValue, useSharedValue } from "react-native-reanimated"
 
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
-import { toCurrency } from "~/utils/functions"
-import { pink } from "~/utils/colors"
+import { toCurrencyNarrow } from "~/utils/functions"
+import { pink, violet } from "~/utils/colors"
 import { transitions } from "~/utils/motion"
 
 import { type Folder, type Fund } from ".prisma/client"
@@ -16,13 +16,13 @@ import { AnimateHeight } from "./AnimateHeight"
 import FolderClosed from "../../assets/icons/folder-duo.svg"
 import FolderOpen from "../../assets/icons/folder-open-duo.svg"
 
-const overspentColor = pink.pink10
+const overspentColor = pink.pink8
 
 type Props = {
   folderId: Folder["id"]
   folderName: Folder["name"]
   amountLeft: number
-  funds: Fund[]
+  funds: (Fund & { totalSpent: number })[]
   defaultOpen?: boolean
   /*
    * prop for animation —
@@ -42,14 +42,13 @@ export default function Budget({
 }: PressableProps & Props) {
   const navigation = useRootStackNavigation()
 
-  // const overspent = Boolean(Math.round(Math.random()))
-  const overspent = false
-
   const open = useSharedValue(defaultOpen)
 
   useEffect(() => {
     if (isRecentlyAdded !== undefined) open.value = isRecentlyAdded
   }, [open, isRecentlyAdded])
+
+  const didOverspend = amountLeft === 0
 
   return (
     <View>
@@ -95,17 +94,16 @@ export default function Budget({
             transition={transitions.snappy}
           >
             <Text
-              className="font-satoshi-medium text-violet12 text-sm opacity-80"
-              style={overspent ? { color: overspentColor } : {}}
+              className="font-satoshi text-sm"
+              style={{
+                color: didOverspend ? overspentColor : violet.violet12,
+              }}
             >
-              {overspent ? "-" : ""}
-              <Text className="font-nunito">{toCurrency(amountLeft)} </Text>
-            </Text>
-            {!overspent ? (
-              <Text className="font-satoshi text-violet12 text-sm opacity-50">
-                left
+              <Text className="font-nunito-semibold">
+                {toCurrencyNarrow(amountLeft)}{" "}
               </Text>
-            ) : null}
+              <Text>left</Text>
+            </Text>
           </StyledMotiView>
         </View>
       </Pressable>
