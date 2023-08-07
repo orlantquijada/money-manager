@@ -3,7 +3,7 @@ import { View, Text } from "react-native"
 import { getWeeksInMonth, getWeekOfMonth } from "date-fns"
 import clsx from "clsx"
 
-import { toCurrencyNarrow } from "~/utils/functions"
+import { getTotalBudgetedAmount, toCurrencyNarrow } from "~/utils/functions"
 import { Fund, TimeMode } from ".prisma/client"
 import ProgressBar from "./ProgressBar"
 import { mauve, pink } from "~/utils/colors"
@@ -16,9 +16,7 @@ type CategoryProps = {
   fund: FundWithTotalSpent
 }
 export default function Category({ fund }: CategoryProps) {
-  const weekOfMonth = getWeekOfMonth(new Date())
-  const overspentValue =
-    weekOfMonth * Number(fund.budgetedAmount) - fund.totalSpent
+  const overspentValue = getOverspentValue(fund)
   const didOverspend = overspentValue < 0
 
   return (
@@ -33,9 +31,6 @@ export default function Category({ fund }: CategoryProps) {
           className={clsx("font-satoshi mt-1 text-xs")}
           style={{ color: didOverspend ? pink.pink8 : mauve.mauve9 }}
         >
-          {/* {`${toCurrency(Math.random() * 1000)} left ${ */}
-          {/*   helperTextTimeModeMap[fund.timeMode] */}
-          {/* }`.trim()} */}
           {didOverspend ? (
             <>
               overspent
@@ -100,6 +95,22 @@ function CategoryProgressBar({ fund }: { fund: FundWithTotalSpent }) {
         />
       ))}
     </View>
+  )
+}
+
+function getOverspentValue(fund: FundWithTotalSpent) {
+  const budgetedAmount = getTotalBudgetedAmount(fund)
+
+  if (fund.timeMode === "MONTHLY" || fund.timeMode === "EVENTUALLY")
+    return budgetedAmount - fund.totalSpent
+  else if (fund.timeMode === "WEEKLY") {
+    const weekOfMonth = getWeekOfMonth(new Date())
+    return weekOfMonth * Number(fund.budgetedAmount) - fund.totalSpent
+  }
+
+  return (
+    (Number(!(new Date().getDay() < 15)) + 1) * Number(fund.budgetedAmount) -
+    fund.totalSpent
   )
 }
 
