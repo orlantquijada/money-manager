@@ -1,3 +1,5 @@
+import { getDaysInMonth } from "date-fns"
+
 export const screenPadding = 16
 
 export const COMMON_FOLDER_NAMES = [
@@ -11,4 +13,6 @@ export const COMMON_FOLDER_NAMES = [
   "Subscriptions",
 ]
 
-export const userId = "clkqvpx610000t7o65ttkft1s"
+export const userId = "clkqj34q70000t7wc7me5srpq"
+
+export const daysInCurrentMonth = getDaysInMonth(new Date())

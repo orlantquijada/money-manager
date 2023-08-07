@@ -1,5 +1,6 @@
 import { Fund } from ".prisma/client"
-import { getWeeksInMonth } from "date-fns"
+import { getWeekOfMonth, getWeeksInMonth, isThisMonth } from "date-fns"
+import { daysInCurrentMonth } from "./constants"
 
 export const getRandomChoice = <T>(arr: T[]) => {
   return arr[Math.floor(Math.random() * arr.length)] as T
@@ -58,9 +59,18 @@ export function sum(numArray: number[]) {
 
 export function getTotalBudgetedAmount(fund: Fund) {
   const budgetedAmount = Number(fund.budgetedAmount)
+  const now = new Date()
+
   if (fund.timeMode === "WEEKLY")
-    return getWeeksInMonth(new Date()) * budgetedAmount
-  else if (fund.timeMode === "BIMONTHLY") return budgetedAmount * 2
+    return isThisMonth(fund.createdAt || now)
+      ? (getWeeksInMonth(now) - getWeekOfMonth(now) + 1) * budgetedAmount
+      : getWeeksInMonth(now) * budgetedAmount
+  else if (fund.timeMode === "BIMONTHLY") {
+    return isThisMonth(fund.createdAt || now) &&
+      now.getDay() > daysInCurrentMonth / 2
+      ? budgetedAmount
+      : budgetedAmount * 2
+  }
 
   return budgetedAmount
 }

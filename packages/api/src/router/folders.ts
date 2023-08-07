@@ -20,7 +20,12 @@ export const foldersRouter = router({
 
     const foldersWithFunds = await ctx.prisma.folder.findMany({
       include: {
-        funds: true,
+        // TODO: order by new field: `order` when funds can now be reordered
+        funds: {
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",

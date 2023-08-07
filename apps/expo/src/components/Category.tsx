@@ -1,15 +1,17 @@
 import { useMemo } from "react"
 import { View, Text, Pressable } from "react-native"
-import { getWeeksInMonth, getWeekOfMonth } from "date-fns"
+import { getWeeksInMonth, getWeekOfMonth, isThisMonth } from "date-fns"
 
 import { getTotalBudgetedAmount, toCurrencyNarrow } from "~/utils/functions"
-import { Fund, TimeMode } from ".prisma/client"
-import ProgressBar from "./ProgressBar"
 import { mauve, pink } from "~/utils/colors"
+import useToggle from "~/utils/hooks/useToggle"
+import { daysInCurrentMonth } from "~/utils/constants"
+
+import ProgressBar from "./ProgressBar"
+import type { Fund, TimeMode } from ".prisma/client"
 
 import Stripes from "@assets/icons/stripes-small-violet.svg"
 import PinkStripes from "@assets/icons/stripes-pink.svg"
-import useToggle from "~/utils/hooks/useToggle"
 
 type FundWithTotalSpent = Fund & { totalSpent: number }
 type CategoryProps = {
@@ -167,28 +169,45 @@ function getShouldHighlight(fund: Fund, index: number) {
   if (fund.timeMode === "MONTHLY" || fund.timeMode === "EVENTUALLY")
     return false
 
-  if (fund.timeMode === "WEEKLY") return getWeekOfMonth(new Date()) === index
+  const now = new Date()
+  if (fund.timeMode === "WEEKLY") {
+    return isThisMonth(fund.createdAt || now)
+      ? getWeekOfMonth(now) - getWeekOfMonth(fund.createdAt || now) + 1 ===
+          index
+      : getWeekOfMonth(now) === index
+  }
 
-  return new Date().getDay() < 15 === !(index - 1)
+  const bars = getNumberOfBars(fund)
+  if (bars === 1) return false
+  return now.getDay() < daysInCurrentMonth / 2 === !(index - 1)
+}
+
+function getNumberOfBars(fund: Fund) {
+  const now = new Date()
+  const bars: Record<TimeMode, number> = {
+    WEEKLY: isThisMonth(fund.createdAt || now)
+      ? getWeeksInMonth(now) - getWeekOfMonth(now) + 1
+      : getWeeksInMonth(now),
+    BIMONTHLY:
+      isThisMonth(fund.createdAt || now) &&
+      now.getDay() > daysInCurrentMonth / 2
+        ? 1
+        : 2,
+    MONTHLY: 1,
+    EVENTUALLY: 1,
+  }
+
+  return bars[fund.timeMode]
 }
 
 function useFundProgress(fund: Fund, totalSpent: number) {
-  // TODO: number of progress bars depend on when the fund was created
-  // if fund was created on the 2nd week of the month, given that there are 5 weeks in that month,
-  // there should only be 4 progress bars shown
-
   return useMemo(() => {
-    const progressBarsPerTimeMode: Record<TimeMode, number> = {
-      WEEKLY: getWeeksInMonth(new Date()),
-      BIMONTHLY: 2,
-      MONTHLY: 1,
-      EVENTUALLY: 1,
-    }
+    const bars = getNumberOfBars(fund)
 
     const budgetProgress: number[] = []
     const budgetedAmount = Number(fund.budgetedAmount)
     let left = totalSpent
-    for (let i = progressBarsPerTimeMode[fund.timeMode] - 1; i >= 0; i--) {
+    for (let i = bars - 1; i >= 0; i--) {
       if (left >= budgetedAmount) {
         budgetProgress[i] = 0
         left -= budgetedAmount

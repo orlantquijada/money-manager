@@ -5,7 +5,7 @@ import clsx from "clsx"
 
 import { violet } from "~/utils/colors"
 
-const DELAY = 350
+const DELAY = 150
 
 type ProgressBarProps = {
   /*
