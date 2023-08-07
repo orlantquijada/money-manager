@@ -1,7 +1,6 @@
 import { useMemo } from "react"
-import { View, Text } from "react-native"
+import { View, Text, Pressable } from "react-native"
 import { getWeeksInMonth, getWeekOfMonth } from "date-fns"
-import clsx from "clsx"
 
 import { getTotalBudgetedAmount, toCurrencyNarrow } from "~/utils/functions"
 import { Fund, TimeMode } from ".prisma/client"
@@ -10,15 +9,13 @@ import { mauve, pink } from "~/utils/colors"
 
 import Stripes from "@assets/icons/stripes-small-violet.svg"
 import PinkStripes from "@assets/icons/stripes-pink.svg"
+import useToggle from "~/utils/hooks/useToggle"
 
 type FundWithTotalSpent = Fund & { totalSpent: number }
 type CategoryProps = {
   fund: FundWithTotalSpent
 }
 export default function Category({ fund }: CategoryProps) {
-  const overspentValue = getOverspentValue(fund)
-  const didOverspend = overspentValue < 0
-
   return (
     <View className="py-2 px-4">
       <View className="flex-row justify-between">
@@ -26,17 +23,41 @@ export default function Category({ fund }: CategoryProps) {
           {fund.name}
         </Text>
 
-        {/* different text format per target type */}
+        <HelperText fund={fund} />
+      </View>
+
+      <CategoryProgressBar fund={fund} />
+    </View>
+  )
+}
+
+function HelperText({ fund }: { fund: FundWithTotalSpent }) {
+  const relativeOverspentValue = useMemo(
+    () => getRelativeOverspentValue(fund),
+    [fund],
+  )
+  const didRelativeOverspend = relativeOverspentValue < 0
+
+  const didMonthlyOverspend = useMemo(
+    () => getDidMonthlyOverspent(fund),
+    [fund],
+  )
+
+  const [showDefault, { toggle }] = useToggle(true)
+
+  return (
+    <Pressable onPress={toggle} hitSlop={20}>
+      {showDefault ? (
         <Text
-          className={clsx("font-satoshi mt-1 text-xs")}
-          style={{ color: didOverspend ? pink.pink8 : mauve.mauve9 }}
+          className="font-satoshi mt-1 text-xs"
+          style={{ color: didRelativeOverspend ? pink.pink8 : mauve.mauve9 }}
         >
-          {didOverspend ? (
+          {didRelativeOverspend ? (
             <>
               overspent
               <Text className="font-nunito-semibold">
                 {" "}
-                {toCurrencyNarrow(overspentValue * -1)}{" "}
+                {toCurrencyNarrow(relativeOverspentValue * -1)}{" "}
               </Text>
               {`${helperTextTimeModeMap[fund.timeMode]}`.trim()}
             </>
@@ -51,10 +72,26 @@ export default function Category({ fund }: CategoryProps) {
             </>
           )}
         </Text>
-      </View>
-
-      <CategoryProgressBar fund={fund} />
-    </View>
+      ) : (
+        <Text
+          className="font-satoshi mt-1 text-xs"
+          style={{ color: didMonthlyOverspend ? pink.pink8 : mauve.mauve9 }}
+        >
+          <>
+            spent
+            <Text className="font-nunito">
+              {" "}
+              {toCurrencyNarrow(fund.totalSpent)}{" "}
+            </Text>
+            of
+            <Text className="font-nunito-semibold">
+              {" "}
+              {toCurrencyNarrow(getTotalBudgetedAmount(fund))}
+            </Text>
+          </>
+        </Text>
+      )}
+    </Pressable>
   )
 }
 
@@ -98,7 +135,12 @@ function CategoryProgressBar({ fund }: { fund: FundWithTotalSpent }) {
   )
 }
 
-function getOverspentValue(fund: FundWithTotalSpent) {
+function getDidMonthlyOverspent(fund: FundWithTotalSpent) {
+  return getTotalBudgetedAmount(fund) - fund.totalSpent
+}
+
+// relative to current date and timemode
+function getRelativeOverspentValue(fund: FundWithTotalSpent) {
   const budgetedAmount = getTotalBudgetedAmount(fund)
 
   if (fund.timeMode === "MONTHLY" || fund.timeMode === "EVENTUALLY")
@@ -131,6 +173,10 @@ function getShouldHighlight(fund: Fund, index: number) {
 }
 
 function useFundProgress(fund: Fund, totalSpent: number) {
+  // TODO: number of progress bars depend on when the fund was created
+  // if fund was created on the 2nd week of the month, given that there are 5 weeks in that month,
+  // there should only be 4 progress bars shown
+
   return useMemo(() => {
     const progressBarsPerTimeMode: Record<TimeMode, number> = {
       WEEKLY: getWeeksInMonth(new Date()),
