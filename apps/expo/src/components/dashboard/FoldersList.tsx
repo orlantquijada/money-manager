@@ -1,6 +1,7 @@
 import { ComponentProps } from "react"
 import { Text, View } from "react-native"
 import Animated from "react-native-reanimated"
+import { getTotalBudgetedAmount } from "~/utils/functions"
 
 import { useRootBottomTabRoute } from "~/utils/hooks/useRootBottomTabRoute"
 import { trpc } from "~/utils/trpc"
@@ -14,7 +15,26 @@ export default function FoldersList({
 }: {
   onScroll?: ComponentProps<typeof Animated.FlatList>["onScroll"]
 }) {
-  const folders = trpc.folder.listWithFunds.useQuery()
+  const folders = trpc.folder.listWithFunds.useQuery(undefined, {
+    select: (folder) => {
+      return folder.map((folder) => {
+        let totalSpent = 0
+        let totalBudget = 0
+
+        for (const fund of folder.funds) {
+          const budgetedAmount = getTotalBudgetedAmount(fund)
+          totalSpent +=
+            budgetedAmount < fund.totalSpent ? budgetedAmount : fund.totalSpent
+          totalBudget += budgetedAmount
+        }
+
+        return {
+          ...folder,
+          amountLeft: totalBudget - totalSpent,
+        }
+      })
+    },
+  })
   const route = useRootBottomTabRoute("Home")
 
   return (
@@ -36,9 +56,10 @@ export default function FoldersList({
             folderName={item.name}
             folderId={item.id}
             // amountLeft={Math.random() * 1000}
-            amountLeft={1000}
+            amountLeft={item.amountLeft}
             funds={item.funds}
-            defaultOpen={index === 0}
+            // defaultOpen={index === 0}
+            defaultOpen
             isRecentlyAdded={
               route.params?.recentlyAddedToFolderId
                 ? route.params.recentlyAddedToFolderId === item.id
