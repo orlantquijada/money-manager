@@ -129,6 +129,7 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
 
   return (
     <ScaleDownPressable
+      disabled={createTransaction.status === "loading"}
       onPress={() => {
         useTransactionStore.setState({ didSumit: true })
         if (formValues.fundId) {
@@ -142,14 +143,17 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
               onSuccess: () => {
                 reset()
                 resetAmount()
-                navigation.navigate("Transactions")
+                navigation.navigate("Home")
               },
             },
           )
         }
       }}
     >
-      <Button className="h-12 w-full rounded-2xl">
+      <Button
+        className="h-12 w-full rounded-2xl"
+        loading={createTransaction.status === "loading"}
+      >
         <Text className="text-mauveDark1 font-satoshi-bold text-lg leading-6">
           Save
         </Text>
@@ -159,5 +163,10 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
 }
 
 function useCreateTransaction() {
-  return trpc.transaction.create.useMutation()
+  const utils = trpc.useContext()
+  return trpc.transaction.create.useMutation({
+    onSuccess: () => {
+      utils.folder.listWithFunds.invalidate()
+    },
+  })
 }
