@@ -136,7 +136,7 @@ function CategoryProgressBar({ fund }: { fund: FundWithTotalSpent }) {
 }
 
 function getDidMonthlyOverspent(fund: FundWithTotalSpent) {
-  return getTotalBudgetedAmount(fund) - fund.totalSpent
+  return getTotalBudgetedAmount(fund) < fund.totalSpent
 }
 
 // relative to current date and timemode
