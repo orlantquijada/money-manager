@@ -144,6 +144,9 @@ importers:
       react-native-pager-view:
         specifier: ^6.1.2
         version: 6.1.2(react-native@0.71.8)(react@18.2.0)
+      react-native-pie-chart:
+        specifier: ^3.0.1
+        version: 3.0.1(react-native-svg@13.4.0)(react-native@0.71.8)(react@18.2.0)
       react-native-reanimated:
         specifier: ^2.14.4
         version: 2.14.4(@babel/core@7.20.7)(react-native@0.71.8)(react@18.2.0)
@@ -5517,6 +5520,18 @@ packages:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
     dev: true
 
+  /d3-path@3.1.0:
+    resolution: {integrity: sha512-p3KP5HCf/bvjBSSKuXid6Zqijx7wIfNW+J/maPs+iwR35at5JCbLUT0LzF1cnjbCHWhqzQTIN2Jpe8pRebIEFQ==}
+    engines: {node: '>=12'}
+    dev: false
+
+  /d3-shape@3.2.0:
+    resolution: {integrity: sha512-SaLBuwGm3MOViRq2ABk3eLoxwZELpH6zhl3FbAoJ7Vm1gofKx6El1Ib5z23NUEhF9AsGl7y+dzLe5Cw2AArGTA==}
+    engines: {node: '>=12'}
+    dependencies:
+      d3-path: 3.1.0
+    dev: false
+
   /dag-map@1.0.2:
     resolution: {integrity: sha512-+LSAiGFwQ9dRnRdOeaj7g47ZFJcOUPukAP8J3A3fuZ1g9Y44BG+P1sgApjLXTQPOzC4+7S9Wr8kXsfpINM4jpw==}
     dev: false
@@ -9743,6 +9758,19 @@ packages:
     dependencies:
       react: 18.2.0
       react-native: 0.71.8(@babel/core@7.20.7)(@babel/preset-env@7.19.3)(react@18.2.0)
+    dev: false
+
+  /react-native-pie-chart@3.0.1(react-native-svg@13.4.0)(react-native@0.71.8)(react@18.2.0):
+    resolution: {integrity: sha512-KJ9z7OqRI1Ryzxr61KanZ4xtLHrQd6CrJwX4QNrYJka9/fej1tUr/tW8uXH/NQdwxrXuFEWXSwwTXIcP2B3wUg==}
+    peerDependencies:
+      react: '>=16.14.0'
+      react-native: '>=0.69.0'
+      react-native-svg: '>=13.0.0'
+    dependencies:
+      d3-shape: 3.2.0
+      react: 18.2.0
+      react-native: 0.71.8(@babel/core@7.20.7)(@babel/preset-env@7.19.3)(react@18.2.0)
+      react-native-svg: 13.4.0(react-native@0.71.8)(react@18.2.0)
     dev: false
 
   /react-native-reanimated@2.14.4(@babel/core@7.20.7)(react-native@0.71.8)(react@18.2.0):
