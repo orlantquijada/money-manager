@@ -72,6 +72,20 @@ export const pink = {
   pink12: "hsl(320, 70.0%, 13.5%)",
 }
 
+export const pinkhex = {
+  pink1: "#fffcfe",
+  pink2: "#fff7fc",
+  pink3: "#feeef8",
+  pink4: "#fce5f3",
+  pink5: "#f9d8ec",
+  pink6: "#f3c6e2",
+  pink7: "#ecadd4",
+  pink8: "#e38ec3",
+  pink9: "#d6409f",
+  pink10: "#d23197",
+  pink11: "#cd1d8d",
+  pink12: "#3b0a2a",
+}
 export const limeDark = {
   lime1: "hsl(75, 55.0%, 6.0%)",
   lime2: "hsl(74, 56.8%, 7.3%)",
@@ -99,4 +113,112 @@ export const redDark = {
   red10: "hsl(358, 85.3%, 64.0%)",
   red11: "hsl(358, 100%, 69.5%)",
   red12: "hsl(351, 89.0%, 96.0%)",
+}
+
+// export const pieColors = {
+//   tomato: "#EA9280",
+//   red: "#EB9091",
+//   crimson: "#E58FB1",
+//   pink: "#E38EC3",
+//   plum: "#CF91D8",
+//   purple: "#BE93E4",
+//   violet: "#AA99EC",
+//   indigo: "#8DA4EF",
+//   blue: "#5EB0EF",
+//   cyan: "#3DB9CF",
+//   teal: "#53B9AB",
+//   green: "#5BB98C",
+//   grass: "#65BA75",
+//   orange: "#FA934E",
+//   brown: "#D09E72",
+// }
+
+export const pieColors = {
+  tomato: "#EA9280",
+  crimson: "#E58FB1",
+  plum: "#CF91D8",
+  violet: "#AA99EC",
+  blue: "#5EB0EF",
+  teal: "#53B9AB",
+  grass: "#65BA75",
+  orange: "#FA934E",
+}
+
+export const pieColors2 = [
+  "#EFE7E0",
+  "#E696B0",
+  "#966A90",
+  "#E25E5F",
+  "#F38051",
+  "#F4CF5B",
+  "#5EDF91",
+  "#6DB0D2",
+  "#5A5D7C",
+]
+
+export const pieColors3 = [
+  "hsla(236, 35%, 81%, 1)",
+  "hsla(200, 80%, 92%, 1)",
+  "hsla(141, 78%, 93%, 1)",
+  "hsla(306, 41%, 86%, 1)",
+  "hsla(356, 78%, 88%, 1)",
+  "hsla(19, 85%, 90%, 1)",
+  "hsla(334, 78%, 95%, 1)",
+  "hsla(15, 50%, 98%, 1)",
+  "hsla(45, 100%, 95%, 1)",
+]
+
+export const pieColors4 = [
+  "#780000",
+  "#c1121f",
+  "#fdf0d5",
+  "#003049",
+  "#669bbc",
+]
+
+export const pieColors6 = [
+  "#001219",
+  "#005f73",
+  "#0a9396",
+  "#94d2bd",
+  "#e9d8a6",
+  "#ee9b00",
+  "#ca6702",
+  "#bb3e03",
+  "#ae2012",
+  "#9b2226",
+]
+
+export const pieColors5 = [
+  "hsla(171, 40%, 84%, 1)",
+  "hsla(190, 54%, 85%, 1)",
+  "hsla(137, 36%, 85%, 1)",
+  "hsla(116, 36%, 85%, 1)",
+  "hsla(224, 79%, 91%, 1)",
+  "hsla(248, 76%, 92%, 1)",
+  "hsla(270, 63%, 91%, 1)",
+  "hsla(29, 48%, 85%, 1)",
+  "hsla(291, 49%, 89%, 1)",
+  "hsla(291, 49%, 89%, 1)",
+  "hsla(331, 56%, 89%, 1)",
+  "hsla(321, 56%, 89%, 1)",
+  "hsla(10, 75%, 89%, 1)",
+  "hsla(3, 73%, 90%, 1)",
+  "hsla(3, 73%, 90%, 1)",
+  "hsla(26, 89%, 86%, 1)",
+]
+
+const grass = {
+  grass1: "#fbfefb",
+  grass2: "#f3fcf3",
+  grass3: "#ebf9eb",
+  grass4: "#dff3df",
+  grass5: "#ceebcf",
+  grass6: "#b7dfba",
+  grass7: "#97cf9c",
+  grass8: "#65ba75",
+  grass9: "#46a758",
+  grass10: "#3d9a50",
+  grass11: "#297c3b",
+  grass12: "#1b311e",
 }
