@@ -144,16 +144,17 @@ function getDidMonthlyOverspent(fund: FundWithTotalSpent) {
 // relative to current date and timemode
 function getRelativeOverspentValue(fund: FundWithTotalSpent) {
   const budgetedAmount = getTotalBudgetedAmount(fund)
+  const now = new Date()
 
   if (fund.timeMode === "MONTHLY" || fund.timeMode === "EVENTUALLY")
     return budgetedAmount - fund.totalSpent
   else if (fund.timeMode === "WEEKLY") {
-    const weekOfMonth = getWeekOfMonth(new Date())
+    const weekOfMonth = getWeekOfMonth(now)
     return weekOfMonth * Number(fund.budgetedAmount) - fund.totalSpent
   }
 
   return (
-    (Number(!(new Date().getDay() < 15)) + 1) * Number(fund.budgetedAmount) -
+    (Number(!(now.getDay() < 15)) + 1) * Number(fund.budgetedAmount) -
     fund.totalSpent
   )
 }

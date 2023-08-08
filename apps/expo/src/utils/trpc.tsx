@@ -39,6 +39,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage,
+  serialize: transformer.stringify,
+  deserialize: transformer.parse,
 })
 
 export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
