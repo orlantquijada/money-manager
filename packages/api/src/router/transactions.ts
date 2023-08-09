@@ -1,9 +1,36 @@
 import { router, publicProcedure } from "../trpc"
 import { z } from "zod"
+import { endOfWeek, startOfWeek } from "date-fns"
 
 export const transactionsRouter = router({
   all: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.transaction.findMany()
+  }),
+  allThisWeek: publicProcedure.query(({ ctx }) => {
+    const now = new Date()
+    return ctx.prisma.transaction.findMany({
+      where: {
+        date: {
+          gte: startOfWeek(now),
+          lt: endOfWeek(now),
+        },
+      },
+      include: {
+        fund: {
+          select: {
+            name: true,
+          },
+        },
+        store: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        date: "desc",
+      },
+    })
   }),
   retrieve: publicProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.transaction.findFirst({ where: { id: input } })
