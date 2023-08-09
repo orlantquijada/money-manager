@@ -1,7 +1,7 @@
 import { Text, View } from "react-native"
-import { getTotalBudgetedAmount } from "~/utils/functions"
 
-import { useRootBottomTabRoute } from "~/utils/hooks/useRootBottomTabRoute"
+import { getTotalBudgetedAmount } from "~/utils/functions"
+import { useHomeTabRoute } from "~/utils/hooks/useHomeTabRoute"
 import { trpc } from "~/utils/trpc"
 
 import Budget from "../Budget"
@@ -27,7 +27,7 @@ export default function FoldersList() {
       })
     },
   })
-  const route = useRootBottomTabRoute("Home")
+  const route = useHomeTabRoute("Budgets")
 
   return (
     <View className="pt-20">
