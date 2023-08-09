@@ -5,7 +5,6 @@ import { useRootBottomTabRoute } from "~/utils/hooks/useRootBottomTabRoute"
 import { trpc } from "~/utils/trpc"
 
 import Budget from "../Budget"
-import Presence from "../Presence"
 
 export default function FoldersList() {
   const folders = trpc.folder.listWithFunds.useQuery(undefined, {
@@ -37,23 +36,22 @@ export default function FoldersList() {
       </Text>
 
       <View className="space-y-2">
-        {folders.data?.map((item, index) => (
-          <Presence delayMultiplier={index + 1} delay={60} key={item.id}>
-            <Budget
-              folderName={item.name}
-              folderId={item.id}
-              // amountLeft={Math.random() * 1000}
-              amountLeft={item.amountLeft}
-              funds={item.funds}
-              // defaultOpen={index === 0}
-              defaultOpen
-              isRecentlyAdded={
-                route.params?.recentlyAddedToFolderId
-                  ? route.params.recentlyAddedToFolderId === item.id
-                  : undefined
-              }
-            />
-          </Presence>
+        {folders.data?.map((item) => (
+          <Budget
+            key={item.id}
+            folderName={item.name}
+            folderId={item.id}
+            // amountLeft={Math.random() * 1000}
+            amountLeft={item.amountLeft}
+            funds={item.funds}
+            // defaultOpen={index === 0}
+            defaultOpen
+            isRecentlyAdded={
+              route.params?.recentlyAddedToFolderId
+                ? route.params.recentlyAddedToFolderId === item.id
+                : undefined
+            }
+          />
         ))}
       </View>
     </View>
