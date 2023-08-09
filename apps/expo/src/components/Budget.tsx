@@ -9,7 +9,7 @@ import { transitions } from "~/utils/motion"
 
 import { type Folder, type Fund } from ".prisma/client"
 import ScaleDownPressable from "./ScaleDownPressable"
-import Category from "./Category"
+import Category, { CATEGORY_HEIGHT } from "./Category"
 import StyledMotiView from "./StyledMotiView"
 import { AnimateHeight } from "./AnimateHeight"
 
@@ -108,10 +108,18 @@ export default function Budget({
         </View>
       </Pressable>
 
-      <AnimateHeight open={open}>
-        {funds.length ? (
-          funds.map((fund) => <Category fund={fund} key={fund.id} />)
-        ) : (
+      {funds.length ? (
+        <AnimateHeight
+          open={open}
+          defaultOpen
+          initalHeight={CATEGORY_HEIGHT * funds.length}
+        >
+          {funds.map((fund) => (
+            <Category fund={fund} key={fund.id} />
+          ))}
+        </AnimateHeight>
+      ) : (
+        <AnimateHeight open={open} defaultOpen initalHeight={48}>
           <ScaleDownPressable
             className="h-12 w-full items-center justify-center"
             onPress={() => {
@@ -122,8 +130,8 @@ export default function Budget({
               Add a fund to this folder
             </Text>
           </ScaleDownPressable>
-        )}
-      </AnimateHeight>
+        </AnimateHeight>
+      )}
     </View>
   )
 }

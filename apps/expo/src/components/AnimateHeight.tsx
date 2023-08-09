@@ -10,7 +10,7 @@ import {
 } from "~/utils/hooks/useAnimateHeight"
 
 type Props = PropsWithChildren<
-  UseAnimateProps & ComponentProps<typeof MotiView>
+  UseAnimateProps & ComponentProps<typeof MotiView> & { initalHeight?: number }
 >
 
 const INITIAL_HEIGHT = 0
@@ -19,9 +19,15 @@ const INITIAL_HEIGHT = 0
 // but the delay while toggling is really noticeable
 // and is just bad for UX, especially when the animations are interrupted
 export function AnimateHeight(props: Props) {
-  const { open, defaultOpen, children, ...rest } = props
+  const {
+    open,
+    defaultOpen,
+    children,
+    initalHeight = INITIAL_HEIGHT,
+    ...rest
+  } = props
 
-  const { measuredHeight, handleOnLayout } = useMeasureHeight(INITIAL_HEIGHT)
+  const { measuredHeight, handleOnLayout } = useMeasureHeight(initalHeight)
   const { animate } = useAnimateHeight(measuredHeight, { open, defaultOpen })
 
   return (

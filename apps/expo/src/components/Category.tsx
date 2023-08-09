@@ -13,13 +13,15 @@ import type { Fund, TimeMode } from ".prisma/client"
 import Stripes from "@assets/icons/stripes-small-violet.svg"
 import PinkStripes from "@assets/icons/stripes-pink.svg"
 
+export const CATEGORY_HEIGHT = 56
+
 type FundWithTotalSpent = Fund & { totalSpent: number }
 type CategoryProps = {
   fund: FundWithTotalSpent
 }
 export default function Category({ fund }: CategoryProps) {
   return (
-    <View className="py-2 px-4">
+    <View className="justify-center px-4" style={{ height: CATEGORY_HEIGHT }}>
       <View className="flex-row justify-between">
         <Text className="font-satoshi-medium text-violet12 text-base">
           {fund.name}
