@@ -69,7 +69,10 @@ function Form() {
               onSuccess: (folder) => {
                 navigation.navigate("Root", {
                   screen: "Home",
-                  params: { recentlyAddedToFolderId: folder.id },
+                  params: {
+                    screen: "Budgets",
+                    params: { recentlyAddedToFolderId: folder.id },
+                  },
                 })
               },
             },
