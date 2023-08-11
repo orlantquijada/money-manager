@@ -74,23 +74,23 @@ const parseKey = (dateString: string) => {
 }
 
 function useTransactionsList() {
-  return trpc.transaction.allThisWeek.useQuery(undefined, {
-    select: (data) => {
+  return trpc.transaction.allThisMonth.useQuery(undefined, {
+    select: (transactions) => {
       // date string as key
-      const _data: Record<string, typeof data[number][]> = {}
+      const groupByDate: Record<string, typeof transactions[number][]> = {}
 
-      for (const transaction of data) {
-        const day = transaction.date
+      for (const transaction of transactions) {
+        const date = transaction.date
         const key = formatKey(transaction.date || new Date())
-        if (!day) continue
-        else if (_data[key]) {
-          _data[key]?.push(transaction)
+        if (!date) continue
+        else if (groupByDate[key]) {
+          groupByDate[key]?.push(transaction)
         } else {
-          _data[key] = [transaction]
+          groupByDate[key] = [transaction]
         }
       }
 
-      return Object.entries(_data).map(([key, value]) => ({
+      return Object.entries(groupByDate).map(([key, value]) => ({
         title: parseKey(key),
         data: value,
       }))
