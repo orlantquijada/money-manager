@@ -208,17 +208,32 @@ export const pieColors5 = [
   "hsla(26, 89%, 86%, 1)",
 ]
 
-const grass = {
-  grass1: "#fbfefb",
-  grass2: "#f3fcf3",
-  grass3: "#ebf9eb",
-  grass4: "#dff3df",
-  grass5: "#ceebcf",
-  grass6: "#b7dfba",
-  grass7: "#97cf9c",
-  grass8: "#65ba75",
-  grass9: "#46a758",
-  grass10: "#3d9a50",
-  grass11: "#297c3b",
-  grass12: "#1b311e",
+// const grass = {
+//   grass1: "#fbfefb",
+//   grass2: "#f3fcf3",
+//   grass3: "#ebf9eb",
+//   grass4: "#dff3df",
+//   grass5: "#ceebcf",
+//   grass6: "#b7dfba",
+//   grass7: "#97cf9c",
+//   grass8: "#65ba75",
+//   grass9: "#46a758",
+//   grass10: "#3d9a50",
+//   grass11: "#297c3b",
+//   grass12: "#1b311e",
+// }
+
+export const lime = {
+  lime1: "hsl(85, 50.0%, 98.7%)",
+  lime2: "hsl(85, 66.7%, 96.5%)",
+  lime3: "hsl(85, 76.8%, 91.7%)",
+  lime4: "hsl(84, 71.6%, 86.6%)",
+  lime5: "hsl(83, 62.5%, 80.8%)",
+  lime6: "hsl(81, 51.6%, 73.6%)",
+  lime7: "hsl(79, 41.5%, 64.4%)",
+  lime8: "hsl(77, 40.2%, 52.2%)",
+  lime9: "hsl(81, 80.0%, 66.0%)",
+  lime10: "hsl(81, 75.0%, 60.0%)",
+  lime11: "hsl(75, 40.0%, 29.0%)",
+  lime12: "hsl(75, 40.0%, 18.0%)",
 }
