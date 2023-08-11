@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { View, Text, Pressable } from "react-native"
 import { getWeeksInMonth, getWeekOfMonth, isThisMonth } from "date-fns"
 
-import { getTotalBudgetedAmount, toCurrencyNarrow } from "~/utils/functions"
+import { toCurrencyNarrow } from "~/utils/functions"
 import { mauve, pink } from "~/utils/colors"
 import useToggle from "~/utils/hooks/useToggle"
 import { daysInCurrentMonth } from "~/utils/constants"
@@ -12,12 +12,12 @@ import type { Fund, TimeMode } from ".prisma/client"
 
 import Stripes from "@assets/icons/stripes-small-violet.svg"
 import PinkStripes from "@assets/icons/stripes-pink.svg"
+import { FundWithMeta } from "~/types"
 
 export const CATEGORY_HEIGHT = 56
 
-type FundWithTotalSpent = Fund & { totalSpent: number }
 type CategoryProps = {
-  fund: FundWithTotalSpent
+  fund: FundWithMeta
 }
 export default function Category({ fund }: CategoryProps) {
   return (
@@ -35,18 +35,10 @@ export default function Category({ fund }: CategoryProps) {
   )
 }
 
-function HelperText({ fund }: { fund: FundWithTotalSpent }) {
-  const relativeOverspentValue = useMemo(
-    () => getRelativeOverspentValue(fund),
-    [fund],
-  )
+function HelperText({ fund }: { fund: FundWithMeta }) {
+  const relativeOverspentValue = getRelativeOverspentValue(fund)
   const didRelativeOverspend = relativeOverspentValue < 0
-
-  const didMonthlyOverspend = useMemo(
-    () => getDidMonthlyOverspent(fund),
-    [fund],
-  )
-
+  const didMonthlyOverspend = getDidMonthlyOverspent(fund)
   const [showDefault, { toggle }] = useToggle(true)
 
   return (
@@ -90,7 +82,11 @@ function HelperText({ fund }: { fund: FundWithTotalSpent }) {
             of
             <Text className="font-nunito-semibold">
               {" "}
-              {toCurrencyNarrow(getTotalBudgetedAmount(fund))}
+              {toCurrencyNarrow(fund.totalBudgetedAmount)}
+            </Text>{" "}
+            <Text className="font-nunito">
+              ({Math.ceil((fund.totalSpent / fund.totalBudgetedAmount) * 100)}
+              %)
             </Text>
           </>
         </Text>
@@ -99,7 +95,7 @@ function HelperText({ fund }: { fund: FundWithTotalSpent }) {
   )
 }
 
-function CategoryProgressBar({ fund }: { fund: FundWithTotalSpent }) {
+function CategoryProgressBar({ fund }: { fund: FundWithMeta }) {
   const [fundProgress, overspentProgress] = useFundProgress(
     fund,
     fund.totalSpent,
@@ -139,19 +135,25 @@ function CategoryProgressBar({ fund }: { fund: FundWithTotalSpent }) {
   )
 }
 
-function getDidMonthlyOverspent(fund: FundWithTotalSpent) {
-  return getTotalBudgetedAmount(fund) < fund.totalSpent
+function getDidMonthlyOverspent(fund: FundWithMeta) {
+  return fund.totalBudgetedAmount < fund.totalSpent
 }
 
 // relative to current date and timemode
-function getRelativeOverspentValue(fund: FundWithTotalSpent) {
-  const budgetedAmount = getTotalBudgetedAmount(fund)
+function getRelativeOverspentValue(fund: FundWithMeta) {
   const now = new Date()
 
   if (fund.timeMode === "MONTHLY" || fund.timeMode === "EVENTUALLY")
-    return budgetedAmount - fund.totalSpent
+    return fund.totalBudgetedAmount - fund.totalSpent
   else if (fund.timeMode === "WEEKLY") {
     const weekOfMonth = getWeekOfMonth(now)
+    if (isThisMonth(fund.createdAt || now)) {
+      return (
+        (getWeekOfMonth(now) - getWeekOfMonth(fund.createdAt || now) + 1) *
+          Number(fund.budgetedAmount) -
+        fund.totalSpent
+      )
+    }
     return weekOfMonth * Number(fund.budgetedAmount) - fund.totalSpent
   }
 
