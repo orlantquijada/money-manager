@@ -7,11 +7,12 @@ import { toCurrencyNarrow } from "~/utils/functions"
 import { pink, violet } from "~/utils/colors"
 import { transitions } from "~/utils/motion"
 
-import { type Folder, type Fund } from ".prisma/client"
+import { type Folder } from ".prisma/client"
 import ScaleDownPressable from "./ScaleDownPressable"
 import Category, { CATEGORY_HEIGHT } from "./Category"
 import StyledMotiView from "./StyledMotiView"
 import { AnimateHeight } from "./AnimateHeight"
+import type { FundWithMeta } from "~/types"
 
 import FolderClosed from "../../assets/icons/folder-duo.svg"
 import FolderOpen from "../../assets/icons/folder-open-duo.svg"
@@ -22,7 +23,7 @@ type Props = {
   folderId: Folder["id"]
   folderName: Folder["name"]
   amountLeft: number
-  funds: (Fund & { totalSpent: number })[]
+  funds: FundWithMeta[]
   defaultOpen?: boolean
   /*
    * prop for animation —

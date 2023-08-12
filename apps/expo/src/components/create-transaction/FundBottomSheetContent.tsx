@@ -77,7 +77,7 @@ export function FundBottomSheetContent() {
 }
 
 const FundList = memo(({ searchText }: { searchText: string }) => {
-  const { data, status } = trpc.fund.listFromUserId.useQuery(userId)
+  const { data, status } = useFunds()
 
   const fund = useTransactionStore((s) => s.fund)
 
@@ -133,7 +133,7 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => {
         const selected = item.id === fund?.id
-        const moneyLeft = getTotalBudgetedAmount(item) - item.totalSpent
+        const moneyLeft = item.totalBudgetedAmount - item.totalSpent
 
         return (
           <Pressable
@@ -179,3 +179,14 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
   )
 })
 FundList.displayName = "FundList"
+
+function useFunds() {
+  return trpc.fund.listFromUserId.useQuery(userId, {
+    select: (funds) => {
+      return funds.map((fund) => ({
+        ...fund,
+        totalBudgetedAmount: getTotalBudgetedAmount(fund),
+      }))
+    },
+  })
+}

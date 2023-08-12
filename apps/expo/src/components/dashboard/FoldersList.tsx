@@ -1,6 +1,5 @@
-import { ComponentProps } from "react"
-import { View } from "react-native"
-import Animated from "react-native-reanimated"
+import { FlatList, View } from "react-native"
+import { FundWithMeta } from "~/types"
 
 import { getTotalBudgetedAmount } from "~/utils/functions"
 import { useHomeTabRoute } from "~/utils/hooks/useHomeTabRoute"
@@ -8,16 +7,11 @@ import { trpc } from "~/utils/trpc"
 
 import Budget from "../Budget"
 
-// TODO: di mn diay ni need i flatlist kay di mn jd siya in ana ka daghan
-export default function FoldersList({
-  onScroll,
-}: {
-  onScroll?: ComponentProps<typeof Animated.FlatList>["onScroll"]
-}) {
+export default function FoldersList() {
   const folders = useFolders()
   const route = useHomeTabRoute("Budgets")
   return (
-    <Animated.FlatList
+    <FlatList
       data={folders.data}
       showsVerticalScrollIndicator={false}
       // ListHeaderComponent={
@@ -25,7 +19,6 @@ export default function FoldersList({
       //     Budgets
       //   </Text>
       // }
-      onScroll={onScroll}
       ItemSeparatorComponent={() => <View className="h-2" />}
       // contentContainerStyle={{ paddingBottom: 40, paddingTop: 80 }}
       contentContainerStyle={{ paddingBottom: 40 }}
@@ -57,15 +50,19 @@ function useFolders() {
         let totalSpent = 0
         let totalBudget = 0
 
-        for (const fund of folder.funds) {
-          const budgetedAmount = getTotalBudgetedAmount(fund)
+        const funds: FundWithMeta[] = folder.funds as FundWithMeta[]
+        for (const fund of funds) {
+          fund.totalBudgetedAmount = getTotalBudgetedAmount(fund)
           totalSpent +=
-            budgetedAmount < fund.totalSpent ? budgetedAmount : fund.totalSpent
-          totalBudget += budgetedAmount
+            fund.totalBudgetedAmount < fund.totalSpent
+              ? fund.totalBudgetedAmount
+              : fund.totalSpent
+          totalBudget += fund.totalBudgetedAmount
         }
 
         return {
           ...folder,
+          funds,
           amountLeft: totalBudget - totalSpent,
         }
       })
