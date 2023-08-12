@@ -1,5 +1,5 @@
 import { ComponentProps, FC, useState } from "react"
-import { View, Text, ScrollView } from "react-native"
+import { View, Text, ScrollView, LayoutChangeEvent } from "react-native"
 import {
   SharedValue,
   useDerivedValue,
@@ -54,8 +54,12 @@ export default function FundInfo({ setScreen }: Props) {
   const selectedType = useSharedValue(formData.fundType || "SPENDING")
 
   const [fundName, setFundName] = useState(formData.name || "")
-  const { targetHeight, spendingHeight, nonNegotiableHeight, state } =
-    useAnimations(selectedType)
+  const {
+    state,
+    handleNonNegotiableOnLayout,
+    handleSpendingOnLayout,
+    handleTargetOnLayout,
+  } = useAnimations(selectedType)
 
   const disabled = !fundName || !selectedType
   const dirty = Boolean(fundName)
@@ -105,11 +109,10 @@ export default function FundInfo({ setScreen }: Props) {
                   <FundCard
                     Icon={ShoppingBagIcon}
                     label="For Spending"
+                    pillLabel="Variable"
                     description="Usually for groceries, transportation"
                     className="mb-2"
-                    onLayout={({ nativeEvent }) => {
-                      spendingHeight.value = nativeEvent.layout.height
-                    }}
+                    onLayout={handleSpendingOnLayout}
                   />
                 </ScaleDownPressable>
               </Presence>
@@ -123,11 +126,10 @@ export default function FundInfo({ setScreen }: Props) {
                   <FundCard
                     Icon={LockIcon}
                     label="Non-negotiables"
+                    pillLabel="Fixed"
                     description="Automatically set aside money for this budget. Usually for rent, electricity"
                     className="mb-2"
-                    onLayout={({ nativeEvent }) => {
-                      nonNegotiableHeight.value = nativeEvent.layout.height
-                    }}
+                    onLayout={handleNonNegotiableOnLayout}
                   />
                 </ScaleDownPressable>
               </Presence>
@@ -142,9 +144,7 @@ export default function FundInfo({ setScreen }: Props) {
                     Icon={GPSIcon}
                     label="Targets"
                     description="Set a target amount to build up over time. Usually for savings, big purchases"
-                    onLayout={({ nativeEvent }) => {
-                      targetHeight.value = nativeEvent.layout.height
-                    }}
+                    onLayout={handleTargetOnLayout}
                   />
                 </ScaleDownPressable>
               </Presence>
@@ -174,12 +174,14 @@ export default function FundInfo({ setScreen }: Props) {
 function FundCard({
   label,
   description,
+  pillLabel,
   Icon,
   className,
   style,
   onLayout,
 }: {
   label: string
+  pillLabel?: string
   description: string
   Icon: FC<SvgProps>
 } & Pick<ComponentProps<typeof View>, "style" | "className" | "onLayout">) {
@@ -194,9 +196,18 @@ function FundCard({
       </View>
 
       <View className="flex-shrink">
-        <Text className="text-mauveDark12 font-satoshi-medium text-base">
-          {label}
-        </Text>
+        <View className="flex-row items-center">
+          <Text className="text-mauveDark12 font-satoshi-medium text-base">
+            {label}
+          </Text>
+          {pillLabel ? (
+            <View className="bg-mauveDark7 ml-2 justify-center rounded-full px-1.5 py-0.5">
+              <Text className="font-satoshi-medium text-mauveDark10 text-xs tracking-wide">
+                {pillLabel}
+              </Text>
+            </View>
+          ) : null}
+        </View>
         <Text className="text-mauveDark10 font-satoshi-medium text-base">
           {description}
         </Text>
@@ -207,9 +218,20 @@ function FundCard({
 
 const FUND_CARD_GAP = 8
 function useAnimations(selectedType: SharedValue<FundType>) {
+  // NOTE: saving heights on one `SharedValue` doesn't work – I've tried
   const spendingHeight = useSharedValue(0)
   const nonNegotiableHeight = useSharedValue(0)
   const targetHeight = useSharedValue(0)
+
+  const handleOnLayout =
+    (height: SharedValue<number>) =>
+    ({ nativeEvent }: LayoutChangeEvent) => {
+      height.value = nativeEvent.layout.height
+    }
+
+  const handleSpendingOnLayout = handleOnLayout(spendingHeight)
+  const handleNonNegotiableOnLayout = handleOnLayout(nonNegotiableHeight)
+  const handleTargetOnLayout = handleOnLayout(targetHeight)
 
   const state = useDynamicAnimation()
 
@@ -234,8 +256,8 @@ function useAnimations(selectedType: SharedValue<FundType>) {
 
   return {
     state,
-    nonNegotiableHeight,
-    spendingHeight,
-    targetHeight,
+    handleTargetOnLayout,
+    handleSpendingOnLayout,
+    handleNonNegotiableOnLayout,
   }
 }
