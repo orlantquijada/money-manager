@@ -34,9 +34,6 @@ COPY --link . .
 # Build application
 RUN pnpm run build:server
 
-# Run DB migrations
-RUN pnpm run db:deploy
-
 # Remove development dependencies
 RUN pnpm prune --prod
 
@@ -46,6 +43,9 @@ FROM base
 
 # Copy built application
 COPY --from=build /app /app
+
+# Run DB migrations
+CMD [ "pnpm", "run", "db:deploy" ]
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
