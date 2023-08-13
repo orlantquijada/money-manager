@@ -162,18 +162,28 @@ export default function TransactionsScreen() {
           {colors.slice(0, 3).map((color, index) => (
             <View
               className={clsx(
-                "flex-row items-center border-b border-transparent py-2.5",
+                "flex-row border-b border-transparent py-2.5",
                 index !== 2 && "border-b-mauve4",
               )}
               key={color + index}
             >
-              <View
-                className="mr-2 aspect-square h-2 rounded-full"
-                style={{ backgroundColor: color }}
-              />
-              <Text className="font-satoshi-bold text-mauve12 text-base">
-                Groceries
-              </Text>
+              <View className="flex-row">
+                <View className="mr-2.5 h-6 justify-center ">
+                  <View
+                    className="aspect-square h-2 rounded-full"
+                    style={{ backgroundColor: color }}
+                  />
+                </View>
+                <View>
+                  <Text className="font-satoshi-bold text-mauve12 text-base">
+                    Groceries
+                  </Text>
+                  {/* TODO: number of entries */}
+                  <Text className="font-satoshi-medium text-mauve10 text-base">
+                    4 entries
+                  </Text>
+                </View>
+              </View>
               <Text className="font-nunito-bold text-mauve9 ml-auto text-sm">
                 {toCurrency(250.25)}
               </Text>
