@@ -11,6 +11,7 @@ export function TransactionsList() {
     <View className="relative flex-1">
       <SectionList
         showsVerticalScrollIndicator={false}
+        keyExtractor={(item) => item.id}
         renderItem={({ item, section, index }) => (
           <View
             className="bg-violet1 flex-row items-center"

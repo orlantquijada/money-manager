@@ -9,6 +9,10 @@ export const transitions = {
     stiffness: 100,
     damping: 30,
   },
+  lessSnappy: {
+    stiffness: 200,
+    damping: 30,
+  },
   snappy: {
     stiffness: 300,
     damping: 30,
