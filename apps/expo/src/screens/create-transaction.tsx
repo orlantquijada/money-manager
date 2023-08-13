@@ -167,7 +167,7 @@ function useCreateTransaction() {
   return trpc.transaction.create.useMutation({
     onSuccess: () => {
       utils.folder.listWithFunds.invalidate()
-      utils.transaction.allThisWeek.invalidate()
+      utils.transaction.allThisMonth.invalidate()
     },
   })
 }
