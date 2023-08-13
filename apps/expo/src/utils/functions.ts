@@ -21,6 +21,15 @@ export const pesoFormatter = new Intl.NumberFormat("en-PH", {
 })
 export const toCurrency = (amount: number) => pesoFormatter.format(amount)
 
+export const shortFormatter = new Intl.NumberFormat("en-PH", {
+  style: "currency",
+  currency: "PHP",
+  minimumFractionDigits: 0,
+})
+export const toCurrencyShort = (amount: number) => {
+  return shortFormatter.format(amount)
+}
+
 // hide decimal if walay decimal ang amount
 // 100
 // 100.50

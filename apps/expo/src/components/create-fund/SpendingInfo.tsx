@@ -194,7 +194,12 @@ function Wrapper({
                     .then(() => {
                       navigation.navigate("Root", {
                         screen: "Home",
-                        params: { recentlyAddedToFolderId: folderId },
+                        params: {
+                          screen: "Budgets",
+                          params: {
+                            recentlyAddedToFolderId: folderId,
+                          },
+                        },
                       })
                     })
                     .catch(() => {

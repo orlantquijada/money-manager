@@ -73,7 +73,7 @@ export const CurrencyInput = forwardRef<
       <RNCurrencyInput
         delimiter=","
         separator="."
-        precision={2}
+        precision={0}
         minValue={0}
         {...props}
         value={props.value || value}
