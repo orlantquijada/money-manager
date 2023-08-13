@@ -34,6 +34,9 @@ COPY --link . .
 # Build application
 RUN pnpm run build:server
 
+# Run DB migrations
+RUN pnpm run db:deploy
+
 # Remove development dependencies
 RUN pnpm prune --prod
 
