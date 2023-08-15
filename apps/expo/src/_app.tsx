@@ -1,3 +1,6 @@
+import "react-native-reanimated"
+import "react-native-gesture-handler"
+
 import { useCallback } from "react"
 import { StatusBar } from "expo-status-bar"
 import { SafeAreaProvider } from "react-native-safe-area-context"
