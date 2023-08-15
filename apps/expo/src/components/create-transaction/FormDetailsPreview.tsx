@@ -12,6 +12,7 @@ import {
 } from "~/utils/hooks/useTransactionStore"
 
 import ChevronUpIcon from "../../../assets/icons/hero-icons/chevron-up.svg"
+import ScaleDownPressable from "../ScaleDownPressable"
 
 export const FormDetailsPreview = ({
   handlePresentModalPress,
@@ -60,7 +61,7 @@ export const FormDetailsPreview = ({
         <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
           ·
         </Text>
-        <Pressable
+        <ScaleDownPressable
           className="h-full shrink justify-center"
           onPress={() => {
             handlePresentModalPress("note")
@@ -75,10 +76,10 @@ export const FormDetailsPreview = ({
           >
             {note || "Add Note"}
           </Text>
-        </Pressable>
+        </ScaleDownPressable>
       </View>
       <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
-        <Pressable
+        <ScaleDownPressable
           className="h-full justify-center"
           onPress={openStoreListBottomSheet}
         >
@@ -90,7 +91,7 @@ export const FormDetailsPreview = ({
           >
             {store || "Store"}
           </Text>
-        </Pressable>
+        </ScaleDownPressable>
 
         <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
           ·
@@ -119,7 +120,7 @@ function DateSection({
   time = time || format(createdAt, "K:mm aa")
 
   return (
-    <Pressable
+    <ScaleDownPressable
       className="h-full justify-center"
       onPress={() => {
         handlePresentModalPress("createdAt")
@@ -128,7 +129,7 @@ function DateSection({
       <Text className="text-mauveDark12 font-satoshi-bold text-base leading-6">
         {capitalize(date || "")} at {time}
       </Text>
-    </Pressable>
+    </ScaleDownPressable>
   )
 }
 
@@ -140,7 +141,7 @@ const FundSection = memo(
     const offset = 4
 
     return (
-      <Pressable
+      <ScaleDownPressable
         className="h-full justify-center"
         onPress={openFundListBottomSheet}
       >
@@ -163,7 +164,7 @@ const FundSection = memo(
         >
           {fund?.name || "Fund"}
         </MotiText>
-      </Pressable>
+      </ScaleDownPressable>
     )
   },
 )
