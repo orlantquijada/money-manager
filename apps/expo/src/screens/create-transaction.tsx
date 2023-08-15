@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react"
-import { Pressable, Text, View } from "react-native"
+import { Dimensions, Pressable, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomSheetModal } from "@gorhom/bottom-sheet"
 import { shallow } from "zustand/shallow"
@@ -25,6 +25,8 @@ import FundListBottomSheet from "~/components/create-transaction/FundListBottomS
 import { FormDetailsPreview } from "~/components/create-transaction/FormDetailsPreview"
 
 import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg"
+
+const { height: screenHeight } = Dimensions.get("screen")
 
 export default function CreateTransaction() {
   // show default insets since tabbar isn't shown on this screen
@@ -85,7 +87,10 @@ function CreateTransactionForm() {
 
   return (
     <>
-      <View className="flex-grow items-center justify-center">
+      <View
+        className="flex-grow items-center justify-center"
+        style={{ minHeight: screenHeight * 0.25 }}
+      >
         <Amount amount={amount} />
       </View>
 
