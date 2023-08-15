@@ -7,7 +7,7 @@ type State = {
   fund?: Fund | undefined
   createdAt: Date
   amount: number
-  didSumit: boolean
+  submitTimestamp?: number | undefined
   reset: () => void
 }
 
@@ -19,7 +19,7 @@ const defaultValues: Omit<State, "reset"> = {
   createdAt: new Date(),
   store: "",
   note: "",
-  didSumit: false,
+  submitTimestamp: undefined,
   fund: undefined,
 }
 

@@ -136,7 +136,7 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
     <ScaleDownPressable
       disabled={createTransaction.status === "loading"}
       onPress={() => {
-        useTransactionStore.setState({ didSumit: true })
+        useTransactionStore.setState({ submitTimestamp: new Date().getTime() })
         if (formValues.fundId) {
           createTransaction.mutate(
             {

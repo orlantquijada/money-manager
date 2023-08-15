@@ -1,11 +1,11 @@
-import { memo } from "react"
+import { memo, useEffect } from "react"
 import { Pressable, Text, View } from "react-native"
-import { MotiText, MotiView } from "moti"
+import { MotiText, MotiView, useAnimationState } from "moti"
 import clsx from "clsx"
 import { format } from "date-fns"
 
 import { mauveDark, redDark } from "~/utils/colors"
-import { capitalize, formatRelativeDate } from "~/utils/functions"
+import { formatRelativeDate } from "~/utils/functions"
 import {
   HandlePresentModalPress,
   useTransactionStore,
@@ -130,9 +130,27 @@ function DateSection({
 const FundSection = memo(
   ({ openFundListBottomSheet }: { openFundListBottomSheet: () => void }) => {
     const fund = useTransactionStore((s) => s.fund)
-    const didSumit = useTransactionStore((s) => s.didSumit)
+    const submitTimestamp = useTransactionStore((s) => s.submitTimestamp)
 
     const offset = 4
+
+    const state = useAnimationState({
+      from: {
+        color: mauveDark.mauve11,
+      },
+      hasFund: {
+        color: mauveDark.mauve12,
+      },
+      shake: {
+        color: redDark.red11,
+        translateX: [0, offset, -offset, offset, 0],
+      },
+    })
+
+    useEffect(() => {
+      if (submitTimestamp && !fund) state.transitionTo("shake")
+      else state.transitionTo(fund ? "hasFund" : "from")
+    }, [fund, state, submitTimestamp])
 
     return (
       <ScaleDownPressable
@@ -141,20 +159,21 @@ const FundSection = memo(
       >
         <MotiText
           className="font-satoshi-bold text-base leading-6"
-          animate={
-            didSumit && !fund
-              ? {
-                  // @ts-expect-error idk
-                  color: redDark.red11,
-                  translateX: [0, offset, -offset, offset, 0],
-                }
-              : {
-                  color: fund ? mauveDark.mauve12 : mauveDark.mauve11,
-                }
-          }
+          state={state}
+          // animate={
+          //   didSumit && !fund
+          //     ? {
+          //         // @ts-expect-error idk
+          //         color: redDark.red11,
+          //         translateX: [0, offset, -offset, offset, 0],
+          //       }
+          //     : {
+          //         color: fund ? mauveDark.mauve12 : mauveDark.mauve11,
+          //       }
+          // }
           // TODO: make it move faster
           transition={{
-            translateX: { type: "timing", duration: 200 },
+            translateX: { type: "timing", duration: 120 },
           }}
         >
           {fund?.name || "Fund"}

@@ -159,7 +159,7 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
               >
                 <Text
                   className={clsx(
-                    "font-satoshi-medium text-sm",
+                    "font-nunito-medium text-sm",
                     moneyLeft > 0 && "text-limeDark10",
                     moneyLeft < 0 && "text-red10",
                   )}
