@@ -2,10 +2,10 @@ import { memo } from "react"
 import { Pressable, Text, View } from "react-native"
 import { MotiText, MotiView } from "moti"
 import clsx from "clsx"
-import { format, formatRelative } from "date-fns"
+import { format } from "date-fns"
 
 import { mauveDark, redDark } from "~/utils/colors"
-import { capitalize } from "~/utils/functions"
+import { capitalize, formatRelativeDate } from "~/utils/functions"
 import {
   HandlePresentModalPress,
   useTransactionStore,
@@ -111,13 +111,7 @@ function DateSection({
 }) {
   const createdAt = useTransactionStore((s) => s.createdAt)
 
-  const formattedDate = formatRelative(createdAt, new Date())
-  let [date, time] = formattedDate.split(" at ")
-
-  // NOTE: does not include year
-  // TODO: include year if not this year
-  date = date?.includes("/") ? format(createdAt, "MMM d") : date
-  time = time || format(createdAt, "K:mm aa")
+  const formattedDate = formatRelativeDate(createdAt, new Date())
 
   return (
     <ScaleDownPressable
@@ -127,7 +121,7 @@ function DateSection({
       }}
     >
       <Text className="text-mauveDark12 font-satoshi-bold text-base leading-6">
-        {capitalize(date || "")} at {time}
+        {formattedDate} at {format(createdAt, "K:mm aa")}
       </Text>
     </ScaleDownPressable>
   )
@@ -158,6 +152,7 @@ const FundSection = memo(
                   color: fund ? mauveDark.mauve12 : mauveDark.mauve11,
                 }
           }
+          // TODO: make it move faster
           transition={{
             translateX: { type: "timing", duration: 200 },
           }}

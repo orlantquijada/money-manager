@@ -5,6 +5,7 @@ import {
   getWeekOfMonth,
   getWeeksInMonth,
   isThisMonth,
+  isThisYear,
 } from "date-fns"
 import { dayOfWeek, daysInCurrentMonth } from "./constants"
 
@@ -98,5 +99,5 @@ export function formatRelativeDate(toDate: Date, baseDate: Date) {
   else if (diff === -1) return "Yesterday"
   else if (diff < -1 && diff > -7) return `Last ${dayOfWeek[toDate.getDay()]}`
 
-  return format(toDate, "MMM d, yyyy")
+  return format(toDate, isThisYear(toDate) ? "MMM d" : "MMM d, yyyy")
 }
