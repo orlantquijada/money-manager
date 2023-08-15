@@ -6,13 +6,13 @@ import { toCurrencyNarrow } from "~/utils/functions"
 import { mauve, pink } from "~/utils/colors"
 import useToggle from "~/utils/hooks/useToggle"
 import { daysInCurrentMonth } from "~/utils/constants"
+import { FundWithMeta } from "~/types"
 
 import ProgressBar from "./ProgressBar"
 import type { Fund, TimeMode } from ".prisma/client"
 
 import Stripes from "@assets/icons/stripes-small-violet.svg"
 import PinkStripes from "@assets/icons/stripes-pink.svg"
-import { FundWithMeta } from "~/types"
 
 export const CATEGORY_HEIGHT = 56
 
