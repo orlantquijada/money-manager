@@ -1,6 +1,12 @@
 import { Fund } from ".prisma/client"
-import { getWeekOfMonth, getWeeksInMonth, isThisMonth } from "date-fns"
-import { daysInCurrentMonth } from "./constants"
+import {
+  differenceInCalendarDays,
+  format,
+  getWeekOfMonth,
+  getWeeksInMonth,
+  isThisMonth,
+} from "date-fns"
+import { dayOfWeek, daysInCurrentMonth } from "./constants"
 
 export const getRandomChoice = <T>(arr: T[]) => {
   return arr[Math.floor(Math.random() * arr.length)] as T
@@ -82,4 +88,15 @@ export function getTotalBudgetedAmount(fund: Fund) {
   }
 
   return budgetedAmount
+}
+
+export function formatRelativeDate(toDate: Date, baseDate: Date) {
+  const diff = differenceInCalendarDays(toDate, baseDate)
+
+  if (diff === 0) return "Today"
+  else if (diff === 1) return "Tomorrow"
+  else if (diff === -1) return "Yesterday"
+  else if (diff < -1 && diff > -7) return `Last ${dayOfWeek[toDate.getDay()]}`
+
+  return format(toDate, "MMM d, yyyy")
 }
