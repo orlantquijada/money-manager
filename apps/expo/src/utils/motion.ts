@@ -29,15 +29,18 @@ export const transitions = {
 
 // custom layout animations for create-transaction amount
 const offset = 90
-export const CustomSlideOutDown: LayoutAnimationFunction = (values) => {
+export const CustomSlideOutDown: LayoutAnimationFunction = (_) => {
   "worklet"
 
   const animations = {
-    originY: withSpring(offset, transitions.snappier),
+    transform: [{ translateY: withSpring(offset, transitions.snappier) }],
     opacity: withSpring(0, transitions.snappier),
   }
 
-  const initialValues = { originY: values.currentOriginY, opacity: 1 }
+  const initialValues = {
+    transform: [{ translateY: 0 }],
+    opacity: 1,
+  }
 
   return {
     animations,
@@ -45,15 +48,15 @@ export const CustomSlideOutDown: LayoutAnimationFunction = (values) => {
   }
 }
 
-export const CustomSlideOutUp: LayoutAnimationFunction = (values) => {
+export const CustomSlideOutUp: LayoutAnimationFunction = (_) => {
   "worklet"
 
   const animations = {
-    originY: withSpring(-offset, transitions.snappier),
+    transform: [{ translateY: withSpring(-offset, transitions.snappier) }],
     opacity: withSpring(0, transitions.snappier),
   }
   const initialValues = {
-    originY: values.currentOriginY,
+    transform: [{ translateY: 0 }],
     opacity: 1,
   }
 
@@ -67,11 +70,11 @@ export const CustomSlideInDown: LayoutAnimationFunction = (_) => {
   "worklet"
 
   const animations = {
-    originY: withSpring(0, transitions.snappier),
+    transform: [{ translateY: withSpring(0, transitions.snappier) }],
     opacity: withSpring(1, transitions.snappier),
   }
   const initialValues = {
-    originY: offset,
+    transform: [{ translateY: offset }],
     opacity: 0,
   }
 

@@ -65,15 +65,22 @@ export default function TotalSpent() {
 const offset = 40
 const delay = 0
 
-const CustomSlideOutUp: LayoutAnimationFunction = (values) => {
+const CustomSlideOutUp: LayoutAnimationFunction = (_) => {
   "worklet"
 
   const animations = {
-    originY: withDelay(delay, withSpring(-offset, transitions.lessSnappy)),
+    transform: [
+      {
+        translateY: withDelay(
+          delay,
+          withSpring(-offset, transitions.lessSnappy),
+        ),
+      },
+    ],
     opacity: withDelay(delay, withSpring(0, transitions.lessSnappy)),
   }
   const initialValues = {
-    originY: values.currentOriginY,
+    transform: [{ translateY: 0 }],
     opacity: 1,
   }
 
@@ -87,11 +94,13 @@ const CustomSlideInDown: LayoutAnimationFunction = (_) => {
   "worklet"
 
   const animations = {
-    originY: withDelay(delay, withSpring(0, transitions.lessSnappy)),
+    transform: [
+      { translateY: withDelay(delay, withSpring(0, transitions.lessSnappy)) },
+    ],
     opacity: withDelay(delay, withSpring(1, transitions.lessSnappy)),
   }
   const initialValues = {
-    originY: offset,
+    transform: [{ translateY: offset }],
     opacity: 0,
   }
 

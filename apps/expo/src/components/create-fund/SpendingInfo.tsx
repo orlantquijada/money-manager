@@ -221,8 +221,8 @@ function Wrapper({
 function TimeModeText({ timeMode }: { timeMode: TimeMode }) {
   return (
     <StyledMotiView
-      from={{ translateY: 20, opacity: 1 }}
-      animate={{ translateY: 0 }}
+      from={{ translateY: 20, opacity: 0 }}
+      animate={{ translateY: 0, opacity: 1 }}
       exit={{ translateY: -20, opacity: 0 }}
       className="absolute left-0 top-0"
       transition={transitions.snappy}
