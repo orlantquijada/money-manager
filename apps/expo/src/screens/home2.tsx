@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react"
-import { View, Pressable } from "react-native"
+import { View } from "react-native"
 
 import SafeAreaView from "~/components/SafeAreaView"
 import BottomSheetModal from "~/components/BottomSheet"
@@ -12,6 +12,7 @@ import { HomeTabsParamList } from "~/types"
 import HomeTabBar from "~/components/HomeTabBar"
 import { TransactionsList } from "~/components/TransactionsList"
 import TotalSpent from "~/components/dashboard/TotalSpent"
+import ScaleDownPressable from "~/components/ScaleDownPressable"
 
 const Tab = createMaterialTopTabNavigator<HomeTabsParamList>()
 
@@ -38,9 +39,13 @@ export default function Home2() {
       <View className="h-full px-4">
         <View className="my-8 w-full flex-row items-start justify-between">
           <TotalSpent />
-          <Pressable hitSlop={40} onPress={handlePresentModalPress}>
+          <ScaleDownPressable
+            scale={0.85}
+            hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}
+            onPress={handlePresentModalPress}
+          >
             <Plus className="bg-mauve12" />
-          </Pressable>
+          </ScaleDownPressable>
         </View>
 
         {/* <View className="mt-8 w-full flex-row items-center justify-between"> */}

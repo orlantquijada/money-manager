@@ -36,7 +36,17 @@ export default function BottomSheetForm({
   return (
     <BottomSheetScrollView>
       <View className="h-8 flex-row items-center justify-between px-4">
-        <ScaleDownPressable onPress={dismissAll}>
+        <ScaleDownPressable
+          onPress={dismissAll}
+          scale={0.9}
+          opacity={0.5}
+          hitSlop={{
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: 10,
+          }}
+        >
           <ChevronDownIcon
             color={mauveDark.mauve12}
             width={20}

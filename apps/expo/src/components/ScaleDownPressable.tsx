@@ -2,10 +2,13 @@ import { mergeAnimateProp, MotiPressable } from "moti/interactions"
 import { styled } from "nativewind"
 import { ComponentProps } from "react"
 
-type Props = ComponentProps<typeof MotiPressable>
+type Props = ComponentProps<typeof MotiPressable> & {
+  scale?: number
+  opacity?: number
+}
 
 function ScaleDownPressable(props: Props) {
-  const { animate, ...rest } = props
+  const { animate, scale = 0.96, opacity = 1, ...rest } = props
 
   return (
     <MotiPressable
@@ -15,7 +18,8 @@ function ScaleDownPressable(props: Props) {
         "worklet"
 
         return mergeAnimateProp(interaction, animate, {
-          scale: interaction.pressed ? 0.96 : 1,
+          scale: interaction.pressed ? scale : 1,
+          opacity: interaction.pressed ? opacity : 1,
         })
       }}
     />

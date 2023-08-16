@@ -4,7 +4,7 @@ import {
   useBottomSheetModal,
 } from "@gorhom/bottom-sheet"
 import { memo, useMemo, useState } from "react"
-import { Pressable, Text, TextInput, View } from "react-native"
+import { Text, TextInput, View } from "react-native"
 import { MotiPressable } from "moti/interactions"
 import { MotiView } from "moti"
 import { Skeleton } from "moti/skeleton"
@@ -40,6 +40,14 @@ export function StoreBottomSheetContent() {
     <View className="flex-1">
       <View className="h-16 flex-row items-center justify-between px-4">
         <ScaleDownPressable
+          scale={0.9}
+          opacity={0.5}
+          hitSlop={{
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: 10,
+          }}
           onPress={() => {
             dismiss()
           }}
@@ -92,7 +100,7 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
         "worklet"
 
         return {
-          backgroundColor: pressed ? mauveDark.mauve5 : mauveDark.mauve4,
+          backgroundColor: pressed ? mauveDark.mauve6 : mauveDark.mauve4,
         }
       },
     [],
@@ -159,22 +167,27 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
         const selected = item.name === store
 
         return (
-          <Pressable
-            onPress={() => {
-              handleSetStore(item.name)
-            }}
+          <View
             className={clsx(
-              "h-12 flex-row items-center justify-between px-4",
+              "h-12",
               selected ? "bg-mauveDark4" : "bg-transparent",
             )}
           >
-            <Text className="text-mauveDark12 font-satoshi-medium text-base">
-              {item.name}
-            </Text>
-            {selected ? (
-              <CheckIcon color={mauveDark.mauve12} width={20} height={20} />
-            ) : null}
-          </Pressable>
+            <ScaleDownPressable
+              scale={0.98}
+              onPress={() => {
+                handleSetStore(item.name)
+              }}
+              className="h-full flex-row items-center justify-between self-stretch px-4"
+            >
+              <Text className="text-mauveDark12 font-satoshi-medium text-base">
+                {item.name}
+              </Text>
+              {selected ? (
+                <CheckIcon color={mauveDark.mauve12} width={20} height={20} />
+              ) : null}
+            </ScaleDownPressable>
+          </View>
         )
       }}
       ListEmptyComponent={() => (

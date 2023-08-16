@@ -1,6 +1,8 @@
-import clsx from "clsx"
-import { Pressable, View, Text } from "react-native"
+import { View, Text } from "react-native"
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs"
+import clsx from "clsx"
+
+import ScaleDownPressable from "./ScaleDownPressable"
 
 export default function HomeTabBar({
   state,
@@ -34,11 +36,10 @@ export default function HomeTabBar({
         }
 
         return (
-          <Pressable
+          <ScaleDownPressable
             onPress={onPress}
             onLongPress={onLongPress}
             key={route.key}
-            hitSlop={15}
             className="h-12 justify-center px-2"
           >
             <Text
@@ -53,7 +54,7 @@ export default function HomeTabBar({
             {isFocused && (
               <View className="bg-mauve12 absolute left-0 right-0 bottom-0 h-0.5" />
             )}
-          </Pressable>
+          </ScaleDownPressable>
         )
       })}
     </View>

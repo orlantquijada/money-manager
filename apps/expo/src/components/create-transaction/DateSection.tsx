@@ -150,10 +150,10 @@ const IOSDateTimePicker = memo(
                 }
                 // }
               }}
-              // display="inline"
-              display="default"
+              display="inline"
+              // display="default"
               themeVariant="dark"
-              style={{ paddingBottom: 16, opacity: 0.25 }}
+              style={{ paddingBottom: 16 }}
             />
           </View>
 

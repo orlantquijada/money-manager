@@ -4,7 +4,7 @@ import {
   useBottomSheetModal,
 } from "@gorhom/bottom-sheet"
 import { memo, useMemo, useState } from "react"
-import { Pressable, Text, TextInput, View } from "react-native"
+import { Text, TextInput, View } from "react-native"
 import { MotiView } from "moti"
 import { Skeleton } from "moti/skeleton"
 import clsx from "clsx"
@@ -43,8 +43,16 @@ export function FundBottomSheetContent() {
     <View className="flex-1">
       <View className="h-16 flex-row items-center justify-between px-4">
         <ScaleDownPressable
+          scale={0.9}
+          opacity={0.5}
           onPress={() => {
             dismiss()
+          }}
+          hitSlop={{
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: 10,
           }}
         >
           <ChevronDownIcon
@@ -136,43 +144,48 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
         const moneyLeft = item.totalBudgetedAmount - item.totalSpent
 
         return (
-          <Pressable
-            onPress={() => {
-              handleSetFund(item)
-            }}
+          <View
             className={clsx(
-              "h-12 flex-row items-center justify-between px-4",
+              "h-12",
               selected ? "bg-mauveDark4" : "bg-transparent",
             )}
           >
-            <Text className="text-mauveDark12 font-satoshi-medium text-base">
-              {item.name}
-            </Text>
+            <ScaleDownPressable
+              scale={0.98}
+              onPress={() => {
+                handleSetFund(item)
+              }}
+              className="h-full flex-row items-center justify-between self-stretch px-4"
+            >
+              <Text className="text-mauveDark12 font-satoshi-medium text-base">
+                {item.name}
+              </Text>
 
-            <View className="flex-row items-center gap-1">
-              <View
-                className={clsx(
-                  "h-8 justify-center rounded-lg px-2",
-                  // moneyLeft > 0 && "bg-lime10",
-                  // moneyLeft < 0 && "bg-red10",
-                )}
-              >
-                <Text
+              <View className="flex-row items-center gap-1">
+                <View
                   className={clsx(
-                    "font-nunito-medium text-sm",
-                    moneyLeft > 0 && "text-limeDark10",
-                    moneyLeft < 0 && "text-red10",
+                    "h-8 justify-center rounded-lg px-2",
+                    // moneyLeft > 0 && "bg-lime10",
+                    // moneyLeft < 0 && "bg-red10",
                   )}
                 >
-                  {toCurrencyNarrow(moneyLeft)}
-                </Text>
-              </View>
+                  <Text
+                    className={clsx(
+                      "font-nunito-medium text-sm",
+                      moneyLeft > 0 && "text-limeDark10",
+                      moneyLeft < 0 && "text-red10",
+                    )}
+                  >
+                    {toCurrencyNarrow(moneyLeft)}
+                  </Text>
+                </View>
 
-              {selected ? (
-                <CheckIcon color={mauveDark.mauve12} width={20} height={20} />
-              ) : null}
-            </View>
-          </Pressable>
+                {selected ? (
+                  <CheckIcon color={mauveDark.mauve12} width={20} height={20} />
+                ) : null}
+              </View>
+            </ScaleDownPressable>
+          </View>
         )
       }}
     />

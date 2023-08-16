@@ -1,5 +1,5 @@
 import { memo, useEffect } from "react"
-import { Pressable, Text, View } from "react-native"
+import { Text, View } from "react-native"
 import { MotiText, MotiView, useAnimationState } from "moti"
 import clsx from "clsx"
 import { format } from "date-fns"
@@ -11,8 +11,11 @@ import {
   useTransactionStore,
 } from "~/utils/hooks/useTransactionStore"
 
-import ChevronUpIcon from "../../../assets/icons/hero-icons/chevron-up.svg"
 import ScaleDownPressable from "../ScaleDownPressable"
+
+import ChevronUpIcon from "../../../assets/icons/hero-icons/chevron-up.svg"
+
+const scale = 0.92
 
 export const FormDetailsPreview = ({
   handlePresentModalPress,
@@ -41,11 +44,18 @@ export const FormDetailsPreview = ({
           delay: 500,
         }}
       >
-        <Pressable
+        <ScaleDownPressable
+          opacity={0.7}
+          scale={0.9}
           onPress={() => {
             handlePresentModalPress()
           }}
-          hitSlop={32}
+          hitSlop={{
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: 10,
+          }}
         >
           <ChevronUpIcon
             color={mauveDark.mauve11}
@@ -53,7 +63,7 @@ export const FormDetailsPreview = ({
             width={24}
             strokeWidth={3}
           />
-        </Pressable>
+        </ScaleDownPressable>
       </MotiView>
 
       <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
@@ -62,6 +72,7 @@ export const FormDetailsPreview = ({
           ·
         </Text>
         <ScaleDownPressable
+          scale={scale}
           className="h-full shrink justify-center"
           onPress={() => {
             handlePresentModalPress("note")
@@ -80,6 +91,7 @@ export const FormDetailsPreview = ({
       </View>
       <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
         <ScaleDownPressable
+          scale={scale}
           className="h-full justify-center"
           onPress={openStoreListBottomSheet}
         >
@@ -115,6 +127,7 @@ function DateSection({
 
   return (
     <ScaleDownPressable
+      scale={scale}
       className="h-full justify-center"
       onPress={() => {
         handlePresentModalPress("createdAt")
@@ -154,6 +167,7 @@ const FundSection = memo(
 
     return (
       <ScaleDownPressable
+        scale={scale}
         className="h-full justify-center"
         onPress={openFundListBottomSheet}
       >

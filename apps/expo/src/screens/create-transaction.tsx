@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react"
-import { Dimensions, Pressable, Text, View } from "react-native"
+import { Dimensions, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomSheetModal } from "@gorhom/bottom-sheet"
 import { shallow } from "zustand/shallow"
@@ -41,7 +41,9 @@ export default function CreateTransaction() {
             Add Expense
           </Text>
 
-          <Pressable
+          <ScaleDownPressable
+            scale={0.85}
+            hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}
             className="aspect-square w-8 items-center justify-center"
             onPress={() => navigation.goBack()}
           >
@@ -51,7 +53,7 @@ export default function CreateTransaction() {
               width={24}
               strokeWidth={3}
             />
-          </Pressable>
+          </ScaleDownPressable>
         </View>
 
         <CreateTransactionForm />

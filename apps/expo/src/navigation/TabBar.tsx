@@ -1,4 +1,4 @@
-import { Pressable, Animated } from "react-native"
+import { Animated, View } from "react-native"
 import { MotiView } from "moti"
 import {
   MaterialTopTabBarProps,
@@ -8,6 +8,8 @@ import {
 import { screenPadding } from "~/utils/constants"
 // import { useIsKeyboardShown } from "~/utils/hooks/useIsKeyboardShown"
 import { transitions } from "~/utils/motion"
+
+import ScaleDownPressable from "~/components/ScaleDownPressable"
 
 // const iconSize = {
 //   small: 20,
@@ -35,7 +37,7 @@ export default function TabBar({
   return (
     <Animated.View style={{ transform: [{ translateY }] }}>
       <MotiView
-        className="bg-mauve12 absolute bottom-0 left-0 right-0 flex-row items-center justify-center rounded-[20px]"
+        className="bg-mauve12 absolute bottom-0 left-0 right-0 flex-row items-center justify-center space-x-10 rounded-[20px]"
         style={{
           marginHorizontal: screenPadding,
           height: tabbarHeight,
@@ -99,32 +101,38 @@ export default function TabBar({
           })
 
           return (
-            <Pressable
-              onPress={onPress}
-              onLongPress={onLongPress}
-              style={index === 0 ? {} : { marginLeft: 40 }}
-              key={route.key}
-              hitSlop={15}
-            >
-              {/* {Icon ? ( */}
-              {/*   <MotiView */}
-              {/*     animate={ */}
-              {/*       shown */}
-              {/*         ? { height: iconSize.small, width: iconSize.small } */}
-              {/*         : { height: iconSize.large, width: iconSize.large } */}
-              {/*     } */}
-              {/*     transition={transitions.snappy} */}
-              {/*   > */}
-              {/*     <Icon focused={isFocused} /> */}
-              {/*   </MotiView> */}
-              {/* ) : null} */}
-              {Icon ? (
-                <Animated.View style={{ opacity }}>
-                  {/* @ts-expect-error annoyting to handle (just check https://reactnavigation.org/docs/bottom-tab-navigator/) */}
-                  <Icon focused={isFocused} />
-                </Animated.View>
-              ) : null}
-            </Pressable>
+            <View key={route.key}>
+              <ScaleDownPressable
+                onPress={onPress}
+                onLongPress={onLongPress}
+                scale={0.9}
+                hitSlop={{
+                  bottom: 10,
+                  right: 10,
+                  left: 10,
+                  top: 10,
+                }}
+              >
+                {/* {Icon ? ( */}
+                {/*   <MotiView */}
+                {/*     animate={ */}
+                {/*       shown */}
+                {/*         ? { height: iconSize.small, width: iconSize.small } */}
+                {/*         : { height: iconSize.large, width: iconSize.large } */}
+                {/*     } */}
+                {/*     transition={transitions.snappy} */}
+                {/*   > */}
+                {/*     <Icon focused={isFocused} /> */}
+                {/*   </MotiView> */}
+                {/* ) : null} */}
+                {Icon ? (
+                  <Animated.View style={{ opacity }}>
+                    {/* @ts-expect-error annoyting to handle (just check https://reactnavigation.org/docs/bottom-tab-navigator/) */}
+                    <Icon focused={isFocused} />
+                  </Animated.View>
+                ) : null}
+              </ScaleDownPressable>
+            </View>
           )
         })}
       </MotiView>
