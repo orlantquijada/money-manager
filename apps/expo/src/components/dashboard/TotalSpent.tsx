@@ -30,6 +30,7 @@ export default function TotalSpent() {
           key={totalSpent}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           exiting={CustomSlideOutUp as any}
+          // FIX: initial animation not working on IOS
           // disable initial animation
           entering={
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

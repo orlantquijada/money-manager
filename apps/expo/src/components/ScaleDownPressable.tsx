@@ -2,12 +2,12 @@ import { mergeAnimateProp, MotiPressable } from "moti/interactions"
 import { styled } from "nativewind"
 import { ComponentProps } from "react"
 
-type Props = ComponentProps<typeof MotiPressable> & {
+export type ScaleDownPressableProps = ComponentProps<typeof MotiPressable> & {
   scale?: number
   opacity?: number
 }
 
-function ScaleDownPressable(props: Props) {
+function ScaleDownPressable(props: ScaleDownPressableProps) {
   const { animate, scale = 0.96, opacity = 1, ...rest } = props
 
   return (

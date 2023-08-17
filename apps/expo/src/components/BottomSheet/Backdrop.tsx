@@ -9,7 +9,7 @@ export default function BottomSheetBackdrop({
   return (
     <GBottomSheetBackdrop
       {...props}
-      style={[{ backgroundColor: mauveA.mauveA9 }, style]}
+      style={[{ backgroundColor: mauveA.mauveA8 }, style]}
     />
   )
 }
