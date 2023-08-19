@@ -1,6 +1,9 @@
 import { ComponentProps, forwardRef, useRef } from "react"
 import { Platform, Text, View } from "react-native"
-import { useBottomSheetModal } from "@gorhom/bottom-sheet"
+import {
+  useBottomSheetModal,
+  useBottomSheetSpringConfigs,
+} from "@gorhom/bottom-sheet"
 
 import { mauveA, mauveDark } from "~/utils/colors"
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
@@ -41,9 +44,15 @@ const DashboardCreateBottomSheet = forwardRef<BottomSheet>((_, ref) => {
     dismissAll()
   }
 
+  const springConfigs = useBottomSheetSpringConfigs({
+    stiffness: 250,
+    damping: 25,
+  })
+
   return (
     <BottomSheet
       snapPoints={snapPoints}
+      animationConfigs={springConfigs}
       detached
       backdropComponent={CreateBackdrop}
       ref={ref}
