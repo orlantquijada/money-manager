@@ -191,7 +191,7 @@ function getNumberOfBars(fund: Fund) {
   const now = new Date()
   const bars: Record<TimeMode, number> = {
     WEEKLY: isThisMonth(fund.createdAt || now)
-      ? getWeeksInMonth(now) - getWeekOfMonth(now) + 1
+      ? getWeeksInMonth(now) - getWeekOfMonth(fund.createdAt || now) + 1
       : getWeeksInMonth(now),
     BIMONTHLY:
       isThisMonth(fund.createdAt || now) &&
