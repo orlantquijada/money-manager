@@ -8,7 +8,7 @@ type State = {
   createdAt: Date
   amount: number
   submitTimestamp?: number | undefined
-  reset: () => void
+  reset: (values?: Partial<typeof defaultValues>) => void
 }
 
 export type BottomSheetData = keyof State | undefined
@@ -25,5 +25,6 @@ const defaultValues: Omit<State, "reset"> = {
 
 export const useTransactionStore = create<State>()((set) => ({
   ...defaultValues,
-  reset: () => set(defaultValues),
+  reset: (values: Partial<typeof defaultValues> = {}) =>
+    set({ ...defaultValues, ...values }),
 }))
