@@ -71,7 +71,7 @@ importers:
         version: 6.1.7(react-native@0.72.3)(react@18.2.0)
       '@react-navigation/stack':
         specifier: ^6.3.17
-        version: 6.3.17(@react-navigation/native@6.1.7)(react-native-gesture-handler@2.12.1)(react-native-safe-area-context@4.6.3)(react-native-screens@3.22.1)(react-native@0.72.3)(react@18.2.0)
+        version: 6.3.17(@react-navigation/native@6.1.7)(react-native-gesture-handler@2.12.1)(react-native-safe-area-context@4.6.3)(react-native-screens@3.24.0)(react-native@0.72.3)(react@18.2.0)
       '@shopify/flash-list':
         specifier: ^1.4.3
         version: 1.4.3(@babel/runtime@7.19.0)(react-native@0.72.3)(react@18.2.0)
@@ -163,8 +163,8 @@ importers:
         specifier: 4.6.3
         version: 4.6.3(react-native@0.72.3)(react@18.2.0)
       react-native-screens:
-        specifier: ^3.22.1
-        version: 3.22.1(react-native@0.72.3)(react@18.2.0)
+        specifier: ^3.24.0
+        version: 3.24.0(react-native@0.72.3)(react@18.2.0)
       react-native-shared-element:
         specifier: ^0.8.8
         version: 0.8.8
@@ -4296,7 +4296,7 @@ packages:
       nanoid: 3.3.4
     dev: false
 
-  /@react-navigation/stack@6.3.17(@react-navigation/native@6.1.7)(react-native-gesture-handler@2.12.1)(react-native-safe-area-context@4.6.3)(react-native-screens@3.22.1)(react-native@0.72.3)(react@18.2.0):
+  /@react-navigation/stack@6.3.17(@react-navigation/native@6.1.7)(react-native-gesture-handler@2.12.1)(react-native-safe-area-context@4.6.3)(react-native-screens@3.24.0)(react-native@0.72.3)(react@18.2.0):
     resolution: {integrity: sha512-8/8ZvJROK3fp6PRmQ9MrXd9epBowA8NkfCaWW/N9H5arqwNX9lTXAkmcjicRhjpX+UNlMBR9dTLkWvPRe2vY9A==}
     peerDependencies:
       '@react-navigation/native': ^6.0.0
@@ -4313,7 +4313,7 @@ packages:
       react-native: 0.72.3(@babel/core@7.20.7)(@babel/preset-env@7.19.3)(react@18.2.0)
       react-native-gesture-handler: 2.12.1(react-native@0.72.3)(react@18.2.0)
       react-native-safe-area-context: 4.6.3(react-native@0.72.3)(react@18.2.0)
-      react-native-screens: 3.22.1(react-native@0.72.3)(react@18.2.0)
+      react-native-screens: 3.24.0(react-native@0.72.3)(react@18.2.0)
       warn-once: 0.1.1
     dev: false
 
@@ -10009,8 +10009,8 @@ packages:
       react-native: 0.72.3(@babel/core@7.20.7)(@babel/preset-env@7.19.3)(react@18.2.0)
     dev: false
 
-  /react-native-screens@3.22.1(react-native@0.72.3)(react@18.2.0):
-    resolution: {integrity: sha512-ffzwUdVKf+iLqhWSzN5DXBm0s2w5sN0P+TaHHPAx42LT7+DT0g8PkHT1QDvxpR5vCEPSS1i3EswyVK4HCuhTYg==}
+  /react-native-screens@3.24.0(react-native@0.72.3)(react@18.2.0):
+    resolution: {integrity: sha512-ncAxY6Fja1eDwxMWsWG1S2lDWbE45f8XtdpKkY+Ovwg52iEov7uWx302PsvBkPpK9dGV4u6f2ZRoZGZYBvSbbA==}
     peerDependencies:
       react: '*'
       react-native: '*'
