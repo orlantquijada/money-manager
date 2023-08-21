@@ -91,6 +91,10 @@ export function getTotalBudgetedAmount(fund: Fund) {
   return budgetedAmount
 }
 
+export function formatDefaultReadableDate(date: Date) {
+  return format(date, isThisYear(date) ? "MMM d" : "MMM d, yyyy")
+}
+
 export function formatRelativeDate(toDate: Date, baseDate: Date) {
   const diff = differenceInCalendarDays(toDate, baseDate)
 
@@ -99,5 +103,5 @@ export function formatRelativeDate(toDate: Date, baseDate: Date) {
   else if (diff === -1) return "Yesterday"
   else if (diff < -1 && diff > -7) return `Last ${dayOfWeek[toDate.getDay()]}`
 
-  return format(toDate, isThisYear(toDate) ? "MMM d" : "MMM d, yyyy")
+  return formatDefaultReadableDate(toDate)
 }

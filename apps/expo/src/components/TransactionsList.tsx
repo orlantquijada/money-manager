@@ -1,8 +1,14 @@
 import { SectionList, Text, View } from "react-native"
-import { format, isToday, isYesterday } from "date-fns"
 
-import { toCurrencyNarrow } from "~/utils/functions"
+import {
+  formatDefaultReadableDate,
+  formatRelativeDate,
+  toCurrencyNarrow,
+} from "~/utils/functions"
 import { trpc } from "~/utils/trpc"
+import useToggle from "~/utils/hooks/useToggle"
+
+import ScaleDownPressable from "./ScaleDownPressable"
 
 export function TransactionsList() {
   const transactions = useTransactionsList()
@@ -40,28 +46,39 @@ export function TransactionsList() {
           </View>
         )}
         ItemSeparatorComponent={() => <View className="h-2" />}
-        renderSectionHeader={({ section }) => {
-          const getTitle = (date: Date) => {
-            if (isToday(date)) {
-              return "Today"
-            } else if (isYesterday(date)) {
-              return "Yesterday"
-            }
-
-            return format(date, "MMM d")
-          }
-          return (
-            <Text className="text-mauve8 font-satoshi-bold bg-violet1 pb-3 text-lg">
-              {getTitle(section.title)}
-            </Text>
-          )
-        }}
+        renderSectionHeader={({ section }) => (
+          <SectionHeader section={section} />
+        )}
         sections={transactions.data || []}
         contentContainerStyle={{
           paddingBottom: 48,
         }}
       />
     </View>
+  )
+}
+
+function SectionHeader({
+  section,
+}: {
+  section: NonNullable<ReturnType<typeof useTransactionsList>["data"]>[number]
+}) {
+  const [showDefaultText, { toggle }] = useToggle(true)
+
+  return (
+    <ScaleDownPressable
+      onPress={toggle}
+      scale={0.94}
+      containerStyle={{
+        alignSelf: "flex-start",
+      }}
+    >
+      <Text className="text-mauve8 font-satoshi-bold pb-3 text-lg">
+        {showDefaultText
+          ? formatRelativeDate(section.title, new Date())
+          : formatDefaultReadableDate(section.title)}
+      </Text>
+    </ScaleDownPressable>
   )
 }
 
