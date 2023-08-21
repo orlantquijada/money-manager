@@ -89,7 +89,7 @@ export default function DateSection({ defaultOpen }: { defaultOpen: boolean }) {
             className="h-full min-w-[25%] items-end justify-center pl-6"
           >
             <Text className="font-satoshi-medium text-mauveDark12 text-base">
-              {format(createdAt, "K:mm aa")}
+              {format(createdAt, "h:mm aa")}
             </Text>
           </Pressable>
         </View>

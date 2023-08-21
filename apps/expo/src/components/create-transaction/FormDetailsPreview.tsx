@@ -134,7 +134,7 @@ function DateSection({
       }}
     >
       <Text className="text-mauveDark12 font-satoshi-bold text-base leading-6">
-        {formattedDate} at {format(createdAt, "K:mm aa")}
+        {formattedDate} at {format(createdAt, "h:mm aa")}
       </Text>
     </ScaleDownPressable>
   )
