@@ -21,6 +21,7 @@ import { userId } from "~/utils/constants"
 
 import ScaleDownPressable from "../ScaleDownPressable"
 import { Fund } from ".prisma/client"
+import FundSectionList from "./FundSectionList"
 
 import ChevronDownIcon from "../../../assets/icons/hero-icons/chevron-down.svg"
 import CheckIcon from "../../../assets/icons/checkbox-circle-duo-dark.svg"
@@ -78,7 +79,8 @@ export function FundBottomSheetContent() {
         className={"flex-1"}
         animate={{ opacity: deferredInput !== input ? 0.5 : 1 }}
       >
-        <FundList searchText={deferredInput} />
+        {/* <FundList searchText={deferredInput} /> */}
+        <FundSectionList searchText={deferredInput} />
       </MotiView>
     </View>
   )
@@ -87,7 +89,7 @@ export function FundBottomSheetContent() {
 const FundList = memo(({ searchText }: { searchText: string }) => {
   const { data, status } = useFunds()
 
-  const fund = useTransactionStore((s) => s.fund)
+  const selectedFund = useTransactionStore((s) => s.fund)
 
   const { forceClose } = useBottomSheet()
 
@@ -129,7 +131,7 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
 
   const handleSetFund = (newFund: Fund) => {
     useTransactionStore.setState({
-      fund: newFund.id === fund?.id ? undefined : newFund,
+      fund: newFund.id === selectedFund?.id ? undefined : newFund,
     })
     forceClose()
   }
@@ -140,7 +142,7 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
       data={filteredData}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => {
-        const selected = item.id === fund?.id
+        const selected = item.id === selectedFund?.id
         const moneyLeft = item.totalBudgetedAmount - item.totalSpent
 
         return (
