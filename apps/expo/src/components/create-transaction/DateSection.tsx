@@ -59,6 +59,7 @@ export default function DateSection({ defaultOpen }: { defaultOpen: boolean }) {
                 DateTimePickerAndroid.open({
                   mode: "date",
                   value: createdAt,
+                  maximumDate: new Date(),
                   onChange: (_, date) => {
                     if (date) handleSelectedDateChange(date)
                   },
@@ -136,8 +137,8 @@ const IOSDateTimePicker = memo(
               testID="date-picker"
               value={createdAtRef.current}
               mode="date"
+              maximumDate={new Date()}
               onChange={(_, date) => {
-                // if (date) {
                 if (_.type === "set" && date) {
                   const newDate = new Date(
                     date.getFullYear(),
