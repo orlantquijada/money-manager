@@ -15,6 +15,7 @@ const fundTypeReadableText: Record<FundType, string> = {
   SPENDING: "Spending",
 }
 
+// TODO: skeleton
 const FundSectionList = memo(({ searchText }: { searchText: string }) => {
   const funds = useFunds()
 
