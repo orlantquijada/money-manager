@@ -1,16 +1,14 @@
-import { ComponentProps, FC, useMemo } from "react"
+import { ComponentProps, FC } from "react"
 import { View, Text } from "react-native"
 import { SvgProps } from "react-native-svg"
 import { MotiPressable } from "moti/interactions"
-import { styled } from "nativewind"
+import ScaleDownPressable from "../ScaleDownPressable"
 
 type Props = {
   Icon: FC<SvgProps>
   title: string
   description: string
 } & Pick<ComponentProps<typeof MotiPressable>, "onPress">
-
-const StyledMotiPressable = styled(MotiPressable)
 
 export default function CreateCard({
   Icon,
@@ -19,21 +17,11 @@ export default function CreateCard({
   onPress,
 }: Props) {
   return (
-    <StyledMotiPressable
+    <ScaleDownPressable
       className="bg-mauveDark1 w-full flex-row px-6 py-4"
       transition={{ type: "timing", duration: 200 }}
-      animate={useMemo(
-        () =>
-          ({ pressed }) => {
-            "worklet"
-
-            return {
-              scale: pressed ? 0.98 : 1,
-              opacity: pressed ? 0.7 : 1,
-            }
-          },
-        [],
-      )}
+      scale={0.98}
+      opacity={0.7}
       onPress={onPress}
     >
       <View className="mr-4 pt-[6px]">
@@ -47,6 +35,6 @@ export default function CreateCard({
           {description}
         </Text>
       </View>
-    </StyledMotiPressable>
+    </ScaleDownPressable>
   )
 }
