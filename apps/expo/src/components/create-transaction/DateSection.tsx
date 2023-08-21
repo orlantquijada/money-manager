@@ -107,7 +107,7 @@ export default function DateSection({ defaultOpen }: { defaultOpen: boolean }) {
     </Pressable>
   )
 }
-
+// NOTE: rerendering this doesn't freeze the app anymore but why fix if it ain't broke
 // WARNING: rerendering `AnimateHeight` causes the app the freeze idk why
 // that's why this component is memoized
 const IOSDateTimePicker = memo(
