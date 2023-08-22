@@ -1,18 +1,18 @@
-import { useMemo } from "react"
-import { View, Text, Pressable } from "react-native"
-import { getWeeksInMonth, getWeekOfMonth, isThisMonth } from "date-fns"
+import { useRef } from "react"
+import { View, Text } from "react-native"
+import { getWeekOfMonth, isThisMonth } from "date-fns"
+import { BottomSheetModal } from "@gorhom/bottom-sheet"
 
 import { toCurrencyNarrow } from "~/utils/functions"
 import { mauve, pink } from "~/utils/colors"
 import useToggle from "~/utils/hooks/useToggle"
-import { daysInCurrentMonth } from "~/utils/constants"
 import { FundWithMeta } from "~/types"
 
-import ProgressBar from "./ProgressBar"
-import type { Fund, TimeMode } from ".prisma/client"
+import ScaleDownPressable from "./ScaleDownPressable"
+import FundDetailBottomSheet from "./fund-detail/FundDetailBottomSheet"
+import type { TimeMode } from ".prisma/client"
 
-import Stripes from "@assets/icons/stripes-small-violet.svg"
-import PinkStripes from "@assets/icons/stripes-pink.svg"
+import CategoryProgressBars from "./CategoryProgressBars"
 
 export const CATEGORY_HEIGHT = 56
 
@@ -20,18 +20,30 @@ type CategoryProps = {
   fund: FundWithMeta
 }
 export default function Category({ fund }: CategoryProps) {
+  const ref = useRef<BottomSheetModal>(null)
+
   return (
-    <View className="justify-center px-4" style={{ height: CATEGORY_HEIGHT }}>
-      <View className="flex-row justify-between">
-        <Text className="font-satoshi-medium text-violet12 text-base">
-          {fund.name}
-        </Text>
+    <>
+      <ScaleDownPressable
+        className="justify-center px-4"
+        style={{ height: CATEGORY_HEIGHT }}
+        onPress={() => {
+          ref.current?.present()
+        }}
+      >
+        <View className="flex-row justify-between">
+          <Text className="font-satoshi-medium text-violet12 text-base">
+            {fund.name}
+          </Text>
 
-        <HelperText fund={fund} />
-      </View>
+          <HelperText fund={fund} />
+        </View>
 
-      <CategoryProgressBar fund={fund} />
-    </View>
+        <CategoryProgressBars fund={fund} />
+      </ScaleDownPressable>
+      {/* FIX: bottom sheet re-showing up after closing */}
+      <FundDetailBottomSheet ref={ref} fund={fund} />
+    </>
   )
 }
 
@@ -42,7 +54,17 @@ function HelperText({ fund }: { fund: FundWithMeta }) {
   const [showDefault, { toggle }] = useToggle(true)
 
   return (
-    <Pressable onPress={toggle} hitSlop={20}>
+    <ScaleDownPressable
+      scale={1}
+      opacity={0.7}
+      onPress={toggle}
+      hitSlop={{
+        top: 10,
+        left: 10,
+        right: 10,
+        bottom: 10,
+      }}
+    >
       {showDefault ? (
         <Text
           className="font-satoshi mt-1 text-xs"
@@ -91,47 +113,7 @@ function HelperText({ fund }: { fund: FundWithMeta }) {
           </>
         </Text>
       )}
-    </Pressable>
-  )
-}
-
-function CategoryProgressBar({ fund }: { fund: FundWithMeta }) {
-  const [fundProgress, overspentProgress] = useFundProgress(
-    fund,
-    fund.totalSpent,
-  )
-
-  return (
-    <View className="mt-2 flex-row gap-x-1">
-      {overspentProgress ? (
-        <ProgressBar
-          progress={100}
-          Stripes={
-            <View>
-              <PinkStripes />
-            </View>
-          }
-          className="flex-1"
-          // color="transparent"
-          color={pink.pink8}
-          style={{ flexGrow: overspentProgress / 100 }}
-        />
-      ) : null}
-      {fundProgress.map((progress, index) => (
-        <ProgressBar
-          key={index + fund.id}
-          progress={progress}
-          highlight={getShouldHighlight(fund, fundProgress.length - index)}
-          delayMultiplier={fundProgress.length - index}
-          Stripes={
-            <View className="opacity-[.15]">
-              <Stripes />
-            </View>
-          }
-          className="flex-1 rounded-full"
-        />
-      ))}
-    </View>
+    </ScaleDownPressable>
   )
 }
 
@@ -168,62 +150,4 @@ const helperTextTimeModeMap: Record<TimeMode, string> = {
   MONTHLY: "this month",
   BIMONTHLY: "",
   EVENTUALLY: "",
-}
-
-function getShouldHighlight(fund: Fund, index: number) {
-  if (fund.timeMode === "MONTHLY" || fund.timeMode === "EVENTUALLY")
-    return false
-
-  const now = new Date()
-  if (fund.timeMode === "WEEKLY") {
-    return isThisMonth(fund.createdAt || now)
-      ? getWeekOfMonth(now) - getWeekOfMonth(fund.createdAt || now) + 1 ===
-          index
-      : getWeekOfMonth(now) === index
-  }
-
-  const bars = getNumberOfBars(fund)
-  if (bars === 1) return false
-  return now.getDay() < daysInCurrentMonth / 2 === !(index - 1)
-}
-
-function getNumberOfBars(fund: Fund) {
-  const now = new Date()
-  const bars: Record<TimeMode, number> = {
-    WEEKLY: isThisMonth(fund.createdAt || now)
-      ? getWeeksInMonth(now) - getWeekOfMonth(fund.createdAt || now) + 1
-      : getWeeksInMonth(now),
-    BIMONTHLY:
-      isThisMonth(fund.createdAt || now) &&
-      now.getDay() > daysInCurrentMonth / 2
-        ? 1
-        : 2,
-    MONTHLY: 1,
-    EVENTUALLY: 1,
-  }
-
-  return bars[fund.timeMode]
-}
-
-function useFundProgress(fund: Fund, totalSpent: number) {
-  return useMemo(() => {
-    const bars = getNumberOfBars(fund)
-
-    const budgetProgress: number[] = []
-    const budgetedAmount = Number(fund.budgetedAmount)
-    let left = totalSpent
-    for (let i = bars - 1; i >= 0; i--) {
-      if (left >= budgetedAmount) {
-        budgetProgress[i] = 0
-        left -= budgetedAmount
-      } else {
-        budgetProgress[i] = 100 - (left / budgetedAmount) * 100
-        left = 0
-      }
-    }
-
-    const overspentProgress = (left / budgetedAmount) * 100
-
-    return [budgetProgress, overspentProgress] as const
-  }, [fund, totalSpent])
 }
