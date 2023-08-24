@@ -1,22 +1,20 @@
 import {
   BottomSheetBackdropProps,
-  BottomSheetHandleProps,
   BottomSheetModal,
   useBottomSheetSpringConfigs,
 } from "@gorhom/bottom-sheet"
 import { forwardRef } from "react"
-import Animated, {
+import {
   interpolate,
   interpolateColor,
   useAnimatedStyle,
 } from "react-native-reanimated"
 import { tabbarBottomInset } from "~/navigation/TabBar"
 import BottomSheetBackdrop from "../BottomSheet/Backdrop"
-import { mauveA } from "~/utils/colors"
+import { mauveA, violet } from "~/utils/colors"
 
 import { FundWithMeta } from "~/types"
 import FundDetailContent from "./FundDetailContent"
-import { View } from "moti"
 
 const snapPoints = ["50%", "92%"]
 
@@ -36,11 +34,14 @@ const FundDetailBottomSheet = forwardRef<BottomSheetModal, Props>(
         snapPoints={snapPoints}
         bottomInset={tabbarBottomInset}
         backdropComponent={CustomBackdrop}
-        handleComponent={CustomHandle}
+        // handleComponent={CustomHandle}
+        handleComponent={null}
         animationConfigs={springConfig}
+        backgroundStyle={{ backgroundColor: "transparent" }}
         detached
         style={{
-          marginHorizontal: 16,
+          // marginHorizontal: 16,
+          alignItems: "center",
           borderRadius: 20,
           overflow: "hidden",
         }}
@@ -62,7 +63,7 @@ export function CustomBackdrop(props: BottomSheetBackdropProps) {
     backgroundColor: interpolateColor(
       animatedIndex.value,
       [-1, 0, 1],
-      [mauveA.mauveA8, mauveA.mauveA8, "#ffffff"],
+      [mauveA.mauveA8, mauveA.mauveA8, violet.violet1],
     ),
   }))
 
@@ -81,18 +82,18 @@ export function CustomBackdrop(props: BottomSheetBackdropProps) {
   )
 }
 
-export function CustomHandle({ animatedIndex }: BottomSheetHandleProps) {
-  const containerStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(animatedIndex.value, [-1, 0, 1], [1, 1, 0]),
-  }))
-
-  return (
-    <Animated.View
-      pointerEvents="none"
-      style={containerStyle}
-      className="h-6 items-center justify-center"
-    >
-      <View className="bg-mauve5 h-1 w-[27px] rounded-full" />
-    </Animated.View>
-  )
-}
+// function CustomHandle({ animatedIndex }: BottomSheetHandleProps) {
+//   const containerStyle = useAnimatedStyle(() => ({
+//     opacity: interpolate(animatedIndex.value, [-1, 0, 1], [1, 1, 0]),
+//   }))
+//
+//   return (
+//     <Animated.View
+//       pointerEvents="none"
+//       style={containerStyle}
+//       className="h-6 items-center justify-center"
+//     >
+//       <View className="bg-mauve5 h-1 w-[27px] rounded-full" />
+//     </Animated.View>
+//   )
+// }

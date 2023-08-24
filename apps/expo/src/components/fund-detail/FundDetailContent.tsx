@@ -1,6 +1,10 @@
 import { useBottomSheet } from "@gorhom/bottom-sheet"
-import { Text, View } from "react-native"
+import { Dimensions, Text, View } from "react-native"
 import * as DropdownMenu from "zeego/dropdown-menu"
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+} from "react-native-reanimated"
 
 import { FundWithMeta } from "~/types"
 import { toCurrencyNarrow } from "~/utils/functions"
@@ -15,6 +19,8 @@ import CategoryProgressBars from "../CategoryProgressBars"
 import Ellipsis from "../../../assets/icons/more-horiz.svg"
 import ChevronRight from "../../../assets/icons/hero-icons/chevron-right.svg"
 
+const { width } = Dimensions.get("screen")
+
 type Props = {
   fund: FundWithMeta
 }
@@ -23,9 +29,34 @@ export default function FundDetailContent({ fund }: Props) {
   const navigation = useRootBottomTabNavigation()
   const { close } = useBottomSheet()
 
+  const { animatedIndex } = useBottomSheet()
+
+  const style = useAnimatedStyle(() => ({
+    width: interpolate(
+      animatedIndex.value,
+      [-1, 0, 1],
+      [width - 16 * 2, width - 16 * 2, width],
+    ),
+  }))
+  const containerStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(animatedIndex.value, [-1, 0, 1], [1, 1, 0]),
+    height: interpolate(animatedIndex.value, [-1, 0, 1], [24, 24, 0]),
+  }))
+
   return (
-    <View className="flex-1 px-4 pb-4">
-      <View className="h-10 flex-row items-center justify-between">
+    <Animated.View
+      className="bg-violet1 flex-1 overflow-hidden rounded-[20px] px-4 pb-4"
+      style={style}
+    >
+      <Animated.View
+        pointerEvents="none"
+        style={containerStyle}
+        className="h-6 items-center justify-center"
+      >
+        <View className="bg-mauve5 h-1 w-[27px] rounded-full" />
+      </Animated.View>
+
+      <View className="h-10 flex-row items-center justify-between pt-4">
         <View className="flex-row items-center">
           <View className="bg-violet4 mr-2 aspect-square w-12 items-center justify-center rounded-full">
             <Ellipsis
@@ -45,6 +76,18 @@ export default function FundDetailContent({ fund }: Props) {
         </View>
         <Dropdown />
       </View>
+
+      <ScaleDownPressable
+        className="mt-10"
+        onPress={() => {
+          close()
+          navigation.navigate("AddTransaction", { fundId: fund.id })
+        }}
+      >
+        <Button className="h-10">
+          <Text className="font-satoshi-medium text-mauve12">Add Expense</Text>
+        </Button>
+      </ScaleDownPressable>
 
       <View className="mt-10">
         <Text className="font-satoshi text-mauve9 text-sm">
@@ -83,6 +126,11 @@ export default function FundDetailContent({ fund }: Props) {
           <ScaleDownPressable
             scale={0.9}
             className="bg-mauve3 ml-3 aspect-square w-6 items-center justify-center rounded-md"
+            onPress={() => {
+              close()
+              // FIX: types
+              navigation.navigate("TransactionsList")
+            }}
           >
             <ChevronRight
               width={15}
@@ -114,18 +162,18 @@ export default function FundDetailContent({ fund }: Props) {
         </View>
       </View>
 
-      <ScaleDownPressable
-        containerStyle={{ marginTop: "auto" }}
-        onPress={() => {
-          close()
-          navigation.navigate("AddTransaction", { fundId: fund.id })
-        }}
-      >
-        <Button className="h-10">
-          <Text className="font-satoshi-medium text-mauve12">Add Expense</Text>
-        </Button>
-      </ScaleDownPressable>
-    </View>
+      {/* <ScaleDownPressable */}
+      {/*   containerStyle={{ marginTop: "auto" }} */}
+      {/*   onPress={() => { */}
+      {/*     close() */}
+      {/*     navigation.navigate("AddTransaction", { fundId: fund.id }) */}
+      {/*   }} */}
+      {/* > */}
+      {/*   <Button className="h-10"> */}
+      {/*     <Text className="font-satoshi-medium text-mauve12">Add Expense</Text> */}
+      {/*   </Button> */}
+      {/* </ScaleDownPressable> */}
+    </Animated.View>
   )
 }
 
