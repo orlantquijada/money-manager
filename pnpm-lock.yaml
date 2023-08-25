@@ -45,6 +45,9 @@ importers:
 
   apps/expo:
     dependencies:
+      '@config-plugins/react-native-quick-actions':
+        specifier: ^6.0.0
+        version: 6.0.0(expo@49.0.7)
       '@expo-google-fonts/nunito':
         specifier: ^0.2.3
         version: 0.2.3
@@ -156,6 +159,9 @@ importers:
       react-native-pie-chart:
         specifier: ^3.0.1
         version: 3.0.1(react-native-svg@13.9.0)(react-native@0.72.3)(react@18.2.0)
+      react-native-quick-actions:
+        specifier: ^0.3.13
+        version: 0.3.13
       react-native-reanimated:
         specifier: ^3.3.0
         version: 3.3.0(@babel/core@7.20.7)(@babel/plugin-proposal-nullish-coalescing-operator@7.18.6)(@babel/plugin-proposal-optional-chaining@7.21.0)(@babel/plugin-transform-arrow-functions@7.22.5)(@babel/plugin-transform-shorthand-properties@7.22.5)(@babel/plugin-transform-template-literals@7.22.5)(react-native@0.72.3)(react@18.2.0)
@@ -2476,6 +2482,14 @@ packages:
   /@changesets/types@4.1.0:
     resolution: {integrity: sha512-LDQvVDv5Kb50ny2s25Fhm3d9QSZimsoUGBsUioj6MC3qbMUCuC8GPIvk/M6IvXx3lYhAs0lwWUQLb+VIEUCECw==}
     dev: true
+
+  /@config-plugins/react-native-quick-actions@6.0.0(expo@49.0.7):
+    resolution: {integrity: sha512-458RrBFFEe7YZZ4m6//NwpjRDU/tg3I6gvWHxljd2H4NWd2X1Q3oEkcocCTtctYUyp9MpEgBvimMEv2BzLuzvA==}
+    peerDependencies:
+      expo: ^49
+    dependencies:
+      expo: 49.0.7(@babel/core@7.20.7)
+    dev: false
 
   /@dominicstop/ts-event-emitter@1.1.0:
     resolution: {integrity: sha512-CcxmJIvUb1vsFheuGGVSQf4KdPZC44XolpUT34+vlal+LyQoBUOn31pjFET5M9ctOxEpt8xa0M3/2M7uUiAoJw==}
@@ -9971,6 +9985,10 @@ packages:
       react: 18.2.0
       react-native: 0.72.3(@babel/core@7.20.7)(@babel/preset-env@7.19.3)(react@18.2.0)
       react-native-svg: 13.9.0(react-native@0.72.3)(react@18.2.0)
+    dev: false
+
+  /react-native-quick-actions@0.3.13:
+    resolution: {integrity: sha512-Vz13a0+NV0mzCh/29tNt0qDzWPh8i2srTQW8eCSzGFDArnVm1COTOhTD0FY0hWHlxRY0ahvX+BlezTDvsyAuMA==}
     dev: false
 
   /react-native-reanimated@3.3.0(@babel/core@7.20.7)(@babel/plugin-proposal-nullish-coalescing-operator@7.18.6)(@babel/plugin-proposal-optional-chaining@7.21.0)(@babel/plugin-transform-arrow-functions@7.22.5)(@babel/plugin-transform-shorthand-properties@7.22.5)(@babel/plugin-transform-template-literals@7.22.5)(react-native@0.72.3)(react@18.2.0):
