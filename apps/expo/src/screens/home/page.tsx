@@ -1,18 +1,21 @@
 import { useCallback, useRef } from "react"
 import { View } from "react-native"
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs"
+
+import type { HomeTabsParamList } from "~/types"
 
 import SafeAreaView from "~/components/SafeAreaView"
 import BottomSheetModal from "~/components/BottomSheet"
 import DashboardCreateBottomSheet from "~/components/dashboard/CreateBottomSheet"
-import FoldersList from "~/components/dashboard/FoldersList"
-
-import Plus from "../../assets/icons/plus.svg"
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs"
-import { HomeTabsParamList } from "~/types"
+// import AlertDialog from "~/components/AlertDialog"
 import HomeTabBar from "~/components/HomeTabBar"
-import { TransactionsList } from "~/components/TransactionsList"
 import TotalSpent from "~/components/dashboard/TotalSpent"
 import ScaleDownPressable from "~/components/ScaleDownPressable"
+
+import BudgetsTab from "./tabs/budgets"
+import TransactionsTab from "./tabs/transactions"
+
+import Plus from "../../../assets/icons/plus.svg"
 
 const Tab = createMaterialTopTabNavigator<HomeTabsParamList>()
 
@@ -70,11 +73,12 @@ export default function Home2() {
             paddingTop: 20,
           }}
         >
-          <Tab.Screen name="Budgets" component={FoldersList} />
-          <Tab.Screen name="Transactions" component={TransactionsList} />
+          <Tab.Screen name="Budgets" component={BudgetsTab} />
+          <Tab.Screen name="Transactions" component={TransactionsTab} />
         </Tab.Navigator>
 
         <DashboardCreateBottomSheet ref={bottomSheetModalRef} />
+        {/* <AlertDialog ref={bottomSheetModalRef} /> */}
       </View>
     </SafeAreaView>
   )

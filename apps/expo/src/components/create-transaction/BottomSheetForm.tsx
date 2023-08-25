@@ -1,9 +1,6 @@
 import { RefObject, useMemo } from "react"
 import { Pressable, Text, TextInput, View } from "react-native"
-import {
-  useBottomSheetModal,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet"
+import { BottomSheetScrollView, useBottomSheet } from "@gorhom/bottom-sheet"
 import clsx from "clsx"
 
 import { mauveDark } from "~/utils/colors"
@@ -29,7 +26,7 @@ export default function BottomSheetForm({
   openFundListBottomSheet: () => void
   openStoreListBottomSheet: () => void
 }) {
-  const { dismissAll } = useBottomSheetModal()
+  const { close } = useBottomSheet()
   const store = useTransactionStore((s) => s.store)
   const fund = useTransactionStore((s) => s.fund)
 
@@ -37,7 +34,7 @@ export default function BottomSheetForm({
     <BottomSheetScrollView>
       <View className="h-8 flex-row items-center justify-between px-4">
         <ScaleDownPressable
-          onPress={dismissAll}
+          onPress={close}
           scale={0.9}
           opacity={0.5}
           hitSlop={{

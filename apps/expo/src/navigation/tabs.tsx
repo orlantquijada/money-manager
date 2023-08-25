@@ -5,7 +5,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { RootBottomTabParamList } from "~/types"
 import { mauveDark, violet } from "~/utils/colors"
 
-import Home2 from "~/screens/home2"
+import Home from "~/screens/home/page"
 import CreateTransaction from "~/screens/create-transaction"
 import TransactionsScreen from "~/screens/transactions"
 
@@ -52,7 +52,7 @@ export default function RootTabs() {
       />
       <Tab.Screen
         name="Home"
-        component={Home2}
+        component={Home}
         options={{
           tabBarIcon: ({ focused }) =>
             focused ? (

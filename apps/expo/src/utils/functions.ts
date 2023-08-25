@@ -1,4 +1,4 @@
-import { Fund } from ".prisma/client"
+import { Fund, Transaction } from ".prisma/client"
 import {
   differenceInCalendarDays,
   format,
@@ -104,4 +104,35 @@ export function formatRelativeDate(toDate: Date, baseDate: Date) {
   else if (diff < -1 && diff > -7) return `Last ${dayOfWeek[toDate.getDay()]}`
 
   return formatDefaultReadableDate(toDate)
+}
+
+const formatKey = (date: Date) => {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+}
+const parseKey = (dateString: string) => {
+  const [year, month, date] = dateString.split("-").map(Number)
+  // @ts-expect-error type should be Number bec of the cast
+  return new Date(year, month, date)
+}
+export function groupTransactionByDate<T extends Transaction>(
+  transactions: T[],
+) {
+  // date string as key
+  const groupByDate: Record<string, typeof transactions[number][]> = {}
+
+  for (const transaction of transactions) {
+    const date = transaction.date
+    const key = formatKey(transaction.date || new Date())
+    if (!date) continue
+    else if (groupByDate[key]) {
+      groupByDate[key]?.push(transaction)
+    } else {
+      groupByDate[key] = [transaction]
+    }
+  }
+
+  return Object.entries(groupByDate).map(([key, value]) => ({
+    title: parseKey(key),
+    data: value,
+  }))
 }
