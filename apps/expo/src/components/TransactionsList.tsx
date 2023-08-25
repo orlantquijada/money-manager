@@ -6,9 +6,9 @@ import {
   toCurrencyNarrow,
 } from "~/utils/functions"
 import useToggle from "~/utils/hooks/useToggle"
+import type { TransactionSection } from "~/types"
 
 import ScaleDownPressable from "./ScaleDownPressable"
-import { TransactionSection } from "~/types"
 
 export function TransactionsList({
   transactions,
@@ -62,10 +62,13 @@ function SectionHeader({ section }: { section: TransactionSection }) {
   return (
     <ScaleDownPressable
       onPress={toggle}
-      scale={0.94}
+      opacity={0.6}
+      scale={1}
       containerStyle={{
         alignSelf: "flex-start",
+        width: "100%",
       }}
+      className="bg-violet1 w-full"
     >
       <Text className="text-mauve8 font-satoshi-bold pb-3 text-lg">
         {showDefaultText

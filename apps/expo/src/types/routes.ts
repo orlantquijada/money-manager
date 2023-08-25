@@ -17,6 +17,6 @@ export type RootStackParamList = {
   Root: NavigatorScreenParams<RootBottomTabParamList>
   CreateFund?: { folderId: Folder["id"] }
   CreateFolder: undefined
-  TransactionsList: undefined
+  TransactionsList: { fundId: Fund["id"] }
   // FolderDetail: { folder: Folder }
 }

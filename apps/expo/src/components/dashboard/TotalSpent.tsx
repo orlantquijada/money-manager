@@ -6,11 +6,13 @@ import Animated, {
   withDelay,
   withSpring,
 } from "react-native-reanimated"
+import * as ContextMenu from "zeego/context-menu"
 
 import { lime } from "~/utils/colors"
 import { toCurrencyShort } from "~/utils/functions"
 import { transitions } from "~/utils/motion"
 import { trpc } from "~/utils/trpc"
+import Button from "../Button"
 
 import ArrowDown from "../../../assets/icons/hero-icons/arrow-down.svg"
 
@@ -59,7 +61,40 @@ export default function TotalSpent() {
       <Text className="font-satoshi-medium text-mauve10 mr-1 text-base">
         Total spent this month
       </Text>
+      {/* <Dropdown /> */}
     </View>
+  )
+}
+
+export function Dropdown() {
+  return (
+    <ContextMenu.Root>
+      <ContextMenu.Trigger>
+        <Button>
+          <Text>Hello</Text>
+        </Button>
+      </ContextMenu.Trigger>
+
+      <ContextMenu.Content>
+        <ContextMenu.Label>Label</ContextMenu.Label>
+        <ContextMenu.Item
+          key="item 1"
+          destructive
+          onSelect={() => {
+            console.log("wow")
+          }}
+        >
+          <ContextMenu.ItemTitle>Hello World</ContextMenu.ItemTitle>
+
+          <ContextMenu.ItemIcon
+            ios={{
+              name: "trash", // required
+              scale: "small",
+            }}
+          />
+        </ContextMenu.Item>
+      </ContextMenu.Content>
+    </ContextMenu.Root>
   )
 }
 
