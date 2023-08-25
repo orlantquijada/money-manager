@@ -45,6 +45,16 @@
           "buildToolsVersion": "33.0.0",
           "kotlinVersion": "1.6.20"
         }
+      ],
+      [
+        "@config-plugins/react-native-quick-actions",
+        [
+          {
+            "title": "Add Transaction",
+            "type": "Add",
+            "icon": "UIApplicationShortcutIconTypeAdd"
+          }
+        ]
       ]
     ]
   }
