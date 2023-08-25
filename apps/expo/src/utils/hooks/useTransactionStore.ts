@@ -25,6 +25,7 @@ const defaultValues: Omit<State, "reset"> = {
 
 export const useTransactionStore = create<State>()((set) => ({
   ...defaultValues,
-  reset: (values: Partial<typeof defaultValues> = {}) =>
-    set({ ...defaultValues, ...values }),
+  reset: (values: Partial<typeof defaultValues> = {}) => {
+    set({ ...defaultValues, createdAt: new Date(), ...values })
+  },
 }))
