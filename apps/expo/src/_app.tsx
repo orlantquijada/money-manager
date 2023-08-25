@@ -20,6 +20,8 @@ SplashScreen.preventAutoHideAsync().catch(() => {
   return
 })
 
+// TODO: quick actions for android
+
 export const App = () => {
   const fontsLoaded = useFonts()
   const onLayoutRootView = useCallback(() => {
