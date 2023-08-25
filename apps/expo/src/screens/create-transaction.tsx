@@ -3,6 +3,7 @@ import { Dimensions, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomSheetModal } from "@gorhom/bottom-sheet"
 import { shallow } from "zustand/shallow"
+import { useFocusEffect } from "@react-navigation/native"
 
 import { mauveDark } from "~/utils/colors"
 import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation"
@@ -13,6 +14,7 @@ import {
   useTransactionStore,
 } from "~/utils/hooks/useTransactionStore"
 import { userId } from "~/utils/constants"
+import { useRootBottomTabRoute } from "~/utils/hooks/useRootBottomTabRoute"
 
 import SafeAreaView from "~/components/SafeAreaView"
 import ScaleDownPressable from "~/components/ScaleDownPressable"
@@ -62,6 +64,24 @@ export default function CreateTransaction() {
   )
 }
 
+function useSetInitialState() {
+  const route = useRootBottomTabRoute("AddTransaction")
+  const funds = trpc.fund.listFromUserId.useQuery(userId)
+  const reset = useTransactionStore((s) => s.reset)
+  const navigation = useRootBottomTabNavigation()
+
+  useFocusEffect(
+    useCallback(() => {
+      if (route.params?.fundId && funds.status === "success") {
+        reset({
+          fund: funds.data.find(({ id }) => id === route.params?.fundId),
+        })
+      }
+      return () => navigation.setParams({ fundId: undefined })
+    }, [funds.data, funds.status, navigation, reset, route.params?.fundId]),
+  )
+}
+
 function CreateTransactionForm() {
   const handlePresentModalPress: HandlePresentModalPress = useCallback(
     (data) => {
@@ -86,6 +106,8 @@ function CreateTransactionForm() {
   useEffect(() => {
     useTransactionStore.setState({ amount })
   }, [amount])
+
+  useSetInitialState()
 
   return (
     <>
