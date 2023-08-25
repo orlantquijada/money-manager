@@ -184,7 +184,7 @@ export default function TransactionsScreen() {
                   </Text>
                 </View>
               </View>
-              <Text className="font-nunito-bold text-mauve9 ml-auto text-sm">
+              <Text className="font-nunito-bold text-mauve9 ml-auto mt-1.5 text-sm">
                 {toCurrency(250.25)}
               </Text>
             </View>

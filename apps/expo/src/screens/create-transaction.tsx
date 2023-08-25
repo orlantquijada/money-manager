@@ -64,6 +64,7 @@ export default function CreateTransaction() {
   )
 }
 
+// TODO: also reset date
 function useSetInitialState() {
   const route = useRootBottomTabRoute("AddTransaction")
   const funds = trpc.fund.listFromUserId.useQuery(userId)
@@ -75,6 +76,7 @@ function useSetInitialState() {
       if (route.params?.fundId && funds.status === "success") {
         reset({
           fund: funds.data.find(({ id }) => id === route.params?.fundId),
+          createdAt: new Date(),
         })
       }
       return () => navigation.setParams({ fundId: undefined })
