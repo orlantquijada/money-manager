@@ -1,7 +1,7 @@
 import { View, Text } from "react-native"
 import { ScrollView } from "react-native-gesture-handler"
 import Presence from "../Presence"
-import TextInput from "../TextInput"
+import { CurrencyInput } from "../TextInput"
 import Choice from "./Choice"
 import Footer from "../CreateFooter"
 
@@ -27,7 +27,7 @@ export default function NonNegotiableInfo({
             <View className="flex w-3/5">
               <Presence delayMultiplier={4}>
                 <Choice choiceLabel="A" selected className="mb-2">
-                  Montly
+                  Monthly
                 </Choice>
               </Presence>
             </View>
@@ -38,7 +38,7 @@ export default function NonNegotiableInfo({
               <Text className="text-mauveDark12 font-satoshi-medium text-lg">
                 How much wil you allocate?
               </Text>
-              <TextInput placeholder="new-fund" />
+              <CurrencyInput />
             </View>
           </Presence>
         </View>
