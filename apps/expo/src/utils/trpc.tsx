@@ -34,33 +34,24 @@ import { QueryClient } from "@tanstack/react-query"
 import { httpBatchLink } from "@trpc/client"
 import { transformer } from "api/transformer"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister"
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister"
 import { MMKV } from "react-native-mmkv"
 
 const storage = new MMKV()
 
 const clientStorage = {
   setItem: (key: string, value: string | number | boolean) => {
-    return new Promise((resolve) => {
-      storage.set(key, value)
-      resolve(undefined)
-    })
+    storage.set(key, value)
   },
   getItem: (key: string) => {
-    const value = storage.getString(key)
-    return new Promise<string | null>((resolve) => {
-      resolve(value || null)
-    })
+    return storage.getString(key) || null
   },
   removeItem: (key: string) => {
-    return new Promise<void>((resolve) => {
-      storage.delete(key)
-      resolve(undefined)
-    })
+    storage.delete(key)
   },
 }
 
-const asyncStoragePersister = createAsyncStoragePersister({
+const asyncStoragePersister = createSyncStoragePersister({
   storage: clientStorage,
   serialize: transformer.stringify,
   deserialize: transformer.parse,
