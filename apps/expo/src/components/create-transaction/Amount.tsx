@@ -58,14 +58,6 @@ export function Amount({ amount }: { amount: number }) {
   return (
     <View className="relative w-full flex-row justify-center">
       <View className="w-full flex-row justify-center overflow-hidden">
-        <Animated.Text
-          layout={Layout.springify()
-            .damping(transitions.snappier.damping)
-            .stiffness(transitions.snappier.stiffness)}
-          className="font-nunito-bold text-mauveDark12 pt-1.5 text-4xl"
-        >
-          ₱
-        </Animated.Text>
         {[...formattedAmount].map((char, i) => (
           <Animated.View
             key={char + getKey(i, formattedAmount)}
@@ -80,7 +72,13 @@ export function Amount({ amount }: { amount: number }) {
             layout={Layout.springify()
               .damping(transitions.snappier.damping)
               .stiffness(transitions.snappier.stiffness)}
+            className="relative"
           >
+            {i === 0 && (
+              <Text className="font-nunito-bold text-mauveDark12 absolute -left-2/3 top-0 pt-1.5 text-4xl">
+                ₱
+              </Text>
+            )}
             <Text className="font-nunito-extra-bold text-mauveDark12 pt-2.5 text-6xl">
               {char}
             </Text>
