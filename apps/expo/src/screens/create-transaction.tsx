@@ -30,6 +30,7 @@ import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg"
 
 const { height: screenHeight } = Dimensions.get("screen")
 
+// TODO: layout does not fit on small screens
 export default function CreateTransaction() {
   // show default insets since tabbar isn't shown on this screen
   const insets = useSafeAreaInsets()
