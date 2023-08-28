@@ -115,7 +115,16 @@ export default function FundDetailContent({ fund }: Props) {
             className="ml-3 aspect-square w-6 items-center justify-center rounded-md"
           ></ScaleDownPressable>
         </View>
-        <View className="flex-row items-center justify-between">
+        <ScaleDownPressable
+          className="flex-row items-center justify-between"
+          opacity={0.6}
+          scale={1}
+          onPress={() => {
+            close()
+            // FIX: types
+            navigation.navigate("TransactionsList")
+          }}
+        >
           <Text className="font-satoshi-medium text-mauve9 mr-auto text-base">
             Total Spent this month
           </Text>
@@ -123,24 +132,20 @@ export default function FundDetailContent({ fund }: Props) {
             {toCurrencyNarrow(fund.totalSpent)}
           </Text>
 
-          <ScaleDownPressable
-            scale={0.9}
-            className="bg-mauve3 ml-3 aspect-square w-6 items-center justify-center rounded-md"
-            onPress={() => {
-              close()
-              // FIX: types
-              navigation.navigate("TransactionsList")
-            }}
-          >
+          <View className="bg-mauve3 ml-3 aspect-square w-6 items-center justify-center rounded-md">
             <ChevronRight
               width={15}
               height={15}
               strokeWidth={3}
               color={mauve.mauve8}
             />
-          </ScaleDownPressable>
-        </View>
-        <View className="flex-row items-center justify-between">
+          </View>
+        </ScaleDownPressable>
+        <ScaleDownPressable
+          className="flex-row items-center justify-between"
+          scale={1}
+          opacity={0.6}
+        >
           <Text className="font-satoshi-medium text-mauve9 mr-auto text-base">
             Total Spent last month
           </Text>
@@ -148,18 +153,15 @@ export default function FundDetailContent({ fund }: Props) {
             {toCurrencyNarrow(400)}
           </Text>
 
-          <ScaleDownPressable
-            scale={0.9}
-            className="bg-mauve3 ml-3 aspect-square w-6 items-center justify-center rounded-md"
-          >
+          <View className="bg-mauve3 ml-3 aspect-square w-6 items-center justify-center rounded-md">
             <ChevronRight
               width={15}
               height={15}
               strokeWidth={3}
               color={mauve.mauve8}
             />
-          </ScaleDownPressable>
-        </View>
+          </View>
+        </ScaleDownPressable>
       </View>
 
       {/* <ScaleDownPressable */}
