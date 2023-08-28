@@ -103,10 +103,10 @@ export default function FundDetailContent({ fund }: Props) {
       {/* details / rows */}
       <View className="mt-8 space-y-2">
         <View className="flex-row items-center justify-between">
-          <Text className="font-satoshi-medium text-mauve9 mr-auto text-base">
+          <Text className="font-satoshi-bold text-mauve9 mr-auto text-base">
             Total Budgeted Amount
           </Text>
-          <Text className="font-nunito-semibold text-mauve11 text-base">
+          <Text className="font-nunito-bold text-mauve9 text-base">
             {toCurrencyNarrow(fund.totalBudgetedAmount)}
           </Text>
 
@@ -128,7 +128,7 @@ export default function FundDetailContent({ fund }: Props) {
           <Text className="font-satoshi-medium text-mauve9 mr-auto text-base">
             Total Spent this month
           </Text>
-          <Text className="font-nunito-semibold text-mauve11 text-base">
+          <Text className="font-nunito-semibold text-mauve9 text-base">
             {toCurrencyNarrow(fund.totalSpent)}
           </Text>
 
@@ -149,7 +149,7 @@ export default function FundDetailContent({ fund }: Props) {
           <Text className="font-satoshi-medium text-mauve9 mr-auto text-base">
             Total Spent last month
           </Text>
-          <Text className="font-nunito-semibold text-mauve11 text-base">
+          <Text className="font-nunito-semibold text-mauve9 text-base">
             {toCurrencyNarrow(400)}
           </Text>
 
