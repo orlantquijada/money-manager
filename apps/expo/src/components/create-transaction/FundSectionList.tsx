@@ -2,18 +2,12 @@ import { Fund, FundType } from ".prisma/client"
 import { BottomSheetSectionList, useBottomSheet } from "@gorhom/bottom-sheet"
 import { memo } from "react"
 import { Text, View } from "react-native"
-import { userId } from "~/utils/constants"
+import { fundTypeReadableText, userId } from "~/utils/constants"
 import { getTotalBudgetedAmount, toCurrencyNarrow } from "~/utils/functions"
 import { trpc } from "~/utils/trpc"
 import ScaleDownPressable from "../ScaleDownPressable"
 import clsx from "clsx"
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore"
-
-const fundTypeReadableText: Record<FundType, string> = {
-  NON_NEGOTIABLE: "Nonnegotiable",
-  TARGET: "Target",
-  SPENDING: "Spending",
-}
 
 // TODO: skeleton
 const FundSectionList = memo(({ searchText }: { searchText: string }) => {

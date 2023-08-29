@@ -10,6 +10,7 @@ import { FundWithMeta } from "~/types"
 import { toCurrencyNarrow } from "~/utils/functions"
 import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation"
 import { mauve, violet } from "~/utils/colors"
+import { fundTypeReadableText } from "~/utils/constants"
 
 import ScaleDownPressable from "../ScaleDownPressable"
 import Button from "../Button"
@@ -56,7 +57,7 @@ export default function FundDetailContent({ fund }: Props) {
         <View className="bg-mauve5 h-1 w-[27px] rounded-full" />
       </Animated.View>
 
-      <View className="h-10 flex-row items-center justify-between pt-4">
+      <View className="mb-10 h-10 flex-row items-center justify-between pt-4">
         <View className="flex-row items-center">
           <View className="bg-violet4 mr-2 aspect-square w-12 items-center justify-center rounded-full">
             <Ellipsis
@@ -71,21 +72,22 @@ export default function FundDetailContent({ fund }: Props) {
             <Text className="text-mauve12 font-satoshi-bold text-lg">
               {fund.name}
             </Text>
-            <Text className="text-mauve9 font-satoshi text-sm">Spending</Text>
+            <Text className="text-mauve9 font-satoshi text-sm">
+              {fundTypeReadableText[fund.fundType]}
+            </Text>
           </View>
         </View>
         <Dropdown />
       </View>
 
       <ScaleDownPressable
-        className="mt-10"
         onPress={() => {
           close()
           navigation.navigate("AddTransaction", { fundId: fund.id })
         }}
       >
         <Button className="h-10">
-          <Text className="font-satoshi-medium text-mauve12">Add Expense</Text>
+          <Text className="font-satoshi-medium text-mauve10">Add Expense</Text>
         </Button>
       </ScaleDownPressable>
 
