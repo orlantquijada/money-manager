@@ -110,7 +110,7 @@ function Wrapper({
   const { setFormValues, formData } = useFormData()
   const route = useRootStackRoute("CreateFund")
   const navigation = useRootStackNavigation()
-  const { mutate, status } = trpc.fund.create.useMutation()
+  const createFund = trpc.fund.create.useMutation()
   const utils = trpc.useContext()
   const [didSubmit, setDidSubmit] = useState(false)
 
@@ -128,7 +128,7 @@ function Wrapper({
     handleSetFormValues()
   }
 
-  const loading = status === "loading" || didSubmit
+  const loading = createFund.status === "loading" || didSubmit
   const disabled = !selectedTimeMode || loading
 
   return (
@@ -169,46 +169,46 @@ function Wrapper({
         disabled={disabled}
         loading={loading}
         onContinuePress={() => {
+          if (!selectedTimeMode) return
+
           const folderId = route.params?.folderId
-          const budgetedAmount = currencyInputRef.current?.getValue() || 0
           if (!folderId) {
             handleSetFormValues()
             setScreen("chooseFolder")
             return
           }
 
-          if (selectedTimeMode) {
-            setDidSubmit(true)
-            mutate(
-              {
-                ...formData,
-                budgetedAmount,
-                folderId,
-                timeMode: selectedTimeMode,
-                userId,
-              },
-              {
-                onSuccess: () => {
-                  utils.folder.listWithFunds
-                    .invalidate()
-                    .then(() => {
-                      navigation.navigate("Root", {
-                        screen: "Home",
+          const budgetedAmount = currencyInputRef.current?.getValue() || 0
+          setDidSubmit(true)
+          createFund.mutate(
+            {
+              ...formData,
+              budgetedAmount,
+              folderId,
+              timeMode: selectedTimeMode,
+              userId,
+            },
+            {
+              onSuccess: () => {
+                utils.folder.listWithFunds
+                  .invalidate()
+                  .then(() => {
+                    navigation.navigate("Root", {
+                      screen: "Home",
+                      params: {
+                        screen: "Budgets",
                         params: {
-                          screen: "Budgets",
-                          params: {
-                            recentlyAddedToFolderId: folderId,
-                          },
+                          recentlyAddedToFolderId: folderId,
                         },
-                      })
+                      },
                     })
-                    .catch(() => {
-                      return
-                    })
-                },
+                  })
+                  .catch(() => {
+                    return
+                  })
               },
-            )
-          }
+            },
+          )
         }}
         onBackPress={handleBackPress}
       >
