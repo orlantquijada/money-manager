@@ -41,6 +41,7 @@ export default function CreateFund() {
             <NonNegotiableInfo
               key="nonNegotiableInfo"
               onBackPress={() => setScreen("fundInfo")}
+              setScreen={setScreen}
             />
           )}
           {screen === "targetsInfo" && (

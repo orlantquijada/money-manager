@@ -1,15 +1,37 @@
-import { View, Text } from "react-native"
-import { ScrollView } from "react-native-gesture-handler"
+import { useRef } from "react"
+import { View, Text, ScrollView } from "react-native"
+
+import { setScreen } from "~/screens/create-fund"
+import { userId } from "~/utils/constants"
+import { useRootStackRoute } from "~/utils/hooks/useRootStackRoute"
+import { trpc } from "~/utils/trpc"
+import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
+
 import Presence from "../Presence"
 import { CurrencyInput } from "../TextInput"
 import Choice from "./Choice"
 import Footer from "../CreateFooter"
+import { useFormData } from "./context"
 
 export default function NonNegotiableInfo({
   onBackPress,
+  setScreen,
 }: {
   onBackPress: () => void
+  setScreen: setScreen
 }) {
+  const route = useRootStackRoute("CreateFund")
+  const currencyInputRef = useRef<CurrencyInput>(null)
+  const { setFormValues, formData } = useFormData()
+  const createFund = trpc.fund.create.useMutation()
+  const navigation = useRootStackNavigation()
+
+  const handleSetFormValues = () => {
+    const budgetedAmount = currencyInputRef.current?.getValue() || 0
+    setFormValues({ budgetedAmount, timeMode: "MONTHLY" })
+  }
+  const utils = trpc.useContext()
+
   return (
     <>
       <ScrollView
@@ -38,12 +60,54 @@ export default function NonNegotiableInfo({
               <Text className="text-mauveDark12 font-satoshi-medium text-lg">
                 How much wil you allocate?
               </Text>
-              <CurrencyInput />
+              <CurrencyInput
+                ref={currencyInputRef}
+                defaultValue={formData.budgetedAmount?.toString()}
+              />
             </View>
           </Presence>
         </View>
       </ScrollView>
-      <Footer onBackPress={onBackPress}>Continue</Footer>
+      <Footer
+        onBackPress={onBackPress}
+        onContinuePress={() => {
+          const folderId = route.params?.folderId
+
+          if (!folderId) {
+            handleSetFormValues()
+            setScreen("chooseFolder")
+            return
+          }
+
+          const budgetedAmount = currencyInputRef.current?.getValue() || 0
+          createFund.mutate(
+            {
+              ...formData,
+              budgetedAmount,
+              folderId,
+              timeMode: "MONTHLY",
+              userId,
+            },
+            {
+              onSuccess: () => {
+                utils.folder.listWithFunds.invalidate().then(() => {
+                  navigation.navigate("Root", {
+                    screen: "Home",
+                    params: {
+                      screen: "Budgets",
+                      params: {
+                        recentlyAddedToFolderId: folderId,
+                      },
+                    },
+                  })
+                })
+              },
+            },
+          )
+        }}
+      >
+        Continue
+      </Footer>
     </>
   )
 }

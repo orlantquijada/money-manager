@@ -101,7 +101,12 @@ export default function ChooseFolder({ onBackPress }: Props) {
                     .then(() => {
                       navigation.navigate("Root", {
                         screen: "Home",
-                        params: { recentlyAddedToFolderId: selectedId },
+                        params: {
+                          screen: "Budgets",
+                          params: {
+                            recentlyAddedToFolderId: selectedId,
+                          },
+                        },
                       })
                     })
                     .catch(() => {
