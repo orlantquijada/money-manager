@@ -170,6 +170,7 @@ function Wrapper({
         loading={loading}
         onContinuePress={() => {
           if (!selectedTimeMode) return
+          setDidSubmit(true)
 
           const folderId = route.params?.folderId
           if (!folderId) {
@@ -179,7 +180,6 @@ function Wrapper({
           }
 
           const budgetedAmount = currencyInputRef.current?.getValue() || 0
-          setDidSubmit(true)
           createFund.mutate(
             {
               ...formData,
