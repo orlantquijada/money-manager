@@ -123,8 +123,7 @@ export default function FundDetailContent({ fund }: Props) {
           scale={1}
           onPress={() => {
             close()
-            // FIX: types
-            navigation.navigate("TransactionsList")
+            navigation.navigate("TransactionsList", { fundId: fund.id })
           }}
         >
           <Text className="font-satoshi-medium text-mauve9 mr-auto text-base">
