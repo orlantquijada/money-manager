@@ -30,8 +30,6 @@ export default function TransactionsPage() {
   const transactions = useTransactions(route.params.fundId)
   const navigation = useNavigation()
 
-  if (transactions.status !== "success") return null
-
   return (
     <SafeAreaView className="bg-violet1 flex-1">
       <View className="px-4">
@@ -82,7 +80,11 @@ export default function TransactionsPage() {
           </View>
         </View>
 
-        <TransactionsList transactions={transactions.data} />
+        <TransactionsList
+          transactions={
+            transactions.status === "success" ? transactions.data : []
+          }
+        />
       </View>
     </SafeAreaView>
   )
