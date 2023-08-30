@@ -4,18 +4,30 @@ import { useNavigation } from "@react-navigation/native"
 import { groupTransactionByDate } from "~/utils/functions"
 import { trpc } from "~/utils/trpc"
 import { mauve } from "~/utils/colors"
+import { useRootStackRoute } from "~/utils/hooks/useRootStackRoute"
 
 import SafeAreaView from "~/components/SafeAreaView"
 import { TransactionsList } from "~/components/TransactionsList"
 import ScaleDownPressable from "~/components/ScaleDownPressable"
+
+import { Fund } from ".prisma/client"
 
 import Menu from "../../assets/icons/more-horiz.svg"
 // import Calendar from "../../assets/icons/hero-icons/calendar.svg"
 import Calendar from "../../assets/icons/calendar-dates.svg"
 import Search from "../../assets/icons/search-duo.svg"
 
+// NOTE: kind of weird na ang transaction record title kay same ug name sa
+// fund name murag redundant na nuon – pwede sguro nga note ang ibutang or ang store instead
+// plus try to add a date
+
+// TODO: empty state
+
+// TODO: search
+
 export default function TransactionsPage() {
-  const transactions = useTransactions()
+  const route = useRootStackRoute("TransactionsList")
+  const transactions = useTransactions(route.params.fundId)
   const navigation = useNavigation()
 
   if (transactions.status !== "success") return null
@@ -32,24 +44,24 @@ export default function TransactionsPage() {
             }}
           >
             <Text className="text-mauve8 font-satoshi-bold text-sm">
-              Electricity
+              Transactions
             </Text>
             <Text className="font-satoshi-bold text-mauve12 text-xl">
-              Transactions
+              {route.params.fundName}
             </Text>
           </ScaleDownPressable>
 
           <View className="flex-row">
             <View className="mr-2">
-              {/* TODO: stroke width not the same */}
-              <Calendar
+              <Menu
                 height={24}
                 width={24}
                 strokeWidth={3}
                 color={mauve.mauve11}
               />
             </View>
-            <Menu
+            {/* TODO: stroke width not the same */}
+            <Calendar
               height={24}
               width={24}
               strokeWidth={3}
@@ -76,8 +88,11 @@ export default function TransactionsPage() {
   )
 }
 
-function useTransactions() {
-  return trpc.transaction.allThisMonth.useQuery(undefined, {
-    select: (transactions) => groupTransactionByDate(transactions),
-  })
+function useTransactions(fundId: Fund["id"]) {
+  return trpc.transaction.allThisMonth.useQuery(
+    { fundId },
+    {
+      select: (transactions) => groupTransactionByDate(transactions),
+    },
+  )
 }

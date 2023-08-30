@@ -6,32 +6,41 @@ export const transactionsRouter = router({
   all: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.transaction.findMany()
   }),
-  allThisMonth: publicProcedure.query(({ ctx }) => {
-    const now = new Date()
-    return ctx.prisma.transaction.findMany({
-      where: {
-        date: {
-          gte: startOfMonth(now),
-          lt: endOfMonth(now),
+  allThisMonth: publicProcedure
+    .input(
+      z
+        .object({
+          fundId: z.number().optional(),
+        })
+        .optional(),
+    )
+    .query(({ ctx, input }) => {
+      const now = new Date()
+      return ctx.prisma.transaction.findMany({
+        where: {
+          date: {
+            gte: startOfMonth(now),
+            lt: endOfMonth(now),
+          },
+          fundId: input?.fundId ? input.fundId : {},
         },
-      },
-      include: {
-        fund: {
-          select: {
-            name: true,
+        include: {
+          fund: {
+            select: {
+              name: true,
+            },
+          },
+          store: {
+            select: {
+              name: true,
+            },
           },
         },
-        store: {
-          select: {
-            name: true,
-          },
+        orderBy: {
+          date: "desc",
         },
-      },
-      orderBy: {
-        date: "desc",
-      },
-    })
-  }),
+      })
+    }),
   retrieve: publicProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.transaction.findFirst({ where: { id: input } })
   }),

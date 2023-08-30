@@ -56,4 +56,11 @@ export const fundsRouter = router({
         totalSpent: totalSpentMap[fund.id]?.toNumber() || 0,
       }))
     }),
+  retrieve: publicProcedure.input(z.number()).query(({ ctx, input }) =>
+    ctx.prisma.fund.findFirst({
+      where: {
+        id: input,
+      },
+    }),
+  ),
 })
