@@ -82,9 +82,10 @@ const FundSectionList = memo(({ searchText }: { searchText: string }) => {
           </View>
         )
       }}
+      contentContainerStyle={{ paddingBottom: 40 }}
       renderSectionHeader={({ section }) =>
         section.data.length ? (
-          <View className="mb-2 px-4">
+          <View className="bg-mauveDark2 px-4 pb-2">
             <Text className="text-mauveDark11 font-satoshi-medium text-sm">
               {fundTypeReadableText[section.title]}
             </Text>
