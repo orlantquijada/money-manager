@@ -16,7 +16,6 @@ model User {
 
   folders Folder[]
   Store   Store[]
-  Fund    Fund[]
 }
 
 model Folder {
@@ -40,14 +39,9 @@ model Fund {
   updatedAt      DateTime? @updatedAt
 
   transactions Transaction[]
-  user         User          @relation(fields: [userId], references: [id])
 
   folder   Folder @relation(fields: [folderId], references: [id])
   folderId Int
-  userId   String
-
-  // not sure
-  @@unique([userId, name])
 }
 
 model Store {

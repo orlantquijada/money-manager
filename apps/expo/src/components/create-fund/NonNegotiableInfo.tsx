@@ -2,7 +2,6 @@ import { useRef } from "react"
 import { View, Text, ScrollView } from "react-native"
 
 import { setScreen } from "~/screens/create-fund"
-import { userId } from "~/utils/constants"
 import { useRootStackRoute } from "~/utils/hooks/useRootStackRoute"
 import { trpc } from "~/utils/trpc"
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
@@ -86,7 +85,6 @@ export default function NonNegotiableInfo({
               budgetedAmount,
               folderId,
               timeMode: "MONTHLY",
-              userId,
             },
             {
               onSuccess: () => {

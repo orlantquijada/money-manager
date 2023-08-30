@@ -14,7 +14,6 @@ export const fundsRouter = router({
         fundType: fundTypeSchema,
         folderId: z.number(),
         timeMode: timeModeSchema,
-        userId: z.string(),
       }),
     )
     .mutation(({ input, ctx }) => ctx.prisma.fund.create({ data: input })),
@@ -23,7 +22,9 @@ export const fundsRouter = router({
     .query(async ({ ctx, input }) => {
       const funds = await ctx.prisma.fund.findMany({
         where: {
-          userId: input,
+          folder: {
+            userId: input,
+          },
         },
         orderBy: {
           name: "asc",
