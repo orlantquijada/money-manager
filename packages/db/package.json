@@ -11,15 +11,21 @@
     "db:migrate": "pnpm with-env prisma migrate",
     "db:deploy": "pnpm with-env prisma migrate deploy",
     "with-env": "dotenv -e ../../.env --",
-    "build": "tsup index.ts --format cjs"
+    "build": "tsup index.ts --format cjs",
+    "seed": "pnpm prisma db seed"
+  },
+  "prisma": {
+    "seed": "tsx ./prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0"
   },
   "devDependencies": {
+    "@types/node": "^18.11.17",
     "dotenv-cli": "^6.0.0",
     "prisma": "^5.0.0",
     "tsup": "^7.1.0",
+    "tsx": "^3.12.1",
     "typescript": "^4.9.4"
   }
 }
