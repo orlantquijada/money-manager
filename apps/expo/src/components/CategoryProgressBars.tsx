@@ -1,14 +1,21 @@
-import { Fund, TimeMode } from ".prisma/client"
+import { Fund, FundType, TimeMode } from ".prisma/client"
 import { getWeekOfMonth, getWeeksInMonth, isThisMonth } from "date-fns"
 import { useMemo } from "react"
 import { View } from "react-native"
 import { FundWithMeta } from "~/types"
 import { daysInCurrentMonth } from "~/utils/constants"
 import ProgressBar from "./ProgressBar"
-import { pink } from "~/utils/colors"
+import { lime, pink, violet } from "~/utils/colors"
 
 import Stripes from "@assets/icons/stripes-small-violet.svg"
 import PinkStripes from "@assets/icons/stripes-pink.svg"
+
+const progressBarColorMap: Record<FundType, string> = {
+  TARGET: "#ffe7b3e6",
+  // amberDark12 90% opacity
+  NON_NEGOTIABLE: lime.lime4,
+  SPENDING: violet.violet6,
+}
 
 export default function CategoryProgressBars({ fund }: { fund: FundWithMeta }) {
   const [fundProgress, overspentProgress] = useFundProgress(
@@ -37,6 +44,7 @@ export default function CategoryProgressBars({ fund }: { fund: FundWithMeta }) {
           progress={progress}
           highlight={getShouldHighlight(fund, fundProgress.length - index)}
           delayMultiplier={fundProgress.length - index}
+          color={progressBarColorMap[fund.fundType]}
           Stripes={
             <View className="opacity-[.15]">
               <Stripes />

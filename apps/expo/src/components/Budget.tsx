@@ -60,7 +60,8 @@ export default function Budget({
           rest.onPress?.(...args)
         }}
       >
-        <View className="bg-violet3 border-violet4 flex-row items-center justify-between rounded-2xl border p-4">
+        {/* bg is mauve12 with 2% opacity */}
+        <View className="flex-row items-center justify-between rounded-2xl bg-[#1a152307] p-4">
           <View className="flex-row items-center">
             <View className="relative h-4 w-4">
               <StyledMotiView
@@ -82,7 +83,7 @@ export default function Budget({
                 <FolderClosed width={16} height={16} />
               </StyledMotiView>
             </View>
-            <Text className="font-satoshi-medium text-violet12 ml-3 text-base">
+            <Text className="font-satoshi-medium text-mauve12 ml-3 text-base">
               {folderName}
             </Text>
           </View>
