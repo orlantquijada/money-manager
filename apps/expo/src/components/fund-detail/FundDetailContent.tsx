@@ -86,7 +86,7 @@ export default function FundDetailContent({ fund }: Props) {
           navigation.navigate("AddTransaction", { fundId: fund.id })
         }}
       >
-        <Button className="h-10">
+        <Button className="h-10" animate={{ backgroundColor: mauve.mauve3 }}>
           <Text className="font-satoshi-medium text-mauve10">Add Expense</Text>
         </Button>
       </ScaleDownPressable>
