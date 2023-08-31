@@ -47,6 +47,7 @@ export default function Category({ fund }: CategoryProps) {
   )
 }
 
+// TODO: fundType NonNegotiable
 function HelperText({ fund }: { fund: FundWithMeta }) {
   const relativeOverspentValue = getRelativeOverspentValue(fund)
   const didRelativeOverspend = relativeOverspentValue < 0
@@ -140,7 +141,7 @@ function getRelativeOverspentValue(fund: FundWithMeta) {
   }
 
   return (
-    (Number(!(now.getDay() < 15)) + 1) * Number(fund.budgetedAmount) -
+    (Number(!(now.getDate() < 15)) + 1) * Number(fund.budgetedAmount) -
     fund.totalSpent
   )
 }

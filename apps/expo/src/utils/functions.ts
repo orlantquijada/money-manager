@@ -82,8 +82,9 @@ export function getTotalBudgetedAmount(fund: Fund) {
       ? (getWeeksInMonth(now) - getWeekOfMonth(now) + 1) * budgetedAmount
       : getWeeksInMonth(now) * budgetedAmount
   else if (fund.timeMode === "BIMONTHLY") {
-    return isThisMonth(fund.createdAt || now) &&
-      now.getDay() > daysInCurrentMonth / 2
+    return fund.createdAt &&
+      isThisMonth(fund.createdAt) &&
+      fund.createdAt.getDate() > daysInCurrentMonth / 2
       ? budgetedAmount
       : budgetedAmount * 2
   }
