@@ -83,12 +83,14 @@ function useFundProgress(fund: Fund, totalSpent: number) {
 function getNumberOfBars(fund: Fund) {
   const now = new Date()
   const bars: Record<TimeMode, number> = {
-    WEEKLY: isThisMonth(fund.createdAt || now)
-      ? getWeeksInMonth(now) - getWeekOfMonth(fund.createdAt || now) + 1
-      : getWeeksInMonth(now),
+    WEEKLY:
+      fund.createdAt && isThisMonth(fund.createdAt)
+        ? getWeeksInMonth(now) - getWeekOfMonth(fund.createdAt) + 1
+        : getWeeksInMonth(now),
     BIMONTHLY:
-      isThisMonth(fund.createdAt || now) &&
-      now.getDay() > daysInCurrentMonth / 2
+      fund.createdAt &&
+      isThisMonth(fund.createdAt) &&
+      fund.createdAt.getDate() > daysInCurrentMonth / 2
         ? 1
         : 2,
     MONTHLY: 1,
@@ -102,6 +104,9 @@ function getShouldHighlight(fund: Fund, index: number) {
   if (fund.timeMode === "MONTHLY" || fund.timeMode === "EVENTUALLY")
     return false
 
+  const bars = getNumberOfBars(fund)
+  if (bars === 1) return false
+
   const now = new Date()
   if (fund.timeMode === "WEEKLY") {
     return isThisMonth(fund.createdAt || now)
@@ -110,7 +115,5 @@ function getShouldHighlight(fund: Fund, index: number) {
       : getWeekOfMonth(now) === index
   }
 
-  const bars = getNumberOfBars(fund)
-  if (bars === 1) return false
-  return now.getDay() < daysInCurrentMonth / 2 === !(index - 1)
+  return now.getDate() < daysInCurrentMonth / 2 === !(index - 1)
 }
