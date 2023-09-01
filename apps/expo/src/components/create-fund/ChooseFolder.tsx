@@ -94,6 +94,7 @@ export default function ChooseFolder({ onBackPress }: Props) {
               },
               {
                 onSuccess: () => {
+                  utils.fund.listFromUserId.invalidate()
                   utils.folder.listWithFunds
                     .invalidate()
                     .then(() => {

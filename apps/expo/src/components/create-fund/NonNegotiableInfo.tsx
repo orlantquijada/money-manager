@@ -88,6 +88,7 @@ export default function NonNegotiableInfo({
             },
             {
               onSuccess: () => {
+                utils.fund.listFromUserId.invalidate()
                 utils.folder.listWithFunds.invalidate().then(() => {
                   navigation.navigate("Root", {
                     screen: "Home",
