@@ -25,13 +25,13 @@ const FundSectionList = memo(({ searchText }: { searchText: string }) => {
   }
 
   const filteredData = searchText
-    ? funds.data?.map((item) => ({
+    ? funds.map((item) => ({
         ...item,
         data: item.data.filter(({ name }) =>
           name.toLowerCase().includes(searchText.toLowerCase()),
         ),
       }))
-    : funds.data
+    : funds
 
   return (
     <BottomSheetSectionList
@@ -99,30 +99,30 @@ const FundSectionList = memo(({ searchText }: { searchText: string }) => {
 FundSectionList.displayName = "FundSectionList"
 
 function useFunds() {
-  return trpc.fund.listFromUserId.useQuery(userId, {
-    select: (funds) => {
-      const fundsWithBudgetedAmount = funds.map((fund) => ({
-        ...fund,
-        totalBudgetedAmount: getTotalBudgetedAmount(fund),
-      }))
+  const utils = trpc.useContext()
 
-      const fundsGroupedByType: Record<FundType, typeof funds> = {
-        SPENDING: [],
-        TARGET: [],
-        NON_NEGOTIABLE: [],
-      }
-      for (const fund of fundsWithBudgetedAmount)
-        fundsGroupedByType[fund.fundType].push(fund)
+  // data from create-transaction
+  const funds = utils.fund.listFromUserId.getData(userId) || []
+  const fundsWithBudgetedAmount = funds.map((fund) => ({
+    ...fund,
+    totalBudgetedAmount: getTotalBudgetedAmount(fund),
+  }))
 
-      return Object.entries(fundsGroupedByType).map(
-        ([title, data]) =>
-          ({
-            title,
-            data,
-          } as { title: FundType; data: typeof fundsWithBudgetedAmount }),
-      )
-    },
-  })
+  const fundsGroupedByType: Record<FundType, typeof funds> = {
+    SPENDING: [],
+    TARGET: [],
+    NON_NEGOTIABLE: [],
+  }
+  for (const fund of fundsWithBudgetedAmount)
+    fundsGroupedByType[fund.fundType].push(fund)
+
+  return Object.entries(fundsGroupedByType).map(
+    ([title, data]) =>
+      ({
+        title,
+        data,
+      } as { title: FundType; data: typeof fundsWithBudgetedAmount }),
+  )
 }
 
 export default FundSectionList
