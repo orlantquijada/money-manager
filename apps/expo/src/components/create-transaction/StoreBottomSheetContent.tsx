@@ -16,6 +16,7 @@ import { trpc } from "~/utils/trpc"
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore"
 import { userId } from "~/utils/constants"
 
+import { Store } from ".prisma/client"
 import ScaleDownPressable from "../ScaleDownPressable"
 
 import ChevronDownIcon from "../../../assets/icons/hero-icons/chevron-down.svg"
@@ -90,9 +91,15 @@ export function StoreBottomSheetContent() {
 }
 
 const StoreList = memo(({ searchText }: { searchText: string }) => {
-  const { data, status } = trpc.store.listFromUserId.useQuery(userId)
+  const { data, status } = trpc.store.listFromUserId.useQuery(userId, {
+    staleTime: 1000 * 60 * 5,
+  })
+  const utils = trpc.useContext()
 
-  const store = useTransactionStore((s) => s.store)
+  // data from create-transaction
+  const funds = utils.fund.listFromUserId.getData(userId)
+
+  const formDataStore = useTransactionStore((s) => s.store)
 
   const animate = useMemo(
     () =>
@@ -145,16 +152,30 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
     : data
 
   const finalData =
-    !searchText && store && !data.some(({ name }) => name === store)
-      ? [...filteredData, { id: -1, name: store }]
+    !searchText &&
+    formDataStore &&
+    !data.some(({ name }) => name === formDataStore)
+      ? [
+          ...filteredData,
+          { id: -1, name: formDataStore, lastSelectedFundId: null },
+        ]
       : filteredData
 
   const hasNoStore = data.length === 0
 
-  const handleSetStore = (newStore: string) => {
-    useTransactionStore.setState({
-      store: newStore === store ? "" : newStore,
-    })
+  const handleSetStore = (newStore: string | Omit<Store, "userId">) => {
+    let storeName = typeof newStore === "string" ? newStore : newStore.name
+    if (storeName === formDataStore) storeName = ""
+
+    useTransactionStore.setState((prev) => ({
+      store: storeName,
+      fund:
+        typeof newStore !== "string" &&
+        prev.fund === undefined &&
+        newStore.lastSelectedFundId
+          ? funds?.find((fund) => fund.id === newStore.lastSelectedFundId)
+          : undefined,
+    }))
     forceClose()
   }
 
@@ -164,7 +185,7 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
       data={finalData}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => {
-        const selected = item.name === store
+        const selected = item.name === formDataStore
 
         return (
           <View
@@ -176,7 +197,7 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
             <ScaleDownPressable
               scale={0.98}
               onPress={() => {
-                handleSetStore(item.name)
+                handleSetStore(item)
               }}
               className="h-full flex-row items-center justify-between self-stretch px-4"
             >

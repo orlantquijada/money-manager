@@ -13,6 +13,7 @@ export const storesRouter = router({
       select: {
         name: true,
         id: true,
+        lastSelectedFundId: true,
       },
     })
   }),
