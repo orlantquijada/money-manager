@@ -6,7 +6,6 @@ import { FlashList } from "@shopify/flash-list"
 import { mauveDark } from "~/utils/colors"
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 import { trpc } from "~/utils/trpc"
-import { userId } from "~/utils/constants"
 
 import { Folder } from ".prisma/client"
 import CreateFooter from "../CreateFooter"
@@ -22,7 +21,7 @@ type Props = {
 }
 
 export default function ChooseFolder({ onBackPress }: Props) {
-  const { mutate, status } = trpc.fund.create.useMutation()
+  const createFund = trpc.fund.create.useMutation()
   const { data } = trpc.folder.list.useQuery()
   const utils = trpc.useContext()
   const navigation = useRootStackNavigation()
@@ -36,7 +35,7 @@ export default function ChooseFolder({ onBackPress }: Props) {
 
   const [didSubmit, setDidSubmit] = useState(false)
 
-  const loading = status === "loading" || didSubmit
+  const loading = createFund.status === "loading" || didSubmit
   const disabled = !selectedId || loading || didSubmit
 
   return (
@@ -88,11 +87,10 @@ export default function ChooseFolder({ onBackPress }: Props) {
         onContinuePress={() => {
           if (selectedId) {
             setDidSubmit(true)
-            mutate(
+            createFund.mutate(
               {
                 ...formData,
                 folderId: selectedId,
-                userId,
               },
               {
                 onSuccess: () => {
