@@ -22,27 +22,19 @@ export function Numpad({ setAmount, ...props }: Props) {
 
   return (
     <View {...props} className="gap-y-2">
-      <View className="flex-row gap-x-2">
-        {[1, 2, 3].map((num) => (
-          <NumberButton onPress={handleNumberButtonPress(num)} key={num}>
-            {num}
-          </NumberButton>
-        ))}
-      </View>
-      <View className="flex-row gap-x-2">
-        {[4, 5, 6].map((num) => (
-          <NumberButton onPress={handleNumberButtonPress(num)} key={num}>
-            {num}
-          </NumberButton>
-        ))}
-      </View>
-      <View className="flex-row gap-x-2">
-        {[7, 8, 9].map((num) => (
-          <NumberButton onPress={handleNumberButtonPress(num)} key={num}>
-            {num}
-          </NumberButton>
-        ))}
-      </View>
+      {[
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+      ].map((row) => (
+        <View className="flex-row gap-x-2" key={row[0]}>
+          {row.map((num) => (
+            <NumberButton onPress={handleNumberButtonPress(num)} key={num}>
+              {num}
+            </NumberButton>
+          ))}
+        </View>
+      ))}
       <View className="flex-row gap-x-2">
         <NumberButton
           onPress={() => {
