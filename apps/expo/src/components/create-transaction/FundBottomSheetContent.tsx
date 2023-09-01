@@ -86,6 +86,7 @@ export function FundBottomSheetContent() {
   )
 }
 
+// WARN: DEAD CODE
 const FundList = memo(({ searchText }: { searchText: string }) => {
   const { data, status } = useFunds()
 
