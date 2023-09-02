@@ -13,12 +13,12 @@ import { mauve, violet } from "~/utils/colors"
 import { fundTypeReadableText } from "~/utils/constants"
 
 import ScaleDownPressable from "../ScaleDownPressable"
-import Button from "../Button"
-import CategoryProgressBars from "../CategoryProgressBars"
+import CategoryProgressBars from "../dashboard/Fund/CategoryProgressBars"
 
 // import Ellipsis from "../../../assets/icons/hero-icons/ellipsis-horizontal.svg"
 import Ellipsis from "../../../assets/icons/more-horiz.svg"
 import ChevronRight from "../../../assets/icons/hero-icons/chevron-right.svg"
+import ActionButton from "./ActionButton"
 
 const { width } = Dimensions.get("screen")
 
@@ -92,18 +92,7 @@ export default function FundDetailContent({ fund }: Props) {
           <Dropdown />
         </View>
 
-        <ScaleDownPressable
-          onPress={() => {
-            close()
-            navigation.navigate("AddTransaction", { fundId: fund.id })
-          }}
-        >
-          <Button className="h-10" animate={{ backgroundColor: mauve.mauve3 }}>
-            <Text className="font-satoshi-medium text-mauve10">
-              Add Expense
-            </Text>
-          </Button>
-        </ScaleDownPressable>
+        <ActionButton fund={fund} />
 
         <View className="mt-10">
           <Text className="font-satoshi text-mauve9 text-sm">
