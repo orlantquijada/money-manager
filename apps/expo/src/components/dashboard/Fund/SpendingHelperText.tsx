@@ -10,9 +10,8 @@ import { HelperTextProps } from "./HelperText"
 import { TimeMode } from ".prisma/client"
 
 const SpendingHelperText: FC<HelperTextProps> = ({ showDefault, fund }) => {
-  const relativeOverspentValue = getRelativeOverspentValue(fund)
-  const didRelativeOverspend = relativeOverspentValue < 0
-  const didMonthlyOverspend = getDidMonthlyOverspent(fund)
+  const relativeAmountLeft = getRelativeAmountLeft(fund)
+  const didRelativeOverspend = relativeAmountLeft < 0
 
   if (showDefault) {
     return (
@@ -25,14 +24,14 @@ const SpendingHelperText: FC<HelperTextProps> = ({ showDefault, fund }) => {
             overspent
             <Text className="font-nunito-semibold">
               {" "}
-              {toCurrencyNarrow(relativeOverspentValue * -1)}{" "}
+              {toCurrencyNarrow(relativeAmountLeft * -1)}{" "}
             </Text>
             {`${helperTextTimeModeMap[fund.timeMode]}`.trim()}
           </>
         ) : (
           <>
             <Text className="font-nunito-semibold">
-              {toCurrencyNarrow(Number(fund.budgetedAmount) - fund.totalSpent)}{" "}
+              {toCurrencyNarrow(relativeAmountLeft)}{" "}
             </Text>
             {`left ${helperTextTimeModeMap[fund.timeMode]}`.trim()}
           </>
@@ -40,6 +39,8 @@ const SpendingHelperText: FC<HelperTextProps> = ({ showDefault, fund }) => {
       </Text>
     )
   }
+
+  const didMonthlyOverspend = getDidMonthlyOverspent(fund)
 
   return (
     <Text
@@ -71,7 +72,7 @@ function getDidMonthlyOverspent(fund: FundWithMeta) {
 }
 
 // relative to current date and timemode
-function getRelativeOverspentValue(fund: FundWithMeta) {
+function getRelativeAmountLeft(fund: FundWithMeta) {
   const now = new Date()
 
   if (fund.timeMode === "MONTHLY" || fund.timeMode === "EVENTUALLY")
@@ -80,7 +81,7 @@ function getRelativeOverspentValue(fund: FundWithMeta) {
     const weekOfMonth = getWeekOfMonth(now)
     if (isThisMonth(fund.createdAt || now)) {
       return (
-        (getWeekOfMonth(now) - getWeekOfMonth(fund.createdAt || now) + 1) *
+        (weekOfMonth - getWeekOfMonth(fund.createdAt || now) + 1) *
           Number(fund.budgetedAmount) -
         fund.totalSpent
       )
