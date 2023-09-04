@@ -38,7 +38,10 @@ const FundSectionList = memo(({ searchText }: { searchText: string }) => {
       sections={filteredData || []}
       renderItem={({ item, section, index }) => {
         const selected = item.id === selectedFund?.id
-        const moneyLeft = item.totalBudgetedAmount - item.totalSpent
+        const moneyLeft =
+          item.fundType === "SPENDING"
+            ? item.totalBudgetedAmount - item.totalSpent * -1
+            : item.totalBudgetedAmount - item.totalSpent
 
         return (
           <View

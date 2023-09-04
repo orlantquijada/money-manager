@@ -4,6 +4,7 @@ import { mauve } from "~/utils/colors"
 import { toCurrencyNarrow } from "~/utils/functions"
 import { HelperTextProps } from "./HelperText"
 
+// TODO: mo error color ra siya if nalapas sa deadline? not sure
 const TargetHelperText: FC<HelperTextProps> = ({ showDefault, fund }) => {
   const isOverFunded = fund.totalSpent > fund.totalBudgetedAmount
   if (showDefault)
