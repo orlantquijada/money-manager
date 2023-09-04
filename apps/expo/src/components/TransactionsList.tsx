@@ -3,6 +3,7 @@ import { SectionList, Text, View } from "react-native"
 import {
   formatDefaultReadableDate,
   formatRelativeDate,
+  sum,
   toCurrencyNarrow,
 } from "~/utils/functions"
 import useToggle from "~/utils/hooks/useToggle"
@@ -60,21 +61,25 @@ function SectionHeader({ section }: { section: TransactionSection }) {
   const [showDefaultText, { toggle }] = useToggle(true)
 
   return (
-    <ScaleDownPressable
-      onPress={toggle}
-      opacity={0.6}
-      scale={1}
-      containerStyle={{
-        alignSelf: "flex-start",
-        width: "100%",
-      }}
-      className="bg-violet1 w-full"
-    >
-      <Text className="text-mauve8 font-satoshi-bold pb-3 text-lg">
-        {showDefaultText
-          ? formatRelativeDate(section.title, new Date())
-          : formatDefaultReadableDate(section.title)}
+    <View className="bg-violet1 w-full flex-row items-center justify-between">
+      <ScaleDownPressable
+        onPress={toggle}
+        opacity={0.6}
+        scale={1}
+        containerStyle={{ flexGrow: 1 }}
+      >
+        <Text className="text-mauve8 font-satoshi-bold pb-3 text-lg">
+          {showDefaultText
+            ? formatRelativeDate(section.title, new Date())
+            : formatDefaultReadableDate(section.title)}
+        </Text>
+      </ScaleDownPressable>
+
+      <Text className="text-mauve8 font-nunito-bold pb-3 text-base">
+        {toCurrencyNarrow(
+          sum(section.data.map(({ amount }) => Number(amount))),
+        )}
       </Text>
-    </ScaleDownPressable>
+    </View>
   )
 }
