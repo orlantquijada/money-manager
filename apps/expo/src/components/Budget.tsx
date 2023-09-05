@@ -98,6 +98,7 @@ export default function Budget({
             <Text
               className="font-satoshi text-sm"
               style={{
+                // TODO: overspending for targets and non negotiable does not make sense na i-error ang color
                 color: didOverspend ? overspentColor : violet.violet12,
               }}
             >
