@@ -152,8 +152,9 @@ function useTotalSpent() {
   const { data: total } = trpc.transaction.allThisMonth.useQuery(undefined, {
     select: (transactions) =>
       transactions.reduce((total, current) => {
-        return total + Number(current.amount)
-      }, 0),
+        const amount = Number(current.amount)
+        return amount < 0 ? total + amount : total
+      }, 0) * -1,
   })
 
   return total || 0
