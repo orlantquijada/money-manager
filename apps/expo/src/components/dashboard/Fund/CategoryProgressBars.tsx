@@ -3,10 +3,16 @@ import { FundWithMeta } from "~/types"
 import SpendingProgressBars from "./SpendingProgressBars"
 import NonNegotiableProgressBars from "./NonNegotiableProgressBars"
 import TargetProgressBars from "./TargetProgressBars"
+import { FundType } from ".prisma/client"
+import { FC } from "react"
 
-export default function CategoryProgressBars({ fund }: { fund: FundWithMeta }) {
-  if (fund.fundType === "SPENDING") return <SpendingProgressBars fund={fund} />
-  else if (fund.fundType === "NON_NEGOTIABLE")
-    return <NonNegotiableProgressBars fund={fund} />
-  return <TargetProgressBars fund={fund} />
+type Props = {
+  fund: FundWithMeta
 }
+
+const CategoryProgressBars: Record<FundType, FC<Props>> = {
+  SPENDING: SpendingProgressBars,
+  TARGET: TargetProgressBars,
+  NON_NEGOTIABLE: NonNegotiableProgressBars,
+}
+export default CategoryProgressBars

@@ -55,6 +55,8 @@ export default function FundDetailContent({ fund }: Props) {
     ],
   }))
 
+  const ProgressBars = CategoryProgressBars[fund.fundType]
+
   return (
     <Animated.View
       className="bg-violet1 flex-1 overflow-hidden rounded-[20px] px-4 pb-4"
@@ -102,7 +104,7 @@ export default function FundDetailContent({ fund }: Props) {
             Available for spending
           </Text>
 
-          <CategoryProgressBars fund={fund} />
+          <ProgressBars fund={fund} />
         </View>
 
         {/* details / rows */}
