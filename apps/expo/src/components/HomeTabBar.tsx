@@ -3,6 +3,7 @@ import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs"
 import clsx from "clsx"
 
 import ScaleDownPressable from "./ScaleDownPressable"
+import { screenPadding } from "~/utils/constants"
 
 export default function HomeTabBar({
   state,
@@ -41,6 +42,7 @@ export default function HomeTabBar({
             onLongPress={onLongPress}
             key={route.key}
             className="h-12 justify-center px-2"
+            style={index === 0 ? { marginLeft: screenPadding } : {}}
           >
             <Text
               className={clsx(

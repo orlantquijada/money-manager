@@ -3,6 +3,7 @@ import { View } from "react-native"
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs"
 
 import type { HomeTabsParamList } from "~/types"
+import { screenPadding } from "~/utils/constants"
 
 import SafeAreaView from "~/components/SafeAreaView"
 import BottomSheetModal from "~/components/BottomSheet"
@@ -71,7 +72,9 @@ export default function Home2() {
           sceneContainerStyle={{
             backgroundColor: "transparent",
             paddingTop: 20,
+            paddingHorizontal: screenPadding,
           }}
+          style={{ marginHorizontal: -screenPadding }}
         >
           <Tab.Screen name="Budgets" component={BudgetsTab} />
           <Tab.Screen name="Transactions" component={TransactionsTab} />
