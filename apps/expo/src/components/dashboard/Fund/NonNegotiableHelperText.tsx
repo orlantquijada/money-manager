@@ -17,7 +17,8 @@ const NonNegotiableHelperText: FC<HelperTextProps> = ({
         style={{ color: !isFunded ? pink.pink8 : mauve.mauve9 }}
       >
         {isFunded ? (
-          "fully funded"
+          // TODO: is the copy better nga completed or fully funded?
+          "completed"
         ) : (
           <>
             <Text className="font-nunito-semibold">
