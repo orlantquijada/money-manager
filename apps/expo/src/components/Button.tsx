@@ -27,7 +27,11 @@ export default function Button(props: Props) {
     <MotiView
       className="relative h-8 items-center justify-center rounded-xl px-4 transition-colors"
       animate={{
-        backgroundColor: disabled ? mauveDark.mauve11 : mauveDark.mauve12,
+        backgroundColor: disabled
+          ? mauveDark.mauve11
+          : typeof animate === "object" && "backgroundColor" in animate
+          ? animate.backgroundColor
+          : mauveDark.mauve12,
         ...animate,
       }}
       transition={{
@@ -36,7 +40,14 @@ export default function Button(props: Props) {
       }}
       {...rest}
     >
-      <View className={clsx(loading && "opacity-0")}>{children}</View>
+      <View
+        className={clsx(
+          "h-full items-center justify-center self-stretch",
+          loading && "opacity-0",
+        )}
+      >
+        {children}
+      </View>
       {loading && (
         <ActivityIndicator
           className="absolute"
