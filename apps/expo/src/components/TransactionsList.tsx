@@ -1,5 +1,7 @@
 import { SectionList, Text, View } from "react-native"
+import { LinearGradient } from "expo-linear-gradient"
 
+import { violet } from "~/utils/colors"
 import {
   formatDefaultReadableDate,
   formatRelativeDate,
@@ -50,6 +52,7 @@ export function TransactionsList({
       ItemSeparatorComponent={() => <View className="h-2" />}
       renderSectionHeader={({ section }) => <SectionHeader section={section} />}
       sections={transactions || []}
+      stickySectionHeadersEnabled
       contentContainerStyle={{
         paddingBottom: 48,
       }}
@@ -61,25 +64,34 @@ function SectionHeader({ section }: { section: TransactionSection }) {
   const [showDefaultText, { toggle }] = useToggle(true)
 
   return (
-    <View className="bg-violet1 w-full flex-row items-center justify-between">
-      <ScaleDownPressable
-        onPress={toggle}
-        opacity={0.6}
-        scale={1}
-        containerStyle={{ flexGrow: 1 }}
-      >
-        <Text className="text-mauve8 font-satoshi-bold pb-3 text-lg">
-          {showDefaultText
-            ? formatRelativeDate(section.title, new Date())
-            : formatDefaultReadableDate(section.title)}
-        </Text>
-      </ScaleDownPressable>
+    <View>
+      <View className="bg-violet1 w-full flex-row items-center justify-between">
+        <ScaleDownPressable
+          onPress={toggle}
+          opacity={0.6}
+          scale={1}
+          containerStyle={{ flexGrow: 1 }}
+        >
+          <Text className="text-mauve8 font-satoshi-bold text-lg">
+            {showDefaultText
+              ? formatRelativeDate(section.title, new Date())
+              : formatDefaultReadableDate(section.title)}
+          </Text>
+        </ScaleDownPressable>
 
-      <Text className="text-mauve8 font-nunito-bold pb-3 text-base">
-        {toCurrencyNarrow(
-          sum(section.data.map(({ amount }) => Number(amount))),
-        )}
-      </Text>
+        <Text className="text-mauve8 font-nunito-bold text-base">
+          {toCurrencyNarrow(
+            sum(section.data.map(({ amount }) => Number(amount))),
+          )}
+        </Text>
+      </View>
+      <View className="relative h-2 w-full overflow-y-visible">
+        <LinearGradient
+          // violet1 with 0 opacity
+          colors={[violet.violet1, "hsla(255, 65.0%, 99.4%, 0)"]}
+          className="absolute left-0 top-0 right-0 z-10 h-6"
+        />
+      </View>
     </View>
   )
 }

@@ -22,7 +22,7 @@ export default function FoldersList({
       // }
       ItemSeparatorComponent={() => <View className="h-2" />}
       // contentContainerStyle={{ paddingBottom: 40, paddingTop: 80 }}
-      contentContainerStyle={{ paddingBottom: 40 }}
+      contentContainerStyle={{ paddingBottom: 40, paddingTop: 20 }}
       style={{ overflow: "visible" }}
       keyExtractor={({ name }, index) => name + index}
       renderItem={({ item }) => (

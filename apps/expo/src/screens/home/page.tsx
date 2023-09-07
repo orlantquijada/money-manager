@@ -71,7 +71,6 @@ export default function Home2() {
           tabBar={(props) => <HomeTabBar {...props} />}
           sceneContainerStyle={{
             backgroundColor: "transparent",
-            paddingTop: 20,
             paddingHorizontal: screenPadding,
           }}
           style={{ marginHorizontal: -screenPadding }}
