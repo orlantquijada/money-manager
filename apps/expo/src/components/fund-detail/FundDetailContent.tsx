@@ -19,6 +19,7 @@ import CategoryProgressBars from "../dashboard/Fund/CategoryProgressBars"
 import Ellipsis from "../../../assets/icons/more-horiz.svg"
 import ChevronRight from "../../../assets/icons/hero-icons/chevron-right.svg"
 import ActionButton from "./ActionButton"
+import HelperText from "./HelperText"
 
 const { width } = Dimensions.get("screen")
 
@@ -97,12 +98,13 @@ export default function FundDetailContent({ fund }: Props) {
         <ActionButton fund={fund} />
 
         <View className="mt-10">
-          <Text className="font-satoshi text-mauve9 text-sm">
-            <Text className="font-nunito-semibold">
-              {toCurrencyNarrow(fund.totalBudgetedAmount - fund.totalSpent)}
-            </Text>{" "}
-            Available for spending
-          </Text>
+          {/* <Text className="font-satoshi text-mauve9 text-sm"> */}
+          {/*   <Text className="font-nunito-semibold"> */}
+          {/*     {toCurrencyNarrow(fund.totalBudgetedAmount - fund.totalSpent)} */}
+          {/*   </Text>{" "} */}
+          {/*   Available for spending */}
+          {/* </Text> */}
+          <HelperText fund={fund} />
 
           <ProgressBars fund={fund} />
         </View>
