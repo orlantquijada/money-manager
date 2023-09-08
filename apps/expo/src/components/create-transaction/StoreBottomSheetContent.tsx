@@ -167,16 +167,17 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
     let storeName = typeof newStore === "string" ? newStore : newStore.name
     if (storeName === formDataStore) storeName = ""
 
-    // TODO: check if ang prev kay lastSelectedFundId (default) which should be overridable
-    useTransactionStore.setState((prev) => ({
-      store: storeName,
-      fund:
-        typeof newStore !== "string" &&
-        prev.fund === undefined &&
-        newStore.lastSelectedFundId
-          ? funds?.find((fund) => fund.id === newStore.lastSelectedFundId)
-          : prev.fund,
-    }))
+    useTransactionStore.setState((prev) => {
+      return {
+        store: storeName,
+        fund:
+          typeof newStore !== "string" &&
+          prev.lastSelectedFund === undefined &&
+          newStore.lastSelectedFundId
+            ? funds?.find((fund) => fund.id === newStore.lastSelectedFundId)
+            : prev.fund,
+      }
+    })
     forceClose()
   }
 

@@ -24,6 +24,7 @@ const FundSectionList = memo(({ searchText }: { searchText: string }) => {
   const handleSetFund = (newFund: Fund) => {
     useTransactionStore.setState({
       fund: newFund.id === selectedFund?.id ? undefined : newFund,
+      lastSelectedFund: newFund.id === selectedFund?.id ? undefined : newFund,
     })
     forceClose()
   }
@@ -40,7 +41,6 @@ const FundSectionList = memo(({ searchText }: { searchText: string }) => {
   return (
     <View className="relative flex-1">
       <LinearGradient
-        // violet1 with 0 opacity
         colors={["hsla(240, 5.1%, 11.6%, 0)", mauveDark.mauve2]}
         className="absolute left-0 bottom-0 right-0 z-10 h-14"
       />
@@ -107,7 +107,6 @@ const FundSectionList = memo(({ searchText }: { searchText: string }) => {
               </View>
               <View className="relative h-2 w-full overflow-y-visible">
                 <LinearGradient
-                  // violet1 with 0 opacity
                   colors={[mauveDark.mauve2, "hsla(240, 5.1%, 11.6%, 0)"]}
                   className="absolute left-0 top-0 right-0 z-10 h-6"
                 />
