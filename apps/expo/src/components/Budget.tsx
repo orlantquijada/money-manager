@@ -1,18 +1,20 @@
 import { useEffect } from "react"
 import { Pressable, PressableProps, View, Text } from "react-native"
 import { useDerivedValue, useSharedValue } from "react-native-reanimated"
+import * as ContextMenu from "zeego/context-menu"
 
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 import { toCurrencyNarrow } from "~/utils/functions"
 import { pink, violet } from "~/utils/colors"
 import { transitions } from "~/utils/motion"
+import useToggle from "~/utils/hooks/useToggle"
+import type { FundWithMeta } from "~/types"
 
 import { type Folder } from ".prisma/client"
 import ScaleDownPressable from "./ScaleDownPressable"
 import Category, { CATEGORY_HEIGHT } from "./Category"
 import StyledMotiView from "./StyledMotiView"
 import { AnimateHeight } from "./AnimateHeight"
-import type { FundWithMeta } from "~/types"
 
 import FolderClosed from "../../assets/icons/folder-duo.svg"
 import FolderOpen from "../../assets/icons/folder-open-duo.svg"
@@ -51,65 +53,102 @@ export default function Budget({
 
   const didOverspend = amountLeft === 0
 
+  // TODO: save option on local storage
+  const [show, { toggle }] = useToggle(true)
+
   return (
-    <View>
-      <Pressable
-        {...rest}
-        onPress={(...args) => {
-          open.value = !open.value
-          rest.onPress?.(...args)
-        }}
-      >
-        {/* bg is mauve12 with 2% opacity */}
-        <View className="flex-row items-center justify-between rounded-2xl bg-[#1a152307] p-4">
-          <View className="flex-row items-center">
-            <View className="relative h-4 w-4">
+    <View className="overflow-visible">
+      <ContextMenu.Root>
+        <ContextMenu.Trigger style={{ borderRadius: 16 }}>
+          <Pressable
+            {...rest}
+            onPress={(...args) => {
+              open.value = !open.value
+              rest.onPress?.(...args)
+            }}
+            className="rounded-2xl"
+          >
+            {/* bg is mauve12 with 2% opacity */}
+            <View className="flex-row items-center justify-between rounded-2xl bg-[#1a152307] p-4">
+              <View className="flex-row items-center">
+                <View className="relative h-4 w-4">
+                  <StyledMotiView
+                    className="absolute inset-0"
+                    transition={transitions.noTransition}
+                    animate={useDerivedValue(() => ({
+                      opacity: open.value ? 1 : 0,
+                    }))}
+                  >
+                    <FolderOpen width={16} height={16} />
+                  </StyledMotiView>
+                  <StyledMotiView
+                    className="absolute inset-0"
+                    transition={transitions.noTransition}
+                    animate={useDerivedValue(() => ({
+                      opacity: open.value ? 0 : 1,
+                    }))}
+                  >
+                    <FolderClosed width={16} height={16} />
+                  </StyledMotiView>
+                </View>
+                <Text className="font-satoshi-medium text-mauve12 ml-3 text-base">
+                  {folderName}
+                </Text>
+              </View>
+
               <StyledMotiView
-                className="absolute inset-0"
-                transition={transitions.noTransition}
-                animate={useDerivedValue(() => ({
-                  opacity: open.value ? 1 : 0,
-                }))}
-              >
-                <FolderOpen width={16} height={16} />
-              </StyledMotiView>
-              <StyledMotiView
-                className="absolute inset-0"
-                transition={transitions.noTransition}
+                className="flex-row items-end"
                 animate={useDerivedValue(() => ({
                   opacity: open.value ? 0 : 1,
                 }))}
+                transition={transitions.snappy}
               >
-                <FolderClosed width={16} height={16} />
+                <Text
+                  className="font-satoshi text-sm"
+                  style={{
+                    // TODO: overspending for targets and non negotiable does not make sense na i-error ang color
+                    color: didOverspend ? overspentColor : violet.violet12,
+                  }}
+                >
+                  <Text className="font-nunito-semibold">
+                    {toCurrencyNarrow(amountLeft)}{" "}
+                  </Text>
+                  <Text>left</Text>
+                </Text>
               </StyledMotiView>
             </View>
-            <Text className="font-satoshi-medium text-mauve12 ml-3 text-base">
-              {folderName}
-            </Text>
-          </View>
+          </Pressable>
+        </ContextMenu.Trigger>
 
-          <StyledMotiView
-            className="flex-row items-end"
-            animate={useDerivedValue(() => ({
-              opacity: open.value ? 0 : 1,
-            }))}
-            transition={transitions.snappy}
-          >
-            <Text
-              className="font-satoshi text-sm"
-              style={{
-                // TODO: overspending for targets and non negotiable does not make sense na i-error ang color
-                color: didOverspend ? overspentColor : violet.violet12,
-              }}
-            >
-              <Text className="font-nunito-semibold">
-                {toCurrencyNarrow(amountLeft)}{" "}
-              </Text>
-              <Text>left</Text>
-            </Text>
-          </StyledMotiView>
-        </View>
-      </Pressable>
+        <ContextMenu.Content>
+          <ContextMenu.Label>Label</ContextMenu.Label>
+          {show ? (
+            <ContextMenu.Item key="item 1" destructive onSelect={toggle}>
+              <ContextMenu.ItemTitle>Show</ContextMenu.ItemTitle>
+
+              <ContextMenu.ItemIcon
+                ios={{
+                  // name: "trash", // required
+                  name: "eye", // required
+                  scale: "small",
+                }}
+              />
+            </ContextMenu.Item>
+          ) : (
+            <ContextMenu.Item key="item 1" destructive onSelect={toggle}>
+              <ContextMenu.ItemTitle>Hide</ContextMenu.ItemTitle>
+
+              <ContextMenu.ItemIcon
+                ios={{
+                  // name: "trash", // required
+                  name: "eye.slash", // required
+                  scale: "small",
+                }}
+              />
+            </ContextMenu.Item>
+          )}
+        </ContextMenu.Content>
+      </ContextMenu.Root>
 
       {funds.length ? (
         <AnimateHeight
