@@ -18,8 +18,8 @@ export function useMeasureHeight(initalHeight = 0) {
   return { measuredHeight, handleOnLayout } as const
 }
 
-export function useMeasureWidth(initalHeight = 0) {
-  const measuredWidth = useSharedValue(initalHeight)
+export function useMeasureWidth(initalWidth = 0) {
+  const measuredWidth = useSharedValue(initalWidth)
   const handleOnLayout = useCallback(
     ({ nativeEvent }: LayoutChangeEvent) => {
       measuredWidth.value = nativeEvent.layout.width
