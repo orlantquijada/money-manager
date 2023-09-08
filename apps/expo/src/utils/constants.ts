@@ -1,5 +1,6 @@
 import type { FundType } from ".prisma/client"
 import { getDaysInMonth } from "date-fns"
+import { amberDark, lime, violet } from "./colors"
 
 export const screenPadding = 16
 
@@ -32,4 +33,11 @@ export const fundTypeReadableText: Record<FundType, string> = {
   NON_NEGOTIABLE: "Nonnegotiable",
   TARGET: "Target",
   SPENDING: "Spending",
+}
+
+export const progressBarColors: Record<FundType, string> = {
+  SPENDING: violet.violet6,
+  NON_NEGOTIABLE: lime.lime4,
+  // amberDark12 90% opacity
+  TARGET: amberDark.amber12 + "e6",
 }

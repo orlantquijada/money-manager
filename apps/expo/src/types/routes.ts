@@ -9,7 +9,10 @@ export type HomeTabsParamList = {
 
 export type RootBottomTabParamList = {
   Home?: NavigatorScreenParams<HomeTabsParamList>
-  AddTransaction?: { fundId?: Fund["id"] | undefined }
+  AddTransaction?: {
+    fundId?: Fund["id"] | undefined
+    amount?: number | undefined
+  }
   Transactions: undefined
 }
 

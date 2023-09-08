@@ -1,7 +1,7 @@
 import { View } from "react-native"
 
 import { FundWithMeta } from "~/types"
-import { lime } from "~/utils/colors"
+import { progressBarColors } from "~/utils/constants"
 
 import ProgressBar from "~/components/ProgressBar"
 
@@ -18,7 +18,7 @@ export default function NonNegotiableProgressBars({
     <View className="mt-2 flex-row gap-x-1">
       <ProgressBar
         progress={fundProgress}
-        color={lime.lime4}
+        color={progressBarColors.NON_NEGOTIABLE}
         Stripes={
           <View className="opacity-[.15]">
             <Stripes />

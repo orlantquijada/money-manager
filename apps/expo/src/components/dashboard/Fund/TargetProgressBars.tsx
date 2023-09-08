@@ -1,11 +1,12 @@
 import { View } from "react-native"
 
-import { FundWithMeta } from "~/types"
+import type { FundWithMeta } from "~/types"
+import { lime } from "~/utils/colors"
+import { progressBarColors } from "~/utils/constants"
 
 import ProgressBar from "~/components/ProgressBar"
 
 import AmberStripes from "@assets/icons/stripes-amber.svg"
-import { lime } from "~/utils/colors"
 
 export default function TargetProgressBars({ fund }: { fund: FundWithMeta }) {
   const fundProgress = useFundProgress(fund, fund.totalSpent)
@@ -16,7 +17,7 @@ export default function TargetProgressBars({ fund }: { fund: FundWithMeta }) {
       <ProgressBar
         progress={isOverFunded ? 100 : fundProgress[0] || 0}
         // amberDark12 90% opacity
-        color="#ffe7b3e6"
+        color={progressBarColors.TARGET}
         Stripes={
           <View className="opacity-[.15]">
             <AmberStripes />

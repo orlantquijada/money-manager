@@ -237,3 +237,33 @@ export const lime = {
   lime11: "hsl(75, 40.0%, 29.0%)",
   lime12: "hsl(75, 40.0%, 18.0%)",
 }
+
+export const amberDark = {
+  amber1: "#1f1300",
+  amber2: "#251804",
+  amber3: "#30200b",
+  amber4: "#39270f",
+  amber5: "#432e12",
+  amber6: "#533916",
+  amber7: "#6f4d1d",
+  amber8: "#a9762a",
+  amber9: "#ffc53d",
+  amber10: "#ffcb47",
+  amber11: "#ffcc4d",
+  amber12: "#ffe7b3",
+}
+
+export const amber = {
+  amber1: "#fefdfb",
+  amber2: "#fff9ed",
+  amber3: "#fff3d0",
+  amber4: "#ffecb7",
+  amber5: "#ffe0a1",
+  amber6: "#f5d08c",
+  amber7: "#e4bb78",
+  amber8: "#d6a35c",
+  amber9: "#ffc53d",
+  amber10: "#ffba1a",
+  amber11: "#915930",
+  amber12: "#4f3422",
+}

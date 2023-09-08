@@ -3,9 +3,9 @@ import { View } from "react-native"
 import { getWeekOfMonth, getWeeksInMonth, isThisMonth } from "date-fns"
 
 import ProgressBar from "~/components/ProgressBar"
-import { daysInCurrentMonth } from "~/utils/constants"
+import { daysInCurrentMonth, progressBarColors } from "~/utils/constants"
 import { FundWithMeta } from "~/types"
-import { pink, violet } from "~/utils/colors"
+import { pink } from "~/utils/colors"
 
 import Stripes from "@assets/icons/stripes-small-violet.svg"
 import PinkStripes from "@assets/icons/stripes-pink.svg"
@@ -39,7 +39,7 @@ export default function SpendingProgressBars({ fund }: { fund: FundWithMeta }) {
           progress={progress}
           highlight={getShouldHighlight(fund, fundProgress.length - index)}
           delayMultiplier={fundProgress.length - index}
-          color={violet.violet6}
+          color={progressBarColors.SPENDING}
           Stripes={
             <View className="opacity-[.15]">
               <Stripes />
