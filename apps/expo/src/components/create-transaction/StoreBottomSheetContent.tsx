@@ -167,6 +167,7 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
     let storeName = typeof newStore === "string" ? newStore : newStore.name
     if (storeName === formDataStore) storeName = ""
 
+    // TODO: check if ang prev kay lastSelectedFundId (default) which should be overridable
     useTransactionStore.setState((prev) => ({
       store: storeName,
       fund:
@@ -174,83 +175,86 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
         prev.fund === undefined &&
         newStore.lastSelectedFundId
           ? funds?.find((fund) => fund.id === newStore.lastSelectedFundId)
-          : undefined,
+          : prev.fund,
     }))
     forceClose()
   }
 
   return (
-    <BottomSheetFlatList
-      keyboardShouldPersistTaps="always"
-      data={finalData}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => {
-        const selected = item.name === formDataStore
+    <View className="flex-1">
+      {searchText && !finalData.map(({ name }) => name).includes(searchText) ? (
+        <MotiPressable
+          onPress={() => {
+            handleSetStore(searchText)
+          }}
+          animate={animate}
+          transition={{ type: "timing", duration: 250 }}
+          style={{ marginBottom: 8 }}
+        >
+          <View className="h-16 flex-row items-center px-4">
+            <PlusIcon width={20} height={20} color={violet.violet8} />
 
-        return (
-          <View
-            className={clsx(
-              "h-12",
-              selected ? "bg-mauveDark4" : "bg-transparent",
-            )}
-          >
-            <ScaleDownPressable
-              scale={0.98}
-              onPress={() => {
-                handleSetStore(item)
-              }}
-              className="h-full flex-row items-center justify-between self-stretch px-4"
-            >
-              <Text className="text-mauveDark12 font-satoshi-medium text-base">
-                {item.name}
-              </Text>
-              {selected ? (
-                <CheckIcon color={mauveDark.mauve12} width={20} height={20} />
-              ) : null}
-            </ScaleDownPressable>
+            <Text className="text-violet8 font-satoshi-medium ml-2 text-base">
+              Add &quot;{searchText}&quot; Store
+            </Text>
           </View>
-        )
-      }}
-      ListEmptyComponent={() => (
-        <View>
-          {hasNoStore ? (
-            <View className="mb-4 px-4">
-              <Text className="text-mauveDark12 font-satoshi text-base">
-                <Text className="font-satoshi-bold underline">Stores</Text> give
-                you a little more information about an expense; It can be what
-                you bought, or where you had it, like{" "}
-                <Text className="font-satoshi-bold-italic text-mauveDark11">
-                  Jollibee
-                </Text>
-                .
-              </Text>
+        </MotiPressable>
+      ) : null}
 
-              <Text className="text-mauveDark12 font-satoshi mt-4 text-base">
-                Start typing to add a store.
-              </Text>
-            </View>
-          ) : null}
+      <BottomSheetFlatList
+        keyboardShouldPersistTaps="always"
+        data={finalData}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => {
+          const selected = item.name === formDataStore
 
-          {searchText ? (
-            <MotiPressable
-              onPress={() => {
-                handleSetStore(searchText)
-              }}
-              animate={animate}
-              transition={{ type: "timing", duration: 250 }}
+          return (
+            <View
+              className={clsx(
+                "h-12",
+                selected ? "bg-mauveDark4" : "bg-transparent",
+              )}
             >
-              <View className="h-16 flex-row items-center px-4">
-                <PlusIcon width={20} height={20} color={violet.violet8} />
+              <ScaleDownPressable
+                scale={0.98}
+                onPress={() => {
+                  handleSetStore(item)
+                }}
+                className="h-full flex-row items-center justify-between self-stretch px-4"
+              >
+                <Text className="text-mauveDark12 font-satoshi-medium text-base">
+                  {item.name}
+                </Text>
+                {selected ? (
+                  <CheckIcon color={mauveDark.mauve12} width={20} height={20} />
+                ) : null}
+              </ScaleDownPressable>
+            </View>
+          )
+        }}
+        ListEmptyComponent={() => (
+          <View>
+            {hasNoStore ? (
+              <View className="mb-4 px-4">
+                <Text className="text-mauveDark12 font-satoshi text-base">
+                  <Text className="font-satoshi-bold underline">Stores</Text>{" "}
+                  give you a little more information about an expense; It can be
+                  what you bought, or where you had it, like{" "}
+                  <Text className="font-satoshi-bold-italic text-mauveDark11">
+                    Jollibee
+                  </Text>
+                  .
+                </Text>
 
-                <Text className="text-violet8 font-satoshi-medium ml-2 text-base">
-                  Add &quot;{searchText}&quot; Store
+                <Text className="text-mauveDark12 font-satoshi mt-4 text-base">
+                  Start typing to add a store.
                 </Text>
               </View>
-            </MotiPressable>
-          ) : null}
-        </View>
-      )}
-    />
+            ) : null}
+          </View>
+        )}
+      />
+    </View>
   )
 })
 StoreList.displayName = "StoreList"
