@@ -137,3 +137,7 @@ export function groupTransactionByDate<T extends Transaction>(
     data: value,
   }))
 }
+
+export function getInnerBorderRadius(outerRadius: number, padding: number) {
+  return outerRadius - padding
+}
