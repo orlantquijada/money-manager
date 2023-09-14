@@ -74,6 +74,7 @@ export const transactionsRouter = router({
           create: {
             name: store,
             userId,
+            lastSelectedFundId: input.fundId,
           },
         })
 
