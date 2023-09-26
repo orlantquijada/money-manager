@@ -25,6 +25,7 @@ import TransactionCreateBottomSheet from "~/components/create-transaction/Create
 import StoreListBottomSheet from "~/components/create-transaction/StoreBottomSheet"
 import FundListBottomSheet from "~/components/create-transaction/FundListBottomSheet"
 import { FormDetailsPreview } from "~/components/create-transaction/FormDetailsPreview"
+import TransactionFlowChoices from "~/components/create-transaction/TransactionFlowChoices"
 
 import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg"
 
@@ -115,10 +116,14 @@ function CreateTransactionForm() {
   return (
     <>
       <View
-        className="flex-grow items-center justify-center"
+        className="relative flex-grow items-center justify-center"
         style={{ minHeight: screenHeight * 0.25 }}
       >
         <Amount amount={amount} />
+
+        <View className="absolute top-0 w-3/5 translate-y-2 self-center">
+          <TransactionFlowChoices />
+        </View>
       </View>
 
       <FormDetailsPreview
