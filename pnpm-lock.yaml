@@ -47,7 +47,7 @@ importers:
     dependencies:
       '@clerk/clerk-expo':
         specifier: ^0.19.4
-        version: 0.19.4(@babel/core@7.20.7)(@types/react@18.2.20)(expo-auth-session@5.0.2)(expo-web-browser@12.5.0)(react-dom@18.2.0)(react-native@0.72.3)(react@18.2.0)
+        version: 0.19.4(@babel/core@7.20.7)(@types/react@18.2.20)(expo-auth-session@5.0.2)(expo-web-browser@12.3.2)(react-dom@18.2.0)(react-native@0.72.3)(react@18.2.0)
       '@config-plugins/react-native-quick-actions':
         specifier: ^6.0.0
         version: 6.0.0(expo@49.0.7)
@@ -135,6 +135,9 @@ importers:
       expo-updates:
         specifier: ~0.18.11
         version: 0.18.11(expo@49.0.7)
+      expo-web-browser:
+        specifier: ^12.3.2
+        version: 12.3.2(expo@49.0.7)
       moti:
         specifier: ^0.26.0
         version: 0.26.0(react-dom@18.2.0)(react-native-reanimated@3.3.0)(react@18.2.0)
@@ -2498,7 +2501,7 @@ packages:
     resolution: {integrity: sha512-LDQvVDv5Kb50ny2s25Fhm3d9QSZimsoUGBsUioj6MC3qbMUCuC8GPIvk/M6IvXx3lYhAs0lwWUQLb+VIEUCECw==}
     dev: true
 
-  /@clerk/clerk-expo@0.19.4(@babel/core@7.20.7)(@types/react@18.2.20)(expo-auth-session@5.0.2)(expo-web-browser@12.5.0)(react-dom@18.2.0)(react-native@0.72.3)(react@18.2.0):
+  /@clerk/clerk-expo@0.19.4(@babel/core@7.20.7)(@types/react@18.2.20)(expo-auth-session@5.0.2)(expo-web-browser@12.3.2)(react-dom@18.2.0)(react-native@0.72.3)(react@18.2.0):
     resolution: {integrity: sha512-rzDUAjodpVjZYAY1cKhyF+QFkROcrAbqMOH3MNRKDE8DDJE6eM1lmGa7kry6f94KIrHgmfpgs+KclszswgSxLQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -2510,7 +2513,7 @@ packages:
       '@clerk/clerk-react': 4.25.2(react@18.2.0)
       base-64: 1.0.0
       expo-auth-session: 5.0.2(expo@49.0.7)
-      expo-web-browser: 12.5.0(expo@49.0.7)
+      expo-web-browser: 12.3.2(expo@49.0.7)
       react: 18.2.0
       react-native-url-polyfill: 2.0.0(react-native@0.72.3)
     transitivePeerDependencies:
@@ -7371,16 +7374,6 @@ packages:
 
   /expo-web-browser@12.3.2(expo@49.0.7):
     resolution: {integrity: sha512-ohBf+vnRnGzlTleY8EQ2XQU0vRdRwqMJtKkzM9MZRPDOK5QyJYPJjpk6ixGhxdeoUG2Ogj0InvhhgX9NUn4jkg==}
-    peerDependencies:
-      expo: '*'
-    dependencies:
-      compare-urls: 2.0.0
-      expo: 49.0.7(@babel/core@7.20.7)
-      url: 0.11.3
-    dev: false
-
-  /expo-web-browser@12.5.0(expo@49.0.7):
-    resolution: {integrity: sha512-3uDzP19DqcEicLOB4ZH6pGWzxlCQ8mLHSmWMmfXEBhZjooUkHUrysbzkNvQQa24ijy3uoUybX4jW0xPss594kA==}
     peerDependencies:
       expo: '*'
     dependencies:
