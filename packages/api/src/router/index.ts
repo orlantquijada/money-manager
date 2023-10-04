@@ -4,6 +4,7 @@ import { transactionsRouter } from "./transactions"
 import { foldersRouter } from "./folders"
 import { fundsRouter } from "./funds"
 import { storesRouter } from "./stores"
+import { usersRouter } from "./users"
 
 export const appRouter = router({
   auth: authRouter,
@@ -11,6 +12,7 @@ export const appRouter = router({
   folder: foldersRouter,
   fund: fundsRouter,
   store: storesRouter,
+  user: usersRouter,
 })
 
 // export type definition of API
