@@ -26,6 +26,12 @@ export async function getCredId() {
   return await SecureStore.getItemAsync(creds.key)
 }
 
+export async function clearCredId() {
+  if (!creds?.key) throw Error("Creds not initialized")
+
+  await SecureStore.deleteItemAsync(creds.key)
+}
+
 export function createUsername() {
   return Crypto.randomUUID()
 }
