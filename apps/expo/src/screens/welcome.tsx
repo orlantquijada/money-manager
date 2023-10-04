@@ -9,11 +9,11 @@ import {
   useSignOut,
   useSignUp,
 } from "~/utils/hooks/useAuth"
+import { getCredId } from "~/utils/lib/auth"
 
 import Button from "~/components/Button"
 import SafeAreaView from "~/components/SafeAreaView"
 import ScaleDownPressable from "~/components/ScaleDownPressable"
-import { getCredId } from "~/utils/lib/auth"
 
 export default function Welcome() {
   // const navigation = useRootStackNavigation()
