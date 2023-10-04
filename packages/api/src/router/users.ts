@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { publicProcedure, router } from "../trpc"
+import { protectedProcedure, publicProcedure, router } from "../trpc"
 
 export const usersRouter = router({
   create: publicProcedure
@@ -14,4 +14,12 @@ export const usersRouter = router({
         data: input,
       })
     }),
+  remove: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
+    // TODO: remove user based on ctx
+    return ctx.prisma.user.delete({
+      where: {
+        id: input,
+      },
+    })
+  }),
 })

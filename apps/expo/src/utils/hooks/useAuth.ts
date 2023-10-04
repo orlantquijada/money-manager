@@ -1,7 +1,14 @@
 import { useState } from "react"
-import { useSignUp as useClerkSignUp } from "@clerk/clerk-expo"
+import { useSignUp as useClerkSignUp, useUser } from "@clerk/clerk-expo"
+
 import { trpc } from "../trpc"
-import { createUsername, creds, getCredId, setCredId } from "../lib/auth"
+import {
+  clearCredId,
+  createUsername,
+  creds,
+  getCredId,
+  setCredId,
+} from "../lib/auth"
 
 export function useSignUp() {
   const { isLoaded, signUp, setActive } = useClerkSignUp()
@@ -38,4 +45,26 @@ export function useSignUp() {
   }
 
   return { handleSignUp, loading }
+}
+
+export function useRemoveUser() {
+  const { isLoaded, user } = useUser()
+  const removeUser = trpc.user.remove.useMutation()
+  const [loading, setLoading] = useState(false)
+
+  const handleRemoveUser = async () => {
+    if (!isLoaded || !user || !user.deleteSelfEnabled) return
+
+    try {
+      setLoading(true)
+      await clearCredId()
+      await removeUser.mutateAsync(user.id)
+      await user.delete()
+      setLoading(false)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  return { handleRemoveUser, loading }
 }
