@@ -105,8 +105,6 @@ export function useSignIn() {
       const id = await getCredId()
       if (!id) throw Error("No cred id set")
 
-      console.log(id, creds.dpw, typeof id, typeof creds.dpw)
-
       const res = await signIn.create({
         identifier: id,
         password: creds.dpw,
@@ -117,7 +115,7 @@ export function useSignIn() {
         setLoading(false)
       }
     } catch (error) {
-      console.error(JSON.stringify(error, null, 2))
+      console.error(error)
     }
   }
 
