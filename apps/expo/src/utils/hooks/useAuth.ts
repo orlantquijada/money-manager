@@ -16,8 +16,9 @@ export function useSignUp() {
       const credId = await getCredId()
       if (credId) throw Error("User already exists")
 
+      const username = createUsername()
       const res = await signUp.create({
-        username: createUsername(),
+        username,
         password: creds.dpw,
       })
 
@@ -28,7 +29,7 @@ export function useSignUp() {
       ) {
         await createUser.mutateAsync({ id: res.createdUserId })
         await setActive({ session: res.createdSessionId })
-        await setCredId(res.createdUserId)
+        await setCredId(username)
         setLoading(false)
       }
     } catch (error) {
