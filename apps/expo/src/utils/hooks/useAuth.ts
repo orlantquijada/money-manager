@@ -2,6 +2,7 @@ import { useState } from "react"
 import {
   useClerk,
   useSignUp as useClerkSignUp,
+  useSignIn as useClerkSignIn,
   useUser,
 } from "@clerk/clerk-expo"
 
@@ -90,4 +91,35 @@ export function useSignOut() {
   }
 
   return { handleSignOut, loading }
+}
+
+export function useSignIn() {
+  const { isLoaded, signIn, setActive } = useClerkSignIn()
+  const [loading, setLoading] = useState(false)
+
+  const handleSignIn = async () => {
+    if (!isLoaded || !creds) return
+
+    try {
+      setLoading(true)
+      const id = await getCredId()
+      if (!id) throw Error("No cred id set")
+
+      console.log(id, creds.dpw, typeof id, typeof creds.dpw)
+
+      const res = await signIn.create({
+        identifier: id,
+        password: creds.dpw,
+      })
+
+      if (res.status === "complete" && res.createdSessionId) {
+        await setActive({ session: res.createdSessionId })
+        setLoading(false)
+      }
+    } catch (error) {
+      console.error(JSON.stringify(error, null, 2))
+    }
+  }
+
+  return { handleSignIn, loading }
 }
