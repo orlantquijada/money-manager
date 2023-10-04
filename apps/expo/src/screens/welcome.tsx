@@ -1,30 +1,32 @@
 import { Text, View } from "react-native"
 
 // import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
+import { useSignUp } from "~/utils/hooks/useAuth"
 
 import Button from "~/components/Button"
 import SafeAreaView from "~/components/SafeAreaView"
 import ScaleDownPressable from "~/components/ScaleDownPressable"
-import { useSignUp } from "~/utils/hooks/useAuth"
 
 export default function Welcome() {
   // const navigation = useRootStackNavigation()
-  const { handleSignUp } = useSignUp()
+  const signUp = useSignUp()
 
   return (
     <SafeAreaView className="bg-violet1 flex-1">
       <View className="h-full items-center justify-center">
         <ScaleDownPressable
           onPress={() => {
-            handleSignUp()
+            signUp
+              .handleSignUp()
               .then(() => {
                 // navigation.navigate("Root", { params: { text: "hello" } })
-                console.log("wowow")
+                console.log("signup successful")
               })
               .catch(console.error)
           }}
+          disabled={signUp.loading}
         >
-          <Button>
+          <Button loading={signUp.loading}>
             <Text>Get Started</Text>
           </Button>
         </ScaleDownPressable>

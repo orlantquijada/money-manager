@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useSignUp as useClerkSignUp } from "@clerk/clerk-expo"
 import { trpc } from "../trpc"
 import { createUsername, creds, getCredId, setCredId } from "../lib/auth"
@@ -5,11 +6,13 @@ import { createUsername, creds, getCredId, setCredId } from "../lib/auth"
 export function useSignUp() {
   const { isLoaded, signUp, setActive } = useClerkSignUp()
   const createUser = trpc.user.create.useMutation()
+  const [loading, setLoading] = useState(false)
 
   const handleSignUp = async () => {
     if (!isLoaded || !creds) return
 
     try {
+      setLoading(true)
       const credId = await getCredId()
       if (credId) throw Error("User already exists")
 
@@ -24,13 +27,14 @@ export function useSignUp() {
         res.createdUserId
       ) {
         await createUser.mutateAsync({ id: res.createdUserId })
-        setActive({ session: res.createdSessionId })
-        setCredId(res.createdUserId)
+        await setActive({ session: res.createdSessionId })
+        await setCredId(res.createdUserId)
+        setLoading(false)
       }
     } catch (error) {
       console.error(error)
     }
   }
 
-  return { handleSignUp, status: createUser.status }
+  return { handleSignUp, loading }
 }
