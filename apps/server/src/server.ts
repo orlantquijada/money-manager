@@ -1,6 +1,6 @@
 import fastify from "fastify"
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
-import { createContext, appRouter } from "api"
+import { createContext, appRouter, authRouter } from "api"
 import { getHostIP } from "./utils"
 
 export function createServer() {
@@ -12,6 +12,11 @@ export function createServer() {
   server.register(fastifyTRPCPlugin, {
     prefix: "/trpc",
     trpcOptions: { router: appRouter, createContext },
+  })
+
+  server.register(fastifyTRPCPlugin, {
+    prefix: "/auth",
+    trpcOptions: { router: authRouter },
   })
 
   server.get("/ping", async () => {

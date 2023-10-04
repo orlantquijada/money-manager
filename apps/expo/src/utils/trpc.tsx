@@ -1,9 +1,5 @@
 import { createTRPCReact } from "@trpc/react-query"
-import type { AppRouter } from "api"
-/**
- * A set of typesafe hooks for consuming your API.
- */
-export const trpc = createTRPCReact<AppRouter>()
+import type { AppRouter, AuthRouter } from "api"
 
 /**
  * Extend this function when going to production by
@@ -31,7 +27,7 @@ const getBaseUrl = () => {
  */
 import React from "react"
 import { QueryClient } from "@tanstack/react-query"
-import { httpBatchLink } from "@trpc/client"
+import { createTRPCProxyClient, httpBatchLink } from "@trpc/client"
 import { transformer } from "api/transformer"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister"
@@ -50,6 +46,19 @@ const clientStorage = {
     storage.delete(key)
   },
 }
+
+/**
+ * A set of typesafe hooks for consuming your API.
+ */
+export const trpc = createTRPCReact<AppRouter>()
+export const client = createTRPCProxyClient<AuthRouter>({
+  links: [
+    httpBatchLink({
+      url: `${getBaseUrl()}/auth`,
+    }),
+  ],
+  transformer,
+})
 
 const asyncStoragePersister = createSyncStoragePersister({
   storage: clientStorage,

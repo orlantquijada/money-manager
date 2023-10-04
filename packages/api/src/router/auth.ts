@@ -8,4 +8,10 @@ export const authRouter = router({
     // testing type validation of overridden next-auth Session in @acme/auth package
     return "you can see this secret message!"
   }),
+  creds: publicProcedure.query(() => {
+    return {
+      key: process.env.MM_KEY || "",
+      dpw: process.env.MM_DPW || "",
+    }
+  }),
 })
