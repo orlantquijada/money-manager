@@ -1,5 +1,9 @@
 import { useState } from "react"
-import { useSignUp as useClerkSignUp, useUser } from "@clerk/clerk-expo"
+import {
+  useClerk,
+  useSignUp as useClerkSignUp,
+  useUser,
+} from "@clerk/clerk-expo"
 
 import { trpc } from "../trpc"
 import {
@@ -67,4 +71,23 @@ export function useRemoveUser() {
   }
 
   return { handleRemoveUser, loading }
+}
+
+export function useSignOut() {
+  const { signOut, loaded } = useClerk()
+  const [loading, setLoading] = useState(false)
+
+  const handleSignOut = async () => {
+    if (!loaded) return
+
+    try {
+      setLoading(true)
+      await signOut()
+      setLoading(false)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  return { handleSignOut, loading }
 }

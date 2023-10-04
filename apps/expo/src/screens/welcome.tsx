@@ -2,7 +2,7 @@ import { Text, View } from "react-native"
 import { useUser } from "@clerk/clerk-expo"
 
 // import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
-import { useRemoveUser, useSignUp } from "~/utils/hooks/useAuth"
+import { useRemoveUser, useSignOut, useSignUp } from "~/utils/hooks/useAuth"
 
 import Button from "~/components/Button"
 import SafeAreaView from "~/components/SafeAreaView"
@@ -12,6 +12,7 @@ export default function Welcome() {
   // const navigation = useRootStackNavigation()
   const signUp = useSignUp()
   const removeUser = useRemoveUser()
+  const signOut = useSignOut()
   const { user } = useUser()
 
   return (
@@ -34,6 +35,20 @@ export default function Welcome() {
             <Text>Get Started</Text>
           </Button>
         </ScaleDownPressable>
+
+        {user ? (
+          <ScaleDownPressable
+            className="mt-4"
+            onPress={() => {
+              signOut.handleSignOut()
+            }}
+            disabled={signOut.loading}
+          >
+            <Button loading={signOut.loading}>
+              <Text>Sign Out</Text>
+            </Button>
+          </ScaleDownPressable>
+        ) : null}
 
         <ScaleDownPressable
           className="mt-4"
