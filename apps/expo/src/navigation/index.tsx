@@ -26,7 +26,11 @@ export default function Routes() {
         screenListeners={({ navigation, route }) => ({
           focus: () => {
             console.log(route.params)
-            if (route.params === undefined && !isSignedIn) {
+            // if (route.params === undefined && !isSignedIn) {
+            //   navigation.setParams({ text: "hello" })
+            //   navigation.navigate("Welcome")
+            // }
+            if (route.params === undefined) {
               navigation.setParams({ text: "hello" })
               navigation.navigate("Welcome")
             }

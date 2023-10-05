@@ -8,6 +8,7 @@ import { NavigationContainer } from "@react-navigation/native"
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import * as SplashScreen from "expo-splash-screen"
+import QuickActions from "react-native-quick-actions"
 import { ClerkProvider } from "@clerk/clerk-expo"
 
 import { violet } from "~/utils/colors"
@@ -21,6 +22,12 @@ import { tokenCache } from "./utils/tokenCache"
 SplashScreen.preventAutoHideAsync().catch(() => {
   return
 })
+
+function doSomethingWithAction(data: QuickActions.ShortcutItem) {
+  console.log("data", data)
+}
+
+QuickActions.popInitialAction().then(doSomethingWithAction).catch(console.error)
 
 // TODO: quick actions for android
 

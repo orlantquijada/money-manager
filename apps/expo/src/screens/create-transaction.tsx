@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react"
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef } from "react"
 import { Dimensions, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomSheetModal } from "@gorhom/bottom-sheet"
@@ -67,22 +67,41 @@ export default function CreateTransaction() {
 }
 
 // TODO: also reset date
-function useSetInitialState() {
+function useSetInitialState({
+  setAmount,
+}: {
+  setAmount: Dispatch<SetStateAction<string>>
+}) {
   const route = useRootBottomTabRoute("AddTransaction")
-  const funds = trpc.fund.listFromUserId.useQuery(userId)
+  const funds = trpc.fund.listFromUserId.useQuery(userId, {
+    staleTime: 1000 * 60 * 60 * 24,
+  })
   const reset = useTransactionStore((s) => s.reset)
   const navigation = useRootBottomTabNavigation()
 
   useFocusEffect(
     useCallback(() => {
-      if (route.params?.fundId && funds.status === "success") {
+      if (route.params?.fundId || route.params?.amount) {
         reset({
-          fund: funds.data.find(({ id }) => id === route.params?.fundId),
+          fund:
+            funds.status === "success" && route.params.fundId
+              ? funds.data.find(({ id }) => id === route.params?.fundId)
+              : undefined,
+          amount: route.params.amount || 0,
           createdAt: new Date(),
         })
+        if (route.params.amount) setAmount(route.params.amount.toString())
       }
-      return () => navigation.setParams({ fundId: undefined })
-    }, [funds.data, funds.status, navigation, reset, route.params?.fundId]),
+      return () => navigation.setParams(undefined)
+    }, [
+      funds.data,
+      funds.status,
+      navigation,
+      reset,
+      route.params?.fundId,
+      route.params?.amount,
+      setAmount,
+    ]),
   )
 }
 
@@ -111,7 +130,7 @@ function CreateTransactionForm() {
     useTransactionStore.setState({ amount })
   }, [amount])
 
-  useSetInitialState()
+  useSetInitialState({ setAmount })
 
   return (
     <>
@@ -163,21 +182,34 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
   const reset = useTransactionStore((s) => s.reset)
   const createTransaction = useCreateTransaction()
   const navigation = useRootBottomTabNavigation()
+  const utils = trpc.useContext()
+
+  const isLoading = createTransaction.status === "loading"
 
   return (
     <ScaleDownPressable
-      disabled={createTransaction.status === "loading"}
+      disabled={isLoading}
       onPress={() => {
         useTransactionStore.setState({ submitTimestamp: new Date().getTime() })
         if (formValues.fundId) {
+          const funds = utils.fund.listFromUserId.getData(userId)
+          const fund = funds?.find(({ id }) => id === formValues.fundId)
+
           createTransaction.mutate(
             {
               ...formValues,
+              amount:
+                fund?.fundType === "SPENDING"
+                  ? formValues.amount * -1
+                  : formValues.amount,
               fundId: formValues.fundId,
               userId,
             },
             {
-              onSuccess: () => {
+              onSuccess: async () => {
+                utils.fund.listFromUserId.invalidate()
+                utils.store.listFromUserId.invalidate()
+
                 reset()
                 resetAmount()
                 navigation.navigate("Home")
@@ -187,10 +219,7 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
         }
       }}
     >
-      <Button
-        className="h-12 w-full rounded-2xl"
-        loading={createTransaction.status === "loading"}
-      >
+      <Button className="h-12 w-full rounded-2xl" loading={isLoading}>
         <Text className="text-mauveDark1 font-satoshi-bold text-lg leading-6">
           Save
         </Text>
