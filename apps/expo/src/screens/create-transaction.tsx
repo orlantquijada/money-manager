@@ -13,7 +13,6 @@ import {
   HandlePresentModalPress,
   useTransactionStore,
 } from "~/utils/hooks/useTransactionStore"
-import { userId } from "~/utils/constants"
 import { useRootBottomTabRoute } from "~/utils/hooks/useRootBottomTabRoute"
 
 import SafeAreaView from "~/components/SafeAreaView"
@@ -25,7 +24,7 @@ import TransactionCreateBottomSheet from "~/components/create-transaction/Create
 import StoreListBottomSheet from "~/components/create-transaction/StoreBottomSheet"
 import FundListBottomSheet from "~/components/create-transaction/FundListBottomSheet"
 import { FormDetailsPreview } from "~/components/create-transaction/FormDetailsPreview"
-import TransactionFlowChoices from "~/components/create-transaction/TransactionFlowChoices"
+// import TransactionFlowChoices from "~/components/create-transaction/TransactionFlowChoices"
 
 import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg"
 
@@ -69,7 +68,7 @@ export default function CreateTransaction() {
 // TODO: also reset date
 function useSetInitialState() {
   const route = useRootBottomTabRoute("AddTransaction")
-  const funds = trpc.fund.listFromUserId.useQuery(userId)
+  const funds = trpc.fund.listFromUserId.useQuery()
   const reset = useTransactionStore((s) => s.reset)
   const navigation = useRootBottomTabNavigation()
 
@@ -122,7 +121,7 @@ function CreateTransactionForm() {
         <Amount amount={amount} />
 
         <View className="absolute top-0 w-3/5 translate-y-2 self-center">
-          <TransactionFlowChoices />
+          {/* <TransactionFlowChoices /> */}
         </View>
       </View>
 
@@ -174,7 +173,6 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
             {
               ...formValues,
               fundId: formValues.fundId,
-              userId,
             },
             {
               onSuccess: () => {

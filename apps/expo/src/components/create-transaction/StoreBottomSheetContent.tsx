@@ -14,7 +14,6 @@ import { debounce } from "~/utils/functions"
 import { mauveDark, violet } from "~/utils/colors"
 import { trpc } from "~/utils/trpc"
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore"
-import { userId } from "~/utils/constants"
 
 import { Store } from ".prisma/client"
 import ScaleDownPressable from "../ScaleDownPressable"
@@ -91,13 +90,13 @@ export function StoreBottomSheetContent() {
 }
 
 const StoreList = memo(({ searchText }: { searchText: string }) => {
-  const { data, status } = trpc.store.listFromUserId.useQuery(userId, {
+  const { data, status } = trpc.store.listFromUserId.useQuery(undefined, {
     staleTime: 1000 * 60 * 5,
   })
   const utils = trpc.useContext()
 
   // data from create-transaction
-  const funds = utils.fund.listFromUserId.getData(userId)
+  const funds = utils.fund.listFromUserId.getData()
 
   const formDataStore = useTransactionStore((s) => s.store)
 

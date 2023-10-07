@@ -1,11 +1,10 @@
-import { z } from "zod"
-import { publicProcedure, router } from "../trpc"
+import { protectedProcedure, router } from "../trpc"
 
 export const storesRouter = router({
-  listFromUserId: publicProcedure.input(z.string()).query(({ input, ctx }) => {
+  listFromUserId: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.store.findMany({
       where: {
-        userId: input,
+        userId: ctx.auth?.userId || "",
       },
       orderBy: {
         name: "asc",

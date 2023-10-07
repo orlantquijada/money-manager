@@ -63,7 +63,7 @@ export function useRemoveUser() {
     try {
       setLoading(true)
       await clearCredId()
-      await removeUser.mutateAsync(user.id)
+      await removeUser.mutateAsync()
       await user.delete()
       setLoading(false)
     } catch (error) {

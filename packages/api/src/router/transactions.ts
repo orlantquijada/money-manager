@@ -1,4 +1,4 @@
-import { router, publicProcedure } from "../trpc"
+import { router, publicProcedure, protectedProcedure } from "../trpc"
 import { z } from "zod"
 import { endOfMonth, startOfMonth } from "date-fns"
 
@@ -44,7 +44,7 @@ export const transactionsRouter = router({
   retrieve: publicProcedure.input(z.string()).query(({ ctx, input }) => {
     return ctx.prisma.transaction.findFirst({ where: { id: input } })
   }),
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         fundId: z.number().positive(),
@@ -56,16 +56,15 @@ export const transactionsRouter = router({
           .default(() => new Date().toJSON()),
         note: z.string().default(""),
         store: z.string().default(""),
-        userId: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input: { store, userId, ...input } }) => {
+    .mutation(async ({ ctx, input: { store, ...input } }) => {
       if (store) {
         const createdStore = await ctx.prisma.store.upsert({
           where: {
             userId_name: {
               name: store,
-              userId,
+              userId: ctx.auth?.userId || "",
             },
           },
           update: {
@@ -73,7 +72,7 @@ export const transactionsRouter = router({
           },
           create: {
             name: store,
-            userId,
+            userId: ctx.auth?.userId || "",
             lastSelectedFundId: input.fundId,
           },
         })

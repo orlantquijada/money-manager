@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient"
 import { BottomSheetSectionList, useBottomSheet } from "@gorhom/bottom-sheet"
 import clsx from "clsx"
 
-import { fundTypeReadableText, userId } from "~/utils/constants"
+import { fundTypeReadableText } from "~/utils/constants"
 import { getTotalBudgetedAmount, toCurrencyNarrow } from "~/utils/functions"
 import { trpc } from "~/utils/trpc"
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore"
@@ -125,7 +125,7 @@ function useFunds() {
   const utils = trpc.useContext()
 
   // data from create-transaction
-  const funds = utils.fund.listFromUserId.getData(userId) || []
+  const funds = utils.fund.listFromUserId.getData() || []
   const fundsWithBudgetedAmount = funds.map((fund) => ({
     ...fund,
     totalBudgetedAmount: getTotalBudgetedAmount(fund),
