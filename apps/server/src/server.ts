@@ -1,5 +1,6 @@
 import fastify from "fastify"
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify"
+import { clerkPlugin } from "@clerk/fastify"
 import { createContext, appRouter, authRouter } from "api"
 import { getHostIP } from "./utils"
 
@@ -7,7 +8,10 @@ export function createServer() {
   const port = Number(process.env.PORT) || 3000
   const server = fastify({
     maxParamLength: 5000,
+    logger: true,
   })
+
+  server.register(clerkPlugin)
 
   server.register(fastifyTRPCPlugin, {
     prefix: "/trpc",

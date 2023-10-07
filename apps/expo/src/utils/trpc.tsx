@@ -32,6 +32,7 @@ import { transformer } from "api/transformer"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister"
 import { MMKV } from "react-native-mmkv"
+import { useAuth } from "@clerk/clerk-expo"
 
 const storage = new MMKV()
 
@@ -69,6 +70,7 @@ const asyncStoragePersister = createSyncStoragePersister({
 export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { getToken } = useAuth()
   const [queryClient] = React.useState(() => new QueryClient())
   const [trpcClient] = React.useState(() =>
     trpc.createClient({
@@ -76,6 +78,12 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
       links: [
         httpBatchLink({
           url: `${getBaseUrl()}/trpc`,
+          async headers() {
+            const authToken = await getToken()
+            return {
+              Authorization: authToken ?? undefined,
+            }
+          },
         }),
       ],
     }),
