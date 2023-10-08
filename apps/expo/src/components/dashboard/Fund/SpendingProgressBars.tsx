@@ -38,7 +38,7 @@ export default function SpendingProgressBars({ fund }: { fund: FundWithMeta }) {
           key={index + fund.id}
           progress={progress}
           highlight={getShouldHighlight(fund, fundProgress.length - index)}
-          delayMultiplier={fundProgress.length - index}
+          delayMultiplier={fundProgress.length - index - 1}
           color={progressBarColors.SPENDING}
           Stripes={
             <View className="opacity-[.15]">
