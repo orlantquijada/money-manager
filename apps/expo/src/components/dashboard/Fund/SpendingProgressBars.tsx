@@ -6,6 +6,7 @@ import ProgressBar from "~/components/ProgressBar"
 import { daysInCurrentMonth, progressBarColors } from "~/utils/constants"
 import { FundWithMeta } from "~/types"
 import { pink } from "~/utils/colors"
+import { usePrevious } from "~/utils/hooks/usePrevious"
 
 import Stripes from "@assets/icons/stripes-small-violet.svg"
 import PinkStripes from "@assets/icons/stripes-pink.svg"
@@ -17,6 +18,8 @@ export default function SpendingProgressBars({ fund }: { fund: FundWithMeta }) {
     fund,
     fund.totalSpent,
   )
+  const prevNumOfNonEmptyBars =
+    usePrevious(fundProgress.filter(Boolean).length) || fundProgress.length
 
   return (
     <View className="mt-2 flex-row gap-x-1">
@@ -38,7 +41,7 @@ export default function SpendingProgressBars({ fund }: { fund: FundWithMeta }) {
           key={index + fund.id}
           progress={progress}
           highlight={getShouldHighlight(fund, fundProgress.length - index)}
-          delayMultiplier={fundProgress.length - index - 1}
+          delayMultiplier={Math.max(prevNumOfNonEmptyBars - index - 1, 0)}
           color={progressBarColors.SPENDING}
           Stripes={
             <View className="opacity-[.15]">
