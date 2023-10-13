@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react"
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef } from "react"
 import { Dimensions, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomSheetModal } from "@gorhom/bottom-sheet"
@@ -66,22 +66,40 @@ export default function CreateTransaction() {
 }
 
 // TODO: also reset date
-function useSetInitialState() {
+function useSetInitialState({
+  setAmount,
+}: {
+  setAmount: Dispatch<SetStateAction<string>>
+}) {
   const route = useRootBottomTabRoute("AddTransaction")
-  const funds = trpc.fund.listFromUserId.useQuery()
+  const funds = trpc.fund.listFromUserId.useQuery(undefined, {
+    staleTime: 1000 * 60 * 60 * 24,
+  })
   const reset = useTransactionStore((s) => s.reset)
   const navigation = useRootBottomTabNavigation()
 
   useFocusEffect(
     useCallback(() => {
-      if (route.params?.fundId && funds.status === "success") {
+      if (route.params?.fundId || route.params?.amount) {
         reset({
-          fund: funds.data.find(({ id }) => id === route.params?.fundId),
-          createdAt: new Date(),
+          fund:
+            funds.status === "success" && route.params.fundId
+              ? funds.data.find(({ id }) => id === route.params?.fundId)
+              : undefined,
+          amount: route.params.amount || 0,
         })
+        if (route.params.amount) setAmount(route.params.amount.toString())
       }
-      return () => navigation.setParams({ fundId: undefined })
-    }, [funds.data, funds.status, navigation, reset, route.params?.fundId]),
+      return () => navigation.setParams(undefined)
+    }, [
+      funds.data,
+      funds.status,
+      navigation,
+      reset,
+      route.params?.fundId,
+      route.params?.amount,
+      setAmount,
+    ]),
   )
 }
 
@@ -110,7 +128,7 @@ function CreateTransactionForm() {
     useTransactionStore.setState({ amount })
   }, [amount])
 
-  useSetInitialState()
+  useSetInitialState({ setAmount })
 
   return (
     <>

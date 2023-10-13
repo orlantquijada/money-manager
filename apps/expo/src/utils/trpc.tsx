@@ -31,22 +31,8 @@ import { createTRPCProxyClient, httpBatchLink } from "@trpc/client"
 import { transformer } from "api/transformer"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister"
-import { MMKV } from "react-native-mmkv"
 import { useAuth } from "@clerk/clerk-expo"
-
-const storage = new MMKV()
-
-const clientStorage = {
-  setItem: (key: string, value: string | number | boolean) => {
-    storage.set(key, value)
-  },
-  getItem: (key: string) => {
-    return storage.getString(key) || null
-  },
-  removeItem: (key: string) => {
-    storage.delete(key)
-  },
-}
+import { clientStorage } from "./mmkv"
 
 /**
  * A set of typesafe hooks for consuming your API.
