@@ -32,6 +32,9 @@ export const foldersRouter = router({
       // TODO: filter by date
 
       const foldersWithFunds = await ctx.prisma.folder.findMany({
+        where: {
+          userId: ctx.auth?.userId || "",
+        },
         include: {
           // TODO: order by new field: `order` when funds can now be reordered
           funds: {
