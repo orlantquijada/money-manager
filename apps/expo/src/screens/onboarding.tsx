@@ -1,8 +1,10 @@
 import { Pressable, Text, View } from "react-native"
-import Button from "~/components/Button"
-import SafeAreaView from "~/components/SafeAreaView"
+
 import { useOnboarding } from "~/utils/hooks/useOnboarding"
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
+
+import Button from "~/components/Button"
+import SafeAreaView from "~/components/SafeAreaView"
 
 export default function Onboarding() {
   const navigation = useRootStackNavigation()

@@ -1,28 +1,24 @@
+import { Platform } from "react-native"
 import { createStackNavigator } from "@react-navigation/stack"
+import { useUser } from "@clerk/clerk-expo"
 
 import { mauveDark, violet } from "~/utils/colors"
 import type { RootStackParamList } from "~/types"
+import { useOnboarding } from "~/utils/hooks/useOnboarding"
 
 import CreateFund from "~/screens/create-fund"
 import CreateFolder from "~/screens/create-folder"
+import TransactionsPage from "~/screens/transactions-list"
+import Welcome from "~/screens/welcome"
+import Onboarding from "~/screens/onboarding"
 
 import RootTabs from "./tabs"
-import { Platform } from "react-native"
-import TransactionsPage from "~/screens/transactions-list"
-import { ClerkLoaded, useUser } from "@clerk/clerk-expo"
-import Welcome from "~/screens/welcome"
-import { useInitializeUser } from "~/utils/hooks/useInitializeUser"
-import { useOnboarding } from "~/utils/hooks/useOnboarding"
-import Onboarding from "~/screens/onboarding"
 
 const RootStack = createStackNavigator<RootStackParamList>()
 
 export default function Routes() {
   const { isSignedIn } = useUser()
-  // useInitializeUser()
-  const { didFirstLaunch, loaded, handleSetFirstLaunch } = useOnboarding()
-
-  console.log({ didFirstLaunch })
+  const { loaded } = useOnboarding()
 
   if (!loaded) return null
 
@@ -36,7 +32,7 @@ export default function Routes() {
         name="Root"
         component={RootTabs}
         options={{ cardStyle: { backgroundColor: violet.violet1 } }}
-        listeners={({ navigation, route }) => ({
+        listeners={({ navigation }) => ({
           focus: () => {
             // if (route.params == null) {
             //   navigation.setParams({})
