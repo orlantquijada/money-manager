@@ -17,7 +17,7 @@ export const fundsRouter = router({
       }),
     )
     .mutation(({ input, ctx }) => ctx.prisma.fund.create({ data: input })),
-  listFromUserId: protectedProcedure.query(async ({ ctx }) => {
+  list: protectedProcedure.query(async ({ ctx }) => {
     const funds = await ctx.prisma.fund.findMany({
       where: {
         folder: {

@@ -125,7 +125,7 @@ function useFunds() {
   const utils = trpc.useContext()
 
   // data from create-transaction
-  const funds = utils.fund.listFromUserId.getData() || []
+  const funds = utils.fund.list.getData() || []
   const fundsWithBudgetedAmount = funds.map((fund) => ({
     ...fund,
     totalBudgetedAmount: getTotalBudgetedAmount(fund),

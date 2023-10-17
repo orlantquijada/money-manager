@@ -196,7 +196,7 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
 FundList.displayName = "FundList"
 
 function useFunds() {
-  return trpc.fund.listFromUserId.useQuery(undefined, {
+  return trpc.fund.list.useQuery(undefined, {
     select: (funds) => {
       return funds.map((fund) => ({
         ...fund,
