@@ -62,7 +62,7 @@ export default function FundInfo({ setScreen }: Props) {
   } = useAnimations(selectedType)
 
   const disabled = !fundName || !selectedType
-  const dirty = Boolean(fundName)
+  // const dirty = Boolean(fundName)
 
   return (
     <>
@@ -80,7 +80,7 @@ export default function FundInfo({ setScreen }: Props) {
                 placeholder="new-fund"
                 value={fundName}
                 onChangeText={setFundName}
-                autoFocus={!dirty}
+                // autoFocus={!dirty}
               />
             </View>
           </Presence>
