@@ -15,9 +15,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.orlantquijada.expo"
@@ -38,16 +36,6 @@
       }
     },
     "plugins": [
-      [
-        "expo-build-properties",
-        {
-          "compileSdkVersion": 33,
-          "targetSdkVersion": 33,
-          "minSdkVersion": 23,
-          "buildToolsVersion": "33.0.0",
-          "kotlinVersion": "1.6.20"
-        }
-      ],
       [
         "@config-plugins/react-native-quick-actions",
         [
