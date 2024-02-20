@@ -35,19 +35,6 @@
         "projectId": "f9195338-5ae2-4197-a799-1af0403e6d8d"
       }
     },
-    "plugins": [
-      [
-        "@config-plugins/react-native-quick-actions",
-        [
-          {
-            "title": "Add Transaction",
-            "type": "Add",
-            "icon": "UIApplicationShortcutIconTypeAdd"
-          }
-        ]
-      ],
-      "expo-font",
-      "expo-secure-store"
-    ]
+    "plugins": ["expo-font", "expo-secure-store"]
   }
 }
