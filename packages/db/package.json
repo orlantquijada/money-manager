@@ -18,12 +18,12 @@
     "seed": "tsx ./prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^5.0.0"
+    "@prisma/client": "^5.9.1"
   },
   "devDependencies": {
     "@types/node": "^18.11.17",
     "dotenv-cli": "^6.0.0",
-    "prisma": "^5.0.0",
+    "prisma": "^5.9.1",
     "tsup": "^7.1.0",
     "tsx": "^3.12.1",
     "typescript": "^4.9.4"
