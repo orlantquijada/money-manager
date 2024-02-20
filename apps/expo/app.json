@@ -15,7 +15,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.orlantquijada.expo"
@@ -55,7 +57,9 @@
             "icon": "UIApplicationShortcutIconTypeAdd"
           }
         ]
-      ]
+      ],
+      "expo-font",
+      "expo-secure-store"
     ]
   }
 }
