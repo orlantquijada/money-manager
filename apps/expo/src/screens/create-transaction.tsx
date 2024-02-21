@@ -203,6 +203,7 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
             {
               onSuccess: () => {
                 utils.fund.list.invalidate()
+                utils.folder.listWithFunds.invalidate()
                 utils.store.list.invalidate()
 
                 reset()
