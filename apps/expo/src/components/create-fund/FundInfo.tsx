@@ -2,11 +2,11 @@ import { ComponentProps, FC, useState } from "react"
 import { View, Text, ScrollView, LayoutChangeEvent } from "react-native"
 import {
   SharedValue,
-  useDerivedValue,
+  useAnimatedStyle,
   useSharedValue,
+  withSpring,
 } from "react-native-reanimated"
 import { SvgProps } from "react-native-svg"
-import { useDynamicAnimation } from "moti"
 import clsx from "clsx"
 
 import { transitions } from "~/utils/motion"
@@ -55,7 +55,7 @@ export default function FundInfo({ setScreen }: Props) {
 
   const [fundName, setFundName] = useState(formData.name || "")
   const {
-    state,
+    style,
     handleNonNegotiableOnLayout,
     handleSpendingOnLayout,
     handleTargetOnLayout,
@@ -96,8 +96,7 @@ export default function FundInfo({ setScreen }: Props) {
               <Presence {...presenceProps[selectedType.value]}>
                 <StyledMotiView
                   className="bg-mauveDark4 absolute left-0 right-0 rounded-xl"
-                  transition={transitions.snappy}
-                  state={state}
+                  style={style}
                 />
               </Presence>
               <Presence {...presenceProps["SPENDING"]}>
@@ -233,9 +232,7 @@ function useAnimations(selectedType: SharedValue<FundType>) {
   const handleNonNegotiableOnLayout = handleOnLayout(nonNegotiableHeight)
   const handleTargetOnLayout = handleOnLayout(targetHeight)
 
-  const state = useDynamicAnimation()
-
-  useDerivedValue(() => {
+  const style = useAnimatedStyle(() => {
     let height = spendingHeight.value
     if (selectedType.value === "NON_NEGOTIABLE")
       height = nonNegotiableHeight.value
@@ -248,14 +245,21 @@ function useAnimations(selectedType: SharedValue<FundType>) {
         FUND_CARD_GAP * 2 + nonNegotiableHeight.value + spendingHeight.value,
     }
 
-    state.animateTo({
-      height,
-      translateY: translateY[selectedType.value],
-    })
+    return {
+      height: withSpring(height, transitions.snappy),
+      transform: [
+        {
+          translateY: withSpring(
+            translateY[selectedType.value],
+            transitions.snappy,
+          ),
+        },
+      ],
+    }
   })
 
   return {
-    state,
+    style,
     handleTargetOnLayout,
     handleSpendingOnLayout,
     handleNonNegotiableOnLayout,
