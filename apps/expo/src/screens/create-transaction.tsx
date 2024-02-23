@@ -162,20 +162,33 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
   const reset = useTransactionStore((s) => s.reset)
   const createTransaction = useCreateTransaction()
   const navigation = useRootBottomTabNavigation()
+  const utils = trpc.useContext()
+
+  const isLoading = createTransaction.status === "loading"
 
   return (
     <ScaleDownPressable
-      disabled={createTransaction.status === "loading"}
+      disabled={isLoading}
       onPress={() => {
         useTransactionStore.setState({ submitTimestamp: new Date().getTime() })
         if (formValues.fundId) {
+          const funds = utils.fund.listFromUserId.getData()
+          const fund = funds?.find(({ id }) => id === formValues.fundId)
+
           createTransaction.mutate(
             {
               ...formValues,
+              amount:
+                fund?.fundType === "SPENDING"
+                  ? formValues.amount * -1
+                  : formValues.amount,
               fundId: formValues.fundId,
             },
             {
               onSuccess: () => {
+                utils.fund.listFromUserId.invalidate()
+                utils.store.listFromUserId.invalidate()
+
                 reset()
                 resetAmount()
                 navigation.navigate("Home")
@@ -185,10 +198,7 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
         }
       }}
     >
-      <Button
-        className="h-12 w-full rounded-2xl"
-        loading={createTransaction.status === "loading"}
-      >
+      <Button className="h-12 w-full rounded-2xl" loading={isLoading}>
         <Text className="text-mauveDark1 font-satoshi-bold text-lg leading-6">
           Save
         </Text>
