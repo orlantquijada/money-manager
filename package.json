@@ -19,7 +19,7 @@
     "start:server": "pnpm start --filter=server"
   },
   "dependencies": {
-    "turbo": "^1.10.12"
+    "turbo": "^1.12.4"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.4.0",
