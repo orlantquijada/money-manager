@@ -10,6 +10,8 @@ import {
   useSignUp,
 } from "~/utils/hooks/useAuth"
 import { getCredId } from "~/utils/lib/auth"
+import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
+import { useOnboarding } from "~/utils/hooks/useOnboarding"
 
 import Button from "~/components/Button"
 import SafeAreaView from "~/components/SafeAreaView"
@@ -68,6 +70,8 @@ function SignInButtons() {
   const signIn = useSignIn()
   const signUp = useSignUp()
   const [hasCreds, setHasCreds] = useState(false)
+  const navigation = useRootStackNavigation()
+  const { didFirstLaunch } = useOnboarding()
 
   useEffect(() => {
     getCredId()
@@ -82,15 +86,15 @@ function SignInButtons() {
           signIn
             .handleSignIn()
             .then(() => {
-              // navigation.navigate("Root", { params: { text: "hello" } })
-              console.log("sign in successful")
+              if (!didFirstLaunch) navigation.navigate("Onboarding")
+              else navigation.popToTop()
             })
             .catch(console.error)
         }}
         disabled={signIn.loading}
       >
         <Button loading={signIn.loading}>
-          <Text>Sign in</Text>
+          <Text>(Get started) Sign in</Text>
         </Button>
       </ScaleDownPressable>
     )
