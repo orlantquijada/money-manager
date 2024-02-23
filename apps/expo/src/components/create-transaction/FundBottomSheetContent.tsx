@@ -17,7 +17,6 @@ import {
 import { mauveDark } from "~/utils/colors"
 import { trpc } from "~/utils/trpc"
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore"
-import { userId } from "~/utils/constants"
 
 import ScaleDownPressable from "../ScaleDownPressable"
 import { Fund } from ".prisma/client"
@@ -197,7 +196,7 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
 FundList.displayName = "FundList"
 
 function useFunds() {
-  return trpc.fund.listFromUserId.useQuery(userId, {
+  return trpc.fund.listFromUserId.useQuery(undefined, {
     select: (funds) => {
       return funds.map((fund) => ({
         ...fund,

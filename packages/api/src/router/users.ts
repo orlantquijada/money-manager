@@ -14,11 +14,10 @@ export const usersRouter = router({
         data: input,
       })
     }),
-  remove: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
-    // TODO: remove user based on ctx
+  remove: protectedProcedure.mutation(({ ctx }) => {
     return ctx.prisma.user.delete({
       where: {
-        id: input,
+        id: ctx.auth.userId || "",
       },
     })
   }),

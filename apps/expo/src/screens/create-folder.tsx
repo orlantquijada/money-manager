@@ -1,11 +1,12 @@
 import { useState } from "react"
 import { View, Pressable, ScrollView, Text } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { useUser } from "@clerk/clerk-expo"
 
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 import { trpc } from "~/utils/trpc"
 import { getRandomChoice } from "~/utils/functions"
-import { COMMON_FOLDER_NAMES, userId } from "~/utils/constants"
+import { COMMON_FOLDER_NAMES } from "~/utils/constants"
 
 import Presence from "~/components/Presence"
 import TextInput from "~/components/TextInput"
@@ -64,7 +65,7 @@ function Form() {
         onContinuePress={() => {
           setDidSubmit(true)
           createFolder.mutate(
-            { name: folderName, userId },
+            { name: folderName },
             {
               onSuccess: (folder) => {
                 navigation.navigate("Root", {
@@ -99,6 +100,7 @@ function Close() {
 
 function useCreateFolder() {
   const utils = trpc.useContext()
+  const { user } = useUser()
 
   return trpc.folder.create.useMutation({
     // optimistic update stuff
@@ -114,6 +116,7 @@ function useCreateFolder() {
           createdAt: null,
           updatedAt: null,
           funds: [],
+          userId: user?.id || "",
         },
         ...previousFolders,
       ])
