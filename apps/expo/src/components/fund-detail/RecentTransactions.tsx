@@ -1,6 +1,11 @@
 import { ComponentProps, ReactNode } from "react"
 import { Text, View } from "react-native"
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+} from "react-native-reanimated"
 import clsx from "clsx"
+import { useBottomSheet } from "@gorhom/bottom-sheet"
 
 import { toCurrencyNarrow } from "~/utils/functions"
 import { trpc } from "~/utils/trpc"
@@ -13,12 +18,15 @@ type Props = {
 }
 
 export default function RecentTransactions({ fundId }: Props) {
-  const transactions = useTransactions(fundId)
+  const { status, data } = useTransactions(fundId)
 
-  const { status, data } = transactions
+  const { animatedIndex } = useBottomSheet()
+  const style = useAnimatedStyle(() => ({
+    opacity: interpolate(animatedIndex.value, [-1, 0, 1], [0, 0, 1]),
+  }))
 
   return (
-    <View className="mt-6">
+    <Animated.View className="mt-6" style={style}>
       {status === "success" ? (
         <Content empty={data.length === 0}>
           <Text className="font-satoshi-bold text-mauve9 mr-auto mb-2 text-base">
@@ -68,7 +76,7 @@ export default function RecentTransactions({ fundId }: Props) {
           </View>
         </View>
       )}
-    </View>
+    </Animated.View>
   )
 }
 
