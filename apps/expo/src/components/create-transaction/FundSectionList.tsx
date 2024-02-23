@@ -124,8 +124,12 @@ FundSectionList.displayName = "FundSectionList"
 function useFunds() {
   const utils = trpc.useContext()
 
+  // BUG: doesn't return data if previously haven't created a transaction
   // data from create-transaction
   const funds = utils.fund.list.getData() || []
+  const { data } = trpc.fund.list.useQuery()
+  // if (data !== undefined) funds = data
+
   const fundsWithBudgetedAmount = funds.map((fund) => ({
     ...fund,
     totalBudgetedAmount: getTotalBudgetedAmount(fund),

@@ -50,7 +50,7 @@ function Form() {
               </Text>
               <TextInput
                 placeholder={getRandomChoice(COMMON_FOLDER_NAMES)}
-                autoFocus
+                // autoFocus
                 value={folderName}
                 onChangeText={setFolderName}
               />
