@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useRef } from "react"
 import { Dimensions, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { BottomSheetModal } from "@gorhom/bottom-sheet"
-import { shallow } from "zustand/shallow"
 import { useFocusEffect } from "@react-navigation/native"
 
 import { mauveDark } from "~/utils/colors"
@@ -175,7 +174,6 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
       fundId: fund?.id,
       amount,
     }),
-    shallow,
   )
   const reset = useTransactionStore((s) => s.reset)
   const createTransaction = useCreateTransaction()
@@ -205,6 +203,7 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
             {
               onSuccess: () => {
                 utils.fund.list.invalidate()
+                utils.folder.listWithFunds.invalidate()
                 utils.store.list.invalidate()
 
                 reset()

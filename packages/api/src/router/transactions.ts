@@ -7,6 +7,25 @@ export const transactionsRouter = router({
   all: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.transaction.findMany()
   }),
+  recentByFund: protectedProcedure.input(z.number()).query(({ ctx, input }) => {
+    return ctx.prisma.transaction.findMany({
+      where: {
+        userId: ctx.auth.userId,
+        fundId: input,
+      },
+      orderBy: {
+        date: "desc",
+      },
+      take: 10,
+      include: {
+        store: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    })
+  }),
   allThisMonth: protectedProcedure
     .input(
       z

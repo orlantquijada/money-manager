@@ -1,5 +1,6 @@
 import { Fund } from ".prisma/client"
-import { create } from "zustand"
+import { shallow } from "zustand/shallow"
+import { createWithEqualityFn } from "zustand/traditional"
 
 export type TransactionFlow = "income" | "expense"
 
@@ -31,9 +32,12 @@ const defaultValues: Omit<State, "reset"> = {
   txnFlow: "income",
 }
 
-export const useTransactionStore = create<State>()((set) => ({
-  ...defaultValues,
-  reset: (values: Partial<typeof defaultValues> = {}) => {
-    set({ ...defaultValues, createdAt: new Date(), ...values })
-  },
-}))
+export const useTransactionStore = createWithEqualityFn<State>()(
+  (set) => ({
+    ...defaultValues,
+    reset: (values: Partial<typeof defaultValues> = {}) => {
+      set({ ...defaultValues, createdAt: new Date(), ...values })
+    },
+  }),
+  shallow,
+)
