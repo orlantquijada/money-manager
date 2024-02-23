@@ -72,7 +72,7 @@ function useSetInitialState({
   setAmount: Dispatch<SetStateAction<string>>
 }) {
   const route = useRootBottomTabRoute("AddTransaction")
-  const funds = trpc.fund.listFromUserId.useQuery(undefined, {
+  const funds = trpc.fund.list.useQuery(undefined, {
     staleTime: 1000 * 60 * 60 * 24,
   })
   const reset = useTransactionStore((s) => s.reset)
@@ -190,7 +190,7 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
       onPress={() => {
         useTransactionStore.setState({ submitTimestamp: new Date().getTime() })
         if (formValues.fundId) {
-          const funds = utils.fund.listFromUserId.getData()
+          const funds = utils.fund.list.getData()
           const fund = funds?.find(({ id }) => id === formValues.fundId)
 
           createTransaction.mutate(
@@ -204,8 +204,8 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
             },
             {
               onSuccess: () => {
-                utils.fund.listFromUserId.invalidate()
-                utils.store.listFromUserId.invalidate()
+                utils.fund.list.invalidate()
+                utils.store.list.invalidate()
 
                 reset()
                 resetAmount()
@@ -229,7 +229,7 @@ function useCreateTransaction() {
   const utils = trpc.useContext()
   return trpc.transaction.create.useMutation({
     onSuccess: () => {
-      utils.folder.listWithFunds.invalidate()
+      utils.folder.list.invalidate()
       utils.transaction.allThisMonth.invalidate()
     },
   })

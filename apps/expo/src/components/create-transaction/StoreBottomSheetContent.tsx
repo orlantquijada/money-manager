@@ -90,13 +90,13 @@ export function StoreBottomSheetContent() {
 }
 
 const StoreList = memo(({ searchText }: { searchText: string }) => {
-  const { data, status } = trpc.store.listFromUserId.useQuery(undefined, {
+  const { data, status } = trpc.store.list.useQuery(undefined, {
     staleTime: 1000 * 60 * 5,
   })
   const utils = trpc.useContext()
 
   // data from create-transaction
-  const funds = utils.fund.listFromUserId.getData()
+  const funds = utils.fund.list.getData()
 
   const formDataStore = useTransactionStore((s) => s.store)
 

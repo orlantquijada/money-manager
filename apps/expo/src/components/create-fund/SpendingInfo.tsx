@@ -188,7 +188,7 @@ function Wrapper({
             },
             {
               onSuccess: () => {
-                utils.fund.listFromUserId.invalidate()
+                utils.fund.list.invalidate()
                 utils.folder.listWithFunds
                   .invalidate()
                   .then(() => {

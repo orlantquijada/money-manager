@@ -19,7 +19,7 @@ export const foldersRouter = router({
     .mutation(({ input, ctx }) =>
       ctx.prisma.folder.delete({ where: { id: input } }),
     ),
-  listWithFunds: publicProcedure
+  listWithFunds: protectedProcedure
     .input(
       z
         .object({
@@ -33,7 +33,7 @@ export const foldersRouter = router({
 
       const foldersWithFunds = await ctx.prisma.folder.findMany({
         where: {
-          userId: ctx.auth?.userId || "",
+          userId: ctx.auth.userId || "",
         },
         include: {
           // TODO: order by new field: `order` when funds can now be reordered
