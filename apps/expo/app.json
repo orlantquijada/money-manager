@@ -35,27 +35,6 @@
         "projectId": "f9195338-5ae2-4197-a799-1af0403e6d8d"
       }
     },
-    "plugins": [
-      [
-        "expo-build-properties",
-        {
-          "compileSdkVersion": 33,
-          "targetSdkVersion": 33,
-          "minSdkVersion": 23,
-          "buildToolsVersion": "33.0.0",
-          "kotlinVersion": "1.6.20"
-        }
-      ],
-      [
-        "@config-plugins/react-native-quick-actions",
-        [
-          {
-            "title": "Add Transaction",
-            "type": "Add",
-            "icon": "UIApplicationShortcutIconTypeAdd"
-          }
-        ]
-      ]
-    ]
+    "plugins": ["expo-font", "expo-secure-store"]
   }
 }
