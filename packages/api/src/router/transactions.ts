@@ -1,12 +1,13 @@
-import { router, publicProcedure, protectedProcedure } from "../trpc"
 import { z } from "zod"
 import { endOfMonth, startOfMonth } from "date-fns"
+
+import { router, publicProcedure, protectedProcedure } from "../trpc"
 
 export const transactionsRouter = router({
   all: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.transaction.findMany()
   }),
-  allThisMonth: publicProcedure
+  allThisMonth: protectedProcedure
     .input(
       z
         .object({
@@ -18,6 +19,7 @@ export const transactionsRouter = router({
       const now = new Date()
       return ctx.prisma.transaction.findMany({
         where: {
+          userId: ctx.auth.userId,
           date: {
             gte: startOfMonth(now),
             lt: endOfMonth(now),
@@ -59,6 +61,11 @@ export const transactionsRouter = router({
       }),
     )
     .mutation(async ({ ctx, input: { store, ...input } }) => {
+      const _input = {
+        ...input,
+        userId: ctx.auth.userId,
+      }
+
       if (store) {
         const createdStore = await ctx.prisma.store.upsert({
           where: {
@@ -78,12 +85,12 @@ export const transactionsRouter = router({
         })
 
         return ctx.prisma.transaction.create({
-          data: { ...input, storeId: createdStore.id },
+          data: { ..._input, storeId: createdStore.id },
         })
       }
 
       return ctx.prisma.transaction.create({
-        data: input,
+        data: _input,
       })
     }),
 })
