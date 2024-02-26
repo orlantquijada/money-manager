@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist",
-    "build": "tsup src/index.ts --format cjs",
+    "build": "tsup src/index.ts --format cjs --minify",
     "dev": "NODE_ENV=development pnpm with-env tsx watch src",
     "with-env": "dotenv -e ../../.env --",
     "start": "pnpm with-env node dist/index.js"
