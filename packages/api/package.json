@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "type": "module",
+  "main": "dist/index.cjs",
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist",
     "lint": "eslint . --ext .ts,.tsx",
