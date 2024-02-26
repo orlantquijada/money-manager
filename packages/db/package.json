@@ -11,8 +11,7 @@
     "db:migrate": "pnpm with-env prisma migrate",
     "db:deploy": "pnpm with-env prisma migrate deploy",
     "with-env": "dotenv -e ../../.env --",
-    "build": "tsup index.ts --format cjs",
-    "seed": "pnpm prisma db seed"
+    "build": "tsup index.ts --format cjs --minify",
     "seed": "pnpm with-env prisma db seed"
   },
   "prisma": {
