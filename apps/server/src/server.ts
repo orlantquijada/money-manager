@@ -5,7 +5,6 @@ import { createContext, appRouter, authRouter } from "api"
 import { getHostIP } from "./utils"
 
 export function createServer() {
-  const port = Number(process.env.PORT) || 3000
   const app = fastify({
     maxParamLength: 5000,
     logger: true,
@@ -31,6 +30,8 @@ export function createServer() {
   const start = async () => {
     const host =
       process.env.NODE_ENV === "development" ? getHostIP() : "0.0.0.0"
+    const port =
+      process.env.NODE_ENV === "development" ? 3000 : Number(process.env.PORT)
 
     try {
       await app.listen({ port, host })
