@@ -23,7 +23,6 @@
     "turbo": "^1.12.4"
   },
   "devDependencies": {
-    "@flydotio/dockerfile": "^0.4.0",
     "@manypkg/cli": "^0.19.2",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.46.0",
