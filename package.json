@@ -15,6 +15,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo lint && manypkg check",
     "type-check": "turbo type-check",
+    "build:deploy": "turbo build:deploy",
     "build:server": "pnpm build --filter=server",
     "start:server": "pnpm start --filter=server"
   },

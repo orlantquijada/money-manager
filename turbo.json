@@ -17,9 +17,13 @@
       "dependsOn": ["^db:generate"],
       "cache": false
     },
+    "build:deploy": {
+      "dependsOn": ["^build", "^db:deploy"],
+      "outputs": ["dist/**", "public/**"]
+    },
     "build": {
       "dependsOn": ["^build", "^db:generate"],
-      "outputs": [".expo/**", "dist/**"]
+      "outputs": [".expo/**", "dist/**", "public/**"]
     },
     "start": {
       "dependsOn": ["^build"]
