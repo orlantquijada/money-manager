@@ -15,9 +15,6 @@
     "build": "tsup index.ts --format cjs --minify",
     "seed": "pnpm with-env prisma db seed"
   },
-  "prisma": {
-    "seed": "tsx ./prisma/seed.ts"
-  },
   "dependencies": {
     "@prisma/client": "^5.9.1"
   },
