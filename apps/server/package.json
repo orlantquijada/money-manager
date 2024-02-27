@@ -1,18 +1,17 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "license": "ISC",
+  "private": true,
   "type": "module",
+  "main": "public/index.cjs",
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist public",
-    "build": "tsup src/index.ts --format cjs --outDir public --minify",
-    "dev": "NODE_ENV=development pnpm with-env tsx watch src",
+    "build": "tsup api/index.ts --format cjs --outDir public --minify",
+    "dev": "NODE_ENV=development pnpm with-env tsx watch api",
     "with-env": "dotenv -e ../../.env --",
     "start": "pnpm with-env node public/index.cjs"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@clerk/fastify": "^0.6.12",
     "@trpc/server": "^10.7.0",
@@ -21,6 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "^18.11.17",
+    "@vercel/node": "^3.0.20",
     "dotenv-cli": "^6.0.0",
     "tsup": "^8.0.2",
     "tsx": "^4.7.1",
