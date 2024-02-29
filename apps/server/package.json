@@ -4,7 +4,6 @@
   "license": "ISC",
   "private": true,
   "type": "module",
-  "main": "public/index.cjs",
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist public",
     "build": "tsup api/index.ts --format cjs --outDir public --minify",
