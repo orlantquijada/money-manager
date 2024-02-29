@@ -4,7 +4,7 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./dist/index.cjs"
   },
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist",
