@@ -1,12 +1,16 @@
 import { z } from "zod"
 import { endOfMonth, startOfMonth } from "date-fns"
 
-import { router, publicProcedure, protectedProcedure } from "../trpc"
+import { router, protectedProcedure } from "../trpc"
 
 export const transactionsRouter = router({
-  all: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.transaction.findMany()
-  }),
+  all: protectedProcedure.query(({ ctx }) =>
+    ctx.prisma.transaction.findMany({
+      where: {
+        userId: ctx.auth.userId || "",
+      },
+    }),
+  ),
   recentByFund: protectedProcedure.input(z.number()).query(({ ctx, input }) => {
     return ctx.prisma.transaction.findMany({
       where: {
@@ -62,8 +66,10 @@ export const transactionsRouter = router({
         },
       })
     }),
-  retrieve: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.transaction.findFirst({ where: { id: input } })
+  retrieve: protectedProcedure.input(z.string()).query(({ ctx, input }) => {
+    return ctx.prisma.transaction.findFirst({
+      where: { id: input, userId: ctx.auth.userId },
+    })
   }),
   create: protectedProcedure
     .input(

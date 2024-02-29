@@ -1,6 +1,6 @@
 import { Prisma } from "db"
 import { z } from "zod"
-import { protectedProcedure, publicProcedure, router } from "../trpc"
+import { protectedProcedure, router } from "../trpc"
 
 export const foldersRouter = router({
   create: protectedProcedure
@@ -14,7 +14,7 @@ export const foldersRouter = router({
         data: { ...input, userId: ctx.auth.userId || "" },
       }),
     ),
-  remove: publicProcedure
+  remove: protectedProcedure
     .input(z.number())
     .mutation(({ input, ctx }) =>
       ctx.prisma.folder.delete({ where: { id: input } }),
@@ -88,5 +88,11 @@ export const foldersRouter = router({
         }),
       }))
     }),
-  list: publicProcedure.query(({ ctx }) => ctx.prisma.folder.findMany()),
+  list: protectedProcedure.query(({ ctx }) =>
+    ctx.prisma.folder.findMany({
+      where: {
+        userId: ctx.auth.userId || "",
+      },
+    }),
+  ),
 })

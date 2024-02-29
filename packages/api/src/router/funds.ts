@@ -2,11 +2,11 @@ import { z } from "zod"
 import { startOfMonth, addMonths } from "date-fns"
 import { Fund, Transaction } from "db"
 
-import { router, publicProcedure, protectedProcedure } from "../trpc"
+import { router, protectedProcedure } from "../trpc"
 import { fundTypeSchema, timeModeSchema } from "../utils/enums"
 
 export const fundsRouter = router({
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         name: z.string(),
@@ -55,7 +55,7 @@ export const fundsRouter = router({
       totalSpent: totalSpentMap[fund.id]?.toNumber() || 0,
     }))
   }),
-  retrieve: publicProcedure.input(z.number()).query(({ ctx, input }) =>
+  retrieve: protectedProcedure.input(z.number()).query(({ ctx, input }) =>
     ctx.prisma.fund.findFirst({
       where: {
         id: input,
