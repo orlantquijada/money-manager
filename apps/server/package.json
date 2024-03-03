@@ -15,7 +15,7 @@
     "@clerk/fastify": "^0.6.12",
     "@trpc/server": "^10.7.0",
     "api": "workspace:*",
-    "fastify": "^4.10.2"
+    "fastify": "^4.26.1"
   },
   "devDependencies": {
     "@types/node": "^18.11.17",
