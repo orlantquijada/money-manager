@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import { Pressable, View, Switch as RNSwitch } from "react-native"
 import Animated, {
-  Layout,
+  LinearTransition,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -61,7 +61,7 @@ export default function Switch() {
           <Animated.View
             className="h-[28px] rounded-full bg-white"
             style={thumbStyle}
-            layout={Layout.springify().stiffness(300).damping(30)}
+            layout={LinearTransition.springify().stiffness(300).damping(30)}
           />
         </Animated.View>
       </Pressable>

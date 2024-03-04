@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from "react"
 import { Pressable, Text, View } from "react-native"
 import Animated, {
-  Layout,
+  LinearTransition,
   LayoutAnimationFunction,
   withDelay,
   withSpring,
@@ -50,7 +50,7 @@ export default function TotalSpent() {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               enabled.current ? (CustomSlideInDown as any) : undefined
             }
-            layout={Layout.springify()
+            layout={LinearTransition.springify()
               .damping(transitions.lessSnappy.damping)
               .stiffness(transitions.lessSnappy.stiffness)}
           >
@@ -59,7 +59,7 @@ export default function TotalSpent() {
         </Pressable>
         {/* TODO: progress relative to previous month */}
         <Animated.View
-          layout={Layout.springify()
+          layout={LinearTransition.springify()
             .damping(transitions.lessSnappy.damping)
             .stiffness(transitions.lessSnappy.stiffness)
             .delay(delay)}
@@ -112,7 +112,7 @@ export function Dropdown() {
 }
 
 const offset = 40
-const delay = 0
+const delay = 150
 
 const CustomSlideOutUp: LayoutAnimationFunction = (_) => {
   "worklet"
@@ -166,8 +166,8 @@ function useTotalSpent() {
     select: (transactions) =>
       transactions.reduce((total, current) => {
         const amount = Number(current.amount)
-        return amount < 0 ? total + amount : total
-      }, 0) * -1,
+        return total + amount
+      }, 0),
   })
 
   return total || 0
