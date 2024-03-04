@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react"
 import { View, Text } from "react-native"
-import Animated, { Layout } from "react-native-reanimated"
+import Animated, { LinearTransition } from "react-native-reanimated"
 
 import {
   CustomSlideInDown,
@@ -69,7 +69,7 @@ export function Amount({ amount }: { amount: number }) {
                   (CustomSlideOutDown as any)
             } // eslint-disable-next-line @typescript-eslint/no-explicit-any
             entering={CustomSlideInDown as any}
-            layout={Layout.springify()
+            layout={LinearTransition.springify()
               .damping(transitions.snappier.damping)
               .stiffness(transitions.snappier.stiffness)}
             className="relative"
