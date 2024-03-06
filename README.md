@@ -1,4 +1,4 @@
-# Money-Manager: APowerful Budgeting App
+# Money-Manager: A Powerful Budgeting App
 
 Money Manager is your all-in-one expense tracking application that helps you take control of your finances. Built on the time-tested principles of the envelope budgeting system, empowering you to allocate funds intelligently across different spending categories, ensuring you never overspend or lose sight of your financial goals.
 
