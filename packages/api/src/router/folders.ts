@@ -81,9 +81,7 @@ export const foldersRouter = router({
 
           return {
             ...fund,
-            totalSpent:
-              totalSpent *
-              (fund.fundType === "SPENDING" && totalSpent !== 0 ? -1 : 1),
+            totalSpent,
           }
         }),
       }))

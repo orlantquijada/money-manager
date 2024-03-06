@@ -5,11 +5,12 @@ import Animated, {
   interpolate,
   useAnimatedStyle,
 } from "react-native-reanimated"
+import clsx from "clsx"
 
 import { FundWithMeta } from "~/types"
 import { toCurrencyNarrow } from "~/utils/functions"
 import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation"
-import { mauve, violet } from "~/utils/colors"
+import { mauve, violet, lime } from "~/utils/colors"
 import { fundTypeReadableText } from "~/utils/constants"
 
 import ScaleDownPressable from "../ScaleDownPressable"
@@ -53,12 +54,20 @@ export default function FundDetailContent({ fund }: Props) {
       <Animated.View style={contentContainerStyle}>
         <View className="mb-10 h-10 flex-row items-center justify-between pt-4">
           <View className="flex-row items-center">
-            <View className="bg-violet4 mr-2 aspect-square w-12 items-center justify-center rounded-full">
+            <View
+              className={clsx(
+                "bg-violet4 mr-2 aspect-square w-12 items-center justify-center rounded-full",
+                fund.fundType === "NON_NEGOTIABLE" && "bg-lime4",
+              )}
+            >
               <Ellipsis
                 width={24}
                 height={24}
                 strokeWidth={3}
-                color={violet.violet8}
+                // TODO: fix this
+                color={
+                  fund.fundType === "SPENDING" ? violet.violet8 : lime.lime8
+                }
               />
             </View>
 
@@ -128,27 +137,27 @@ export default function FundDetailContent({ fund }: Props) {
               />
             </View>
           </ScaleDownPressable>
-          <ScaleDownPressable
-            className="flex-row items-center justify-between"
-            scale={1}
-            opacity={0.6}
-          >
-            <Text className="font-satoshi-medium text-mauve9 mr-auto text-base">
-              Total Spent last month
-            </Text>
-            <Text className="font-nunito-semibold text-mauve9 text-base">
-              {toCurrencyNarrow(400)}
-            </Text>
-
-            <View className="bg-mauve3 ml-3 aspect-square w-6 items-center justify-center rounded-md">
-              <ChevronRight
-                width={15}
-                height={15}
-                strokeWidth={3}
-                color={mauve.mauve8}
-              />
-            </View>
-          </ScaleDownPressable>
+          {/* <ScaleDownPressable */}
+          {/*   className="flex-row items-center justify-between" */}
+          {/*   scale={1} */}
+          {/*   opacity={0.6} */}
+          {/* > */}
+          {/*   <Text className="font-satoshi-medium text-mauve9 mr-auto text-base"> */}
+          {/*     Total Spent last month */}
+          {/*   </Text> */}
+          {/*   <Text className="font-nunito-semibold text-mauve9 text-base"> */}
+          {/*     {toCurrencyNarrow(400)} */}
+          {/*   </Text> */}
+          {/**/}
+          {/*   <View className="bg-mauve3 ml-3 aspect-square w-6 items-center justify-center rounded-md"> */}
+          {/*     <ChevronRight */}
+          {/*       width={15} */}
+          {/*       height={15} */}
+          {/*       strokeWidth={3} */}
+          {/*       color={mauve.mauve8} */}
+          {/*     /> */}
+          {/*   </View> */}
+          {/* </ScaleDownPressable> */}
         </View>
 
         <RecentTransactions fundId={fund.id} />

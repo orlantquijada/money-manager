@@ -1,4 +1,4 @@
-import { memo } from "react"
+import { memo, useMemo } from "react"
 import { Text, View } from "react-native"
 import { LinearGradient } from "expo-linear-gradient"
 import { BottomSheetSectionList, useBottomSheet } from "@gorhom/bottom-sheet"
@@ -126,30 +126,30 @@ function useFunds() {
 
   // BUG: doesn't return data if previously haven't created a transaction
   // data from create-transaction
-  const funds = utils.fund.list.getData() || []
-  const { data } = trpc.fund.list.useQuery()
-  // if (data !== undefined) funds = data
-
-  const fundsWithBudgetedAmount = funds.map((fund) => ({
+  const funds = (utils.fund.list.getData() || []).map((fund) => ({
     ...fund,
     totalBudgetedAmount: getTotalBudgetedAmount(fund),
   }))
+  // const { data } = trpc.fund.list.useQuery()
+  // if (data !== undefined) funds = data
 
-  const fundsGroupedByType: Record<FundType, typeof funds> = {
-    SPENDING: [],
-    TARGET: [],
-    NON_NEGOTIABLE: [],
-  }
-  for (const fund of fundsWithBudgetedAmount)
-    fundsGroupedByType[fund.fundType].push(fund)
+  return useMemo(() => {
+    const fundsGroupedByType: Record<FundType, typeof funds> = {
+      SPENDING: [],
+      TARGET: [],
+      NON_NEGOTIABLE: [],
+    }
 
-  return Object.entries(fundsGroupedByType).map(
-    ([title, data]) =>
-      ({
-        title,
-        data,
-      } as { title: FundType; data: typeof fundsWithBudgetedAmount }),
-  )
+    for (const fund of funds) fundsGroupedByType[fund.fundType].push(fund)
+
+    return Object.entries(fundsGroupedByType).map(
+      ([title, data]) =>
+        ({
+          title,
+          data,
+        } as { title: FundType; data: typeof funds }),
+    )
+  }, [funds])
 }
 
 export default FundSectionList

@@ -118,4 +118,59 @@ export const transactionsRouter = router({
         data: _input,
       })
     }),
+
+  totalThisMonth: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.transaction
+      .aggregate({
+        where: {
+          userId: ctx.auth.userId,
+          date: {
+            gte: startOfMonth(new Date()),
+            lt: endOfMonth(new Date()),
+          },
+        },
+        _sum: { amount: true },
+      })
+      .then((data) => data._sum.amount?.toNumber() || 0)
+  }),
+
+  byFund: protectedProcedure
+    .input(z.number().optional())
+    .query(async ({ ctx, input }) => {
+      const txns = await ctx.prisma.transaction.groupBy({
+        by: "fundId",
+        where: {
+          userId: ctx.auth.userId || "",
+          date: {
+            gte: startOfMonth(new Date()),
+            lt: endOfMonth(new Date()),
+          },
+        },
+        _sum: {
+          amount: true,
+        },
+        orderBy: {
+          _sum: {
+            amount: "desc",
+          },
+        },
+        ...(input ? { take: input } : {}),
+      })
+
+      return txns
+    }),
+
+  countByFund: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.transaction.groupBy({
+      by: "fundId",
+      _count: true,
+      where: {
+        userId: ctx.auth.userId,
+        date: {
+          gte: startOfMonth(new Date()),
+          lt: endOfMonth(new Date()),
+        },
+      },
+    })
+  }),
 })
