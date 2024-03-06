@@ -56,6 +56,11 @@ export default function Budget({
   // TODO: save option on local storage
   const [show, { toggle }] = useToggle(true)
 
+  const handleToggle = () => {
+    open.value = !open.value
+    toggle()
+  }
+
   return (
     <View className="overflow-visible">
       <ContextMenu.Root>
@@ -121,9 +126,26 @@ export default function Budget({
         </ContextMenu.Trigger>
 
         <ContextMenu.Content>
-          <ContextMenu.Label>Label</ContextMenu.Label>
+          {/* <ContextMenu.Label>Label</ContextMenu.Label> */}
+          <ContextMenu.Item
+            key="item 2"
+            destructive
+            onSelect={() => {
+              navigation.navigate("CreateFund", { folderId })
+            }}
+          >
+            <ContextMenu.ItemTitle>Add</ContextMenu.ItemTitle>
+
+            <ContextMenu.ItemIcon
+              ios={{
+                // name: "trash", // required
+                name: "plus", // required
+                scale: "small",
+              }}
+            />
+          </ContextMenu.Item>
           {show ? (
-            <ContextMenu.Item key="item 1" destructive onSelect={toggle}>
+            <ContextMenu.Item key="item 1" destructive onSelect={handleToggle}>
               <ContextMenu.ItemTitle>Show</ContextMenu.ItemTitle>
 
               <ContextMenu.ItemIcon
@@ -135,7 +157,7 @@ export default function Budget({
               />
             </ContextMenu.Item>
           ) : (
-            <ContextMenu.Item key="item 1" destructive onSelect={toggle}>
+            <ContextMenu.Item key="item 1" destructive onSelect={handleToggle}>
               <ContextMenu.ItemTitle>Hide</ContextMenu.ItemTitle>
 
               <ContextMenu.ItemIcon

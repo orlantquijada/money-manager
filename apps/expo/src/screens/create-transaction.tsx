@@ -188,27 +188,26 @@ function CreateTransactionButton({ resetAmount }: { resetAmount: () => void }) {
       onPress={() => {
         useTransactionStore.setState({ submitTimestamp: new Date().getTime() })
         if (formValues.fundId) {
-          const funds = utils.fund.list.getData()
-          const fund = funds?.find(({ id }) => id === formValues.fundId)
-
           createTransaction.mutate(
             {
               ...formValues,
-              amount:
-                fund?.fundType === "SPENDING"
-                  ? formValues.amount * -1
-                  : formValues.amount,
+              amount: formValues.amount,
               fundId: formValues.fundId,
             },
             {
               onSuccess: () => {
-                utils.fund.list.invalidate()
-                utils.folder.listWithFunds.invalidate()
-                utils.store.list.invalidate()
-
-                reset()
-                resetAmount()
-                navigation.navigate("Home")
+                Promise.all([
+                  // utils.fund.list.invalidate(),
+                  // utils.folder.listWithFunds.invalidate(),
+                  utils.fund.invalidate(),
+                  utils.folder.invalidate(),
+                  utils.transaction.invalidate(),
+                  utils.store.list.invalidate(),
+                ]).then(() => {
+                  navigation.navigate("Home", { screen: "Budgets" })
+                  reset()
+                  resetAmount()
+                })
               },
             },
           )
@@ -228,8 +227,9 @@ function useCreateTransaction() {
   const utils = trpc.useContext()
   return trpc.transaction.create.useMutation({
     onSuccess: () => {
-      utils.folder.list.invalidate()
-      utils.transaction.allThisMonth.invalidate()
+      // utils.folder.list.invalidate()
+      // utils.transaction.allThisMonth.invalidate()
+      // utils.transaction.countByFund.invalidate()
     },
   })
 }
