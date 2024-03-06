@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { startOfMonth, addMonths } from "date-fns"
+import { startOfMonth, endOfMonth } from "date-fns"
 import { Fund, Transaction } from "db"
 
 import { router, protectedProcedure } from "../trpc"
@@ -37,7 +37,7 @@ export const fundsRouter = router({
         },
         date: {
           gte: startOfMonth(new Date()),
-          lt: startOfMonth(addMonths(new Date(), 1)),
+          lt: endOfMonth(new Date()),
         },
       },
       _sum: {

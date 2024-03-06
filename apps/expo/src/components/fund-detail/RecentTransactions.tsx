@@ -6,6 +6,7 @@ import Animated, {
 } from "react-native-reanimated"
 import clsx from "clsx"
 import { useBottomSheet } from "@gorhom/bottom-sheet"
+import { format } from "date-fns"
 
 import { toCurrencyNarrow } from "~/utils/functions"
 import { trpc } from "~/utils/trpc"
@@ -40,11 +41,13 @@ export default function RecentTransactions({ fundId }: Props) {
             >
               <Text
                 className={clsx(
-                  "font-satoshi-medium text-mauve9 text-base capitalize",
+                  "font-satoshi-medium text-mauve9 text-base",
                   !item.store?.name && "font-satoshi",
                 )}
               >
-                {item.store?.name || "Store needed"}
+                {item.store?.name ||
+                  format(item.date || new Date(), "MMM d 'at' h:mm bbb") ||
+                  "Store needed"}
               </Text>
 
               <Text className="font-nunito-semibold text-mauve9 ml-auto text-base">
