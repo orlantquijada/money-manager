@@ -16,6 +16,9 @@ db.sqlite-journal
 .expo/
 dist/
 
+ios/
+android/
+
 # production
 build
 
