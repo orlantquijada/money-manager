@@ -20,7 +20,7 @@
     "start:server": "pnpm start --filter=server"
   },
   "dependencies": {
-    "turbo": "^1.12.4"
+    "turbo": "^2.2.3"
   },
   "devDependencies": {
     "@manypkg/cli": "^0.19.2",
