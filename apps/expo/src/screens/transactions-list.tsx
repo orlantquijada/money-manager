@@ -16,6 +16,7 @@ import Menu from "../../assets/icons/more-horiz.svg"
 // import Calendar from "../../assets/icons/hero-icons/calendar.svg"
 import Calendar from "../../assets/icons/calendar-dates.svg"
 import Search from "../../assets/icons/search-duo.svg"
+import TriangleLeft from "../../assets/icons/triangle-left.svg"
 
 // NOTE: kind of weird na ang transaction record title kay same ug name sa
 // fund name murag redundant na nuon – pwede sguro nga note ang ibutang or ang store instead
@@ -41,9 +42,12 @@ export default function TransactionsPage() {
               navigation.goBack()
             }}
           >
-            <Text className="text-mauve8 font-satoshi-bold text-sm">
-              Transactions
-            </Text>
+            <View className="flex-row items-center">
+              <TriangleLeft height={15} width={15} color={mauve.mauve8} />
+              <Text className="text-mauve8 font-satoshi-bold text-sm">
+                Transactions
+              </Text>
+            </View>
             <Text className="font-satoshi-bold text-mauve12 text-xl">
               {route.params.fundName}
             </Text>

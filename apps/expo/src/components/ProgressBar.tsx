@@ -5,7 +5,7 @@ import clsx from "clsx"
 
 import { violet } from "~/utils/colors"
 
-const DELAY = 150
+const duration = 550
 
 type ProgressBarProps = {
   /*
@@ -17,10 +17,8 @@ type ProgressBarProps = {
   color?: ColorValue | undefined
   highlight?: boolean
   delayMultiplier?: number
-  delay?: number
 } & ComponentProps<typeof View>
 
-// TODO: handle negative progress
 export default function ProgressBar({
   progress: progressProp,
   className,
@@ -29,7 +27,6 @@ export default function ProgressBar({
   highlight,
   style,
   delayMultiplier = 0,
-  delay = DELAY,
   ...props
 }: ProgressBarProps) {
   return (
@@ -57,9 +54,8 @@ export default function ProgressBar({
       <View className="absolute inset-0 overflow-hidden rounded-full">
         <MotiView
           animate={{ left: `-${100 - progressProp}%` }}
-          // slight delay to wait for navigation animation
-          delay={delay * delayMultiplier}
-          transition={{ type: "timing", duration: 550 }}
+          delay={duration * delayMultiplier}
+          transition={{ type: "timing", duration }}
           className="h-full rounded-full"
           style={{ backgroundColor: color }}
         />

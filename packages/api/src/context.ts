@@ -1,15 +1,15 @@
 import { prisma } from "db"
 import { type inferAsyncReturnType } from "@trpc/server"
+import { type CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
+import { getAuth } from "@clerk/fastify"
 
-type Session = {
-  user?: { id: string }
-}
+type Session = Required<ReturnType<typeof getAuth>>
 
 /**
  * Replace this with an object if you want to pass things to createContextInner
  */
 type CreateContextOptions = {
-  session: Session | null
+  auth: Session | null
 }
 
 /** Use this helper for:
@@ -19,7 +19,7 @@ type CreateContextOptions = {
  */
 export const createContextInner = async (opts: CreateContextOptions) => {
   return {
-    session: opts.session,
+    auth: opts.auth,
     prisma,
   }
 }
@@ -28,10 +28,9 @@ export const createContextInner = async (opts: CreateContextOptions) => {
  * This is the actual context you'll use in your router
  * @link https://trpc.io/docs/context
  **/
-export const createContext = async () => {
-  // TODO: auth
+export const createContext = async (opts: CreateFastifyContextOptions) => {
   return await createContextInner({
-    session: {},
+    auth: getAuth(opts.req),
   })
 }
 

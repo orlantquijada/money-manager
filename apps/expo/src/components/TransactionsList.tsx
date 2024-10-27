@@ -37,7 +37,7 @@ export function TransactionsList({
                 {item.fund.name}
               </Text>
               {item.store ? (
-                <Text className="text-mauve11 font-satoshi text-base">
+                <Text className="text-mauve8 font-satoshi-bold text-base">
                   {item.store.name}
                 </Text>
               ) : null}

@@ -101,19 +101,17 @@ function Content() {
         onPress={handleCardOnPress("CreateFolder")}
       />
       <View className="bg-mauveDark6 h-px w-full" />
-      {/* TODO: description copy */}
       <CreateCard
         Icon={WalletIcon}
         title="Fund"
-        description="Description"
+        description="manage your money for different goals"
         onPress={handleCardOnPress("CreateFund")}
       />
       <View className="bg-mauveDark6 h-px w-full" />
-      {/* TODO: description copy */}
       <CreateCard
         Icon={ShoppingBagIcon}
         title="Transaction"
-        description="Description"
+        description="Add transactions to track your spending"
         onPress={handleCardOnPress("Root")}
       />
     </View>

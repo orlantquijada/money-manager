@@ -1,5 +1,6 @@
 import { prisma } from "../index"
 
+// BUG: data can't be used because `id` must be synced with clerk user id
 async function main() {
   const user = await prisma.user.create({
     data: {

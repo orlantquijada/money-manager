@@ -4,14 +4,17 @@ import { transactionsRouter } from "./transactions"
 import { foldersRouter } from "./folders"
 import { fundsRouter } from "./funds"
 import { storesRouter } from "./stores"
+import { usersRouter } from "./users"
 
 export const appRouter = router({
-  auth: authRouter,
   transaction: transactionsRouter,
   folder: foldersRouter,
   fund: fundsRouter,
   store: storesRouter,
+  user: usersRouter,
 })
+export { authRouter }
 
 // export type definition of API
 export type AppRouter = typeof appRouter
+export type AuthRouter = typeof authRouter

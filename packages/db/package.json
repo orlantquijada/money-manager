@@ -1,8 +1,11 @@
 {
   "name": "db",
   "version": "0.1.0",
-  "main": "./dist/index.js",
   "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.cjs"
+  },
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
     "db:generate": "pnpm with-env prisma generate",
@@ -11,21 +14,18 @@
     "db:migrate": "pnpm with-env prisma migrate",
     "db:deploy": "pnpm with-env prisma migrate deploy",
     "with-env": "dotenv -e ../../.env --",
-    "build": "tsup index.ts --format cjs",
-    "seed": "pnpm prisma db seed"
-  },
-  "prisma": {
-    "seed": "tsx ./prisma/seed.ts"
+    "build": "tsup index.ts --format cjs --minify",
+    "seed": "pnpm with-env prisma db seed"
   },
   "dependencies": {
-    "@prisma/client": "^5.0.0"
+    "@prisma/client": "^5.9.1"
   },
   "devDependencies": {
     "@types/node": "^18.11.17",
     "dotenv-cli": "^6.0.0",
-    "prisma": "^5.0.0",
-    "tsup": "^7.1.0",
-    "tsx": "^3.12.1",
-    "typescript": "^4.9.4"
+    "prisma": "^5.9.1",
+    "tsup": "^8.0.2",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3"
   }
 }

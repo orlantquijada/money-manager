@@ -1,22 +1,25 @@
 import { Prisma } from "db"
 import { z } from "zod"
-import { publicProcedure, router } from "../trpc"
+import { protectedProcedure, router } from "../trpc"
 
 export const foldersRouter = router({
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         name: z.string(),
-        userId: z.string(),
       }),
     )
-    .mutation(({ input, ctx }) => ctx.prisma.folder.create({ data: input })),
-  remove: publicProcedure
+    .mutation(({ input, ctx }) =>
+      ctx.prisma.folder.create({
+        data: { ...input, userId: ctx.auth.userId || "" },
+      }),
+    ),
+  remove: protectedProcedure
     .input(z.number())
     .mutation(({ input, ctx }) =>
       ctx.prisma.folder.delete({ where: { id: input } }),
     ),
-  listWithFunds: publicProcedure
+  listWithFunds: protectedProcedure
     .input(
       z
         .object({
@@ -29,6 +32,9 @@ export const foldersRouter = router({
       // TODO: filter by date
 
       const foldersWithFunds = await ctx.prisma.folder.findMany({
+        where: {
+          userId: ctx.auth.userId || "",
+        },
         include: {
           // TODO: order by new field: `order` when funds can now be reordered
           funds: {
@@ -75,12 +81,16 @@ export const foldersRouter = router({
 
           return {
             ...fund,
-            totalSpent:
-              totalSpent *
-              (fund.fundType === "SPENDING" && totalSpent !== 0 ? -1 : 1),
+            totalSpent,
           }
         }),
       }))
     }),
-  list: publicProcedure.query(({ ctx }) => ctx.prisma.folder.findMany()),
+  list: protectedProcedure.query(({ ctx }) =>
+    ctx.prisma.folder.findMany({
+      where: {
+        userId: ctx.auth.userId || "",
+      },
+    }),
+  ),
 })

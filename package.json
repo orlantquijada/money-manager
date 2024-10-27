@@ -15,14 +15,14 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo lint && manypkg check",
     "type-check": "turbo type-check",
+    "build:deploy": "turbo build:deploy",
     "build:server": "pnpm build --filter=server",
     "start:server": "pnpm start --filter=server"
   },
   "dependencies": {
-    "turbo": "^1.10.12"
+    "turbo": "^2.2.3"
   },
   "devDependencies": {
-    "@flydotio/dockerfile": "^0.4.0",
     "@manypkg/cli": "^0.19.2",
     "@typescript-eslint/eslint-plugin": "^5.46.0",
     "@typescript-eslint/parser": "^5.46.0",

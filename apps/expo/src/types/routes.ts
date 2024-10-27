@@ -23,4 +23,5 @@ export type RootStackParamList = {
   TransactionsList: { fundId: Fund["id"]; fundName: Fund["name"] }
   // FolderDetail: { folder: Folder }
   Welcome: undefined
+  Onboarding: undefined
 }

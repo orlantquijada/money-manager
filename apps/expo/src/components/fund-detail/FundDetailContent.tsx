@@ -5,21 +5,23 @@ import Animated, {
   interpolate,
   useAnimatedStyle,
 } from "react-native-reanimated"
+import clsx from "clsx"
 
 import { FundWithMeta } from "~/types"
 import { toCurrencyNarrow } from "~/utils/functions"
 import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation"
-import { mauve, violet } from "~/utils/colors"
+import { mauve, violet, lime } from "~/utils/colors"
 import { fundTypeReadableText } from "~/utils/constants"
 
 import ScaleDownPressable from "../ScaleDownPressable"
 import CategoryProgressBars from "../dashboard/Fund/CategoryProgressBars"
+import ActionButton from "./ActionButton"
+import HelperText from "./HelperText"
+import RecentTransactions from "./RecentTransactions"
 
 // import Ellipsis from "../../../assets/icons/hero-icons/ellipsis-horizontal.svg"
 import Ellipsis from "../../../assets/icons/more-horiz.svg"
 import ChevronRight from "../../../assets/icons/hero-icons/chevron-right.svg"
-import ActionButton from "./ActionButton"
-import HelperText from "./HelperText"
 
 const { width } = Dimensions.get("screen")
 
@@ -33,30 +35,8 @@ export default function FundDetailContent({ fund }: Props) {
   const navigation = useRootBottomTabNavigation()
   const { close } = useBottomSheet()
 
-  const { animatedIndex } = useBottomSheet()
-
-  const style = useAnimatedStyle(() => ({
-    width,
-    transform: [
-      {
-        scale: interpolate(
-          animatedIndex.value,
-          [-1, 0, 1],
-          [previewScale, previewScale, 1],
-        ),
-      },
-    ],
-  }))
-  const handleStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(animatedIndex.value, [-1, 0, 1], [1, 1, 0]),
-  }))
-  const contentContainerStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: interpolate(animatedIndex.value, [-1, 0, 1], [0, 0, -24]) },
-    ],
-  }))
-
   const ProgressBars = CategoryProgressBars[fund.fundType]
+  const { contentContainerStyle, handleStyle, style } = useStyles()
 
   return (
     <Animated.View
@@ -74,12 +54,20 @@ export default function FundDetailContent({ fund }: Props) {
       <Animated.View style={contentContainerStyle}>
         <View className="mb-10 h-10 flex-row items-center justify-between pt-4">
           <View className="flex-row items-center">
-            <View className="bg-violet4 mr-2 aspect-square w-12 items-center justify-center rounded-full">
+            <View
+              className={clsx(
+                "bg-violet4 mr-2 aspect-square w-12 items-center justify-center rounded-full",
+                fund.fundType === "NON_NEGOTIABLE" && "bg-lime4",
+              )}
+            >
               <Ellipsis
                 width={24}
                 height={24}
                 strokeWidth={3}
-                color={violet.violet8}
+                // TODO: fix this
+                color={
+                  fund.fundType === "SPENDING" ? violet.violet8 : lime.lime8
+                }
               />
             </View>
 
@@ -119,10 +107,7 @@ export default function FundDetailContent({ fund }: Props) {
               {toCurrencyNarrow(fund.totalBudgetedAmount)}
             </Text>
 
-            <ScaleDownPressable
-              scale={0.9}
-              className="ml-3 aspect-square w-6 items-center justify-center rounded-md"
-            ></ScaleDownPressable>
+            <View className="ml-3 aspect-square w-6"></View>
           </View>
           <ScaleDownPressable
             className="flex-row items-center justify-between"
@@ -152,45 +137,67 @@ export default function FundDetailContent({ fund }: Props) {
               />
             </View>
           </ScaleDownPressable>
-          <ScaleDownPressable
-            className="flex-row items-center justify-between"
-            scale={1}
-            opacity={0.6}
-          >
-            <Text className="font-satoshi-medium text-mauve9 mr-auto text-base">
-              Total Spent last month
-            </Text>
-            <Text className="font-nunito-semibold text-mauve9 text-base">
-              {toCurrencyNarrow(400)}
-            </Text>
-
-            <View className="bg-mauve3 ml-3 aspect-square w-6 items-center justify-center rounded-md">
-              <ChevronRight
-                width={15}
-                height={15}
-                strokeWidth={3}
-                color={mauve.mauve8}
-              />
-            </View>
-          </ScaleDownPressable>
+          {/* <ScaleDownPressable */}
+          {/*   className="flex-row items-center justify-between" */}
+          {/*   scale={1} */}
+          {/*   opacity={0.6} */}
+          {/* > */}
+          {/*   <Text className="font-satoshi-medium text-mauve9 mr-auto text-base"> */}
+          {/*     Total Spent last month */}
+          {/*   </Text> */}
+          {/*   <Text className="font-nunito-semibold text-mauve9 text-base"> */}
+          {/*     {toCurrencyNarrow(400)} */}
+          {/*   </Text> */}
+          {/**/}
+          {/*   <View className="bg-mauve3 ml-3 aspect-square w-6 items-center justify-center rounded-md"> */}
+          {/*     <ChevronRight */}
+          {/*       width={15} */}
+          {/*       height={15} */}
+          {/*       strokeWidth={3} */}
+          {/*       color={mauve.mauve8} */}
+          {/*     /> */}
+          {/*   </View> */}
+          {/* </ScaleDownPressable> */}
         </View>
-      </Animated.View>
 
-      {/* <ScaleDownPressable */}
-      {/*   containerStyle={{ marginTop: "auto" }} */}
-      {/*   onPress={() => { */}
-      {/*     close() */}
-      {/*     navigation.navigate("AddTransaction", { fundId: fund.id }) */}
-      {/*   }} */}
-      {/* > */}
-      {/*   <Button className="h-10"> */}
-      {/*     <Text className="font-satoshi-medium text-mauve12">Add Expense</Text> */}
-      {/*   </Button> */}
-      {/* </ScaleDownPressable> */}
+        <RecentTransactions fundId={fund.id} />
+      </Animated.View>
     </Animated.View>
   )
 }
 
+function useStyles() {
+  const { animatedIndex } = useBottomSheet()
+
+  const style = useAnimatedStyle(() => ({
+    width,
+    transform: [
+      {
+        scale: interpolate(
+          animatedIndex.value,
+          [-1, 0, 1],
+          [previewScale, previewScale, 1],
+        ),
+      },
+    ],
+  }))
+  const handleStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(animatedIndex.value, [-1, 0, 1], [1, 1, 0]),
+  }))
+  const contentContainerStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateY: interpolate(animatedIndex.value, [-1, 0, 1], [0, 0, -24]) },
+    ],
+  }))
+
+  return {
+    style,
+    handleStyle,
+    contentContainerStyle,
+  }
+}
+
+// TODO: dropdown
 function Dropdown() {
   return (
     <DropdownMenu.Root>

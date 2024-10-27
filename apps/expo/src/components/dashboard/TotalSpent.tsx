@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef } from "react"
-import { Text, View } from "react-native"
+import { Pressable, Text, View } from "react-native"
 import Animated, {
-  Layout,
+  LinearTransition,
   LayoutAnimationFunction,
   withDelay,
   withSpring,
@@ -15,6 +15,8 @@ import { trpc } from "~/utils/trpc"
 import Button from "../Button"
 
 import ArrowDown from "../../../assets/icons/hero-icons/arrow-down.svg"
+import { useSignOut } from "~/utils/hooks/useAuth"
+import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 
 export default function TotalSpent() {
   const totalSpent = useTotalSpent()
@@ -24,29 +26,40 @@ export default function TotalSpent() {
     enabled.current = true
   }, [])
 
+  const navigation = useRootStackNavigation()
+  const { handleSignOut } = useSignOut()
+
   return (
     <View className="grow">
       <View className="w-full flex-row items-center">
-        <Animated.Text
-          className="font-nunito-bold text-mauve12 mr-2 text-4xl"
-          key={totalSpent}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          exiting={CustomSlideOutUp as any}
-          // FIX: initial animation not working on IOS
-          // disable initial animation
-          entering={
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            enabled.current ? (CustomSlideInDown as any) : undefined
-          }
-          layout={Layout.springify()
-            .damping(transitions.lessSnappy.damping)
-            .stiffness(transitions.lessSnappy.stiffness)}
+        <Pressable
+          onPress={() => {
+            handleSignOut().then(() => {
+              navigation.navigate("Welcome")
+            })
+          }}
         >
-          {toCurrencyShort(totalSpent)}
-        </Animated.Text>
+          <Animated.Text
+            className="font-nunito-bold text-mauve12 mr-2 text-4xl"
+            key={totalSpent}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            exiting={CustomSlideOutUp as any}
+            // FIX: initial animation not working on IOS
+            // disable initial animation
+            entering={
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              enabled.current ? (CustomSlideInDown as any) : undefined
+            }
+            layout={LinearTransition.springify()
+              .damping(transitions.lessSnappy.damping)
+              .stiffness(transitions.lessSnappy.stiffness)}
+          >
+            {toCurrencyShort(totalSpent)}
+          </Animated.Text>
+        </Pressable>
         {/* TODO: progress relative to previous month */}
         <Animated.View
-          layout={Layout.springify()
+          layout={LinearTransition.springify()
             .damping(transitions.lessSnappy.damping)
             .stiffness(transitions.lessSnappy.stiffness)
             .delay(delay)}
@@ -99,7 +112,7 @@ export function Dropdown() {
 }
 
 const offset = 40
-const delay = 0
+const delay = 150
 
 const CustomSlideOutUp: LayoutAnimationFunction = (_) => {
   "worklet"
@@ -153,8 +166,8 @@ function useTotalSpent() {
     select: (transactions) =>
       transactions.reduce((total, current) => {
         const amount = Number(current.amount)
-        return amount < 0 ? total + amount : total
-      }, 0) * -1,
+        return total + amount
+      }, 0),
   })
 
   return total || 0

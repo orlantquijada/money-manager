@@ -1,12 +1,36 @@
-import { router, publicProcedure } from "../trpc"
 import { z } from "zod"
 import { endOfMonth, startOfMonth } from "date-fns"
 
+import { router, protectedProcedure } from "../trpc"
+
 export const transactionsRouter = router({
-  all: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.transaction.findMany()
+  all: protectedProcedure.query(({ ctx }) =>
+    ctx.prisma.transaction.findMany({
+      where: {
+        userId: ctx.auth.userId || "",
+      },
+    }),
+  ),
+  recentByFund: protectedProcedure.input(z.number()).query(({ ctx, input }) => {
+    return ctx.prisma.transaction.findMany({
+      where: {
+        userId: ctx.auth.userId,
+        fundId: input,
+      },
+      orderBy: {
+        date: "desc",
+      },
+      take: 10,
+      include: {
+        store: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    })
   }),
-  allThisMonth: publicProcedure
+  allThisMonth: protectedProcedure
     .input(
       z
         .object({
@@ -18,6 +42,7 @@ export const transactionsRouter = router({
       const now = new Date()
       return ctx.prisma.transaction.findMany({
         where: {
+          userId: ctx.auth.userId,
           date: {
             gte: startOfMonth(now),
             lt: endOfMonth(now),
@@ -41,10 +66,12 @@ export const transactionsRouter = router({
         },
       })
     }),
-  retrieve: publicProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.transaction.findFirst({ where: { id: input } })
+  retrieve: protectedProcedure.input(z.string()).query(({ ctx, input }) => {
+    return ctx.prisma.transaction.findFirst({
+      where: { id: input, userId: ctx.auth.userId },
+    })
   }),
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         fundId: z.number().positive(),
@@ -56,16 +83,20 @@ export const transactionsRouter = router({
           .default(() => new Date().toJSON()),
         note: z.string().default(""),
         store: z.string().default(""),
-        userId: z.string(),
       }),
     )
-    .mutation(async ({ ctx, input: { store, userId, ...input } }) => {
+    .mutation(async ({ ctx, input: { store, ...input } }) => {
+      const _input = {
+        ...input,
+        userId: ctx.auth.userId,
+      }
+
       if (store) {
         const createdStore = await ctx.prisma.store.upsert({
           where: {
             userId_name: {
               name: store,
-              userId,
+              userId: ctx.auth?.userId || "",
             },
           },
           update: {
@@ -73,18 +104,73 @@ export const transactionsRouter = router({
           },
           create: {
             name: store,
-            userId,
+            userId: ctx.auth?.userId || "",
             lastSelectedFundId: input.fundId,
           },
         })
 
         return ctx.prisma.transaction.create({
-          data: { ...input, storeId: createdStore.id },
+          data: { ..._input, storeId: createdStore.id },
         })
       }
 
       return ctx.prisma.transaction.create({
-        data: input,
+        data: _input,
       })
     }),
+
+  totalThisMonth: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.transaction
+      .aggregate({
+        where: {
+          userId: ctx.auth.userId,
+          date: {
+            gte: startOfMonth(new Date()),
+            lt: endOfMonth(new Date()),
+          },
+        },
+        _sum: { amount: true },
+      })
+      .then((data) => data._sum.amount?.toNumber() || 0)
+  }),
+
+  byFund: protectedProcedure
+    .input(z.number().optional())
+    .query(async ({ ctx, input }) => {
+      const txns = await ctx.prisma.transaction.groupBy({
+        by: "fundId",
+        where: {
+          userId: ctx.auth.userId || "",
+          date: {
+            gte: startOfMonth(new Date()),
+            lt: endOfMonth(new Date()),
+          },
+        },
+        _sum: {
+          amount: true,
+        },
+        orderBy: {
+          _sum: {
+            amount: "desc",
+          },
+        },
+        ...(input ? { take: input } : {}),
+      })
+
+      return txns
+    }),
+
+  countByFund: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.transaction.groupBy({
+      by: "fundId",
+      _count: true,
+      where: {
+        userId: ctx.auth.userId,
+        date: {
+          gte: startOfMonth(new Date()),
+          lt: endOfMonth(new Date()),
+        },
+      },
+    })
+  }),
 })
