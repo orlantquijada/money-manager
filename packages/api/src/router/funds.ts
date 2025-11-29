@@ -1,9 +1,9 @@
-import { z } from "zod"
-import { startOfMonth, endOfMonth } from "date-fns"
-import { Fund, Transaction } from "db"
+import { endOfMonth, startOfMonth } from "date-fns";
+import type { Fund, Transaction } from "db";
+import { z } from "zod";
 
-import { router, protectedProcedure } from "../trpc"
-import { fundTypeSchema, timeModeSchema } from "../utils/enums"
+import { protectedProcedure, router } from "../trpc";
+import { fundTypeSchema, timeModeSchema } from "../utils/enums";
 
 export const fundsRouter = router({
   create: protectedProcedure
@@ -14,7 +14,7 @@ export const fundsRouter = router({
         fundType: fundTypeSchema,
         folderId: z.number(),
         timeMode: timeModeSchema,
-      }),
+      })
     )
     .mutation(({ input, ctx }) => ctx.prisma.fund.create({ data: input })),
   list: protectedProcedure.query(async ({ ctx }) => {
@@ -27,7 +27,7 @@ export const fundsRouter = router({
       orderBy: {
         name: "asc",
       },
-    })
+    });
 
     const totalSpentByFund = await ctx.prisma.transaction.groupBy({
       by: ["fundId"],
@@ -43,23 +43,23 @@ export const fundsRouter = router({
       _sum: {
         amount: true,
       },
-    })
+    });
 
-    const totalSpentMap: Record<Fund["id"], Transaction["amount"]> = {}
+    const totalSpentMap: Record<Fund["id"], Transaction["amount"]> = {};
     for (const t of totalSpentByFund) {
-      totalSpentMap[t.fundId] = t._sum.amount
+      totalSpentMap[t.fundId] = t._sum.amount;
     }
 
     return funds.map((fund) => ({
       ...fund,
       totalSpent: totalSpentMap[fund.id]?.toNumber() || 0,
-    }))
+    }));
   }),
   retrieve: protectedProcedure.input(z.number()).query(({ ctx, input }) =>
     ctx.prisma.fund.findFirst({
       where: {
         id: input,
       },
-    }),
+    })
   ),
-})
+});

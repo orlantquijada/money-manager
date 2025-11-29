@@ -1,64 +1,63 @@
-import { View, Text } from "react-native"
-import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs"
-import clsx from "clsx"
-
-import ScaleDownPressable from "./ScaleDownPressable"
-import { screenPadding } from "~/utils/constants"
+import type { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
+import clsx from "clsx";
+import { Text, View } from "react-native";
+import { screenPadding } from "~/utils/constants";
+import ScaleDownPressable from "./ScaleDownPressable";
 
 export default function HomeTabBar({
   state,
   navigation,
 }: MaterialTopTabBarProps) {
   return (
-    <View className="border-b-mauve5 flex-row space-x-2 border-b">
+    <View className="flex-row space-x-2 border-b border-b-mauve5">
       {state.routes.map((route, index) => {
         // const { options } = descriptors[route.key] as {
         //   options: MaterialTopTabNavigationOptions
         // }
-        const isFocused = state.index === index
+        const isFocused = state.index === index;
 
         const onPress = () => {
           const event = navigation.emit({
             type: "tabPress",
             target: route.key,
             canPreventDefault: true,
-          })
+          });
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name)
+          if (!(isFocused || event.defaultPrevented)) {
+            navigation.navigate(route.name);
           }
-        }
+        };
 
         const onLongPress = () => {
           navigation.emit({
             type: "tabLongPress",
             target: route.key,
-          })
-        }
+          });
+        };
 
         return (
           <ScaleDownPressable
-            onPress={onPress}
-            onLongPress={onLongPress}
-            key={route.key}
             className="h-12 justify-center px-2"
+            key={route.key}
+            onLongPress={onLongPress}
+            onPress={onPress}
             style={index === 0 ? { marginLeft: screenPadding } : {}}
           >
             <Text
               className={clsx(
-                "text-mauve10 font-satoshi-bold text-base",
-                isFocused && "text-mauve12",
+                "font-satoshi-bold text-base text-mauve10",
+                isFocused && "text-mauve12"
               )}
             >
               {route.name}
             </Text>
 
             {isFocused && (
-              <View className="bg-mauve12 absolute left-0 right-0 bottom-0 h-0.5" />
+              <View className="absolute right-0 bottom-0 left-0 h-0.5 bg-mauve12" />
             )}
           </ScaleDownPressable>
-        )
+        );
       })}
     </View>
-  )
+  );
 }

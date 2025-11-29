@@ -1,16 +1,16 @@
-import { FC } from "react"
-import { Text } from "react-native"
-import { mauve } from "~/utils/colors"
-import { toCurrencyNarrow } from "~/utils/functions"
-import { HelperTextProps } from "./HelperText"
+import type { FC } from "react";
+import { Text } from "react-native";
+import { mauve } from "~/utils/colors";
+import { toCurrencyNarrow } from "~/utils/functions";
+import type { HelperTextProps } from "./HelperText";
 
 // TODO: mo error color ra siya if nalapas sa deadline? not sure
 const TargetHelperText: FC<HelperTextProps> = ({ showDefault, fund }) => {
-  const isOverFunded = fund.totalSpent > fund.totalBudgetedAmount
-  if (showDefault)
+  const isOverFunded = fund.totalSpent > fund.totalBudgetedAmount;
+  if (showDefault) {
     return (
       <Text
-        className="font-satoshi mt-1 text-xs"
+        className="mt-1 font-satoshi text-xs"
         style={{ color: mauve.mauve9 }}
       >
         {isOverFunded ? (
@@ -19,7 +19,7 @@ const TargetHelperText: FC<HelperTextProps> = ({ showDefault, fund }) => {
             <Text className="font-nunito-semibold">
               {" "}
               {toCurrencyNarrow(
-                (Number(fund.budgetedAmount) - fund.totalSpent) * -1,
+                (Number(fund.budgetedAmount) - fund.totalSpent) * -1
               )}{" "}
             </Text>
             more than target
@@ -27,16 +27,19 @@ const TargetHelperText: FC<HelperTextProps> = ({ showDefault, fund }) => {
         ) : (
           <>
             <Text className="font-nunito-semibold">
-              {toCurrencyNarrow(Number(fund.budgetedAmount) - fund.totalSpent)}{" "}
+              {toCurrencyNarrow(
+                Number(fund.budgetedAmount) - fund.totalSpent
+              )}{" "}
             </Text>
             more needed
           </>
         )}
       </Text>
-    )
+    );
+  }
 
   return (
-    <Text className="font-satoshi mt-1 text-xs" style={{ color: mauve.mauve9 }}>
+    <Text className="mt-1 font-satoshi text-xs" style={{ color: mauve.mauve9 }}>
       funded
       <Text className="font-nunito"> {toCurrencyNarrow(fund.totalSpent)} </Text>
       of
@@ -49,7 +52,7 @@ const TargetHelperText: FC<HelperTextProps> = ({ showDefault, fund }) => {
         %)
       </Text>
     </Text>
-  )
-}
+  );
+};
 
-export default TargetHelperText
+export default TargetHelperText;

@@ -1,15 +1,15 @@
-import { type ComponentProps } from "react"
-import { View, ActivityIndicator } from "react-native"
-import clsx from "clsx"
-import { MotiView } from "moti"
+import clsx from "clsx";
+import { MotiView } from "moti";
+import type { ComponentProps } from "react";
+import { ActivityIndicator, View } from "react-native";
 
-import { mauveDark } from "~/utils/colors"
+import { mauveDark } from "~/utils/colors";
 
 type Props = {
-  disabled?: boolean
-  loading?: boolean
-  loadingColor?: string
-} & ComponentProps<typeof MotiView>
+  disabled?: boolean;
+  loading?: boolean;
+  loadingColor?: string;
+} & ComponentProps<typeof MotiView>;
 
 // only a UI comp does not actually do what a button does
 // wrap this with a <Pressable /> to have button functionality
@@ -22,18 +22,18 @@ export default function Button(props: Props) {
     transition,
     animate,
     ...rest
-  } = props
+  } = props;
   return (
     <MotiView
-      className="relative h-8 items-center justify-center rounded-xl px-4 transition-colors"
       animate={{
         backgroundColor: disabled
           ? mauveDark.mauve11
           : typeof animate === "object" && "backgroundColor" in animate
-          ? animate.backgroundColor
-          : mauveDark.mauve12,
+            ? animate.backgroundColor
+            : mauveDark.mauve12,
         ...animate,
       }}
+      className="relative h-8 items-center justify-center rounded-xl px-4 transition-colors"
       transition={{
         backgroundColor: { type: "timing", duration: 200 },
         ...transition,
@@ -43,7 +43,7 @@ export default function Button(props: Props) {
       <View
         className={clsx(
           "h-full items-center justify-center self-stretch",
-          loading && "opacity-0",
+          loading && "opacity-0"
         )}
       >
         {children}
@@ -51,10 +51,10 @@ export default function Button(props: Props) {
       {loading && (
         <ActivityIndicator
           className="absolute"
-          size="small"
           color={loadingColor}
+          size="small"
         />
       )}
     </MotiView>
-  )
+  );
 }

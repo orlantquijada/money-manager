@@ -1,72 +1,66 @@
-import React, { ComponentProps } from "react"
-
-import { Text, TextInput, TouchableOpacity, View } from "react-native"
-
-import { SafeAreaView } from "react-native-safe-area-context"
-import { FlashList } from "@shopify/flash-list"
-import type { inferProcedureOutput } from "@trpc/server"
-import type { AppRouter } from "api"
-
-import Plus from "../../assets/icons/plus-rec.svg"
-
-import { trpc } from "~/utils/trpc"
+import { FlashList } from "@shopify/flash-list";
+import type { inferProcedureOutput } from "@trpc/server";
+import type { AppRouter } from "api";
+import React, { type ComponentProps } from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { trpc } from "~/utils/trpc";
+import Plus from "../../assets/icons/plus-rec.svg";
 
 const PostCard: React.FC<{
-  post: inferProcedureOutput<AppRouter["folder"]["list"]>[number]
-}> = ({ post }) => {
-  return (
-    <View className="border-mauve4 rounded-lg border bg-white p-4 shadow-2xl">
-      <Text className="font-satoshi text-mauve12 text-xl">{post.name}</Text>
-      <Text className="font-satoshi text-mauve9">{post.id}</Text>
-    </View>
-  )
-}
+  post: inferProcedureOutput<AppRouter["folder"]["list"]>[number];
+}> = ({ post }) => (
+  <View className="rounded-lg border border-mauve4 bg-white p-4 shadow-2xl">
+    <Text className="font-satoshi text-mauve12 text-xl">{post.name}</Text>
+    <Text className="font-satoshi text-mauve9">{post.id}</Text>
+  </View>
+);
 
 const CreatePost: React.FC = () => {
-  const utils = trpc.useContext()
+  const utils = trpc.useContext();
   const { mutate } = trpc.folder.create.useMutation({
     async onSuccess() {
-      await utils.folder.list.invalidate()
+      await utils.folder.list.invalidate();
     },
     onError(e) {
-      console.log(e.data)
+      console.log(e.data);
     },
-  })
+  });
 
-  const [name, setName] = React.useState("")
+  const [name, setName] = React.useState("");
 
   return (
-    <View className="border-mauve4 flex flex-col border-t py-4">
+    <View className="flex flex-col border-mauve4 border-t py-4">
       <TextInput
-        value={name}
-        className="border-mauve4 font-satoshi text-mauve12 focus:border-mauve8 mb-2 rounded border p-2"
+        className="mb-2 rounded border border-mauve4 p-2 font-satoshi text-mauve12 focus:border-mauve8"
         onChangeText={setName}
         placeholder="Title"
+        value={name}
       />
       <TouchableOpacity
-        className="bg-violet5 h-9 items-center justify-center rounded px-4"
         activeOpacity={0.8}
+        className="h-9 items-center justify-center rounded bg-violet5 px-4"
         onPress={() => {
-          mutate({ userId: "cle57ii5w0000t7idkmnccmrm", name })
+          mutate({ userId: "cle57ii5w0000t7idkmnccmrm", name });
         }}
       >
-        <Text className="font-satoshi text-violet11 text-sm">
+        <Text className="font-satoshi text-sm text-violet11">
           Publish post <Plus />
         </Text>
       </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 
 export const HomeScreen = ({
   onLayout,
   children,
 }: Pick<ComponentProps<typeof SafeAreaView>, "onLayout" | "children">) => {
-  const postQuery = trpc.folder.list.useQuery()
-  const [showPost, setShowPost] = React.useState<string | null>(null)
+  const postQuery = trpc.folder.list.useQuery();
+  const [showPost, setShowPost] = React.useState<string | null>(null);
 
   return (
-    <SafeAreaView onLayout={onLayout} className="bg-violet1">
+    <SafeAreaView className="bg-violet1" onLayout={onLayout}>
       <View className="h-full w-full p-4">
         <View className="py-2">
           {showPost ? (
@@ -84,14 +78,14 @@ export const HomeScreen = ({
         </View>
 
         <FlashList
+          contentContainerStyle={{ paddingBottom: 8 }}
           data={postQuery.data}
           estimatedItemSize={20}
           ItemSeparatorComponent={() => <View className="h-2" />}
-          contentContainerStyle={{ paddingBottom: 8 }}
           renderItem={(p) => (
             <TouchableOpacity
-              onPress={() => setShowPost(p.item.id.toString())}
               activeOpacity={0.6}
+              onPress={() => setShowPost(p.item.id.toString())}
             >
               <PostCard post={p.item} />
             </TouchableOpacity>
@@ -102,5 +96,5 @@ export const HomeScreen = ({
       </View>
       {children}
     </SafeAreaView>
-  )
-}
+  );
+};

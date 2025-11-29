@@ -1,58 +1,56 @@
-import { Text, View } from "react-native"
-
-import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation"
-import { amber, limeDark, mauve } from "~/utils/colors"
-
-import Button from "../Button"
-import ScaleDownPressable from "../ScaleDownPressable"
-import { useBottomSheet } from "@gorhom/bottom-sheet"
-import type { FundWithMeta } from "~/types"
-
-import CheckboxCircle from "../../../assets/icons/hero-icons/check-circle-mini-solid.svg"
-import { progressBarColors } from "~/utils/constants"
+import { useBottomSheet } from "@gorhom/bottom-sheet";
+import { Text, View } from "react-native";
+import type { FundWithMeta } from "~/types";
+import { amber, limeDark, mauve } from "~/utils/colors";
+import { progressBarColors } from "~/utils/constants";
+import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation";
+import CheckboxCircle from "../../../assets/icons/hero-icons/check-circle-mini-solid.svg";
+import Button from "../Button";
+import ScaleDownPressable from "../ScaleDownPressable";
 
 //  TODO: better texts ani nila kay bati kayg mga pangan
 export default function ActionButton({ fund }: { fund: FundWithMeta }) {
-  const navigation = useRootBottomTabNavigation()
-  const { close } = useBottomSheet()
+  const navigation = useRootBottomTabNavigation();
+  const { close } = useBottomSheet();
 
-  if (fund.fundType === "SPENDING")
+  if (fund.fundType === "SPENDING") {
     return (
       <ScaleDownPressable
         onPress={() => {
-          close()
-          navigation.navigate("AddTransaction", { fundId: fund.id })
+          close();
+          navigation.navigate("AddTransaction", { fundId: fund.id });
         }}
       >
-        <Button className="h-10" animate={{ backgroundColor: mauve.mauve3 }}>
+        <Button animate={{ backgroundColor: mauve.mauve3 }} className="h-10">
           <Text className="font-satoshi-medium text-mauve10">Add Expense</Text>
         </Button>
       </ScaleDownPressable>
-    )
-  else if (fund.fundType === "NON_NEGOTIABLE") {
-    return <NonNegotiableActionButton fund={fund} />
+    );
+  }
+  if (fund.fundType === "NON_NEGOTIABLE") {
+    return <NonNegotiableActionButton fund={fund} />;
   }
 
-  return <TargetActionButton fund={fund} />
+  return <TargetActionButton fund={fund} />;
 }
 
 function NonNegotiableActionButton({ fund }: { fund: FundWithMeta }) {
-  const navigation = useRootBottomTabNavigation()
-  const { close } = useBottomSheet()
+  const navigation = useRootBottomTabNavigation();
+  const { close } = useBottomSheet();
 
-  const isFullyFunded = fund.totalSpent >= fund.totalBudgetedAmount
+  const isFullyFunded = fund.totalSpent >= fund.totalBudgetedAmount;
 
-  if (isFullyFunded)
+  if (isFullyFunded) {
     return (
       <ScaleDownPressable>
         <Button
-          className="h-10"
           animate={{
             backgroundColor: progressBarColors.NON_NEGOTIABLE,
           }}
+          className="h-10"
         >
           <View className="absolute left-0 opacity-80">
-            <CheckboxCircle width={20} height={20} color={limeDark.lime11} />
+            <CheckboxCircle color={limeDark.lime11} height={20} width={20} />
           </View>
           <Text
             className="font-satoshi-medium"
@@ -62,69 +60,71 @@ function NonNegotiableActionButton({ fund }: { fund: FundWithMeta }) {
           </Text>
         </Button>
       </ScaleDownPressable>
-    )
+    );
+  }
 
   return (
     <ScaleDownPressable
       onPress={() => {
-        close()
+        close();
         navigation.navigate("AddTransaction", {
           fundId: fund.id,
           amount: Number(fund.budgetedAmount),
-        })
+        });
       }}
     >
-      <Button className="h-10" animate={{ backgroundColor: mauve.mauve3 }}>
+      <Button animate={{ backgroundColor: mauve.mauve3 }} className="h-10">
         <Text className="font-satoshi-medium text-mauve10">Auto Fund</Text>
       </Button>
     </ScaleDownPressable>
-  )
+  );
 }
 
 function TargetActionButton({ fund }: { fund: FundWithMeta }) {
-  const navigation = useRootBottomTabNavigation()
-  const { close } = useBottomSheet()
+  const navigation = useRootBottomTabNavigation();
+  const { close } = useBottomSheet();
 
-  const isFullyFunded = fund.totalSpent >= fund.totalBudgetedAmount
+  const isFullyFunded = fund.totalSpent >= fund.totalBudgetedAmount;
 
-  if (isFullyFunded)
+  if (isFullyFunded) {
     return (
       <ScaleDownPressable
         onPress={() => {
-          close()
+          close();
           navigation.navigate("AddTransaction", {
             fundId: fund.id,
-          })
+          });
         }}
       >
         <Button
-          className="h-10"
           animate={{ backgroundColor: progressBarColors.TARGET }}
+          className="h-10"
         >
           <View className="absolute left-0">
-            <CheckboxCircle width={20} height={20} color={amber.amber7} />
+            <CheckboxCircle color={amber.amber7} height={20} width={20} />
           </View>
           <Text className="font-satoshi-medium" style={{ color: amber.amber7 }}>
             Completed
           </Text>
         </Button>
       </ScaleDownPressable>
-    )
+    );
+  }
 
   return (
     <ScaleDownPressable
       onPress={() => {
-        close()
+        close();
         navigation.navigate("AddTransaction", {
           fundId: fund.id,
-        })
+        });
       }}
     >
-      <Button className="h-10" animate={{ backgroundColor: mauve.mauve3 }}>
+      <Button animate={{ backgroundColor: mauve.mauve3 }} className="h-10">
         <Text className="font-satoshi-medium text-mauve10">
           Add Transaction
         </Text>
       </Button>
     </ScaleDownPressable>
-  )
+  );
 }

@@ -1,15 +1,14 @@
-import { View, Text } from "react-native"
-import { ScrollView } from "react-native-gesture-handler"
-
-import Presence from "../Presence"
-import TextInput from "../TextInput"
-import CreateFooter from "../CreateFooter"
-import Choice from "./Choice"
+import { Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import CreateFooter from "../CreateFooter";
+import Presence from "../Presence";
+import TextInput from "../TextInput";
+import Choice from "./Choice";
 
 export default function TargetsInfo({
   onBackPress,
 }: {
-  onBackPress: () => void
+  onBackPress: () => void;
 }) {
   return (
     <>
@@ -20,14 +19,14 @@ export default function TargetsInfo({
         <View className="flex gap-y-8">
           <View className="gap-y-[10px]">
             <Presence delayMultiplier={3}>
-              <Text className="text-mauveDark12 font-satoshi-medium text-lg">
+              <Text className="font-satoshi-medium text-lg text-mauveDark12">
                 Do you want this budget to have a deadline?
               </Text>
             </Presence>
 
             <View className="flex w-3/5">
               <Presence delayMultiplier={4}>
-                <Choice choiceLabel="A" selected className="mb-2">
+                <Choice choiceLabel="A" className="mb-2" selected>
                   Yes
                 </Choice>
               </Presence>
@@ -41,7 +40,7 @@ export default function TargetsInfo({
 
           <Presence delayMultiplier={6}>
             <View className="gap-[10px]">
-              <Text className="text-mauveDark12 font-satoshi-medium text-lg">
+              <Text className="font-satoshi-medium text-lg text-mauveDark12">
                 How much wil you allocate?
               </Text>
               <TextInput placeholder="new-fund" />
@@ -51,5 +50,5 @@ export default function TargetsInfo({
       </ScrollView>
       <CreateFooter onBackPress={onBackPress}>Continue</CreateFooter>
     </>
-  )
+  );
 }

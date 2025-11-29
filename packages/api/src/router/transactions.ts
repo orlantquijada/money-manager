@@ -1,7 +1,7 @@
-import { z } from "zod"
-import { endOfMonth, startOfMonth } from "date-fns"
+import { endOfMonth, startOfMonth } from "date-fns";
+import { z } from "zod";
 
-import { router, protectedProcedure } from "../trpc"
+import { protectedProcedure, router } from "../trpc";
 
 export const transactionsRouter = router({
   all: protectedProcedure.query(({ ctx }) =>
@@ -9,10 +9,10 @@ export const transactionsRouter = router({
       where: {
         userId: ctx.auth.userId || "",
       },
-    }),
+    })
   ),
-  recentByFund: protectedProcedure.input(z.number()).query(({ ctx, input }) => {
-    return ctx.prisma.transaction.findMany({
+  recentByFund: protectedProcedure.input(z.number()).query(({ ctx, input }) =>
+    ctx.prisma.transaction.findMany({
       where: {
         userId: ctx.auth.userId,
         fundId: input,
@@ -29,17 +29,17 @@ export const transactionsRouter = router({
         },
       },
     })
-  }),
+  ),
   allThisMonth: protectedProcedure
     .input(
       z
         .object({
           fundId: z.number().optional(),
         })
-        .optional(),
+        .optional()
     )
     .query(({ ctx, input }) => {
-      const now = new Date()
+      const now = new Date();
       return ctx.prisma.transaction.findMany({
         where: {
           userId: ctx.auth.userId,
@@ -64,13 +64,13 @@ export const transactionsRouter = router({
         orderBy: {
           date: "desc",
         },
-      })
+      });
     }),
-  retrieve: protectedProcedure.input(z.string()).query(({ ctx, input }) => {
-    return ctx.prisma.transaction.findFirst({
+  retrieve: protectedProcedure.input(z.string()).query(({ ctx, input }) =>
+    ctx.prisma.transaction.findFirst({
       where: { id: input, userId: ctx.auth.userId },
     })
-  }),
+  ),
   create: protectedProcedure
     .input(
       z.object({
@@ -83,13 +83,13 @@ export const transactionsRouter = router({
           .default(() => new Date().toJSON()),
         note: z.string().default(""),
         store: z.string().default(""),
-      }),
+      })
     )
     .mutation(async ({ ctx, input: { store, ...input } }) => {
       const _input = {
         ...input,
         userId: ctx.auth.userId,
-      }
+      };
 
       if (store) {
         const createdStore = await ctx.prisma.store.upsert({
@@ -107,20 +107,20 @@ export const transactionsRouter = router({
             userId: ctx.auth?.userId || "",
             lastSelectedFundId: input.fundId,
           },
-        })
+        });
 
         return ctx.prisma.transaction.create({
           data: { ..._input, storeId: createdStore.id },
-        })
+        });
       }
 
       return ctx.prisma.transaction.create({
         data: _input,
-      })
+      });
     }),
 
-  totalThisMonth: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.transaction
+  totalThisMonth: protectedProcedure.query(({ ctx }) =>
+    ctx.prisma.transaction
       .aggregate({
         where: {
           userId: ctx.auth.userId,
@@ -132,7 +132,7 @@ export const transactionsRouter = router({
         _sum: { amount: true },
       })
       .then((data) => data._sum.amount?.toNumber() || 0)
-  }),
+  ),
 
   byFund: protectedProcedure
     .input(z.number().optional())
@@ -155,13 +155,13 @@ export const transactionsRouter = router({
           },
         },
         ...(input ? { take: input } : {}),
-      })
+      });
 
-      return txns
+      return txns;
     }),
 
-  countByFund: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.transaction.groupBy({
+  countByFund: protectedProcedure.query(({ ctx }) =>
+    ctx.prisma.transaction.groupBy({
       by: "fundId",
       _count: true,
       where: {
@@ -172,5 +172,5 @@ export const transactionsRouter = router({
         },
       },
     })
-  }),
-})
+  ),
+});

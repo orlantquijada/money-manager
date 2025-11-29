@@ -1,19 +1,18 @@
-import { ComponentProps, PropsWithChildren } from "react"
-import { View } from "react-native"
-import { MotiView } from "moti"
-
-import { transitions } from "~/utils/motion"
+import { MotiView } from "moti";
+import type { ComponentProps, PropsWithChildren } from "react";
+import { View } from "react-native";
 import {
+  type UseAnimateProps,
   useAnimateHeight,
-  UseAnimateProps,
   useMeasureHeight,
-} from "~/utils/hooks/useAnimateHeight"
+} from "~/utils/hooks/useAnimateHeight";
+import { transitions } from "~/utils/motion";
 
 type Props = PropsWithChildren<
   UseAnimateProps & ComponentProps<typeof MotiView> & { initalHeight?: number }
->
+>;
 
-const INITIAL_HEIGHT = 0
+const INITIAL_HEIGHT = 0;
 
 // NOTE: tried using react state to handle `open`
 // but the delay while toggling is really noticeable
@@ -25,24 +24,24 @@ export function AnimateHeight(props: Props) {
     children,
     initalHeight = INITIAL_HEIGHT,
     ...rest
-  } = props
+  } = props;
 
-  const { measuredHeight, handleOnLayout } = useMeasureHeight(initalHeight)
-  const { animate } = useAnimateHeight(measuredHeight, { open, defaultOpen })
+  const { measuredHeight, handleOnLayout } = useMeasureHeight(initalHeight);
+  const { animate } = useAnimateHeight(measuredHeight, { open, defaultOpen });
 
   return (
     <MotiView
       {...rest}
-      className="overflow-hidden"
       animate={animate}
+      className="overflow-hidden"
       transition={transitions.snappy}
     >
       <View
-        className="absolute left-0 right-0 bottom-0 top-auto"
+        className="absolute top-auto right-0 bottom-0 left-0"
         onLayout={handleOnLayout}
       >
         {children}
       </View>
     </MotiView>
-  )
+  );
 }

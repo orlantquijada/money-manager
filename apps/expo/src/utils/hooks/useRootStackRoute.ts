@@ -1,9 +1,9 @@
-import { RouteProp, useRoute } from "@react-navigation/native"
+import { type RouteProp, useRoute } from "@react-navigation/native";
 
-import type { RootStackParamList } from "~/types"
+import type { RootStackParamList } from "~/types";
 
 export function useRootStackRoute<T extends keyof RootStackParamList>(
-  route: T,
+  _route: T
 ) {
-  return useRoute<RouteProp<RootStackParamList, typeof route>>()
+  return useRoute<RouteProp<RootStackParamList, typeof route>>();
 }

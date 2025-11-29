@@ -1,37 +1,35 @@
-import { Platform } from "react-native"
-import { createStackNavigator } from "@react-navigation/stack"
-import { useUser } from "@clerk/clerk-expo"
+import { useUser } from "@clerk/clerk-expo";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Platform } from "react-native";
+import CreateFolder from "~/screens/create-folder";
+import CreateFund from "~/screens/create-fund";
+import Onboarding from "~/screens/onboarding";
+import TransactionsPage from "~/screens/transactions-list";
+import Welcome from "~/screens/welcome";
+import type { RootStackParamList } from "~/types";
+import { mauveDark, violet } from "~/utils/colors";
+import { useOnboarding } from "~/utils/hooks/useOnboarding";
 
-import { mauveDark, violet } from "~/utils/colors"
-import type { RootStackParamList } from "~/types"
-import { useOnboarding } from "~/utils/hooks/useOnboarding"
+import RootTabs from "./tabs";
 
-import CreateFund from "~/screens/create-fund"
-import CreateFolder from "~/screens/create-folder"
-import TransactionsPage from "~/screens/transactions-list"
-import Welcome from "~/screens/welcome"
-import Onboarding from "~/screens/onboarding"
-
-import RootTabs from "./tabs"
-
-const RootStack = createStackNavigator<RootStackParamList>()
+const RootStack = createStackNavigator<RootStackParamList>();
 
 export default function Routes() {
-  const { isSignedIn } = useUser()
-  const { loaded } = useOnboarding()
+  const { isSignedIn } = useUser();
+  const { loaded } = useOnboarding();
 
-  if (!loaded) return null
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <RootStack.Navigator
+      detachInactiveScreens
       initialRouteName="Root"
       screenOptions={{ headerShown: false }}
-      detachInactiveScreens
     >
       <RootStack.Screen
-        name="Root"
         component={RootTabs}
-        options={{ cardStyle: { backgroundColor: violet.violet1 } }}
         listeners={({ navigation }) => ({
           focus: () => {
             // if (route.params == null) {
@@ -40,30 +38,32 @@ export default function Routes() {
             // }
             if (!isSignedIn) {
               // navigation.setParams({})
-              navigation.navigate("Welcome")
+              navigation.navigate("Welcome");
             }
           },
         })}
+        name="Root"
+        options={{ cardStyle: { backgroundColor: violet.violet1 } }}
       />
       <RootStack.Screen
-        name="CreateFund"
         component={CreateFund}
+        name="CreateFund"
         options={{
           cardStyle: { backgroundColor: mauveDark.mauve1 },
           presentation: Platform.OS === "ios" ? "modal" : "card",
         }}
       />
       <RootStack.Screen
-        name="TransactionsList"
         component={TransactionsPage}
+        name="TransactionsList"
         options={{
           cardStyle: { backgroundColor: mauveDark.mauve1 },
           presentation: Platform.OS === "ios" ? "modal" : "card",
         }}
       />
       <RootStack.Screen
-        name="CreateFolder"
         component={CreateFolder}
+        name="CreateFolder"
         options={{
           cardStyle: { backgroundColor: mauveDark.mauve1 },
           presentation: Platform.OS === "ios" ? "modal" : "card",
@@ -71,8 +71,8 @@ export default function Routes() {
       />
 
       <RootStack.Screen
-        name="Onboarding"
         component={Onboarding}
+        name="Onboarding"
         options={{
           cardStyle: { backgroundColor: mauveDark.mauve1 },
           presentation: Platform.OS === "ios" ? "modal" : "card",
@@ -81,8 +81,8 @@ export default function Routes() {
       />
 
       <RootStack.Screen
-        name="Welcome"
         component={Welcome}
+        name="Welcome"
         options={{
           cardStyle: { backgroundColor: mauveDark.mauve1 },
           presentation: Platform.OS === "ios" ? "modal" : "card",
@@ -92,5 +92,5 @@ export default function Routes() {
         }}
       />
     </RootStack.Navigator>
-  )
+  );
 }

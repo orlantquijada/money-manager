@@ -55,7 +55,7 @@ const light = {
     red11: "hsl(358, 65.0%, 47.0%)",
     red12: "hsl(350, 63.0%, 24.0%)",
   },
-}
+};
 
 const dark = {
   mauve: {
@@ -114,7 +114,7 @@ const dark = {
     amber11: "hsl(39, 90.0%, 49.8%)",
     amber12: "hsl(39, 97.0%, 93.2%)",
   },
-}
+};
 
 /** @type {import("tailwindcss").Config} */
 module.exports = {
@@ -150,4 +150,4 @@ module.exports = {
       "nunito-extra-bold": ["Nunito_800ExtraBold"],
     },
   },
-}
+};

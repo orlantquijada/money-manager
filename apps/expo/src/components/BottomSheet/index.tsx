@@ -1,2 +1,2 @@
-export { BottomSheetModal as default } from "./BottomSheet"
-export { default as Backdrop } from "./Backdrop"
+export { default as Backdrop } from "./Backdrop";
+export { BottomSheetModal as default } from "./BottomSheet";

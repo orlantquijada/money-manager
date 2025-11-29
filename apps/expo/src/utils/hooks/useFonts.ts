@@ -1,4 +1,4 @@
-import { useFonts as useExpoFonts } from "expo-font"
+import { useFonts as useExpoFonts } from "expo-font";
 // import {
 //   Nunito_200ExtraLight,
 //   Nunito_300Light,
@@ -24,7 +24,7 @@ export function useFonts() {
     Nunito_600SemiBold: require("../../../assets/fonts/Nunito/Nunito-SemiBold.ttf"),
     Nunito_700Bold: require("../../../assets/fonts/Nunito/Nunito-Bold.ttf"),
     Nunito_800ExtraBold: require("../../../assets/fonts/Nunito/Nunito-ExtraBold.ttf"),
-  })
+  });
 
-  return loaded
+  return loaded;
 }

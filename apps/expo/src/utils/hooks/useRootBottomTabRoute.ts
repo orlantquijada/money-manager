@@ -1,9 +1,9 @@
-import { RouteProp, useRoute } from "@react-navigation/native"
+import { type RouteProp, useRoute } from "@react-navigation/native";
 
-import type { RootBottomTabParamList } from "~/types"
+import type { RootBottomTabParamList } from "~/types";
 
 export function useRootBottomTabRoute<T extends keyof RootBottomTabParamList>(
-  route: T,
+  _route: T
 ) {
-  return useRoute<RouteProp<RootBottomTabParamList, typeof route>>()
+  return useRoute<RouteProp<RootBottomTabParamList, typeof route>>();
 }

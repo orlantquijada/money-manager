@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
-import { initializeCreds } from "../lib/auth"
+import { initializeCreds } from "../lib/auth";
 
 export function useInitializeCreds() {
-  const [loaded, setLoaded] = useState(false)
+  const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     initializeCreds().then(() => {
-      setLoaded(true)
-    })
-  }, [])
+      setLoaded(true);
+    });
+  }, []);
 
-  return loaded
+  return loaded;
 }

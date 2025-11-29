@@ -1,5 +1,5 @@
-module.exports = function (api) {
-  api.cache(true)
+module.exports = (api) => {
+  api.cache(true);
   return {
     plugins: [
       "nativewind/babel",
@@ -16,5 +16,5 @@ module.exports = function (api) {
       "react-native-reanimated/plugin",
     ],
     presets: ["babel-preset-expo"],
-  }
-}
+  };
+};

@@ -1,6 +1,6 @@
-import { BottomSheetBackdrop as GBottomSheetBackdrop } from "@gorhom/bottom-sheet"
-import { ComponentProps } from "react"
-import { mauveA } from "~/utils/colors"
+import { BottomSheetBackdrop as GBottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import type { ComponentProps } from "react";
+import { mauveA } from "~/utils/colors";
 
 export default function BottomSheetBackdrop({
   style,
@@ -11,5 +11,5 @@ export default function BottomSheetBackdrop({
       {...props}
       style={[{ backgroundColor: mauveA.mauveA8 }, style]}
     />
-  )
+  );
 }

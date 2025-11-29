@@ -1,11 +1,11 @@
-import clsx from "clsx"
-import { PropsWithChildren } from "react"
-import { ViewProps, Pressable, Text, View } from "react-native"
+import clsx from "clsx";
+import type { PropsWithChildren } from "react";
+import { Pressable, Text, View, type ViewProps } from "react-native";
 
 export function ToggleGroup(props: ViewProps) {
   return (
-    <View className="bg-mauve3 w-full flex-row rounded-md p-1" {...props} />
-  )
+    <View className="w-full flex-row rounded-md bg-mauve3 p-1" {...props} />
+  );
 }
 
 export function ToggleButton({
@@ -16,17 +16,17 @@ export function ToggleButton({
     <Pressable
       className={clsx(
         "grow items-center rounded-[4px] px-3 py-1.5",
-        selected && "bg-mauve1",
+        selected && "bg-mauve1"
       )}
     >
       <Text
         className={clsx(
           "font-satoshi-medium text-mauve11 text-sm",
-          selected && "text-mauve12",
+          selected && "text-mauve12"
         )}
       >
         {children}
       </Text>
     </Pressable>
-  )
+  );
 }

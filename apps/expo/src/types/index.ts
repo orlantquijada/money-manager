@@ -1,23 +1,23 @@
-import { Folder, Fund, Store, Transaction } from ".prisma/client"
+import type { Folder, Fund, Store, Transaction } from ".prisma/client";
 
-export * from "./routes"
+export * from "./routes";
 
 export type FundWithMeta = Fund & {
-  totalSpent: number
-  totalBudgetedAmount: number
-}
+  totalSpent: number;
+  totalBudgetedAmount: number;
+};
 
 export type FolderWithMeta = Folder & {
-  amountLeft: number
-  funds: FundWithMeta[]
-}
+  amountLeft: number;
+  funds: FundWithMeta[];
+};
 
 export type TransactionWithMeta = Transaction & {
-  fund: Pick<Fund, "name">
-  store: Pick<Store, "name"> | null
-}
+  fund: Pick<Fund, "name">;
+  store: Pick<Store, "name"> | null;
+};
 
 export type TransactionSection = {
-  title: Date
-  data: TransactionWithMeta[]
-}
+  title: Date;
+  data: TransactionWithMeta[];
+};

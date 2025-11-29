@@ -1,54 +1,52 @@
-import { useBottomSheet } from "@gorhom/bottom-sheet"
-import { Dimensions, Text, View } from "react-native"
-import * as DropdownMenu from "zeego/dropdown-menu"
+import { useBottomSheet } from "@gorhom/bottom-sheet";
+import clsx from "clsx";
+import { Dimensions, Text, View } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedStyle,
-} from "react-native-reanimated"
-import clsx from "clsx"
+} from "react-native-reanimated";
+import * as DropdownMenu from "zeego/dropdown-menu";
 
-import { FundWithMeta } from "~/types"
-import { toCurrencyNarrow } from "~/utils/functions"
-import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation"
-import { mauve, violet, lime } from "~/utils/colors"
-import { fundTypeReadableText } from "~/utils/constants"
-
-import ScaleDownPressable from "../ScaleDownPressable"
-import CategoryProgressBars from "../dashboard/Fund/CategoryProgressBars"
-import ActionButton from "./ActionButton"
-import HelperText from "./HelperText"
-import RecentTransactions from "./RecentTransactions"
-
+import type { FundWithMeta } from "~/types";
+import { lime, mauve, violet } from "~/utils/colors";
+import { fundTypeReadableText } from "~/utils/constants";
+import { toCurrencyNarrow } from "~/utils/functions";
+import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation";
+import ChevronRight from "../../../assets/icons/hero-icons/chevron-right.svg";
 // import Ellipsis from "../../../assets/icons/hero-icons/ellipsis-horizontal.svg"
-import Ellipsis from "../../../assets/icons/more-horiz.svg"
-import ChevronRight from "../../../assets/icons/hero-icons/chevron-right.svg"
+import Ellipsis from "../../../assets/icons/more-horiz.svg";
+import CategoryProgressBars from "../dashboard/Fund/CategoryProgressBars";
+import ScaleDownPressable from "../ScaleDownPressable";
+import ActionButton from "./ActionButton";
+import HelperText from "./HelperText";
+import RecentTransactions from "./RecentTransactions";
 
-const { width } = Dimensions.get("screen")
+const { width } = Dimensions.get("screen");
 
 type Props = {
-  fund: FundWithMeta
-}
+  fund: FundWithMeta;
+};
 
-const previewScale = (width - 16 * 2) / width
+const previewScale = (width - 16 * 2) / width;
 
 export default function FundDetailContent({ fund }: Props) {
-  const navigation = useRootBottomTabNavigation()
-  const { close } = useBottomSheet()
+  const navigation = useRootBottomTabNavigation();
+  const { close } = useBottomSheet();
 
-  const ProgressBars = CategoryProgressBars[fund.fundType]
-  const { contentContainerStyle, handleStyle, style } = useStyles()
+  const ProgressBars = CategoryProgressBars[fund.fundType];
+  const { contentContainerStyle, handleStyle, style } = useStyles();
 
   return (
     <Animated.View
-      className="bg-violet1 flex-1 overflow-hidden rounded-[20px] px-4 pb-4"
+      className="flex-1 overflow-hidden rounded-[20px] bg-violet1 px-4 pb-4"
       style={style}
     >
       <Animated.View
+        className="h-6 items-center justify-center"
         pointerEvents="none"
         style={handleStyle}
-        className="h-6 items-center justify-center"
       >
-        <View className="bg-mauve5 h-1 w-[27px] rounded-full" />
+        <View className="h-1 w-[27px] rounded-full bg-mauve5" />
       </Animated.View>
 
       <Animated.View style={contentContainerStyle}>
@@ -56,26 +54,26 @@ export default function FundDetailContent({ fund }: Props) {
           <View className="flex-row items-center">
             <View
               className={clsx(
-                "bg-violet4 mr-2 aspect-square w-12 items-center justify-center rounded-full",
-                fund.fundType === "NON_NEGOTIABLE" && "bg-lime4",
+                "mr-2 aspect-square w-12 items-center justify-center rounded-full bg-violet4",
+                fund.fundType === "NON_NEGOTIABLE" && "bg-lime4"
               )}
             >
               <Ellipsis
-                width={24}
-                height={24}
-                strokeWidth={3}
-                // TODO: fix this
                 color={
                   fund.fundType === "SPENDING" ? violet.violet8 : lime.lime8
                 }
+                height={24}
+                strokeWidth={3}
+                // TODO: fix this
+                width={24}
               />
             </View>
 
             <View>
-              <Text className="text-mauve12 font-satoshi-bold text-lg">
+              <Text className="font-satoshi-bold text-lg text-mauve12">
                 {fund.name}
               </Text>
-              <Text className="text-mauve9 font-satoshi text-sm">
+              <Text className="font-satoshi text-mauve9 text-sm">
                 {fundTypeReadableText[fund.fundType]}
               </Text>
             </View>
@@ -100,40 +98,40 @@ export default function FundDetailContent({ fund }: Props) {
         {/* details / rows */}
         <View className="mt-8 space-y-2">
           <View className="flex-row items-center justify-between">
-            <Text className="font-satoshi-bold text-mauve9 mr-auto text-base">
+            <Text className="mr-auto font-satoshi-bold text-base text-mauve9">
               Total Budgeted Amount
             </Text>
-            <Text className="font-nunito-bold text-mauve9 text-base">
+            <Text className="font-nunito-bold text-base text-mauve9">
               {toCurrencyNarrow(fund.totalBudgetedAmount)}
             </Text>
 
-            <View className="ml-3 aspect-square w-6"></View>
+            <View className="ml-3 aspect-square w-6" />
           </View>
           <ScaleDownPressable
             className="flex-row items-center justify-between"
-            opacity={0.6}
-            scale={1}
             onPress={() => {
-              close()
+              close();
               navigation.navigate("TransactionsList", {
                 fundId: fund.id,
                 fundName: fund.name,
-              })
+              });
             }}
+            opacity={0.6}
+            scale={1}
           >
-            <Text className="font-satoshi-medium text-mauve9 mr-auto text-base">
+            <Text className="mr-auto font-satoshi-medium text-base text-mauve9">
               Total Spent this month
             </Text>
-            <Text className="font-nunito-semibold text-mauve9 text-base">
+            <Text className="font-nunito-semibold text-base text-mauve9">
               {toCurrencyNarrow(fund.totalSpent)}
             </Text>
 
-            <View className="bg-mauve3 ml-3 aspect-square w-6 items-center justify-center rounded-md">
+            <View className="ml-3 aspect-square w-6 items-center justify-center rounded-md bg-mauve3">
               <ChevronRight
-                width={15}
+                color={mauve.mauve8}
                 height={15}
                 strokeWidth={3}
-                color={mauve.mauve8}
+                width={15}
               />
             </View>
           </ScaleDownPressable>
@@ -163,11 +161,11 @@ export default function FundDetailContent({ fund }: Props) {
         <RecentTransactions fundId={fund.id} />
       </Animated.View>
     </Animated.View>
-  )
+  );
 }
 
 function useStyles() {
-  const { animatedIndex } = useBottomSheet()
+  const { animatedIndex } = useBottomSheet();
 
   const style = useAnimatedStyle(() => ({
     width,
@@ -176,25 +174,25 @@ function useStyles() {
         scale: interpolate(
           animatedIndex.value,
           [-1, 0, 1],
-          [previewScale, previewScale, 1],
+          [previewScale, previewScale, 1]
         ),
       },
     ],
-  }))
+  }));
   const handleStyle = useAnimatedStyle(() => ({
     opacity: interpolate(animatedIndex.value, [-1, 0, 1], [1, 1, 0]),
-  }))
+  }));
   const contentContainerStyle = useAnimatedStyle(() => ({
     transform: [
       { translateY: interpolate(animatedIndex.value, [-1, 0, 1], [0, 0, -24]) },
     ],
-  }))
+  }));
 
   return {
     style,
     handleStyle,
     contentContainerStyle,
-  }
+  };
 }
 
 // TODO: dropdown
@@ -203,13 +201,13 @@ function Dropdown() {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <ScaleDownPressable
+          className="aspect-square w-6 items-center justify-center rounded-md bg-mauve3"
           scale={0.9}
-          className="bg-mauve3 aspect-square w-6 items-center justify-center rounded-md"
         >
           <Ellipsis
-            strokeWidth={3}
             color={mauve.mauve8}
             height={15}
+            strokeWidth={3}
             width={15}
           />
         </ScaleDownPressable>
@@ -218,10 +216,10 @@ function Dropdown() {
       <DropdownMenu.Content>
         <DropdownMenu.Label>Label</DropdownMenu.Label>
         <DropdownMenu.Item
-          key="item 1"
           destructive
+          key="item 1"
           onSelect={() => {
-            console.log("wow")
+            console.log("wow");
           }}
         >
           <DropdownMenu.ItemTitle>Hello World</DropdownMenu.ItemTitle>
@@ -235,5 +233,5 @@ function Dropdown() {
         </DropdownMenu.Item>
       </DropdownMenu.Content>
     </DropdownMenu.Root>
-  )
+  );
 }

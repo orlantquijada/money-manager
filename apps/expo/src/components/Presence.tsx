@@ -1,23 +1,23 @@
-import { type ComponentProps, type PropsWithChildren } from "react"
-import { View } from "moti"
+import { View } from "moti";
+import type { ComponentProps, PropsWithChildren } from "react";
 
 // https://twitter.com/FernandoTheRojo/status/1520186163339968514
 
-type ViewProps = ComponentProps<typeof View>
+type ViewProps = ComponentProps<typeof View>;
 
-const DELAY = 80
+const DELAY = 80;
 const defaultAnimation: ViewProps = {
   from: { opacity: 0, translateY: 4 },
   animate: { opacity: 1, translateY: 0 },
   exit: { opacity: 0, translateY: 0 },
-}
+};
 
 type Props = PropsWithChildren<{
-  delayMultiplier?: number
-  delay?: number
-  exitDelayMultiplier?: number
+  delayMultiplier?: number;
+  delay?: number;
+  exitDelayMultiplier?: number;
 }> &
-  Pick<ViewProps, "style" | "className">
+  Pick<ViewProps, "style" | "className">;
 
 export default function Presence({
   style,
@@ -29,9 +29,9 @@ export default function Presence({
 }: Props) {
   return (
     <View
-      style={style}
       className={className}
       delay={delayMultiplier * delay}
+      style={style}
       {...defaultAnimation}
       exitTransition={
         exitDelayMultiplier === undefined
@@ -41,5 +41,5 @@ export default function Presence({
     >
       {children}
     </View>
-  )
+  );
 }

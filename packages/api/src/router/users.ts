@@ -1,5 +1,5 @@
-import { z } from "zod"
-import { protectedProcedure, publicProcedure, router } from "../trpc"
+import { z } from "zod";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const usersRouter = router({
   create: publicProcedure
@@ -7,18 +7,18 @@ export const usersRouter = router({
       z.object({
         id: z.string().min(12),
         name: z.string().nullable().default(null),
-      }),
+      })
     )
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.user.create({
+    .mutation(({ ctx, input }) =>
+      ctx.prisma.user.create({
         data: input,
       })
-    }),
-  remove: protectedProcedure.mutation(({ ctx }) => {
-    return ctx.prisma.user.delete({
+    ),
+  remove: protectedProcedure.mutation(({ ctx }) =>
+    ctx.prisma.user.delete({
       where: {
         id: ctx.auth.userId || "",
       },
     })
-  }),
-})
+  ),
+});

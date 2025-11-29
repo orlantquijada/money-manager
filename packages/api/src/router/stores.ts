@@ -1,8 +1,8 @@
-import { protectedProcedure, router } from "../trpc"
+import { protectedProcedure, router } from "../trpc";
 
 export const storesRouter = router({
-  list: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.store.findMany({
+  list: protectedProcedure.query(({ ctx }) =>
+    ctx.prisma.store.findMany({
       where: {
         userId: ctx.auth?.userId || "",
       },
@@ -15,5 +15,5 @@ export const storesRouter = router({
         lastSelectedFundId: true,
       },
     })
-  }),
-})
+  ),
+});

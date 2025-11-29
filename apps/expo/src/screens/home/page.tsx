@@ -1,31 +1,27 @@
-import { useCallback, useRef } from "react"
-import { View } from "react-native"
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs"
-
-import type { HomeTabsParamList } from "~/types"
-import { screenPadding } from "~/utils/constants"
-
-import SafeAreaView from "~/components/SafeAreaView"
-import BottomSheetModal from "~/components/BottomSheet"
-import DashboardCreateBottomSheet from "~/components/dashboard/CreateBottomSheet"
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { useCallback, useRef } from "react";
+import { View } from "react-native";
+import type BottomSheetModal from "~/components/BottomSheet";
+import DashboardCreateBottomSheet from "~/components/dashboard/CreateBottomSheet";
+import TotalSpent from "~/components/dashboard/TotalSpent";
 // import AlertDialog from "~/components/AlertDialog"
-import HomeTabBar from "~/components/HomeTabBar"
-import TotalSpent from "~/components/dashboard/TotalSpent"
-import ScaleDownPressable from "~/components/ScaleDownPressable"
+import HomeTabBar from "~/components/HomeTabBar";
+import SafeAreaView from "~/components/SafeAreaView";
+import ScaleDownPressable from "~/components/ScaleDownPressable";
+import type { HomeTabsParamList } from "~/types";
+import { screenPadding } from "~/utils/constants";
+import Plus from "../../../assets/icons/plus.svg";
+import BudgetsTab from "./tabs/budgets";
+import TransactionsTab from "./tabs/transactions";
 
-import BudgetsTab from "./tabs/budgets"
-import TransactionsTab from "./tabs/transactions"
-
-import Plus from "../../../assets/icons/plus.svg"
-
-const Tab = createMaterialTopTabNavigator<HomeTabsParamList>()
+const Tab = createMaterialTopTabNavigator<HomeTabsParamList>();
 
 export default function Home2() {
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null)
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present()
-  }, [])
+    bottomSheetModalRef.current?.present();
+  }, []);
 
   // const didScroll = useSharedValue(0)
   // const offset = 200
@@ -39,14 +35,14 @@ export default function Home2() {
   // })
 
   return (
-    <SafeAreaView className="bg-violet1 flex-1">
+    <SafeAreaView className="flex-1 bg-violet1">
       <View className="h-full px-4">
         <View className="my-8 w-full flex-row items-start justify-between">
           <TotalSpent />
           <ScaleDownPressable
-            scale={0.85}
             hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}
             onPress={handlePresentModalPress}
+            scale={0.85}
           >
             <Plus className="bg-mauve12" />
           </ScaleDownPressable>
@@ -68,20 +64,20 @@ export default function Home2() {
 
         <Tab.Navigator
           initialRouteName="Budgets"
-          tabBar={(props) => <HomeTabBar {...props} />}
           sceneContainerStyle={{
             backgroundColor: "transparent",
             paddingHorizontal: screenPadding,
           }}
           style={{ marginHorizontal: -screenPadding }}
+          tabBar={(props) => <HomeTabBar {...props} />}
         >
-          <Tab.Screen name="Budgets" component={BudgetsTab} />
-          <Tab.Screen name="Transactions" component={TransactionsTab} />
+          <Tab.Screen component={BudgetsTab} name="Budgets" />
+          <Tab.Screen component={TransactionsTab} name="Transactions" />
         </Tab.Navigator>
 
         <DashboardCreateBottomSheet ref={bottomSheetModalRef} />
         {/* <AlertDialog ref={bottomSheetModalRef} /> */}
       </View>
     </SafeAreaView>
-  )
+  );
 }

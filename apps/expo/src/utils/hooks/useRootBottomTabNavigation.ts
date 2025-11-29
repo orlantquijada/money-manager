@@ -1,11 +1,11 @@
+import type { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
 import {
-  CompositeNavigationProp,
+  type CompositeNavigationProp,
   useNavigation,
-} from "@react-navigation/native"
-import { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs"
-import { StackNavigationProp } from "@react-navigation/stack"
+} from "@react-navigation/native";
+import type { StackNavigationProp } from "@react-navigation/stack";
 
-import type { RootBottomTabParamList, RootStackParamList } from "~/types"
+import type { RootBottomTabParamList, RootStackParamList } from "~/types";
 
 export function useRootBottomTabNavigation() {
   return useNavigation<
@@ -13,5 +13,5 @@ export function useRootBottomTabNavigation() {
       MaterialTopTabNavigationProp<RootBottomTabParamList>,
       StackNavigationProp<RootStackParamList>
     >
-  >()
+  >();
 }

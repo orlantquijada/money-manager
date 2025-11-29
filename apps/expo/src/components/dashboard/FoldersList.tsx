@@ -1,20 +1,20 @@
-import { FlatList, View } from "react-native"
-import { FolderWithMeta } from "~/types"
+import { FlatList, View } from "react-native";
+import type { FolderWithMeta } from "~/types";
 
-import { useHomeTabRoute } from "~/utils/hooks/useHomeTabRoute"
+import { useHomeTabRoute } from "~/utils/hooks/useHomeTabRoute";
 
-import Budget from "../Budget"
+import Budget from "../Budget";
 
 export default function FoldersList({
   folders,
 }: {
-  folders: FolderWithMeta[]
+  folders: FolderWithMeta[];
 }) {
-  const route = useHomeTabRoute("Budgets")
+  const route = useHomeTabRoute("Budgets");
   return (
     <FlatList
+      contentContainerStyle={{ paddingBottom: 40, paddingTop: 20 }}
       data={folders}
-      showsVerticalScrollIndicator={false}
       // ListHeaderComponent={
       //   <Text className="font-satoshi-medium text-mauve12 mb-4 text-xl">
       //     Budgets
@@ -22,18 +22,16 @@ export default function FoldersList({
       // }
       ItemSeparatorComponent={() => <View className="h-2" />}
       // contentContainerStyle={{ paddingBottom: 40, paddingTop: 80 }}
-      contentContainerStyle={{ paddingBottom: 40, paddingTop: 20 }}
-      style={{ overflow: "visible" }}
       keyExtractor={({ name }, index) => name + index}
       renderItem={({ item }) => (
         <Budget
-          folderName={item.name}
-          folderId={item.id}
-          // amountLeft={Math.random() * 1000}
           amountLeft={item.amountLeft}
-          funds={item.funds}
-          // defaultOpen={index === 0}
           defaultOpen
+          // amountLeft={Math.random() * 1000}
+          folderId={item.id}
+          folderName={item.name}
+          // defaultOpen={index === 0}
+          funds={item.funds}
           isRecentlyAdded={
             route.params?.recentlyAddedToFolderId
               ? route.params.recentlyAddedToFolderId === item.id
@@ -41,6 +39,8 @@ export default function FoldersList({
           }
         />
       )}
+      showsVerticalScrollIndicator={false}
+      style={{ overflow: "visible" }}
     />
-  )
+  );
 }

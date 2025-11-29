@@ -11,7 +11,7 @@ export const violet = {
   violet10: "hsl(251, 48.1%, 53.5%)",
   violet11: "hsl(250, 43.0%, 48.0%)",
   violet12: "hsl(254, 60.0%, 18.5%)",
-}
+};
 export const mauve = {
   mauve1: "hsl(300, 20.0%, 99.0%)",
   mauve2: "hsl(300, 7.7%, 97.5%)",
@@ -25,7 +25,7 @@ export const mauve = {
   mauve10: "hsl(253, 3.5%, 53.5%)",
   mauve11: "hsl(252, 4.0%, 44.8%)",
   mauve12: "hsl(260, 25.0%, 11.0%)",
-}
+};
 
 export const mauveA = {
   mauveA1: "hsla(300, 89.3%, 18.3%, 0.012)",
@@ -40,7 +40,7 @@ export const mauveA = {
   mauveA10: "hsla(253, 96.5%, 3.8%, 0.483)",
   mauveA11: "hsla(247, 97.9%, 3.2%, 0.569)",
   mauveA12: "hsla(261, 98.7%, 3.0%, 0.918)",
-}
+};
 
 export const mauveDark = {
   mauve1: "hsl(246, 6.0%, 9.0%)",
@@ -55,7 +55,7 @@ export const mauveDark = {
   mauve10: "hsl(247, 3.4%, 50.7%)",
   mauve11: "hsl(253, 4.0%, 63.7%)",
   mauve12: "hsl(256, 6.0%, 93.2%)",
-}
+};
 
 export const pink = {
   pink1: "hsl(322, 100%, 99.4%)",
@@ -70,7 +70,7 @@ export const pink = {
   pink10: "hsl(322, 63.9%, 50.7%)",
   pink11: "hsl(322, 75.0%, 46.0%)",
   pink12: "hsl(320, 70.0%, 13.5%)",
-}
+};
 
 export const pinkhex = {
   pink1: "#fffcfe",
@@ -85,7 +85,7 @@ export const pinkhex = {
   pink10: "#d23197",
   pink11: "#cd1d8d",
   pink12: "#3b0a2a",
-}
+};
 export const limeDark = {
   lime1: "hsl(75, 55.0%, 6.0%)",
   lime2: "hsl(74, 56.8%, 7.3%)",
@@ -99,7 +99,7 @@ export const limeDark = {
   lime10: "hsl(75, 85.0%, 60.0%)",
   lime11: "hsl(81, 70.0%, 43.8%)",
   lime12: "hsl(84, 79.0%, 92.6%)",
-}
+};
 export const redDark = {
   red1: "hsl(353, 23.0%, 9.8%)",
   red2: "hsl(357, 34.4%, 12.0%)",
@@ -113,7 +113,7 @@ export const redDark = {
   red10: "hsl(358, 85.3%, 64.0%)",
   red11: "hsl(358, 100%, 69.5%)",
   red12: "hsl(351, 89.0%, 96.0%)",
-}
+};
 
 // export const pieColors = {
 //   tomato: "#EA9280",
@@ -142,7 +142,7 @@ export const pieColors = {
   teal: "#53B9AB",
   grass: "#65BA75",
   orange: "#FA934E",
-}
+};
 
 export const pieColors2 = [
   "#EFE7E0",
@@ -154,7 +154,7 @@ export const pieColors2 = [
   "#5EDF91",
   "#6DB0D2",
   "#5A5D7C",
-]
+];
 
 export const pieColors3 = [
   "hsla(236, 35%, 81%, 1)",
@@ -166,7 +166,7 @@ export const pieColors3 = [
   "hsla(334, 78%, 95%, 1)",
   "hsla(15, 50%, 98%, 1)",
   "hsla(45, 100%, 95%, 1)",
-]
+];
 
 export const pieColors4 = [
   "#780000",
@@ -174,7 +174,7 @@ export const pieColors4 = [
   "#fdf0d5",
   "#003049",
   "#669bbc",
-]
+];
 
 export const pieColors6 = [
   "#001219",
@@ -187,7 +187,7 @@ export const pieColors6 = [
   "#bb3e03",
   "#ae2012",
   "#9b2226",
-]
+];
 
 export const pieColors5 = [
   "hsla(171, 40%, 84%, 1)",
@@ -206,7 +206,7 @@ export const pieColors5 = [
   "hsla(3, 73%, 90%, 1)",
   "hsla(3, 73%, 90%, 1)",
   "hsla(26, 89%, 86%, 1)",
-]
+];
 
 export const pieColors7 = [
   // "hsl(44, 100%, 89%)",
@@ -217,7 +217,7 @@ export const pieColors7 = [
   "hsl(278, 70%, 29%)",
   "hsl(277, 70%, 15%)",
   "hsl(44, 100%, 89%)",
-]
+];
 
 export const saturatedPieColors7 = [
   // "hsl(44, 0%, 89%)",
@@ -228,7 +228,7 @@ export const saturatedPieColors7 = [
   "hsl(278, 0%, 29%)",
   "hsl(277, 0%, 15%)",
   "hsl(44, 0%, 89%)",
-]
+];
 
 export const pieColors8 = [
   // "hsl(44, 100%, 89%)",
@@ -239,7 +239,7 @@ export const pieColors8 = [
   "hsl(278, 70%, 29%)",
   "hsl(277, 70%, 22%)",
   // "hsl(277, 70%, 15%)",
-]
+];
 
 export const saturatedPieColors8 = [
   // "hsl(44, 0%, 89%)",
@@ -250,7 +250,7 @@ export const saturatedPieColors8 = [
   "hsl(278, 0%, 29%)",
   "hsl(277, 0%, 22%)",
   // "hsl(277, 0%, 15%)",
-]
+];
 
 export const pieColors9 = [
   // "hsl(98, 32%, 45%)",
@@ -260,7 +260,7 @@ export const pieColors9 = [
   "hsl(297, 28%, 87%)",
   "hsl(265, 100%, 87%)",
   "hsl(254, 53%, 66%)",
-]
+];
 
 export const saturatedPieColors9 = [
   // "hsl(98, 0%, 45%)",
@@ -270,7 +270,7 @@ export const saturatedPieColors9 = [
   "hsl(297, 0%, 87%)",
   "hsl(265, 0%, 87%)",
   "hsl(254, 0%, 66%)",
-]
+];
 
 // export const pieColors7 = [
 //   "#FFF1C9",
@@ -309,7 +309,7 @@ export const lime = {
   lime10: "hsl(81, 75.0%, 60.0%)",
   lime11: "hsl(75, 40.0%, 29.0%)",
   lime12: "hsl(75, 40.0%, 18.0%)",
-}
+};
 
 export const amberDark = {
   amber1: "#1f1300",
@@ -324,7 +324,7 @@ export const amberDark = {
   amber10: "#ffcb47",
   amber11: "#ffcc4d",
   amber12: "#ffe7b3",
-}
+};
 
 export const amber = {
   amber1: "#fefdfb",
@@ -339,4 +339,4 @@ export const amber = {
   amber10: "#ffba1a",
   amber11: "#915930",
   amber12: "#4f3422",
-}
+};

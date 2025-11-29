@@ -1,42 +1,39 @@
-import clsx from "clsx"
-import { ComponentProps, useState } from "react"
-import { View, ScrollView, Text } from "react-native"
-import { FlashList } from "@shopify/flash-list"
-
-import { mauveDark } from "~/utils/colors"
-import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
-import { trpc } from "~/utils/trpc"
-
-import { Folder } from ".prisma/client"
-import CreateFooter from "../CreateFooter"
-import Presence from "../Presence"
-import ScaleDownPressable from "../ScaleDownPressable"
-import { useFormData } from "./context"
-
-import FolderClosed from "../../../assets/icons/folder-duo-light.svg"
-import FolderOpen from "../../../assets/icons/folder-open-duo.svg"
+import type { Folder } from ".prisma/client";
+import { FlashList } from "@shopify/flash-list";
+import clsx from "clsx";
+import { type ComponentProps, useState } from "react";
+import { ScrollView, Text, View } from "react-native";
+import { mauveDark } from "~/utils/colors";
+import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
+import { trpc } from "~/utils/trpc";
+import FolderClosed from "../../../assets/icons/folder-duo-light.svg";
+import FolderOpen from "../../../assets/icons/folder-open-duo.svg";
+import CreateFooter from "../CreateFooter";
+import Presence from "../Presence";
+import ScaleDownPressable from "../ScaleDownPressable";
+import { useFormData } from "./context";
 
 type Props = {
-  onBackPress: () => void
-}
+  onBackPress: () => void;
+};
 
 export default function ChooseFolder({ onBackPress }: Props) {
-  const createFund = trpc.fund.create.useMutation()
-  const { data } = trpc.folder.list.useQuery()
-  const utils = trpc.useContext()
-  const navigation = useRootStackNavigation()
-  const { formData, setFormValues } = useFormData()
-  const [selectedId, setSelectedId] = useState<Folder["id"]>(formData.folderId)
+  const createFund = trpc.fund.create.useMutation();
+  const { data } = trpc.folder.list.useQuery();
+  const utils = trpc.useContext();
+  const navigation = useRootStackNavigation();
+  const { formData, setFormValues } = useFormData();
+  const [selectedId, setSelectedId] = useState<Folder["id"]>(formData.folderId);
 
   const handleBackPress = () => {
-    onBackPress()
-    setFormValues({ folderId: selectedId })
-  }
+    onBackPress();
+    setFormValues({ folderId: selectedId });
+  };
 
-  const [didSubmit, setDidSubmit] = useState(false)
+  const [didSubmit, setDidSubmit] = useState(false);
 
-  const loading = createFund.status === "loading" || didSubmit
-  const disabled = !selectedId || loading || didSubmit
+  const loading = createFund.status === "loading" || didSubmit;
+  const disabled = !selectedId || loading || didSubmit;
 
   return (
     <>
@@ -45,48 +42,48 @@ export default function ChooseFolder({ onBackPress }: Props) {
         contentContainerStyle={{ paddingBottom: 16 }}
       >
         <View className="flex">
-          <Presence delayMultiplier={3} delay={60}>
-            <Text className="text-mauveDark12 font-satoshi-medium text-lg">
+          <Presence delay={60} delayMultiplier={3}>
+            <Text className="font-satoshi-medium text-lg text-mauveDark12">
               Select a folder.
             </Text>
           </Presence>
 
           <View className="mt-3 h-full">
             <FlashList
+              contentContainerStyle={{ paddingBottom: 8 }}
               data={data}
               estimatedItemSize={50}
+              extraData={selectedId}
+              ItemSeparatorComponent={() => <View className="h-2" />}
+              keyExtractor={(item) => item.id.toString()}
+              numColumns={2}
               renderItem={({ item, index }) => {
                 // delay multipler 3 takes into account api loading
                 return (
                   <Presence
-                    delayMultiplier={3 + index}
-                    delay={60}
                     className={clsx("flex-1", index % 2 ? "ml-1" : "mr-1")}
+                    delay={60}
+                    delayMultiplier={3 + index}
                   >
                     <FolderCard
                       folder={item}
-                      selected={item.id === selectedId}
                       onPress={() => setSelectedId(item.id)}
+                      selected={item.id === selectedId}
                     />
                   </Presence>
-                )
+                );
               }}
-              keyExtractor={(item) => item.id.toString()}
-              ItemSeparatorComponent={() => <View className="h-2" />}
-              contentContainerStyle={{ paddingBottom: 8 }}
-              numColumns={2}
-              extraData={selectedId}
             />
           </View>
         </View>
       </ScrollView>
       <CreateFooter
-        onBackPress={handleBackPress}
         disabled={disabled}
         loading={loading}
+        onBackPress={handleBackPress}
         onContinuePress={() => {
           if (selectedId) {
-            setDidSubmit(true)
+            setDidSubmit(true);
             createFund.mutate(
               {
                 ...formData,
@@ -94,7 +91,7 @@ export default function ChooseFolder({ onBackPress }: Props) {
               },
               {
                 onSuccess: () => {
-                  utils.fund.list.invalidate()
+                  utils.fund.list.invalidate();
                   utils.folder.listWithFunds
                     .invalidate()
                     .then(() => {
@@ -106,49 +103,49 @@ export default function ChooseFolder({ onBackPress }: Props) {
                             recentlyAddedToFolderId: selectedId,
                           },
                         },
-                      })
+                      });
                     })
                     .catch(() => {
-                      return
-                    })
+                      return;
+                    });
                 },
-              },
-            )
+              }
+            );
           }
         }}
       >
         Save
       </CreateFooter>
     </>
-  )
+  );
 }
 
 type FolderCardProps = {
-  folder: Folder
-  selected?: boolean
-} & Omit<ComponentProps<typeof ScaleDownPressable>, "children">
+  folder: Folder;
+  selected?: boolean;
+} & Omit<ComponentProps<typeof ScaleDownPressable>, "children">;
 
 function FolderCard({ folder, selected = false, ...rest }: FolderCardProps) {
-  const Icon = selected ? FolderOpen : FolderClosed
+  const Icon = selected ? FolderOpen : FolderClosed;
 
   return (
     <ScaleDownPressable
-      className="flex-row items-center rounded-xl p-4"
       animate={{
         backgroundColor: selected ? mauveDark.mauve12 : mauveDark.mauve4,
       }}
+      className="flex-row items-center rounded-xl p-4"
       {...rest}
     >
-      <Icon width={16} height={16} />
+      <Icon height={16} width={16} />
       <Text
         className={clsx(
-          "font-satoshi-medium text-mauveDark12 ml-2 shrink text-base",
-          selected && "text-mauveDark1",
+          "ml-2 shrink font-satoshi-medium text-base text-mauveDark12",
+          selected && "text-mauveDark1"
         )}
         numberOfLines={1}
       >
         {folder.name}
       </Text>
     </ScaleDownPressable>
-  )
+  );
 }

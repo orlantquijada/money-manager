@@ -1,20 +1,20 @@
-import { FC } from "react"
-import { Text } from "react-native"
-import { mauve, pink } from "~/utils/colors"
-import { toCurrencyNarrow } from "~/utils/functions"
-import { HelperTextProps } from "./HelperText"
+import type { FC } from "react";
+import { Text } from "react-native";
+import { mauve, pink } from "~/utils/colors";
+import { toCurrencyNarrow } from "~/utils/functions";
+import type { HelperTextProps } from "./HelperText";
 
 const NonNegotiableHelperText: FC<HelperTextProps> = ({
   showDefault,
   fund,
 }) => {
   // is funded?
-  const isFunded = fund.totalBudgetedAmount === fund.totalSpent
-  if (showDefault)
+  const isFunded = fund.totalBudgetedAmount === fund.totalSpent;
+  if (showDefault) {
     return (
       <Text
-        className="font-satoshi mt-1 text-xs"
-        style={{ color: !isFunded ? pink.pink8 : mauve.mauve9 }}
+        className="mt-1 font-satoshi text-xs"
+        style={{ color: isFunded ? mauve.mauve9 : pink.pink8 }}
       >
         {isFunded ? (
           // TODO: is the copy better nga completed or fully funded?
@@ -28,12 +28,13 @@ const NonNegotiableHelperText: FC<HelperTextProps> = ({
           </>
         )}
       </Text>
-    )
+    );
+  }
 
   return (
     <Text
-      className="font-satoshi mt-1 text-xs"
-      style={{ color: !isFunded ? pink.pink8 : mauve.mauve9 }}
+      className="mt-1 font-satoshi text-xs"
+      style={{ color: isFunded ? mauve.mauve9 : pink.pink8 }}
     >
       funded
       <Text className="font-nunito"> {toCurrencyNarrow(fund.totalSpent)} </Text>
@@ -47,7 +48,7 @@ const NonNegotiableHelperText: FC<HelperTextProps> = ({
         %)
       </Text>
     </Text>
-  )
-}
+  );
+};
 
-export default NonNegotiableHelperText
+export default NonNegotiableHelperText;

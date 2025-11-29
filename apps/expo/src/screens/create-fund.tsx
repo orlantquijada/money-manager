@@ -1,26 +1,24 @@
-import { useState } from "react"
-import { View, Pressable } from "react-native"
-import { SafeAreaView } from "react-native-safe-area-context"
-import { AnimatePresence } from "moti"
+import { AnimatePresence } from "moti";
+import { useState } from "react";
+import { Pressable, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import ChooseFolder from "~/components/create-fund/ChooseFolder";
+import { FormProvider } from "~/components/create-fund/context";
+import FundInfo from "~/components/create-fund/FundInfo";
+import NonNegotiableInfo from "~/components/create-fund/NonNegotiableInfo";
+import SpendingInfo from "~/components/create-fund/SpendingInfo";
+import TargetsInfo from "~/components/create-fund/TargetsInfo";
+import { usePrevious } from "~/utils/hooks/usePrevious";
+import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
 
-import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
-import { usePrevious } from "~/utils/hooks/usePrevious"
-
-import { FormProvider } from "~/components/create-fund/context"
-import SpendingInfo from "~/components/create-fund/SpendingInfo"
-import FundInfo from "~/components/create-fund/FundInfo"
-import NonNegotiableInfo from "~/components/create-fund/NonNegotiableInfo"
-import TargetsInfo from "~/components/create-fund/TargetsInfo"
-import ChooseFolder from "~/components/create-fund/ChooseFolder"
-
-import CrossIcon from "../../assets/icons/cross.svg"
+import CrossIcon from "../../assets/icons/cross.svg";
 
 export default function CreateFund() {
-  const [screen, setScreen] = useCreateFundScreens()
-  const prevScreen = usePrevious(screen)
+  const [screen, setScreen] = useCreateFundScreens();
+  const prevScreen = usePrevious(screen);
 
   return (
-    <SafeAreaView className="bg-mauveDark1 flex-1 pt-4">
+    <SafeAreaView className="flex-1 bg-mauveDark1 pt-4">
       <View className="mb-8 pl-4">
         <Close />
       </View>
@@ -28,13 +26,13 @@ export default function CreateFund() {
       <FormProvider>
         <AnimatePresence exitBeforeEnter>
           {screen === "fundInfo" && (
-            <FundInfo setScreen={setScreen} key="fundInfo" />
+            <FundInfo key="fundInfo" setScreen={setScreen} />
           )}
           {screen === "spendingInfo" && (
             <SpendingInfo
-              setScreen={setScreen}
-              onBackPress={() => setScreen("fundInfo")}
               key="spendingInfo"
+              onBackPress={() => setScreen("fundInfo")}
+              setScreen={setScreen}
             />
           )}
           {screen === "nonNegotiableInfo" && (
@@ -54,34 +52,36 @@ export default function CreateFund() {
             <ChooseFolder
               key="targetsInfo"
               onBackPress={() => {
-                if (prevScreen) setScreen(prevScreen)
+                if (prevScreen) {
+                  setScreen(prevScreen);
+                }
               }}
             />
           )}
         </AnimatePresence>
       </FormProvider>
     </SafeAreaView>
-  )
+  );
 }
 
 function Close() {
-  const navigation = useRootStackNavigation()
+  const navigation = useRootStackNavigation();
   return (
     <Pressable
-      className="bg-mauveDark12 flex h-8 w-8 items-center justify-center rounded-full"
+      className="flex h-8 w-8 items-center justify-center rounded-full bg-mauveDark12"
       onPress={navigation.goBack}
     >
       <CrossIcon />
     </Pressable>
-  )
+  );
 }
 export type CreateFundScreens =
   | "fundInfo"
   | "spendingInfo"
   | "targetsInfo"
   | "nonNegotiableInfo"
-  | "chooseFolder"
+  | "chooseFolder";
 function useCreateFundScreens() {
-  return useState<CreateFundScreens>("fundInfo")
+  return useState<CreateFundScreens>("fundInfo");
 }
-export type setScreen = ReturnType<typeof useCreateFundScreens>[1]
+export type setScreen = ReturnType<typeof useCreateFundScreens>[1];

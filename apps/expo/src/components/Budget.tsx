@@ -1,38 +1,35 @@
-import { useEffect } from "react"
-import { Pressable, PressableProps, View, Text } from "react-native"
-import { useDerivedValue, useSharedValue } from "react-native-reanimated"
-import * as ContextMenu from "zeego/context-menu"
+import type { Folder } from ".prisma/client";
+import { useEffect } from "react";
+import { Pressable, type PressableProps, Text, View } from "react-native";
+import { useDerivedValue, useSharedValue } from "react-native-reanimated";
+import * as ContextMenu from "zeego/context-menu";
+import type { FundWithMeta } from "~/types";
+import { pink, violet } from "~/utils/colors";
+import { toCurrencyNarrow } from "~/utils/functions";
+import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
+import useToggle from "~/utils/hooks/useToggle";
+import { transitions } from "~/utils/motion";
+import FolderClosed from "../../assets/icons/folder-duo.svg";
+import FolderOpen from "../../assets/icons/folder-open-duo.svg";
+import { AnimateHeight } from "./AnimateHeight";
+import Category, { CATEGORY_HEIGHT } from "./Category";
+import ScaleDownPressable from "./ScaleDownPressable";
+import StyledMotiView from "./StyledMotiView";
 
-import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
-import { toCurrencyNarrow } from "~/utils/functions"
-import { pink, violet } from "~/utils/colors"
-import { transitions } from "~/utils/motion"
-import useToggle from "~/utils/hooks/useToggle"
-import type { FundWithMeta } from "~/types"
-
-import { type Folder } from ".prisma/client"
-import ScaleDownPressable from "./ScaleDownPressable"
-import Category, { CATEGORY_HEIGHT } from "./Category"
-import StyledMotiView from "./StyledMotiView"
-import { AnimateHeight } from "./AnimateHeight"
-
-import FolderClosed from "../../assets/icons/folder-duo.svg"
-import FolderOpen from "../../assets/icons/folder-open-duo.svg"
-
-const overspentColor = pink.pink8
+const overspentColor = pink.pink8;
 
 type Props = {
-  folderId: Folder["id"]
-  folderName: Folder["name"]
-  amountLeft: number
-  funds: FundWithMeta[]
-  defaultOpen?: boolean
+  folderId: Folder["id"];
+  folderName: Folder["name"];
+  amountLeft: number;
+  funds: FundWithMeta[];
+  defaultOpen?: boolean;
   /*
    * prop for animation —
    * open recently added folder, close everything else
    */
-  isRecentlyAdded?: boolean | undefined
-}
+  isRecentlyAdded?: boolean | undefined;
+};
 
 export default function Budget({
   folderId,
@@ -43,23 +40,25 @@ export default function Budget({
   isRecentlyAdded,
   ...rest
 }: PressableProps & Props) {
-  const navigation = useRootStackNavigation()
+  const navigation = useRootStackNavigation();
 
-  const open = useSharedValue(defaultOpen)
+  const open = useSharedValue(defaultOpen);
 
   useEffect(() => {
-    if (isRecentlyAdded !== undefined) open.value = isRecentlyAdded
-  }, [open, isRecentlyAdded])
+    if (isRecentlyAdded !== undefined) {
+      open.value = isRecentlyAdded;
+    }
+  }, [open, isRecentlyAdded]);
 
-  const didOverspend = amountLeft === 0
+  const didOverspend = amountLeft === 0;
 
   // TODO: save option on local storage
-  const [show, { toggle }] = useToggle(true)
+  const [show, { toggle }] = useToggle(true);
 
   const handleToggle = () => {
-    open.value = !open.value
-    toggle()
-  }
+    open.value = !open.value;
+    toggle();
+  };
 
   return (
     <View className="overflow-visible">
@@ -67,45 +66,45 @@ export default function Budget({
         <ContextMenu.Trigger style={{ borderRadius: 16 }}>
           <Pressable
             {...rest}
-            onPress={(...args) => {
-              open.value = !open.value
-              rest.onPress?.(...args)
-            }}
             className="rounded-2xl"
+            onPress={(...args) => {
+              open.value = !open.value;
+              rest.onPress?.(...args);
+            }}
           >
             {/* bg is mauve12 with 2% opacity */}
             <View className="flex-row items-center justify-between rounded-2xl bg-[#1a152307] p-4">
               <View className="flex-row items-center">
                 <View className="relative h-4 w-4">
                   <StyledMotiView
-                    className="absolute inset-0"
-                    transition={transitions.noTransition}
                     animate={useDerivedValue(() => ({
                       opacity: open.value ? 1 : 0,
                     }))}
-                  >
-                    <FolderOpen width={16} height={16} />
-                  </StyledMotiView>
-                  <StyledMotiView
                     className="absolute inset-0"
                     transition={transitions.noTransition}
+                  >
+                    <FolderOpen height={16} width={16} />
+                  </StyledMotiView>
+                  <StyledMotiView
                     animate={useDerivedValue(() => ({
                       opacity: open.value ? 0 : 1,
                     }))}
+                    className="absolute inset-0"
+                    transition={transitions.noTransition}
                   >
-                    <FolderClosed width={16} height={16} />
+                    <FolderClosed height={16} width={16} />
                   </StyledMotiView>
                 </View>
-                <Text className="font-satoshi-medium text-mauve12 ml-3 text-base">
+                <Text className="ml-3 font-satoshi-medium text-base text-mauve12">
                   {folderName}
                 </Text>
               </View>
 
               <StyledMotiView
-                className="flex-row items-end"
                 animate={useDerivedValue(() => ({
                   opacity: open.value ? 0 : 1,
                 }))}
+                className="flex-row items-end"
                 transition={transitions.snappy}
               >
                 <Text
@@ -128,10 +127,10 @@ export default function Budget({
         <ContextMenu.Content>
           {/* <ContextMenu.Label>Label</ContextMenu.Label> */}
           <ContextMenu.Item
-            key="item 2"
             destructive
+            key="item 2"
             onSelect={() => {
-              navigation.navigate("CreateFund", { folderId })
+              navigation.navigate("CreateFund", { folderId });
             }}
           >
             <ContextMenu.ItemTitle>Add</ContextMenu.ItemTitle>
@@ -145,7 +144,7 @@ export default function Budget({
             />
           </ContextMenu.Item>
           {show ? (
-            <ContextMenu.Item key="item 1" destructive onSelect={handleToggle}>
+            <ContextMenu.Item destructive key="item 1" onSelect={handleToggle}>
               <ContextMenu.ItemTitle>Show</ContextMenu.ItemTitle>
 
               <ContextMenu.ItemIcon
@@ -157,7 +156,7 @@ export default function Budget({
               />
             </ContextMenu.Item>
           ) : (
-            <ContextMenu.Item key="item 1" destructive onSelect={handleToggle}>
+            <ContextMenu.Item destructive key="item 1" onSelect={handleToggle}>
               <ContextMenu.ItemTitle>Hide</ContextMenu.ItemTitle>
 
               <ContextMenu.ItemIcon
@@ -174,20 +173,20 @@ export default function Budget({
 
       {funds.length ? (
         <AnimateHeight
-          open={open}
           defaultOpen
           initalHeight={CATEGORY_HEIGHT * funds.length}
+          open={open}
         >
           {funds.map((fund) => (
             <Category fund={fund} key={fund.id} />
           ))}
         </AnimateHeight>
       ) : (
-        <AnimateHeight open={open} defaultOpen initalHeight={48}>
+        <AnimateHeight defaultOpen initalHeight={48} open={open}>
           <ScaleDownPressable
             className="h-12 w-full items-center justify-center"
             onPress={() => {
-              navigation.navigate("CreateFund", { folderId })
+              navigation.navigate("CreateFund", { folderId });
             }}
           >
             <Text className="font-satoshi text-mauve11 text-sm">
@@ -197,5 +196,5 @@ export default function Budget({
         </AnimateHeight>
       )}
     </View>
-  )
+  );
 }

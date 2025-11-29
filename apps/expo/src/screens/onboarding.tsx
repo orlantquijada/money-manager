@@ -1,23 +1,21 @@
-import { Pressable, Text, View } from "react-native"
-
-import { useOnboarding } from "~/utils/hooks/useOnboarding"
-import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
-
-import Button from "~/components/Button"
-import SafeAreaView from "~/components/SafeAreaView"
+import { Pressable, Text, View } from "react-native";
+import Button from "~/components/Button";
+import SafeAreaView from "~/components/SafeAreaView";
+import { useOnboarding } from "~/utils/hooks/useOnboarding";
+import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
 
 export default function Onboarding() {
-  const navigation = useRootStackNavigation()
-  const { handleSetFirstLaunch } = useOnboarding()
+  const navigation = useRootStackNavigation();
+  const { handleSetFirstLaunch } = useOnboarding();
 
   return (
-    <SafeAreaView className="bg-violet1 flex-1">
+    <SafeAreaView className="flex-1 bg-violet1">
       <View className="h-full items-center justify-center">
         {/* {user ? <Text className="mb-4">{user.id}</Text> : null} */}
         <Pressable
           onPress={() => {
-            handleSetFirstLaunch()
-            navigation.popToTop()
+            handleSetFirstLaunch();
+            navigation.popToTop();
           }}
         >
           <Button>
@@ -60,5 +58,5 @@ export default function Onboarding() {
         {/* </SignedIn> */}
       </View>
     </SafeAreaView>
-  )
+  );
 }

@@ -1,7 +1,7 @@
 {
   "name": "money-manager",
   "private": true,
-  "packageManager": "pnpm@7.19.0",
+  "packageManager": "pnpm@10.24.0",
   "scripts": {
     "preinstall": "npx -y only-allow pnpm",
     "build": "turbo build",
@@ -12,25 +12,18 @@
     "db:push": "turbo db:push db:generate",
     "db:deploy": "turbo db:deploy",
     "dev": "turbo dev --parallel",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo lint && manypkg check",
+    "lint:ws": "pnpm dlx sherif@latest",
     "type-check": "turbo type-check",
     "build:deploy": "turbo build:deploy",
     "build:server": "pnpm build --filter=server",
     "start:server": "pnpm start --filter=server"
   },
-  "dependencies": {
-    "turbo": "^2.2.3"
-  },
   "devDependencies": {
+    "@biomejs/biome": "catalog:",
     "@manypkg/cli": "^0.19.2",
-    "@typescript-eslint/eslint-plugin": "^5.46.0",
-    "@typescript-eslint/parser": "^5.46.0",
-    "eslint": "^8.29.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.1",
-    "prettier-plugin-tailwindcss": "^0.2.1",
-    "typescript": "^4.9.4"
+    "turbo": "^2.2.3",
+    "typescript": "^4.9.4",
+    "ultracite": "catalog:"
   }
 }

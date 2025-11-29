@@ -1,33 +1,34 @@
-import { forwardRef } from "react"
-import { View } from "react-native"
 import {
+  type BottomSheetModalProps,
   BottomSheetModal as GBottomSheetModal,
-  BottomSheetModalProps,
   // BottomSheetView,
   useBottomSheetSpringConfigs,
-} from "@gorhom/bottom-sheet"
+} from "@gorhom/bottom-sheet";
+import { forwardRef } from "react";
+import { View } from "react-native";
+
 // import { styled } from "nativewind"
 
-import { transitions } from "~/utils/motion"
-import { mauve } from "~/utils/colors"
+import { mauve } from "~/utils/colors";
+import { transitions } from "~/utils/motion";
 
-import BottomSheetBackdrop from "./Backdrop"
+import BottomSheetBackdrop from "./Backdrop";
 
 export const BottomSheetModal = forwardRef<
   GBottomSheetModal,
   BottomSheetModalProps
 >(({ handleIndicatorStyle = {}, backgroundStyle = {}, ...props }, ref) => {
-  const springConfigs = useBottomSheetSpringConfigs(transitions.snappier)
+  const springConfigs = useBottomSheetSpringConfigs(transitions.snappier);
 
   return (
     <GBottomSheetModal
+      animationConfigs={springConfigs}
+      backdropComponent={BottomSheetBackdrop}
+      backgroundStyle={[{ backgroundColor: "transparent" }, backgroundStyle]}
       handleIndicatorStyle={[
         { backgroundColor: mauve.mauve5 },
         handleIndicatorStyle,
       ]}
-      backgroundStyle={[{ backgroundColor: "transparent" }, backgroundStyle]}
-      backdropComponent={BottomSheetBackdrop}
-      animationConfigs={springConfigs}
       index={1}
       {...props}
       ref={ref}
@@ -37,10 +38,10 @@ export const BottomSheetModal = forwardRef<
         {props.children}
       </View>
     </GBottomSheetModal>
-  )
-})
-BottomSheetModal.displayName = "BottomSheetModal"
+  );
+});
+BottomSheetModal.displayName = "BottomSheetModal";
 
 // const StyledBottomSheetView = styled(BottomSheetView)
 
-export type BottomSheetModal = GBottomSheetModal
+export type BottomSheetModal = GBottomSheetModal;

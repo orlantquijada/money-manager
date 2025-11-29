@@ -4,3 +4,7 @@ packages:
   - packages/api
   - packages/db
   - packages/config/*
+
+catalog:
+  '@biomejs/biome': 2.3.8
+  ultracite: 6.3.8

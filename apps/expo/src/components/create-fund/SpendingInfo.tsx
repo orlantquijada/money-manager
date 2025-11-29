@@ -1,54 +1,51 @@
-import { ReactNode, useRef, useState } from "react"
-import { View, Text, ScrollView } from "react-native"
-import { AnimatePresence } from "moti"
+import type { TimeMode } from ".prisma/client";
+import { AnimatePresence } from "moti";
+import { type ReactNode, useRef, useState } from "react";
+import { ScrollView, Text, View } from "react-native";
+import type { setScreen } from "~/screens/create-fund";
+import { useHardwareBackPress } from "~/utils/hooks/useHardwareBackPress";
+import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
+import { useRootStackRoute } from "~/utils/hooks/useRootStackRoute";
+import { transitions } from "~/utils/motion";
+import { trpc } from "~/utils/trpc";
+import CreateFooter from "../CreateFooter";
+import Presence from "../Presence";
+import StyledMotiView from "../StyledMotiView";
+import { CurrencyInput } from "../TextInput";
+import Choice from "./Choice";
+import { useFormData } from "./context";
 
-import { useHardwareBackPress } from "~/utils/hooks/useHardwareBackPress"
-import { useRootStackRoute } from "~/utils/hooks/useRootStackRoute"
-import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
-import { trpc } from "~/utils/trpc"
-import { transitions } from "~/utils/motion"
-
-import { setScreen } from "~/screens/create-fund"
-
-import { TimeMode } from ".prisma/client"
-import { useFormData } from "./context"
-import Presence from "../Presence"
-import { CurrencyInput } from "../TextInput"
-import Choice from "./Choice"
-import CreateFooter from "../CreateFooter"
-import StyledMotiView from "../StyledMotiView"
-
-const DELAY = 40
+const DELAY = 40;
 
 export default function SpendingInfo({
   onBackPress,
   setScreen,
 }: {
-  onBackPress: () => void
-  setScreen: setScreen
+  onBackPress: () => void;
+  setScreen: setScreen;
 }) {
-  useHardwareBackPress(onBackPress)
+  useHardwareBackPress(onBackPress);
 
-  const { formData } = useFormData()
+  const { formData } = useFormData();
   const [selectedChoice, setSelectedChoice] = useState<TimeMode>(
-    formData.timeMode,
-  )
+    formData.timeMode
+  );
 
   return (
     <Wrapper
       onBackPress={onBackPress}
-      setScreen={setScreen}
       selectedTimeMode={selectedChoice}
+      setScreen={setScreen}
     >
       <View className="mb-8">
-        <Presence delayMultiplier={1} delay={DELAY}>
-          <Text className="text-mauveDark12 font-satoshi-medium text-lg">
+        <Presence delay={DELAY} delayMultiplier={1}>
+          <Text className="font-satoshi-medium text-lg text-mauveDark12">
             How frequent do you use this fund?
           </Text>
         </Presence>
 
         <View className="mt-[10px] flex w-3/5">
-          <Presence delayMultiplier={2} delay={DELAY}>
+          <Presence delay={DELAY} delayMultiplier={2}>
             <Choice
               choiceLabel="A"
               className="mb-2"
@@ -58,7 +55,7 @@ export default function SpendingInfo({
               Weekly
             </Choice>
           </Presence>
-          <Presence delayMultiplier={3} delay={DELAY}>
+          <Presence delay={DELAY} delayMultiplier={3}>
             <Choice
               choiceLabel="B"
               className="mb-2"
@@ -69,7 +66,7 @@ export default function SpendingInfo({
             </Choice>
           </Presence>
 
-          <Presence delayMultiplier={4} delay={DELAY}>
+          <Presence delay={DELAY} delayMultiplier={4}>
             <Choice
               choiceLabel="C"
               onPress={() => setSelectedChoice("BIMONTHLY")}
@@ -81,7 +78,7 @@ export default function SpendingInfo({
         </View>
       </View>
     </Wrapper>
-  )
+  );
 }
 
 const readableTimeModeMap: Record<TimeMode, string> = {
@@ -89,14 +86,14 @@ const readableTimeModeMap: Record<TimeMode, string> = {
   MONTHLY: "monthly",
   BIMONTHLY: "twice a month",
   EVENTUALLY: "",
-}
+};
 
 type WrapperProps = {
-  children: ReactNode
-  onBackPress: () => void
-  setScreen: setScreen
-  selectedTimeMode?: TimeMode
-}
+  children: ReactNode;
+  onBackPress: () => void;
+  setScreen: setScreen;
+  selectedTimeMode?: TimeMode;
+};
 // necessary Wrapper component since <Choice/> always animates on rerender
 // ^ controlled TextInput below triggers rerender
 function Wrapper({
@@ -105,30 +102,30 @@ function Wrapper({
   setScreen,
   selectedTimeMode,
 }: WrapperProps) {
-  const currencyInputRef = useRef<CurrencyInput>(null)
-  const { setFormValues, formData } = useFormData()
-  const route = useRootStackRoute("CreateFund")
-  const navigation = useRootStackNavigation()
-  const createFund = trpc.fund.create.useMutation()
-  const utils = trpc.useContext()
-  const [didSubmit, setDidSubmit] = useState(false)
+  const currencyInputRef = useRef<CurrencyInput>(null);
+  const { setFormValues, formData } = useFormData();
+  const route = useRootStackRoute("CreateFund");
+  const navigation = useRootStackNavigation();
+  const createFund = trpc.fund.create.useMutation();
+  const utils = trpc.useContext();
+  const [didSubmit, setDidSubmit] = useState(false);
 
   const handleSetFormValues = () => {
-    const budgetedAmount = currencyInputRef.current?.getValue() || 0
+    const budgetedAmount = currencyInputRef.current?.getValue() || 0;
     setFormValues(
       selectedTimeMode
         ? { budgetedAmount, timeMode: selectedTimeMode }
-        : { budgetedAmount },
-    )
-  }
+        : { budgetedAmount }
+    );
+  };
 
   const handleBackPress = () => {
-    onBackPress()
-    handleSetFormValues()
-  }
+    onBackPress();
+    handleSetFormValues();
+  };
 
-  const loading = createFund.status === "loading" || didSubmit
-  const disabled = !selectedTimeMode || loading
+  const loading = createFund.status === "loading" || didSubmit;
+  const disabled = !selectedTimeMode || loading;
 
   return (
     <>
@@ -138,11 +135,11 @@ function Wrapper({
       >
         {children}
         {selectedTimeMode ? (
-          <Presence delayMultiplier={5} delay={DELAY}>
+          <Presence delay={DELAY} delayMultiplier={5}>
             <View className="gap-[10px]">
               <View className="flex-row">
                 <Text
-                  className="text-mauveDark12 font-satoshi-medium text-lg"
+                  className="font-satoshi-medium text-lg text-mauveDark12"
                   style={{ lineHeight: undefined }}
                 >
                   How much will you allocate{" "}
@@ -150,15 +147,15 @@ function Wrapper({
                 <View className="relative">
                   <AnimatePresence initial={false}>
                     <TimeModeText
-                      timeMode={selectedTimeMode}
                       key={selectedTimeMode}
+                      timeMode={selectedTimeMode}
                     />
                   </AnimatePresence>
                 </View>
               </View>
               <CurrencyInput
-                ref={currencyInputRef}
                 defaultValue={formData.budgetedAmount?.toString()}
+                ref={currencyInputRef}
               />
             </View>
           </Presence>
@@ -167,18 +164,21 @@ function Wrapper({
       <CreateFooter
         disabled={disabled}
         loading={loading}
+        onBackPress={handleBackPress}
         onContinuePress={() => {
-          if (!selectedTimeMode) return
-          setDidSubmit(true)
+          if (!selectedTimeMode) {
+            return;
+          }
+          setDidSubmit(true);
 
-          const folderId = route.params?.folderId
+          const folderId = route.params?.folderId;
           if (!folderId) {
-            handleSetFormValues()
-            setScreen("chooseFolder")
-            return
+            handleSetFormValues();
+            setScreen("chooseFolder");
+            return;
           }
 
-          const budgetedAmount = currencyInputRef.current?.getValue() || 0
+          const budgetedAmount = currencyInputRef.current?.getValue() || 0;
           createFund.mutate(
             {
               ...formData,
@@ -188,7 +188,7 @@ function Wrapper({
             },
             {
               onSuccess: () => {
-                utils.fund.list.invalidate()
+                utils.fund.list.invalidate();
                 utils.folder.listWithFunds
                   .invalidate()
                   .then(() => {
@@ -200,38 +200,37 @@ function Wrapper({
                           recentlyAddedToFolderId: folderId,
                         },
                       },
-                    })
+                    });
                   })
                   .catch(() => {
-                    return
-                  })
+                    return;
+                  });
               },
-            },
-          )
+            }
+          );
         }}
-        onBackPress={handleBackPress}
       >
         Continue
       </CreateFooter>
     </>
-  )
+  );
 }
 
 function TimeModeText({ timeMode }: { timeMode: TimeMode }) {
   return (
     <StyledMotiView
-      from={{ translateY: 20, opacity: 0 }}
       animate={{ translateY: 0, opacity: 1 }}
+      className="absolute top-0 left-0"
       exit={{ translateY: -20, opacity: 0 }}
-      className="absolute left-0 top-0"
+      from={{ translateY: 20, opacity: 0 }}
       transition={transitions.snappy}
     >
       <Text
-        className="text-mauveDark12 font-satoshi-medium text-lg"
+        className="font-satoshi-medium text-lg text-mauveDark12"
         style={{ lineHeight: undefined }}
       >
         {readableTimeModeMap[timeMode]}?
       </Text>
     </StyledMotiView>
-  )
+  );
 }

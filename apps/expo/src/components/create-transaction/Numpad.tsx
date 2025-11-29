@@ -1,24 +1,21 @@
-import { Dispatch, SetStateAction } from "react"
-import { View, ViewProps } from "react-native"
+import type { Dispatch, SetStateAction } from "react";
+import { View, type ViewProps } from "react-native";
+import { mauveDark } from "~/utils/colors";
 
-import { NumberButton } from "./NumberButton"
-
-import ChevronLeftIcon from "../../../assets/icons/hero-icons/chevron-left.svg"
-import { mauveDark } from "~/utils/colors"
+import ChevronLeftIcon from "../../../assets/icons/hero-icons/chevron-left.svg";
+import { NumberButton } from "./NumberButton";
 
 type Props = {
-  setAmount: Dispatch<SetStateAction<string>>
-} & ViewProps
+  setAmount: Dispatch<SetStateAction<string>>;
+} & ViewProps;
 
 export function Numpad({ setAmount, ...props }: Props) {
   const handleNumberButtonPress = (num: number) => () => {
     setAmount((prev) =>
       // limit decimal to hundredths
-      prev.includes(".") && prev.split(".")[1]?.length === 2
-        ? prev
-        : prev + num,
-    )
-  }
+      prev.includes(".") && prev.split(".")[1]?.length === 2 ? prev : prev + num
+    );
+  };
 
   return (
     <View {...props} className="gap-y-2">
@@ -29,7 +26,7 @@ export function Numpad({ setAmount, ...props }: Props) {
       ].map((row) => (
         <View className="flex-row gap-x-2" key={row[0]}>
           {row.map((num) => (
-            <NumberButton onPress={handleNumberButtonPress(num)} key={num}>
+            <NumberButton key={num} onPress={handleNumberButtonPress(num)}>
               {num}
             </NumberButton>
           ))}
@@ -38,7 +35,7 @@ export function Numpad({ setAmount, ...props }: Props) {
       <View className="flex-row gap-x-2">
         <NumberButton
           onPress={() => {
-            setAmount((prev) => (prev.includes(".") ? prev : prev + "."))
+            setAmount((prev) => (prev.includes(".") ? prev : `${prev}.`));
           }}
         >
           .
@@ -47,30 +44,30 @@ export function Numpad({ setAmount, ...props }: Props) {
           0
         </NumberButton>
         <NumberButton
+          onLongPress={() => {
+            setAmount(() => "");
+          }}
           onPress={() =>
             setAmount((prev) => {
               // include removing decimal point if current number on tenths decimal place
               if (prev.includes(".") && prev.split(".")[1]?.length === 1) {
-                return prev.slice(0, -2)
+                return prev.slice(0, -2);
               }
 
-              return prev.slice(0, -1)
+              return prev.slice(0, -1);
             })
           }
-          onLongPress={() => {
-            setAmount(() => "")
-          }}
         >
           <View className="relative">
             <ChevronLeftIcon
-              height={20}
-              width={20}
-              strokeWidth={3.5}
               color={mauveDark.mauve12}
+              height={20}
+              strokeWidth={3.5}
+              width={20}
             />
           </View>
         </NumberButton>
       </View>
     </View>
-  )
+  );
 }

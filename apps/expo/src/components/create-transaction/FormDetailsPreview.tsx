@@ -1,42 +1,40 @@
-import { memo, useEffect } from "react"
-import { Text, View } from "react-native"
-import { MotiText, MotiView, useAnimationState } from "moti"
-import clsx from "clsx"
-import { format } from "date-fns"
+import clsx from "clsx";
+import { format } from "date-fns";
+import { MotiText, MotiView, useAnimationState } from "moti";
+import { memo, useEffect } from "react";
+import { Text, View } from "react-native";
 
-import { mauveDark, redDark } from "~/utils/colors"
-import { formatRelativeDate } from "~/utils/functions"
+import { mauveDark, redDark } from "~/utils/colors";
+import { formatRelativeDate } from "~/utils/functions";
 import {
-  HandlePresentModalPress,
+  type HandlePresentModalPress,
   useTransactionStore,
-} from "~/utils/hooks/useTransactionStore"
+} from "~/utils/hooks/useTransactionStore";
+import ChevronUpIcon from "../../../assets/icons/hero-icons/chevron-up.svg";
+import ScaleDownPressable from "../ScaleDownPressable";
 
-import ScaleDownPressable from "../ScaleDownPressable"
-
-import ChevronUpIcon from "../../../assets/icons/hero-icons/chevron-up.svg"
-
-const scale = 0.92
+const scale = 0.92;
 
 export const FormDetailsPreview = ({
   handlePresentModalPress,
   openStoreListBottomSheet,
   openFundListBottomSheet,
 }: {
-  handlePresentModalPress: HandlePresentModalPress
-  openFundListBottomSheet: () => void
-  openStoreListBottomSheet: () => void
+  handlePresentModalPress: HandlePresentModalPress;
+  openFundListBottomSheet: () => void;
+  openStoreListBottomSheet: () => void;
 }) => {
-  const store = useTransactionStore((s) => s.store)
-  const note = useTransactionStore((s) => s.note)
+  const store = useTransactionStore((s) => s.store);
+  const note = useTransactionStore((s) => s.note);
 
   return (
     <View className="relative mb-4 items-center">
       <MotiView
-        className="absolute -top-6"
+        animate={{ translateY: 0 }}
+        className="-top-6 absolute"
         from={{
           translateY: -10,
         }}
-        animate={{ translateY: 0 }}
         transition={{
           loop: true,
           type: "timing",
@@ -45,107 +43,107 @@ export const FormDetailsPreview = ({
         }}
       >
         <ScaleDownPressable
-          opacity={0.7}
-          scale={0.9}
-          onPress={() => {
-            handlePresentModalPress()
-          }}
           hitSlop={{
             top: 10,
             left: 10,
             right: 10,
             bottom: 10,
           }}
+          onPress={() => {
+            handlePresentModalPress();
+          }}
+          opacity={0.7}
+          scale={0.9}
         >
           <ChevronUpIcon
             color={mauveDark.mauve11}
             height={24}
-            width={24}
             strokeWidth={3}
+            width={24}
           />
         </ScaleDownPressable>
       </MotiView>
 
-      <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
+      <View className="h-10 w-full flex-row items-center border-b border-b-mauveDark5">
         <DateSection handlePresentModalPress={handlePresentModalPress} />
-        <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
+        <Text className="mx-4 font-satoshi-bold text-base text-mauveDark11 leading-6">
           ·
         </Text>
         <ScaleDownPressable
-          scale={scale}
           className="h-full shrink justify-center"
           onPress={() => {
-            handlePresentModalPress("note")
+            handlePresentModalPress("note");
           }}
+          scale={scale}
         >
           <Text
-            numberOfLines={1}
             className={clsx(
-              "font-satoshi-bold shrink text-base leading-6",
-              note ? "text-mauveDark12" : "text-mauveDark11",
+              "shrink font-satoshi-bold text-base leading-6",
+              note ? "text-mauveDark12" : "text-mauveDark11"
             )}
+            numberOfLines={1}
           >
             {note || "Add Note"}
           </Text>
         </ScaleDownPressable>
       </View>
-      <View className="border-b-mauveDark5 h-10 w-full flex-row items-center border-b">
+      <View className="h-10 w-full flex-row items-center border-b border-b-mauveDark5">
         <ScaleDownPressable
-          scale={scale}
           className="h-full justify-center"
           onPress={openStoreListBottomSheet}
+          scale={scale}
         >
           <Text
             className={clsx(
               "font-satoshi-bold text-base leading-6",
-              store ? "text-mauveDark12" : "text-mauveDark11",
+              store ? "text-mauveDark12" : "text-mauveDark11"
             )}
           >
             {store || "Store"}
           </Text>
         </ScaleDownPressable>
 
-        <Text className="text-mauveDark11 font-satoshi-bold mx-4 text-base leading-6">
+        <Text className="mx-4 font-satoshi-bold text-base text-mauveDark11 leading-6">
           ·
         </Text>
 
         <FundSection openFundListBottomSheet={openFundListBottomSheet} />
       </View>
     </View>
-  )
-}
-FormDetailsPreview.displayName = "FormDetailsPreview"
+  );
+};
+FormDetailsPreview.displayName = "FormDetailsPreview";
 
 function DateSection({
   handlePresentModalPress,
 }: {
-  handlePresentModalPress: HandlePresentModalPress
+  handlePresentModalPress: HandlePresentModalPress;
 }) {
-  const createdAt = useTransactionStore((s) => s.createdAt)
+  const createdAt = useTransactionStore((s) => s.createdAt);
 
-  const formattedDate = formatRelativeDate(createdAt, new Date())
+  const formattedDate = formatRelativeDate(createdAt, new Date());
 
   return (
     <ScaleDownPressable
-      scale={scale}
       className="h-full justify-center"
       onPress={() => {
-        handlePresentModalPress("createdAt")
+        handlePresentModalPress("createdAt");
       }}
+      scale={scale}
     >
-      <Text className="text-mauveDark12 font-satoshi-bold text-base leading-6">
+      <Text className="font-satoshi-bold text-base text-mauveDark12 leading-6">
         {formattedDate} at {format(createdAt, "h:mm aa")}
       </Text>
     </ScaleDownPressable>
-  )
+  );
 }
 
 const FundSection = memo(
   ({ openFundListBottomSheet }: { openFundListBottomSheet: () => void }) => {
-    const fund = useTransactionStore((s) => s.fund)
-    const submitTimestamp = useTransactionStore((s) => s.submitTimestamp)
+    const fund = useTransactionStore((s) => s.fund);
+    const submitTimestamp = useTransactionStore((s) => s.submitTimestamp);
 
-    const offset = 4
+    const offset = 4;
 
     const state = useAnimationState({
       from: {
@@ -158,18 +156,21 @@ const FundSection = memo(
         color: redDark.red11,
         translateX: [0, offset, -offset, offset, 0],
       },
-    })
+    });
 
     useEffect(() => {
-      if (submitTimestamp && !fund) state.transitionTo("shake")
-      else state.transitionTo(fund ? "hasFund" : "from")
-    }, [fund, state, submitTimestamp])
+      if (submitTimestamp && !fund) {
+        state.transitionTo("shake");
+      } else {
+        state.transitionTo(fund ? "hasFund" : "from");
+      }
+    }, [fund, state, submitTimestamp]);
 
     return (
       <ScaleDownPressable
-        scale={scale}
         className="h-full justify-center"
         onPress={openFundListBottomSheet}
+        scale={scale}
       >
         <MotiText
           className="font-satoshi-bold text-base leading-6"
@@ -193,7 +194,7 @@ const FundSection = memo(
           {fund?.name || "Fund"}
         </MotiText>
       </ScaleDownPressable>
-    )
-  },
-)
-FundSection.displayName = "FundSection"
+    );
+  }
+);
+FundSection.displayName = "FundSection";

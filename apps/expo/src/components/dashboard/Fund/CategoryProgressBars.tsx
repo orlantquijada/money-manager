@@ -1,18 +1,17 @@
-import { FundWithMeta } from "~/types"
-
-import SpendingProgressBars from "./SpendingProgressBars"
-import NonNegotiableProgressBars from "./NonNegotiableProgressBars"
-import TargetProgressBars from "./TargetProgressBars"
-import { FundType } from ".prisma/client"
-import { FC } from "react"
+import type { FundType } from ".prisma/client";
+import type { FC } from "react";
+import type { FundWithMeta } from "~/types";
+import NonNegotiableProgressBars from "./NonNegotiableProgressBars";
+import SpendingProgressBars from "./SpendingProgressBars";
+import TargetProgressBars from "./TargetProgressBars";
 
 type Props = {
-  fund: FundWithMeta
-}
+  fund: FundWithMeta;
+};
 
 const CategoryProgressBars: Record<FundType, FC<Props>> = {
   SPENDING: SpendingProgressBars,
   TARGET: TargetProgressBars,
   NON_NEGOTIABLE: NonNegotiableProgressBars,
-}
-export default CategoryProgressBars
+};
+export default CategoryProgressBars;

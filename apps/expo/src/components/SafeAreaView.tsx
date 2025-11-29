@@ -1,22 +1,25 @@
-import { View, ViewProps } from "react-native"
-import { EdgeInsets, useSafeAreaInsets } from "react-native-safe-area-context"
-import { styled } from "nativewind"
+import { styled } from "nativewind";
+import { View, type ViewProps } from "react-native";
+import {
+  type EdgeInsets,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
-import { totalContentInset } from "~/navigation/TabBar"
+import { totalContentInset } from "~/navigation/TabBar";
 
 type Props = {
-  insets?: EdgeInsets
-} & ViewProps
+  insets?: EdgeInsets;
+} & ViewProps;
 
 // NOTE: use this instead of react-native's `SafeAreaView`
 function SafeAreaView(props: Props) {
-  const { insets: insetsProp } = props
-  const insets = useSafeAreaInsets()
+  const { insets: insetsProp } = props;
+  const insets = useSafeAreaInsets();
 
   const _insets =
     insetsProp === undefined
       ? { ...insets, bottom: totalContentInset }
-      : insetsProp
+      : insetsProp;
 
   return (
     <View
@@ -31,7 +34,7 @@ function SafeAreaView(props: Props) {
         props.style,
       ]}
     />
-  )
+  );
 }
 
-export default styled(SafeAreaView)
+export default styled(SafeAreaView);

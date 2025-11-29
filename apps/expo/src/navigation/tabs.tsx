@@ -1,81 +1,81 @@
 // import { View, Text } from "react-native"
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs"
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+
 // import { FlashList } from "@shopify/flash-list"
 
-import { RootBottomTabParamList } from "~/types"
-import { mauveDark, violet } from "~/utils/colors"
-
-import Home from "~/screens/home/page"
-import CreateTransaction from "~/screens/create-transaction"
-import TransactionsScreen from "~/screens/transactions"
+import CreateTransaction from "~/screens/create-transaction";
+import Home from "~/screens/home/page";
+import TransactionsScreen from "~/screens/transactions";
+import type { RootBottomTabParamList } from "~/types";
+import { mauveDark, violet } from "~/utils/colors";
 
 // import Presence from "~/components/Presence"
 // import Budget from "~/components/Budget"
 
-import HomeIcon from "../../assets/icons/home-duo-dark.svg"
-import HomeFilledIcon from "../../assets/icons/home-filled-dark.svg"
-import PlusRecIcon from "../../assets/icons/plus-rec-duo-dark.svg"
-import PlusRecFilledIcon from "../../assets/icons/plus-rec-filled-dark.svg"
-import ActivityIcon from "../../assets/icons/activity-rec-duo-dark.svg"
-import ActivityFilledIcon from "../../assets/icons/activity-rec-filled-dark.svg"
+import ActivityIcon from "../../assets/icons/activity-rec-duo-dark.svg";
+import ActivityFilledIcon from "../../assets/icons/activity-rec-filled-dark.svg";
+import HomeIcon from "../../assets/icons/home-duo-dark.svg";
+import HomeFilledIcon from "../../assets/icons/home-filled-dark.svg";
+import PlusRecIcon from "../../assets/icons/plus-rec-duo-dark.svg";
+import PlusRecFilledIcon from "../../assets/icons/plus-rec-filled-dark.svg";
 
-import TabBar from "./TabBar"
+import TabBar from "./TabBar";
 
-const Tab = createMaterialTopTabNavigator<RootBottomTabParamList>()
+const Tab = createMaterialTopTabNavigator<RootBottomTabParamList>();
 
-const size = 24
+const size = 24;
 
 export default function RootTabs() {
   return (
     <Tab.Navigator
+      backBehavior="history"
+      initialRouteName="Home"
+      sceneContainerStyle={{ backgroundColor: violet.violet1 }}
       tabBar={(props) => <TabBar {...props} />}
       tabBarPosition="bottom"
-      sceneContainerStyle={{ backgroundColor: violet.violet1 }}
-      initialRouteName="Home"
-      backBehavior="history"
     >
       <Tab.Screen
-        name="AddTransaction"
         component={CreateTransaction}
+        name="AddTransaction"
         options={{
           tabBarIcon: ({ focused }) =>
             focused ? (
               <PlusRecFilledIcon
-                width={size}
-                height={size}
                 color={mauveDark.mauve12}
+                height={size}
+                width={size}
               />
             ) : (
-              <PlusRecIcon width={size} height={size} />
+              <PlusRecIcon height={size} width={size} />
             ),
         }}
       />
       <Tab.Screen
-        name="Home"
         component={Home}
+        name="Home"
         options={{
           tabBarIcon: ({ focused }) =>
             focused ? (
-              <HomeFilledIcon width={size} height={size} />
+              <HomeFilledIcon height={size} width={size} />
             ) : (
-              <HomeIcon width={size} height={size} />
+              <HomeIcon height={size} width={size} />
             ),
         }}
       />
       <Tab.Screen
-        name="Transactions"
         component={TransactionsScreen}
+        name="Transactions"
         options={{
           tabBarIcon: ({ focused }) =>
             focused ? (
-              <ActivityFilledIcon width={size} height={size} />
+              <ActivityFilledIcon height={size} width={size} />
             ) : (
-              <ActivityIcon width={size} height={size} />
+              <ActivityIcon height={size} width={size} />
             ),
         }}
       />
     </Tab.Navigator>
-  )
+  );
 }
 
 // function PlaceHolderScreen() {

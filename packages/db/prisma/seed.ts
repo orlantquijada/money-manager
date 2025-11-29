@@ -1,4 +1,4 @@
-import { prisma } from "../index"
+import { prisma } from "../index";
 
 // BUG: data can't be used because `id` must be synced with clerk user id
 async function main() {
@@ -6,37 +6,37 @@ async function main() {
     data: {
       name: "John Doe",
     },
-  })
+  });
   const others = await prisma.folder.create({
     data: {
       name: "Others",
       userId: user.id,
     },
-  })
+  });
   const subscriptions = await prisma.folder.create({
     data: {
       name: "Subscriptions",
       userId: user.id,
     },
-  })
+  });
   const selfDevelopment = await prisma.folder.create({
     data: {
       name: "Self Development",
       userId: user.id,
     },
-  })
+  });
   const frequent = await prisma.folder.create({
     data: {
       name: "Frequent",
       userId: user.id,
     },
-  })
+  });
   const bills = await prisma.folder.create({
     data: {
       name: "Bills",
       userId: user.id,
     },
-  })
+  });
 
   await prisma.fund.createMany({
     data: [
@@ -118,7 +118,7 @@ async function main() {
         timeMode: "MONTHLY",
         fundType: "NON_NEGOTIABLE",
         folderId: bills.id,
-        budgetedAmount: 12000,
+        budgetedAmount: 12_000,
       },
       {
         name: "Internet",
@@ -135,15 +135,15 @@ async function main() {
         budgetedAmount: 350,
       },
     ],
-  })
+  });
 }
 
 main()
   .then(async () => {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

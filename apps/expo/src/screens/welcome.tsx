@@ -1,30 +1,28 @@
-import { useEffect, useState } from "react"
-import { Text, View } from "react-native"
-import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo"
-
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import { useEffect, useState } from "react";
+import { Text, View } from "react-native";
+import Button from "~/components/Button";
+import SafeAreaView from "~/components/SafeAreaView";
+import ScaleDownPressable from "~/components/ScaleDownPressable";
 // import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
 import {
   useRemoveUser,
   useSignIn,
   useSignOut,
   useSignUp,
-} from "~/utils/hooks/useAuth"
-import { getCredId } from "~/utils/lib/auth"
-import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation"
-import { useOnboarding } from "~/utils/hooks/useOnboarding"
-
-import Button from "~/components/Button"
-import SafeAreaView from "~/components/SafeAreaView"
-import ScaleDownPressable from "~/components/ScaleDownPressable"
+} from "~/utils/hooks/useAuth";
+import { useOnboarding } from "~/utils/hooks/useOnboarding";
+import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
+import { getCredId } from "~/utils/lib/auth";
 
 export default function Welcome() {
   // const navigation = useRootStackNavigation()
-  const removeUser = useRemoveUser()
-  const signOut = useSignOut()
-  const { user } = useUser()
+  const removeUser = useRemoveUser();
+  const signOut = useSignOut();
+  const { user } = useUser();
 
   return (
-    <SafeAreaView className="bg-violet1 flex-1">
+    <SafeAreaView className="flex-1 bg-violet1">
       <View className="h-full items-center justify-center">
         {user ? <Text className="mb-4">{user.id}</Text> : null}
 
@@ -34,10 +32,10 @@ export default function Welcome() {
 
         <SignedIn>
           <ScaleDownPressable
-            onPress={() => {
-              signOut.handleSignOut()
-            }}
             disabled={signOut.loading}
+            onPress={() => {
+              signOut.handleSignOut();
+            }}
           >
             <Button loading={signOut.loading}>
               <Text>Sign Out</Text>
@@ -46,15 +44,15 @@ export default function Welcome() {
 
           <ScaleDownPressable
             className="mt-4"
+            disabled={removeUser.loading}
             onPress={() => {
               removeUser
                 .handleRemoveUser()
                 .then(() => {
-                  console.log("remove successful")
+                  console.log("remove successful");
                 })
-                .catch(console.error)
+                .catch(console.error);
             }}
-            disabled={removeUser.loading}
           >
             <Button loading={removeUser.loading}>
               <Text>Remove user</Text>
@@ -63,59 +61,62 @@ export default function Welcome() {
         </SignedIn>
       </View>
     </SafeAreaView>
-  )
+  );
 }
 
 function SignInButtons() {
-  const signIn = useSignIn()
-  const signUp = useSignUp()
-  const [hasCreds, setHasCreds] = useState(false)
-  const navigation = useRootStackNavigation()
-  const { didFirstLaunch } = useOnboarding()
+  const signIn = useSignIn();
+  const signUp = useSignUp();
+  const [hasCreds, setHasCreds] = useState(false);
+  const navigation = useRootStackNavigation();
+  const { didFirstLaunch } = useOnboarding();
 
   useEffect(() => {
     getCredId()
       .then((id) => setHasCreds(Boolean(id)))
-      .catch(() => setHasCreds(false))
-  }, [])
+      .catch(() => setHasCreds(false));
+  }, []);
 
   if (hasCreds) {
     return (
       <ScaleDownPressable
+        disabled={signIn.loading}
         onPress={() => {
           signIn
             .handleSignIn()
             .then(() => {
-              if (!didFirstLaunch) navigation.navigate("Onboarding")
-              else navigation.popToTop()
+              if (didFirstLaunch) {
+                navigation.popToTop();
+              } else {
+                navigation.navigate("Onboarding");
+              }
             })
-            .catch(console.error)
+            .catch(console.error);
         }}
-        disabled={signIn.loading}
       >
         <Button loading={signIn.loading}>
           <Text>(Get started) Sign in</Text>
         </Button>
       </ScaleDownPressable>
-    )
+    );
   }
 
   return (
     <ScaleDownPressable
+      disabled={signUp.loading}
       onPress={() => {
         signUp
           .handleSignUp()
           .then(() => {
             // navigation.navigate("Root", { params: { text: "hello" } })
-            console.log("signup successful")
+            console.log("signup successful");
           })
-          .catch(console.error)
+          .catch(console.error);
       }}
-      disabled={signUp.loading}
     >
       <Button loading={signUp.loading}>
         <Text>Get Started</Text>
       </Button>
     </ScaleDownPressable>
-  )
+  );
 }

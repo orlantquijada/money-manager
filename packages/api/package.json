@@ -8,7 +8,7 @@
   },
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "biome check --write",
     "type-check": "tsc --noEmit",
     "build": "tsup index.ts --format cjs --minify"
   },
@@ -22,9 +22,10 @@
     "zod": "^3.20.0"
   },
   "devDependencies": {
-    "eslint": "^8.29.0",
+    "@biomejs/biome": "catalog:",
     "tsup": "^8.0.2",
     "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "ultracite": "catalog:"
   }
 }

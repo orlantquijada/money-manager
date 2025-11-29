@@ -1,23 +1,23 @@
-import { Prisma } from "db"
-import { z } from "zod"
-import { protectedProcedure, router } from "../trpc"
+import type { Prisma } from "db";
+import { z } from "zod";
+import { protectedProcedure, router } from "../trpc";
 
 export const foldersRouter = router({
   create: protectedProcedure
     .input(
       z.object({
         name: z.string(),
-      }),
+      })
     )
     .mutation(({ input, ctx }) =>
       ctx.prisma.folder.create({
         data: { ...input, userId: ctx.auth.userId || "" },
-      }),
+      })
     ),
   remove: protectedProcedure
     .input(z.number())
     .mutation(({ input, ctx }) =>
-      ctx.prisma.folder.delete({ where: { id: input } }),
+      ctx.prisma.folder.delete({ where: { id: input } })
     ),
   listWithFunds: protectedProcedure
     .input(
@@ -26,7 +26,7 @@ export const foldersRouter = router({
           startDate: z.date().optional(),
           endDate: z.date().optional(),
         })
-        .optional(),
+        .optional()
     )
     .query(async ({ ctx, input }) => {
       // TODO: filter by date
@@ -46,11 +46,11 @@ export const foldersRouter = router({
         orderBy: {
           createdAt: "desc",
         },
-      })
+      });
 
       const fundIds = foldersWithFunds.flatMap((folder) =>
-        folder.funds.map((fund) => fund.id),
-      )
+        folder.funds.map((fund) => fund.id)
+      );
       const totalSpentByFund = await ctx.prisma.transaction.groupBy({
         by: ["fundId"],
         where: {
@@ -69,7 +69,7 @@ export const foldersRouter = router({
         orderBy: {
           fundId: "desc",
         },
-      })
+      });
 
       return foldersWithFunds.map((folder) => ({
         ...folder,
@@ -77,20 +77,20 @@ export const foldersRouter = router({
           const totalSpent =
             totalSpentByFund
               .find(({ fundId }) => fundId === fund.id)
-              ?._sum.amount?.toNumber() || 0
+              ?._sum.amount?.toNumber() || 0;
 
           return {
             ...fund,
             totalSpent,
-          }
+          };
         }),
-      }))
+      }));
     }),
   list: protectedProcedure.query(({ ctx }) =>
     ctx.prisma.folder.findMany({
       where: {
         userId: ctx.auth.userId || "",
       },
-    }),
+    })
   ),
-})
+});

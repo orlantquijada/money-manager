@@ -1,4 +1,7 @@
-import { LayoutAnimationFunction, withSpring } from "react-native-reanimated"
+import {
+  type LayoutAnimationFunction,
+  withSpring,
+} from "react-native-reanimated";
 
 export const transitions = {
   bounce: {
@@ -25,61 +28,61 @@ export const transitions = {
     type: "timing",
     duration: 0,
   },
-} as const
+} as const;
 
 // custom layout animations for create-transaction amount
-const offset = 90
+const offset = 90;
 export const CustomSlideOutDown: LayoutAnimationFunction = (_) => {
-  "worklet"
+  "worklet";
 
   const animations = {
     transform: [{ translateY: withSpring(offset, transitions.snappier) }],
     opacity: withSpring(0, transitions.snappier),
-  }
+  };
 
   const initialValues = {
     transform: [{ translateY: 0 }],
     opacity: 1,
-  }
+  };
 
   return {
     animations,
     initialValues,
-  }
-}
+  };
+};
 
 export const CustomSlideOutUp: LayoutAnimationFunction = (_) => {
-  "worklet"
+  "worklet";
 
   const animations = {
     transform: [{ translateY: withSpring(-offset, transitions.snappier) }],
     opacity: withSpring(0, transitions.snappier),
-  }
+  };
   const initialValues = {
     transform: [{ translateY: 0 }],
     opacity: 1,
-  }
+  };
 
   return {
     animations,
     initialValues,
-  }
-}
+  };
+};
 
 export const CustomSlideInDown: LayoutAnimationFunction = (_) => {
-  "worklet"
+  "worklet";
 
   const animations = {
     transform: [{ translateY: withSpring(0, transitions.snappier) }],
     opacity: withSpring(1, transitions.snappier),
-  }
+  };
   const initialValues = {
     transform: [{ translateY: offset }],
     opacity: 0,
-  }
+  };
 
   return {
     animations,
     initialValues,
-  }
-}
+  };
+};
