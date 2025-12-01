@@ -1,5 +1,15 @@
 import { endOfMonth, startOfMonth } from "date-fns";
-import type { Fund, Transaction } from "db";
+import { Folder, Fund, Transaction } from "db/schema";
+import {
+  and,
+  asc,
+  eq,
+  getTableColumns,
+  gte,
+  inArray,
+  lt,
+  sum,
+} from "drizzle-orm";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../trpc";
@@ -16,50 +26,67 @@ export const fundsRouter = router({
         timeMode: timeModeSchema,
       })
     )
-    .mutation(({ input, ctx }) => ctx.prisma.fund.create({ data: input })),
+    .mutation(({ input, ctx }) =>
+      ctx.db.insert(Fund).values({
+        ...input,
+        budgetedAmount: input.budgetedAmount.toString(),
+      })
+    ),
   list: protectedProcedure.query(async ({ ctx }) => {
-    const funds = await ctx.prisma.fund.findMany({
-      where: {
-        folder: {
-          userId: ctx.auth?.userId || "",
-        },
-      },
-      orderBy: {
-        name: "asc",
-      },
-    });
+    // Use db.select for explicit join and type safety
+    const funds = await ctx.db
+      .select({
+        ...getTableColumns(Fund),
+      })
+      .from(Fund)
+      .innerJoin(Folder, eq(Fund.folderId, Folder.id))
+      // TODO: implement auth
+      // .where(eq(Folder.userId, ctx.auth.userId || ""))
+      .orderBy(asc(Fund.name));
 
-    const totalSpentByFund = await ctx.prisma.transaction.groupBy({
-      by: ["fundId"],
-      where: {
-        fundId: {
-          in: funds.map(({ id }) => id),
-        },
-        date: {
-          gte: startOfMonth(new Date()),
-          lt: endOfMonth(new Date()),
-        },
-      },
-      _sum: {
-        amount: true,
-      },
-    });
+    const totalSpentByFund = await ctx.db
+      .select({
+        fundId: Transaction.fundId,
+        amount: sum(Transaction.amount).mapWith(Number),
+      })
+      .from(Transaction)
+      .where(
+        and(
+          inArray(
+            Transaction.fundId,
+            funds.map((f) => f.id)
+          ),
+          gte(Transaction.date, startOfMonth(new Date())),
+          lt(Transaction.date, endOfMonth(new Date()))
+        )
+      )
+      .groupBy(Transaction.fundId);
 
-    const totalSpentMap: Record<Fund["id"], Transaction["amount"]> = {};
+    const totalSpentMap: Record<number, number> = {};
     for (const t of totalSpentByFund) {
-      totalSpentMap[t.fundId] = t._sum.amount;
+      totalSpentMap[t.fundId] = t.amount;
     }
 
     return funds.map((fund) => ({
       ...fund,
-      totalSpent: totalSpentMap[fund.id]?.toNumber() || 0,
+      budgetedAmount: Number(fund.budgetedAmount),
+      totalSpent: totalSpentMap[fund.id] || 0,
     }));
   }),
-  retrieve: protectedProcedure.input(z.number()).query(({ ctx, input }) =>
-    ctx.prisma.fund.findFirst({
-      where: {
-        id: input,
-      },
-    })
-  ),
+  retrieve: protectedProcedure
+    .input(z.number())
+    .query(async ({ ctx, input }) => {
+      const fund = await ctx.db.query.Fund.findFirst({
+        where: eq(Fund.id, input),
+      });
+
+      if (!fund) {
+        return null;
+      }
+
+      return {
+        ...fund,
+        budgetedAmount: Number(fund.budgetedAmount),
+      };
+    }),
 });

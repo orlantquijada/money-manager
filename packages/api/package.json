@@ -13,16 +13,17 @@
     "build": "tsup index.ts --format cjs --minify"
   },
   "dependencies": {
-    "@clerk/fastify": "^0.6.12",
     "@trpc/client": "^10.7.0",
     "@trpc/server": "^10.7.0",
     "date-fns": "catalog:",
     "db": "workspace:*",
+    "drizzle-orm": "^0.44.7",
     "superjson": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
+    "@types/pg": "catalog:",
     "tsup": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",

@@ -1,3 +1,4 @@
+import { User } from "db/schema";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
@@ -9,16 +10,9 @@ export const usersRouter = router({
         name: z.string().nullable().default(null),
       })
     )
-    .mutation(({ ctx, input }) =>
-      ctx.prisma.user.create({
-        data: input,
-      })
-    ),
-  remove: protectedProcedure.mutation(({ ctx }) =>
-    ctx.prisma.user.delete({
-      where: {
-        id: ctx.auth.userId || "",
-      },
-    })
-  ),
+    .mutation(({ ctx, input }) => ctx.db.insert(User).values(input)),
+  remove: protectedProcedure.mutation(({ ctx }) => {
+    // TODO: implement auth
+    // ctx.db.delete(User).where(eq(User.id, ctx.auth.userId || ""))
+  }),
 });
