@@ -16,16 +16,16 @@
     "@clerk/fastify": "^0.6.12",
     "@trpc/client": "^10.7.0",
     "@trpc/server": "^10.7.0",
-    "date-fns": "^2.29.3",
+    "date-fns": "catalog:",
     "db": "workspace:*",
-    "superjson": "1.9.1",
-    "zod": "^3.20.0"
+    "superjson": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
-    "tsup": "^8.0.2",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
     "ultracite": "catalog:"
   }
 }

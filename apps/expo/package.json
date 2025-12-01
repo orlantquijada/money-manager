@@ -32,7 +32,7 @@
     "@trpc/server": "^10.7.0",
     "api": "workspace:*",
     "d3-shape": "^3.2.0",
-    "date-fns": "^3.3.1",
+    "date-fns": "catalog:",
     "expo": "~50.0.7",
     "expo-auth-session": "~5.4.0",
     "expo-build-properties": "~0.11.1",
@@ -81,7 +81,7 @@
     "postcss": "^8.4.19",
     "react-native-svg-transformer": "^1.3.0",
     "tailwindcss": "^3.2.4",
-    "typescript": "^5.3.3",
+    "typescript": "catalog:",
     "ultracite": "catalog:"
   },
   "private": true

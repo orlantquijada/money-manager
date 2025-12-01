@@ -1,31 +1,40 @@
 {
   "name": "db",
-  "version": "0.1.0",
-  "license": "MIT",
+  "version": "0.0.0",
+  "private": true,
   "type": "module",
   "exports": {
-    ".": "./dist/index.cjs"
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./schema": {
+      "default": "./src/schema.ts"
+    },
+    "./client": {
+      "default": "./src/client.ts"
+    }
   },
   "scripts": {
-    "clean": "rm -rf .turbo node_modules",
-    "db:generate": "pnpm with-env prisma generate",
-    "db:push": "pnpm with-env prisma db push --skip-generate",
-    "dev": "pnpm with-env prisma studio --port 5556",
-    "db:migrate": "pnpm with-env prisma migrate",
-    "db:deploy": "pnpm with-env prisma migrate deploy",
     "with-env": "dotenv -e ../../.env --",
-    "build": "tsup index.ts --format cjs --minify",
-    "seed": "pnpm with-env prisma db seed"
+    "generate": "pnpm with-env drizzle-kit generate",
+    "studio": "pnpm with-env drizzle-kit studio",
+    "push": "pnpm with-env drizzle-kit push",
+    "migrate": "pnpm with-env drizzle-kit migrate",
+    "clean": "rm -rf ./.turbo/ ./dist/ ./node_modules/"
   },
   "dependencies": {
-    "@prisma/client": "^5.9.1"
+    "@t3-oss/env-core": "catalog:",
+    "@paralleldrive/cuid2": "^3.0.4",
+    "dotenv-cli": "catalog:",
+    "drizzle-orm": "^0.44.7",
+    "pg": "^8.16.3",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "^18.11.17",
-    "dotenv-cli": "^6.0.0",
-    "prisma": "^5.9.1",
-    "tsup": "^8.0.2",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "@biomejs/biome": "catalog:",
+    "@types/pg": "^8.15.6",
+    "drizzle-kit": "^0.31.7",
+    "typescript": "catalog:",
+    "ultracite": "catalog:"
   }
 }

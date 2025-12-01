@@ -7,4 +7,12 @@ packages:
 
 catalog:
   '@biomejs/biome': 2.3.8
+  superjson: 2.2.6
+  typescript: 5.9.3
   ultracite: 6.3.8
+  zod: 4.1.13
+  '@t3-oss/env-core': 0.13.8
+  'dotenv-cli': 6.0.0 
+  tsup: 8.5.1
+  tsx: 4.21.0
+  'date-fns': 4.1.0

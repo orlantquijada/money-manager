@@ -20,9 +20,9 @@
   "devDependencies": {
     "@types/node": "^18.11.17",
     "@vercel/node": "^3.0.20",
-    "dotenv-cli": "^6.0.0",
-    "tsup": "^8.0.2",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "dotenv-cli": "catalog:",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:"
   }
 }
