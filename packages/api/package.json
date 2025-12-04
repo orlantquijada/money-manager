@@ -18,11 +18,11 @@
     "build": "tsup index.ts --format cjs --minify"
   },
   "dependencies": {
-    "@trpc/client": "^10.7.0",
-    "@trpc/server": "^10.7.0",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
     "date-fns": "catalog:",
     "db": "workspace:*",
-    "drizzle-orm": "^0.44.7",
+    "drizzle-orm": "catalog:",
     "superjson": "catalog:",
     "zod": "catalog:"
   },

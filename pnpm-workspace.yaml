@@ -17,5 +17,8 @@ catalog:
   tsx: 4.21.0
   'date-fns': 4.1.0
   '@types/pg': 8.15.6
-
-nodeLinker: hoisted
+  pg: 8.16.3
+  drizzle-orm: 0.44.7
+  "@trpc/client": ^11.7.1
+  "@trpc/server": ^11.7.1
+  "@trpc/tanstack-react-query": ^11.7.1
