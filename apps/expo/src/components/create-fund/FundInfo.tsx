@@ -1,6 +1,6 @@
-import type { Fund } from ".prisma/client";
-import clsx from "clsx";
-import { type ComponentProps, type FC, useState } from "react";
+import type { Fund } from "api";
+import { clsx } from "clsx";
+import { type ComponentProps, useState } from "react";
 import { type LayoutChangeEvent, ScrollView, Text, View } from "react-native";
 import {
   type SharedValue,
@@ -8,15 +8,18 @@ import {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import type { SvgProps } from "react-native-svg";
+// import type { SvgProps } from "react-native-svg";
 import CreateFooter from "~/components/CreateFooter";
 import Presence from "~/components/Presence";
 import TextInput from "~/components/TextInput";
-import type { CreateFundScreens, setScreen } from "~/screens/create-fund";
+import type {
+  CreateFundScreens,
+  setScreen as SetScreen,
+} from "~/screens/create-fund";
 import { transitions } from "~/utils/motion";
-import GPSIcon from "../../../assets/icons/gps.svg";
-import LockIcon from "../../../assets/icons/lock.svg";
-import ShoppingBagIcon from "../../../assets/icons/shopping-bag.svg";
+// import GPSIcon from "../../../assets/icons/gps.svg";
+// import LockIcon from "../../../assets/icons/lock.svg";
+// import ShoppingBagIcon from "../../../assets/icons/shopping-bag.svg";
 import ScaleDownPressable from "../ScaleDownPressable";
 import StyledMotiView from "../StyledMotiView";
 import { useFormData } from "./context";
@@ -42,7 +45,7 @@ const presenceProps = {
 } as const;
 
 type Props = {
-  setScreen: setScreen;
+  setScreen: SetScreen;
 };
 
 export default function FundInfo({ setScreen }: Props) {
@@ -104,7 +107,7 @@ export default function FundInfo({ setScreen }: Props) {
                   <FundCard
                     className="mb-2"
                     description="Usually for groceries, transportation"
-                    Icon={ShoppingBagIcon}
+                    // Icon={ShoppingBagIcon}
                     label="For Spending"
                     onLayout={handleSpendingOnLayout}
                     pillLabel="Variable"
@@ -121,7 +124,7 @@ export default function FundInfo({ setScreen }: Props) {
                   <FundCard
                     className="mb-2"
                     description="Automatically set aside money for this budget. Usually for rent, electricity"
-                    Icon={LockIcon}
+                    // Icon={LockIcon}
                     label="Non-negotiables"
                     onLayout={handleNonNegotiableOnLayout}
                     pillLabel="Fixed"
@@ -137,7 +140,7 @@ export default function FundInfo({ setScreen }: Props) {
                 >
                   <FundCard
                     description="Set a target amount to build up over time. Usually for savings, big purchases"
-                    Icon={GPSIcon}
+                    // Icon={GPSIcon}
                     label="Targets"
                     onLayout={handleTargetOnLayout}
                   />
@@ -170,7 +173,7 @@ function FundCard({
   label,
   description,
   pillLabel,
-  Icon,
+  // Icon,
   className,
   style,
   onLayout,
@@ -178,7 +181,7 @@ function FundCard({
   label: string;
   pillLabel?: string;
   description: string;
-  Icon: FC<SvgProps>;
+  // Icon: FC<SvgProps>;
 } & Pick<ComponentProps<typeof View>, "style" | "className" | "onLayout">) {
   return (
     <StyledMotiView
@@ -186,9 +189,7 @@ function FundCard({
       onLayout={onLayout}
       style={style}
     >
-      <View className="mt-[6px] mr-4">
-        <Icon />
-      </View>
+      <View className="mt-[6px] mr-4">{/* <Icon /> */}</View>
 
       <View className="flex-shrink">
         <View className="flex-row items-center">

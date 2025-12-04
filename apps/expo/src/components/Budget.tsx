@@ -1,20 +1,12 @@
-import type { Folder } from ".prisma/client";
+import type { Folder } from "api";
 import { useEffect } from "react";
-import { Pressable, type PressableProps, Text, View } from "react-native";
-import { useDerivedValue, useSharedValue } from "react-native-reanimated";
-import * as ContextMenu from "zeego/context-menu";
+import type { PressableProps } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
+// import * as ContextMenu from "zeego/context-menu";
 import type { FundWithMeta } from "~/types";
-import { pink, violet } from "~/utils/colors";
-import { toCurrencyNarrow } from "~/utils/functions";
+import { pink } from "~/utils/colors";
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
 import useToggle from "~/utils/hooks/useToggle";
-import { transitions } from "~/utils/motion";
-import FolderClosed from "../../assets/icons/folder-duo.svg";
-import FolderOpen from "../../assets/icons/folder-open-duo.svg";
-import { AnimateHeight } from "./AnimateHeight";
-import Category, { CATEGORY_HEIGHT } from "./Category";
-import ScaleDownPressable from "./ScaleDownPressable";
-import StyledMotiView from "./StyledMotiView";
 
 const overspentColor = pink.pink8;
 
@@ -60,141 +52,143 @@ export default function Budget({
     toggle();
   };
 
-  return (
-    <View className="overflow-visible">
-      <ContextMenu.Root>
-        <ContextMenu.Trigger style={{ borderRadius: 16 }}>
-          <Pressable
-            {...rest}
-            className="rounded-2xl"
-            onPress={(...args) => {
-              open.value = !open.value;
-              rest.onPress?.(...args);
-            }}
-          >
-            {/* bg is mauve12 with 2% opacity */}
-            <View className="flex-row items-center justify-between rounded-2xl bg-[#1a152307] p-4">
-              <View className="flex-row items-center">
-                <View className="relative h-4 w-4">
-                  <StyledMotiView
-                    animate={useDerivedValue(() => ({
-                      opacity: open.value ? 1 : 0,
-                    }))}
-                    className="absolute inset-0"
-                    transition={transitions.noTransition}
-                  >
-                    <FolderOpen height={16} width={16} />
-                  </StyledMotiView>
-                  <StyledMotiView
-                    animate={useDerivedValue(() => ({
-                      opacity: open.value ? 0 : 1,
-                    }))}
-                    className="absolute inset-0"
-                    transition={transitions.noTransition}
-                  >
-                    <FolderClosed height={16} width={16} />
-                  </StyledMotiView>
-                </View>
-                <Text className="ml-3 font-satoshi-medium text-base text-mauve12">
-                  {folderName}
-                </Text>
-              </View>
+  return null;
 
-              <StyledMotiView
-                animate={useDerivedValue(() => ({
-                  opacity: open.value ? 0 : 1,
-                }))}
-                className="flex-row items-end"
-                transition={transitions.snappy}
-              >
-                <Text
-                  className="font-satoshi text-sm"
-                  style={{
-                    // TODO: overspending for targets and non negotiable does not make sense na i-error ang color
-                    color: didOverspend ? overspentColor : violet.violet12,
-                  }}
-                >
-                  <Text className="font-nunito-semibold">
-                    {toCurrencyNarrow(amountLeft)}{" "}
-                  </Text>
-                  <Text>left</Text>
-                </Text>
-              </StyledMotiView>
-            </View>
-          </Pressable>
-        </ContextMenu.Trigger>
+  // return (
+  //   <View className="overflow-visible">
+  //     <ContextMenu.Root>
+  //       <ContextMenu.Trigger style={{ borderRadius: 16 }}>
+  //         <Pressable
+  //           {...rest}
+  //           className="rounded-2xl"
+  //           onPress={(...args) => {
+  //             open.value = !open.value;
+  //             rest.onPress?.(...args);
+  //           }}
+  //         >
+  //           {/* bg is mauve12 with 2% opacity */}
+  //           <View className="flex-row items-center justify-between rounded-2xl bg-[#1a152307] p-4">
+  //             <View className="flex-row items-center">
+  //               <View className="relative h-4 w-4">
+  //                 <StyledMotiView
+  //                   animate={useDerivedValue(() => ({
+  //                     opacity: open.value ? 1 : 0,
+  //                   }))}
+  //                   className="absolute inset-0"
+  //                   transition={transitions.noTransition}
+  //                 >
+  //                   <FolderOpen height={16} width={16} />
+  //                 </StyledMotiView>
+  //                 <StyledMotiView
+  //                   animate={useDerivedValue(() => ({
+  //                     opacity: open.value ? 0 : 1,
+  //                   }))}
+  //                   className="absolute inset-0"
+  //                   transition={transitions.noTransition}
+  //                 >
+  //                   <FolderClosed height={16} width={16} />
+  //                 </StyledMotiView>
+  //               </View>
+  //               <Text className="ml-3 font-satoshi-medium text-base text-mauve12">
+  //                 {folderName}
+  //               </Text>
+  //             </View>
 
-        <ContextMenu.Content>
-          {/* <ContextMenu.Label>Label</ContextMenu.Label> */}
-          <ContextMenu.Item
-            destructive
-            key="item 2"
-            onSelect={() => {
-              navigation.navigate("CreateFund", { folderId });
-            }}
-          >
-            <ContextMenu.ItemTitle>Add</ContextMenu.ItemTitle>
+  //             <StyledMotiView
+  //               animate={useDerivedValue(() => ({
+  //                 opacity: open.value ? 0 : 1,
+  //               }))}
+  //               className="flex-row items-end"
+  //               transition={transitions.snappy}
+  //             >
+  //               <Text
+  //                 className="font-satoshi text-sm"
+  //                 style={{
+  //                   // TODO: overspending for targets and non negotiable does not make sense na i-error ang color
+  //                   color: didOverspend ? overspentColor : violet.violet12,
+  //                 }}
+  //               >
+  //                 <Text className="font-nunito-semibold">
+  //                   {toCurrencyNarrow(amountLeft)}{" "}
+  //                 </Text>
+  //                 <Text>left</Text>
+  //               </Text>
+  //             </StyledMotiView>
+  //           </View>
+  //         </Pressable>
+  //       </ContextMenu.Trigger>
 
-            <ContextMenu.ItemIcon
-              ios={{
-                // name: "trash", // required
-                name: "plus", // required
-                scale: "small",
-              }}
-            />
-          </ContextMenu.Item>
-          {show ? (
-            <ContextMenu.Item destructive key="item 1" onSelect={handleToggle}>
-              <ContextMenu.ItemTitle>Show</ContextMenu.ItemTitle>
+  //       <ContextMenu.Content>
+  //         {/* <ContextMenu.Label>Label</ContextMenu.Label> */}
+  //         <ContextMenu.Item
+  //           destructive
+  //           key="item 2"
+  //           onSelect={() => {
+  //             navigation.navigate("CreateFund", { folderId });
+  //           }}
+  //         >
+  //           <ContextMenu.ItemTitle>Add</ContextMenu.ItemTitle>
 
-              <ContextMenu.ItemIcon
-                ios={{
-                  // name: "trash", // required
-                  name: "eye", // required
-                  scale: "small",
-                }}
-              />
-            </ContextMenu.Item>
-          ) : (
-            <ContextMenu.Item destructive key="item 1" onSelect={handleToggle}>
-              <ContextMenu.ItemTitle>Hide</ContextMenu.ItemTitle>
+  //           <ContextMenu.ItemIcon
+  //             ios={{
+  //               // name: "trash", // required
+  //               name: "plus", // required
+  //               scale: "small",
+  //             }}
+  //           />
+  //         </ContextMenu.Item>
+  //         {show ? (
+  //           <ContextMenu.Item destructive key="item 1" onSelect={handleToggle}>
+  //             <ContextMenu.ItemTitle>Show</ContextMenu.ItemTitle>
 
-              <ContextMenu.ItemIcon
-                ios={{
-                  // name: "trash", // required
-                  name: "eye.slash", // required
-                  scale: "small",
-                }}
-              />
-            </ContextMenu.Item>
-          )}
-        </ContextMenu.Content>
-      </ContextMenu.Root>
+  //             <ContextMenu.ItemIcon
+  //               ios={{
+  //                 // name: "trash", // required
+  //                 name: "eye", // required
+  //                 scale: "small",
+  //               }}
+  //             />
+  //           </ContextMenu.Item>
+  //         ) : (
+  //           <ContextMenu.Item destructive key="item 1" onSelect={handleToggle}>
+  //             <ContextMenu.ItemTitle>Hide</ContextMenu.ItemTitle>
 
-      {funds.length ? (
-        <AnimateHeight
-          defaultOpen
-          initalHeight={CATEGORY_HEIGHT * funds.length}
-          open={open}
-        >
-          {funds.map((fund) => (
-            <Category fund={fund} key={fund.id} />
-          ))}
-        </AnimateHeight>
-      ) : (
-        <AnimateHeight defaultOpen initalHeight={48} open={open}>
-          <ScaleDownPressable
-            className="h-12 w-full items-center justify-center"
-            onPress={() => {
-              navigation.navigate("CreateFund", { folderId });
-            }}
-          >
-            <Text className="font-satoshi text-mauve11 text-sm">
-              Add a fund to this folder
-            </Text>
-          </ScaleDownPressable>
-        </AnimateHeight>
-      )}
-    </View>
-  );
+  //             <ContextMenu.ItemIcon
+  //               ios={{
+  //                 // name: "trash", // required
+  //                 name: "eye.slash", // required
+  //                 scale: "small",
+  //               }}
+  //             />
+  //           </ContextMenu.Item>
+  //         )}
+  //       </ContextMenu.Content>
+  //     </ContextMenu.Root>
+
+  //     {funds.length ? (
+  //       <AnimateHeight
+  //         defaultOpen
+  //         initalHeight={CATEGORY_HEIGHT * funds.length}
+  //         open={open}
+  //       >
+  //         {funds.map((fund) => (
+  //           <Category fund={fund} key={fund.id} />
+  //         ))}
+  //       </AnimateHeight>
+  //     ) : (
+  //       <AnimateHeight defaultOpen initalHeight={48} open={open}>
+  //         <ScaleDownPressable
+  //           className="h-12 w-full items-center justify-center"
+  //           onPress={() => {
+  //             navigation.navigate("CreateFund", { folderId });
+  //           }}
+  //         >
+  //           <Text className="font-satoshi text-mauve11 text-sm">
+  //             Add a fund to this folder
+  //           </Text>
+  //         </ScaleDownPressable>
+  //       </AnimateHeight>
+  //     )}
+  //   </View>
+  // );
 }

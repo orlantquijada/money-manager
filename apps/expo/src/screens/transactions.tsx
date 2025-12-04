@@ -1,6 +1,6 @@
-import type { Fund } from ".prisma/client";
 import { useNavigationState } from "@react-navigation/native";
-import clsx from "clsx";
+import type { Fund } from "api";
+import { clsx } from "clsx";
 import { MotiText, MotiView } from "moti";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
@@ -18,7 +18,7 @@ import { toCurrency } from "~/utils/functions";
 import { transitions } from "~/utils/motion";
 import { trpc } from "~/utils/trpc";
 // import ChartIcon from "../../assets/icons/chart-column.svg"
-import ChartIcon from "../../assets/icons/calendar-dates.svg";
+// import ChartIcon from "../../assets/icons/calendar-dates.svg";
 // import ChevronRightIcon from "../../assets/icons/hero-icons/chevron-right.svg"
 
 export default function TransactionsScreen() {
@@ -47,12 +47,12 @@ export default function TransactionsScreen() {
               Expense Structure
             </Text>
             <Pressable className="flex-row items-center justify-center">
-              <ChartIcon
-                // color={mauveDark.mauve12}
-                height={20}
-                strokeWidth={3}
-                width={20}
-              />
+              {/* <ChartIcon */}
+              {/*   // color={mauveDark.mauve12} */}
+              {/*   height={20} */}
+              {/*   strokeWidth={3} */}
+              {/*   width={20} */}
+              {/* /> */}
               <Text className="ml-2 font-satoshi-medium text-mauve12 text-sm">
                 March
               </Text>

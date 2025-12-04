@@ -16,7 +16,9 @@
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/f9195338-5ae2-4197-a799-1af0403e6d8d"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.orlantquijada.expo"
@@ -36,7 +38,11 @@
         "projectId": "f9195338-5ae2-4197-a799-1af0403e6d8d"
       }
     },
-    "plugins": ["expo-font", "expo-secure-store"],
+    "plugins": [
+      "expo-font",
+      "expo-secure-store",
+      "expo-build-properties"
+    ],
     "runtimeVersion": {
       "policy": "appVersion"
     }

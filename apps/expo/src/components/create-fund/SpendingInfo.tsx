@@ -1,8 +1,8 @@
-import type { TimeMode } from ".prisma/client";
+import type { TimeMode } from "api";
 import { AnimatePresence } from "moti";
 import { type ReactNode, useRef, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
-import type { setScreen } from "~/screens/create-fund";
+import type { setScreen as SetScreen } from "~/screens/create-fund";
 import { useHardwareBackPress } from "~/utils/hooks/useHardwareBackPress";
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
 import { useRootStackRoute } from "~/utils/hooks/useRootStackRoute";
@@ -22,7 +22,7 @@ export default function SpendingInfo({
   setScreen,
 }: {
   onBackPress: () => void;
-  setScreen: setScreen;
+  setScreen: SetScreen;
 }) {
   useHardwareBackPress(onBackPress);
 
@@ -91,7 +91,7 @@ const readableTimeModeMap: Record<TimeMode, string> = {
 type WrapperProps = {
   children: ReactNode;
   onBackPress: () => void;
-  setScreen: setScreen;
+  setScreen: SetScreen;
   selectedTimeMode?: TimeMode;
 };
 // necessary Wrapper component since <Choice/> always animates on rerender
@@ -107,7 +107,7 @@ function Wrapper({
   const route = useRootStackRoute("CreateFund");
   const navigation = useRootStackNavigation();
   const createFund = trpc.fund.create.useMutation();
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const [didSubmit, setDidSubmit] = useState(false);
 
   const handleSetFormValues = () => {

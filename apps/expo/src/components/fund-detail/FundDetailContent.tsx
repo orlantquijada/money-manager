@@ -5,14 +5,14 @@ import Animated, {
   interpolate,
   useAnimatedStyle,
 } from "react-native-reanimated";
-import * as DropdownMenu from "zeego/dropdown-menu";
+// import * as DropdownMenu from "zeego/dropdown-menu";
 
 import type { FundWithMeta } from "~/types";
-import { lime, mauve, violet } from "~/utils/colors";
+import { lime, violet } from "~/utils/colors";
 import { fundTypeReadableText } from "~/utils/constants";
 import { toCurrencyNarrow } from "~/utils/functions";
 import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation";
-import ChevronRight from "../../../assets/icons/hero-icons/chevron-right.svg";
+// import ChevronRight from "../../../assets/icons/hero-icons/chevron-right.svg";
 // import Ellipsis from "../../../assets/icons/hero-icons/ellipsis-horizontal.svg"
 import Ellipsis from "../../../assets/icons/more-horiz.svg";
 import CategoryProgressBars from "../dashboard/Fund/CategoryProgressBars";
@@ -127,12 +127,12 @@ export default function FundDetailContent({ fund }: Props) {
             </Text>
 
             <View className="ml-3 aspect-square w-6 items-center justify-center rounded-md bg-mauve3">
-              <ChevronRight
-                color={mauve.mauve8}
-                height={15}
-                strokeWidth={3}
-                width={15}
-              />
+              {/* <ChevronRight */}
+              {/*   color={mauve.mauve8} */}
+              {/*   height={15} */}
+              {/*   strokeWidth={3} */}
+              {/*   width={15} */}
+              {/* /> */}
             </View>
           </ScaleDownPressable>
           {/* <ScaleDownPressable */}
@@ -197,41 +197,42 @@ function useStyles() {
 
 // TODO: dropdown
 function Dropdown() {
-  return (
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger asChild>
-        <ScaleDownPressable
-          className="aspect-square w-6 items-center justify-center rounded-md bg-mauve3"
-          scale={0.9}
-        >
-          <Ellipsis
-            color={mauve.mauve8}
-            height={15}
-            strokeWidth={3}
-            width={15}
-          />
-        </ScaleDownPressable>
-      </DropdownMenu.Trigger>
+  return null;
+  // return (
+  //   <DropdownMenu.Root>
+  //     <DropdownMenu.Trigger asChild>
+  //       <ScaleDownPressable
+  //         className="aspect-square w-6 items-center justify-center rounded-md bg-mauve3"
+  //         scale={0.9}
+  //       >
+  //         <Ellipsis
+  //           color={mauve.mauve8}
+  //           height={15}
+  //           strokeWidth={3}
+  //           width={15}
+  //         />
+  //       </ScaleDownPressable>
+  //     </DropdownMenu.Trigger>
 
-      <DropdownMenu.Content>
-        <DropdownMenu.Label>Label</DropdownMenu.Label>
-        <DropdownMenu.Item
-          destructive
-          key="item 1"
-          onSelect={() => {
-            console.log("wow");
-          }}
-        >
-          <DropdownMenu.ItemTitle>Hello World</DropdownMenu.ItemTitle>
+  //     <DropdownMenu.Content>
+  //       <DropdownMenu.Label>Label</DropdownMenu.Label>
+  //       <DropdownMenu.Item
+  //         destructive
+  //         key="item 1"
+  //         onSelect={() => {
+  //           console.log("wow");
+  //         }}
+  //       >
+  //         <DropdownMenu.ItemTitle>Hello World</DropdownMenu.ItemTitle>
 
-          <DropdownMenu.ItemIcon
-            ios={{
-              name: "trash", // required
-              scale: "small",
-            }}
-          />
-        </DropdownMenu.Item>
-      </DropdownMenu.Content>
-    </DropdownMenu.Root>
-  );
+  //         <DropdownMenu.ItemIcon
+  //           ios={{
+  //             name: "trash", // required
+  //             scale: "small",
+  //           }}
+  //         />
+  //       </DropdownMenu.Item>
+  //     </DropdownMenu.Content>
+  //   </DropdownMenu.Root>
+  // );
 }

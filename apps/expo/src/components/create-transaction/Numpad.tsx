@@ -1,8 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
 import { View, type ViewProps } from "react-native";
-import { mauveDark } from "~/utils/colors";
-
-import ChevronLeftIcon from "../../../assets/icons/hero-icons/chevron-left.svg";
 import { NumberButton } from "./NumberButton";
 
 type Props = {
@@ -59,12 +56,12 @@ export function Numpad({ setAmount, ...props }: Props) {
           }
         >
           <View className="relative">
-            <ChevronLeftIcon
-              color={mauveDark.mauve12}
-              height={20}
-              strokeWidth={3.5}
-              width={20}
-            />
+            {/* <ChevronLeftIcon */}
+            {/*   color={mauveDark.mauve12} */}
+            {/*   height={20} */}
+            {/*   strokeWidth={3.5} */}
+            {/*   width={20} */}
+            {/* /> */}
           </View>
         </NumberButton>
       </View>

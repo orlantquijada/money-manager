@@ -1,4 +1,4 @@
-import type { FundType } from ".prisma/client";
+import type { FundType } from "api";
 import type { FC } from "react";
 import ScaleDownPressable from "~/components/ScaleDownPressable";
 import type { FundWithMeta } from "~/types";

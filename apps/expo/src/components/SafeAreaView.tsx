@@ -1,4 +1,4 @@
-import { styled } from "nativewind";
+// import { styled } from "nativewind";
 import { View, type ViewProps } from "react-native";
 import {
   type EdgeInsets,
@@ -37,4 +37,5 @@ function SafeAreaView(props: Props) {
   );
 }
 
-export default styled(SafeAreaView);
+// export default styled(SafeAreaView);
+export default SafeAreaView;

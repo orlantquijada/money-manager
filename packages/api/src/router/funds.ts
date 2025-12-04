@@ -1,5 +1,5 @@
 import { endOfMonth, startOfMonth } from "date-fns";
-import { Folder, Fund, Transaction } from "db/schema";
+import { folders, funds, transactions } from "db/schema";
 import {
   and,
   asc,
@@ -27,47 +27,50 @@ export const fundsRouter = router({
       })
     )
     .mutation(({ input, ctx }) =>
-      ctx.db.insert(Fund).values({
+      ctx.db.insert(funds).values({
         ...input,
         budgetedAmount: input.budgetedAmount.toString(),
       })
     ),
   list: protectedProcedure.query(async ({ ctx }) => {
+    return [];
     // Use db.select for explicit join and type safety
-    const funds = await ctx.db
+
+    console.log("hello");
+    const _funds = await ctx.db
       .select({
-        ...getTableColumns(Fund),
+        ...getTableColumns(funds),
       })
-      .from(Fund)
-      .innerJoin(Folder, eq(Fund.folderId, Folder.id))
+      .from(funds)
+      .innerJoin(folders, eq(funds.folderId, folders.id))
       // TODO: implement auth
-      // .where(eq(Folder.userId, ctx.auth.userId || ""))
-      .orderBy(asc(Fund.name));
+      // .where(eq(folders.userId, ctx.auth.userId || ""))
+      .orderBy(asc(funds.name));
 
     const totalSpentByFund = await ctx.db
       .select({
-        fundId: Transaction.fundId,
-        amount: sum(Transaction.amount).mapWith(Number),
+        fundId: transactions.fundId,
+        amount: sum(transactions.amount).mapWith(Number),
       })
-      .from(Transaction)
+      .from(transactions)
       .where(
         and(
           inArray(
-            Transaction.fundId,
-            funds.map((f) => f.id)
+            transactions.fundId,
+            _funds.map((f) => f.id)
           ),
-          gte(Transaction.date, startOfMonth(new Date())),
-          lt(Transaction.date, endOfMonth(new Date()))
+          gte(transactions.date, startOfMonth(new Date())),
+          lt(transactions.date, endOfMonth(new Date()))
         )
       )
-      .groupBy(Transaction.fundId);
+      .groupBy(transactions.fundId);
 
     const totalSpentMap: Record<number, number> = {};
     for (const t of totalSpentByFund) {
       totalSpentMap[t.fundId] = t.amount;
     }
 
-    return funds.map((fund) => ({
+    return _funds.map((fund) => ({
       ...fund,
       budgetedAmount: Number(fund.budgetedAmount),
       totalSpent: totalSpentMap[fund.id] || 0,
@@ -76,8 +79,8 @@ export const fundsRouter = router({
   retrieve: protectedProcedure
     .input(z.number())
     .query(async ({ ctx, input }) => {
-      const fund = await ctx.db.query.Fund.findFirst({
-        where: eq(Fund.id, input),
+      const fund = await ctx.db.query.funds.findFirst({
+        where: eq(funds.id, input),
       });
 
       if (!fund) {

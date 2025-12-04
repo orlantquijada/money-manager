@@ -9,9 +9,9 @@ import {
   type BottomSheetData,
   useTransactionStore,
 } from "~/utils/hooks/useTransactionStore";
-import ChevronDownIcon from "../../../assets/icons/hero-icons/chevron-down.svg";
-import NoteIcon from "../../../assets/icons/note-duo-dark.svg";
-import WalletIcon from "../../../assets/icons/wallet-duo.svg";
+// import ChevronDownIcon from "../../../assets/icons/hero-icons/chevron-down.svg";
+// import NoteIcon from "../../../assets/icons/note-duo-dark.svg";
+// import WalletIcon from "../../../assets/icons/wallet-duo.svg";
 import ScaleDownPressable from "../ScaleDownPressable";
 import DateSection from "./DateSection";
 
@@ -42,12 +42,12 @@ export default function BottomSheetForm({
           opacity={0.5}
           scale={0.9}
         >
-          <ChevronDownIcon
-            color={mauveDark.mauve12}
-            height={20}
-            strokeWidth={3}
-            width={20}
-          />
+          {/* <ChevronDownIcon */}
+          {/*   color={mauveDark.mauve12} */}
+          {/*   height={20} */}
+          {/*   strokeWidth={3} */}
+          {/*   width={20} */}
+          {/* /> */}
         </ScaleDownPressable>
       </View>
 
@@ -72,7 +72,7 @@ export default function BottomSheetForm({
         className="h-16 flex-row items-center border-b border-b-mauveDark4 px-4"
         onPress={openFundListBottomSheet}
       >
-        <WalletIcon height={20} width={20} />
+        {/* <WalletIcon height={20} width={20} /> */}
         <View className="ml-4 h-full grow justify-center">
           <Text
             className={clsx(
@@ -110,7 +110,7 @@ function NoteSection({ autoFocus }: { autoFocus?: boolean }) {
 
   return (
     <View className="min-h-[64px] flex-row items-center border-b border-b-mauveDark4 px-4">
-      <NoteIcon height={20} width={20} />
+      {/* <NoteIcon height={20} width={20} /> */}
       <TextInput
         autoFocus={autoFocus}
         className="ml-4 h-full shrink grow font-satoshi-medium text-mauveDark12"

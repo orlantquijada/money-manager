@@ -18,7 +18,6 @@ import { Numpad } from "~/components/create-transaction/Numpad";
 import StoreListBottomSheet from "~/components/create-transaction/StoreBottomSheet";
 import SafeAreaView from "~/components/SafeAreaView";
 import ScaleDownPressable from "~/components/ScaleDownPressable";
-import { mauveDark } from "~/utils/colors";
 import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation";
 import { useRootBottomTabRoute } from "~/utils/hooks/useRootBottomTabRoute";
 import {
@@ -27,9 +26,10 @@ import {
   useTransactionStore,
 } from "~/utils/hooks/useTransactionStore";
 import { trpc } from "~/utils/trpc";
+
 // import TransactionFlowChoices from "~/components/create-transaction/TransactionFlowChoices"
 
-import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg";
+// import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg";
 
 const { height: screenHeight } = Dimensions.get("screen");
 
@@ -53,12 +53,12 @@ export default function CreateTransaction() {
             onPress={() => navigation.goBack()}
             scale={0.85}
           >
-            <CrossIcon
-              color={mauveDark.mauve12}
-              height={24}
-              strokeWidth={3}
-              width={24}
-            />
+            {/* <CrossIcon */}
+            {/*   color={mauveDark.mauve12} */}
+            {/*   height={24} */}
+            {/*   strokeWidth={3} */}
+            {/*   width={24} */}
+            {/* /> */}
           </ScaleDownPressable>
         </View>
 

@@ -1,9 +1,8 @@
-import { clerkPlugin } from "@clerk/fastify";
+import os from "node:os";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { appRouter, authRouter, createContext } from "api";
+import { appRouter, createContext } from "api";
 import fastify from "fastify";
-import os from "os";
 
 const { app, start } = createServer();
 
@@ -24,17 +23,15 @@ function createServer() {
     logger: true,
   });
 
-  app.register(clerkPlugin);
-
   app.register(fastifyTRPCPlugin, {
     prefix: "/trpc",
     trpcOptions: { router: appRouter, createContext },
   });
 
-  app.register(fastifyTRPCPlugin, {
-    prefix: "/auth",
-    trpcOptions: { router: authRouter },
-  });
+  // app.register(fastifyTRPCPlugin, {
+  //   prefix: "/auth",
+  //   trpcOptions: { router: authRouter },
+  // });
 
   app.get("/ping", async () => "pong");
 
@@ -47,8 +44,9 @@ function createServer() {
 
     try {
       await app.listen({ port, host });
-      if (process.env.NODE_ENV === "development")
+      if (process.env.NODE_ENV === "development") {
         console.log(`listening on ${host}:${port}`);
+      }
     } catch (err) {
       app.log.error("err", err);
       process.exit(1);

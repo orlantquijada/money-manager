@@ -7,7 +7,7 @@
     "build": "turbo build",
     "clean": "rm -rf node_modules",
     "start": "turbo start",
-    "clean:workspaces": "turbo clean",
+    "clean:ws": "turbo clean",
     "db:generate": "turbo db:generate",
     "db:push": "turbo db:push db:generate",
     "db:deploy": "turbo db:deploy",

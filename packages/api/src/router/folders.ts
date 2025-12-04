@@ -1,4 +1,4 @@
-import { Folder, Transaction } from "db/schema";
+import { folders, transactions } from "db/schema";
 import { and, eq, gte, inArray, lte, sum } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure, router } from "../trpc";
@@ -10,16 +10,16 @@ export const foldersRouter = router({
         name: z.string(),
       })
     )
-    .mutation(({ input, ctx }) =>
-      ctx.db.insert(Folder).values({
-        ...input,
-        userId: ctx.auth.userId || "",
-      })
-    ),
+    .mutation(({ input, ctx }) => {
+      // ctx.db.insert(folders).values({
+      //   ...input,
+      //   userId: ctx.auth.userId || "",
+      // })
+    }),
   remove: protectedProcedure
     .input(z.number())
     .mutation(({ input, ctx }) =>
-      ctx.db.delete(Folder).where(eq(Folder.id, input))
+      ctx.db.delete(folders).where(eq(folders.id, input))
     ),
   listWithFunds: protectedProcedure
     .input(
@@ -31,8 +31,9 @@ export const foldersRouter = router({
         .optional()
     )
     .query(async ({ ctx, input }) => {
-      const foldersWithFunds = await ctx.db.query.Folder.findMany({
-        where: eq(Folder.userId, ctx.auth.userId || ""),
+      return [];
+      const foldersWithFunds = await ctx.db.query.folders.findMany({
+        // where: eq(folders.userId, ctx.auth.userId || ""),
         with: {
           funds: {
             orderBy: (funds, { asc }) => asc(funds.createdAt),
@@ -58,20 +59,20 @@ export const foldersRouter = router({
 
       const totalSpentByFund = await ctx.db
         .select({
-          fundId: Transaction.fundId,
-          amount: sum(Transaction.amount).mapWith(Number),
+          fundId: transactions.fundId,
+          amount: sum(transactions.amount).mapWith(Number),
         })
-        .from(Transaction)
+        .from(transactions)
         .where(
           and(
-            inArray(Transaction.fundId, fundIds),
+            inArray(transactions.fundId, fundIds),
             input?.startDate
-              ? gte(Transaction.date, input.startDate)
+              ? gte(transactions.date, input.startDate)
               : undefined,
-            input?.endDate ? lte(Transaction.date, input.endDate) : undefined
+            input?.endDate ? lte(transactions.date, input.endDate) : undefined
           )
         )
-        .groupBy(Transaction.fundId);
+        .groupBy(transactions.fundId);
 
       return foldersWithFunds.map((folder) => ({
         ...folder,
@@ -89,8 +90,8 @@ export const foldersRouter = router({
       }));
     }),
   list: protectedProcedure.query(({ ctx }) =>
-    ctx.db.query.Folder.findMany({
-      where: eq(Folder.userId, ctx.auth.userId || ""),
+    ctx.db.query.folders.findMany({
+      // where: eq(folders.userId, ctx.auth.userId || ""),
     })
   ),
 });

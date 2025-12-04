@@ -1,10 +1,10 @@
-import type { Store } from ".prisma/client";
 import {
   BottomSheetFlatList,
   useBottomSheet,
   useBottomSheetModal,
 } from "@gorhom/bottom-sheet";
-import clsx from "clsx";
+import type { Store } from "api";
+import { clsx } from "clsx";
 import { MotiView } from "moti";
 import { MotiPressable } from "moti/interactions";
 import { Skeleton } from "moti/skeleton";
@@ -14,10 +14,10 @@ import { mauveDark, violet } from "~/utils/colors";
 import { debounce } from "~/utils/functions";
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore";
 import { trpc } from "~/utils/trpc";
-import CheckIcon from "../../../assets/icons/checkbox-circle-duo-dark.svg";
+// import CheckIcon from "../../../assets/icons/checkbox-circle-duo-dark.svg";
 
-import ChevronDownIcon from "../../../assets/icons/hero-icons/chevron-down.svg";
-import PlusIcon from "../../../assets/icons/plus-rec-filled-dark.svg";
+// import ChevronDownIcon from "../../../assets/icons/hero-icons/chevron-down.svg";
+// import PlusIcon from "../../../assets/icons/plus-rec-filled-dark.svg";
 import ScaleDownPressable from "../ScaleDownPressable";
 
 export function StoreBottomSheetContent() {
@@ -50,12 +50,12 @@ export function StoreBottomSheetContent() {
           opacity={0.5}
           scale={0.9}
         >
-          <ChevronDownIcon
-            color={mauveDark.mauve12}
-            height={20}
-            strokeWidth={3}
-            width={20}
-          />
+          {/* <ChevronDownIcon */}
+          {/*   color={mauveDark.mauve12} */}
+          {/*   height={20} */}
+          {/*   strokeWidth={3} */}
+          {/*   width={20} */}
+          {/* /> */}
         </ScaleDownPressable>
 
         <TextInput
@@ -91,7 +91,7 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
   const { data, status } = trpc.store.list.useQuery(undefined, {
     staleTime: 1000 * 60 * 5,
   });
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
 
   // data from create-transaction
   const funds = utils.fund.list.getData();
@@ -245,9 +245,9 @@ const StoreList = memo(({ searchText }: { searchText: string }) => {
                 <Text className="font-satoshi-medium text-base text-mauveDark12">
                   {item.name}
                 </Text>
-                {selected ? (
-                  <CheckIcon color={mauveDark.mauve12} height={20} width={20} />
-                ) : null}
+                {/* {selected ? ( */}
+                {/*   <CheckIcon color={mauveDark.mauve12} height={20} width={20} /> */}
+                {/* ) : null} */}
               </ScaleDownPressable>
             </View>
           );

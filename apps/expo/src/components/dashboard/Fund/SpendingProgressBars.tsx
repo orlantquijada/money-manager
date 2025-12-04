@@ -1,6 +1,6 @@
-import type { Fund, TimeMode } from ".prisma/client";
-import PinkStripes from "@assets/icons/stripes-pink.svg";
-import Stripes from "@assets/icons/stripes-small-violet.svg";
+import type { Fund, TimeMode } from "api";
+// import PinkStripes from "@assets/icons/stripes-pink.svg";
+// import Stripes from "@assets/icons/stripes-small-violet.svg";
 import { getWeekOfMonth, getWeeksInMonth, isThisMonth } from "date-fns";
 import { useMemo } from "react";
 import { View } from "react-native";
@@ -25,11 +25,7 @@ export default function SpendingProgressBars({ fund }: { fund: FundWithMeta }) {
           className="flex-1"
           color={pink.pink8}
           progress={100}
-          Stripes={
-            <View>
-              <PinkStripes />
-            </View>
-          }
+          Stripes={<View>{/* <PinkStripes /> */}</View>}
           style={{ flexGrow: overspentProgress / 100 }}
         />
       ) : null}
@@ -41,11 +37,7 @@ export default function SpendingProgressBars({ fund }: { fund: FundWithMeta }) {
           highlight={getShouldHighlight(fund, fundProgress.length - index)}
           key={index + fund.id}
           progress={progress}
-          Stripes={
-            <View className="opacity-[.15]">
-              <Stripes />
-            </View>
-          }
+          Stripes={<View className="opacity-[.15]">{/* <Stripes /> */}</View>}
         />
       ))}
     </View>

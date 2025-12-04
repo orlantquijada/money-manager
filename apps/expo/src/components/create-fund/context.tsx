@@ -1,4 +1,4 @@
-import type { FundType, TimeMode } from ".prisma/client";
+import type { FundType, TimeMode } from "api";
 import { createContext, type ReactNode, useContext, useState } from "react";
 
 type FormData = {

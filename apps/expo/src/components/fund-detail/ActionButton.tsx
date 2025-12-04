@@ -4,7 +4,7 @@ import type { FundWithMeta } from "~/types";
 import { amber, limeDark, mauve } from "~/utils/colors";
 import { progressBarColors } from "~/utils/constants";
 import { useRootBottomTabNavigation } from "~/utils/hooks/useRootBottomTabNavigation";
-import CheckboxCircle from "../../../assets/icons/hero-icons/check-circle-mini-solid.svg";
+// import CheckboxCircle from "../../../assets/icons/hero-icons/check-circle-mini-solid.svg";
 import Button from "../Button";
 import ScaleDownPressable from "../ScaleDownPressable";
 
@@ -50,7 +50,7 @@ function NonNegotiableActionButton({ fund }: { fund: FundWithMeta }) {
           className="h-10"
         >
           <View className="absolute left-0 opacity-80">
-            <CheckboxCircle color={limeDark.lime11} height={20} width={20} />
+            {/* <CheckboxCircle color={limeDark.lime11} height={20} width={20} /> */}
           </View>
           <Text
             className="font-satoshi-medium"

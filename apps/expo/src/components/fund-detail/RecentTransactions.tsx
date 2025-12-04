@@ -1,6 +1,6 @@
-import type { Fund } from ".prisma/client";
 import { useBottomSheet } from "@gorhom/bottom-sheet";
-import clsx from "clsx";
+import type { Fund } from "api";
+import { clsx } from "clsx";
 import { format } from "date-fns";
 import type { ComponentProps, ReactNode } from "react";
 import { Text, View } from "react-native";

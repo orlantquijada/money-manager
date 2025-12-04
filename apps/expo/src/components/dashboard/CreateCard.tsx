@@ -1,17 +1,16 @@
 import type { MotiPressable } from "moti/interactions";
-import type { ComponentProps, FC } from "react";
+import type { ComponentProps } from "react";
 import { Text, View } from "react-native";
-import type { SvgProps } from "react-native-svg";
 import ScaleDownPressable from "../ScaleDownPressable";
 
 type Props = {
-  Icon: FC<SvgProps>;
+  // Icon: FC<SvgProps>;
   title: string;
   description: string;
 } & Pick<ComponentProps<typeof MotiPressable>, "onPress">;
 
 export default function CreateCard({
-  Icon,
+  // Icon,
   title,
   description,
   onPress,
@@ -25,7 +24,7 @@ export default function CreateCard({
       transition={{ type: "timing", duration: 200 }}
     >
       <View className="mr-4 pt-[6px]">
-        <Icon height={18} width={18} />
+        {/* <Icon height={18} width={18} /> */}
       </View>
       <View className="flex-1">
         <Text className="font-satoshi-medium text-base text-mauveDark12">

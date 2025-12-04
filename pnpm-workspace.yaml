@@ -17,3 +17,5 @@ catalog:
   tsx: 4.21.0
   'date-fns': 4.1.0
   '@types/pg': 8.15.6
+
+nodeLinker: hoisted

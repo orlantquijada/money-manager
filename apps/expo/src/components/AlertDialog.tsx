@@ -10,8 +10,8 @@ import { Text, View } from "react-native";
 import { interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { tabbarBottomInset } from "~/navigation/TabBar";
 import { mauve, mauveA } from "~/utils/colors";
-import AlertIcon from "../../assets/icons/alert-triangle.svg";
-import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg";
+// import AlertIcon from "../../assets/icons/alert-triangle.svg";
+// import CrossIcon from "../../assets/icons/hero-icons/x-mark.svg";
 import ScaleDownPressable from "./ScaleDownPressable";
 
 const snapPoints = [273];
@@ -52,19 +52,19 @@ function Content() {
     <View className="bg-mauve1 p-5">
       <View className="mb-4 flex-row justify-between">
         <View>
-          <AlertIcon height={48} strokeWidth={3} width={48} />
+          {/* <AlertIcon height={48} strokeWidth={3} width={48} /> */}
         </View>
         <ScaleDownPressable
           className="aspect-square h-6 items-center justify-center rounded-full bg-mauve3"
           onPress={() => dismiss()}
           scale={0.85}
         >
-          <CrossIcon
-            color={mauve.mauve8}
-            height={16}
-            strokeWidth={3}
-            width={16}
-          />
+          {/* <CrossIcon */}
+          {/*   color={mauve.mauve8} */}
+          {/*   height={16} */}
+          {/*   strokeWidth={3} */}
+          {/*   width={16} */}
+          {/* /> */}
         </ScaleDownPressable>
       </View>
 

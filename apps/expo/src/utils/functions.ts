@@ -1,4 +1,4 @@
-import type { Fund, Transaction } from ".prisma/client";
+import type { Fund, Transaction } from "api";
 import {
   differenceInCalendarDays,
   format,

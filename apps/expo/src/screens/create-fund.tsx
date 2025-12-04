@@ -11,7 +11,7 @@ import TargetsInfo from "~/components/create-fund/TargetsInfo";
 import { usePrevious } from "~/utils/hooks/usePrevious";
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
 
-import CrossIcon from "../../assets/icons/cross.svg";
+// import CrossIcon from "../../assets/icons/cross.svg";
 
 export default function CreateFund() {
   const [screen, setScreen] = useCreateFundScreens();
@@ -71,7 +71,7 @@ function Close() {
       className="flex h-8 w-8 items-center justify-center rounded-full bg-mauveDark12"
       onPress={navigation.goBack}
     >
-      <CrossIcon />
+      {/* <CrossIcon /> */}
     </Pressable>
   );
 }

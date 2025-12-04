@@ -1,4 +1,4 @@
-import type { Fund } from ".prisma/client";
+import type { Fund } from "api";
 import * as d3 from "d3-shape";
 import { motifySvg } from "moti/svg";
 import { useEffect, useState } from "react";

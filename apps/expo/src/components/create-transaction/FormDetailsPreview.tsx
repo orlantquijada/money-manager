@@ -10,7 +10,7 @@ import {
   type HandlePresentModalPress,
   useTransactionStore,
 } from "~/utils/hooks/useTransactionStore";
-import ChevronUpIcon from "../../../assets/icons/hero-icons/chevron-up.svg";
+// import ChevronUpIcon from "../../../assets/icons/hero-icons/chevron-up.svg";
 import ScaleDownPressable from "../ScaleDownPressable";
 
 const scale = 0.92;
@@ -55,12 +55,12 @@ export const FormDetailsPreview = ({
           opacity={0.7}
           scale={0.9}
         >
-          <ChevronUpIcon
-            color={mauveDark.mauve11}
-            height={24}
-            strokeWidth={3}
-            width={24}
-          />
+          {/* <ChevronUpIcon */}
+          {/*   color={mauveDark.mauve11} */}
+          {/*   height={24} */}
+          {/*   strokeWidth={3} */}
+          {/*   width={24} */}
+          {/* /> */}
         </ScaleDownPressable>
       </MotiView>
 

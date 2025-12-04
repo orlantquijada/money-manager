@@ -4,7 +4,7 @@ import type { MotiPressable } from "moti/interactions";
 import type { ComponentProps, PropsWithChildren } from "react";
 import { Pressable, Text, View } from "react-native";
 
-import CheckboxIcon from "../../../assets/icons/checkbox-circle.svg";
+// import CheckboxIcon from "../../../assets/icons/checkbox-circle.svg";
 
 type Props = PropsWithChildren<{
   choiceLabel: string;
@@ -60,7 +60,7 @@ export default function Choice({
             </Text>
           </View>
 
-          {selected ? <CheckboxIcon /> : null}
+          {/* {selected ? <CheckboxIcon /> : null} */}
         </View>
       </MotiView>
     </Pressable>

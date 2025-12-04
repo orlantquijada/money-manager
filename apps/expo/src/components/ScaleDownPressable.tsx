@@ -1,5 +1,5 @@
 import { MotiPressable, mergeAnimateProp } from "moti/interactions";
-import { styled } from "nativewind";
+// import { styled } from "nativewind";
 import type { ComponentProps } from "react";
 
 export type ScaleDownPressableProps = ComponentProps<typeof MotiPressable> & {
@@ -26,4 +26,5 @@ function ScaleDownPressable(props: ScaleDownPressableProps) {
   );
 }
 
-export default styled(ScaleDownPressable);
+// export default styled(ScaleDownPressable);
+export default ScaleDownPressable;

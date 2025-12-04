@@ -4,7 +4,12 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-    ".": "./dist/index.cjs"
+    ".": {
+      "default": "./index.ts"
+    },
+    "./transformer": {
+      "default": "./transformer.ts"
+    }
   },
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist",

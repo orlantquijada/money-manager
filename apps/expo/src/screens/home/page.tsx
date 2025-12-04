@@ -10,7 +10,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import ScaleDownPressable from "~/components/ScaleDownPressable";
 import type { HomeTabsParamList } from "~/types";
 import { screenPadding } from "~/utils/constants";
-import Plus from "../../../assets/icons/plus.svg";
+// import Plus from "../../../assets/icons/plus.svg";
 import BudgetsTab from "./tabs/budgets";
 import TransactionsTab from "./tabs/transactions";
 
@@ -44,7 +44,7 @@ export default function Home2() {
             onPress={handlePresentModalPress}
             scale={0.85}
           >
-            <Plus className="bg-mauve12" />
+            {/* <Plus className="bg-mauve12" /> */}
           </ScaleDownPressable>
         </View>
 

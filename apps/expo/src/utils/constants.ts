@@ -1,4 +1,4 @@
-import type { FundType } from ".prisma/client";
+import type { FundType } from "api";
 import { getDaysInMonth } from "date-fns";
 import { amberDark, lime, violet } from "./colors";
 

@@ -118,10 +118,12 @@ const dark = {
 
 /** @type {import("tailwindcss").Config} */
 module.exports = {
-  presets: [require("tailwind-config")],
+  presets: [require("nativewind/preset")],
   corePlugins: {
     backgroundOpacity: false,
   },
+
+  content: ["./src/**/*.{jsx,tsx}"],
 
   theme: {
     extend: {

@@ -1,4 +1,4 @@
-import type { Folder, Fund, Store, Transaction } from ".prisma/client";
+import type { Folder, Fund, Store, Transaction } from "api";
 
 export * from "./routes";
 

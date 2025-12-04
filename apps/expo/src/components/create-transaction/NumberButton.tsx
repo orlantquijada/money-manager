@@ -1,11 +1,12 @@
 import { MotiPressable } from "moti/interactions";
-import { styled } from "nativewind";
+// import { styled } from "nativewind";
 import { type ComponentProps, type PropsWithChildren, useMemo } from "react";
 import { Text, View } from "react-native";
 
 import { transitions } from "~/utils/motion";
 
-const StyledMotiPressable = styled(MotiPressable);
+// const StyledMotiPressable = styled(MotiPressable);
+const StyledMotiPressable = MotiPressable;
 
 export function NumberButton({
   children,
@@ -15,7 +16,6 @@ export function NumberButton({
   return (
     <StyledMotiPressable
       {...rest}
-      // @ts-expect-error asdasd
       animate={useMemo(
         () =>
           ({ pressed }) => {
@@ -27,8 +27,8 @@ export function NumberButton({
           },
         []
       )}
-      className="h-full w-full"
-      containerStyle={[style, { height: 64, width: "33.33%", flexShrink: 1 }]}
+      // className="h-full w-full"
+      // containerStyle={[style, { height: 64, width: "33.33%", flexShrink: 1 }]}
       transition={transitions.snappy}
     >
       <View className="h-full w-full items-center justify-center">

@@ -1,6 +1,6 @@
-import type { Fund, FundType } from ".prisma/client";
 import { BottomSheetSectionList, useBottomSheet } from "@gorhom/bottom-sheet";
-import clsx from "clsx";
+import type { Fund, FundType } from "api";
+import { clsx } from "clsx";
 import { LinearGradient } from "expo-linear-gradient";
 import { memo, useMemo } from "react";
 import { Text, View } from "react-native";
@@ -120,7 +120,7 @@ const FundSectionList = memo(({ searchText }: { searchText: string }) => {
 FundSectionList.displayName = "FundSectionList";
 
 function useFunds() {
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
 
   // BUG: doesn't return data if previously haven't created a transaction
   // data from create-transaction

@@ -24,21 +24,14 @@ const getBaseUrl = () => {
   if (!localhost) {
     throw new Error("failed to get localhost, configure it manually");
   }
+
   return `http://${localhost}:3000`;
 };
 
-import { useAuth } from "@clerk/clerk-expo";
-import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
-import { QueryClient } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import { transformer } from "api/transformer";
-/**
- * A wrapper for your app that provides the TRPC context.
- * Use only in _app.tsx
- */
-import React from "react";
-import { clientStorage } from "./mmkv";
+import { useState } from "react";
 
 /**
  * A set of typesafe hooks for consuming your API.
@@ -53,29 +46,32 @@ export const client = createTRPCProxyClient<AuthRouter>({
   transformer,
 });
 
-const asyncStoragePersister = createSyncStoragePersister({
-  storage: clientStorage,
-  serialize: transformer.stringify,
-  deserialize: transformer.parse,
-});
+// const asyncStoragePersister = createSyncStoragePersister({
+//   storage: clientStorage,
+//   serialize: transformer.stringify,
+//   deserialize: transformer.parse,
+// });
 
 export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { getToken } = useAuth();
-  const [queryClient] = React.useState(() => new QueryClient());
-  const [trpcClient] = React.useState(() =>
+  // const { getToken } = useAuth();
+  const getToken = () => {};
+
+  const [queryClient] = useState(() => new QueryClient());
+  const [trpcClient] = useState(() =>
     trpc.createClient({
       transformer,
       links: [
         httpBatchLink({
           url: `${getBaseUrl()}/trpc`,
-          async headers() {
-            const authToken = await getToken();
-            return {
-              Authorization: authToken ?? undefined,
-            };
-          },
+
+          // async headers() {
+          //   const authToken = await getToken();
+          //   return {
+          //     Authorization: authToken ?? undefined,
+          //   };
+          // },
         }),
       ],
     })
@@ -83,12 +79,7 @@ export const TRPCProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{ persister: asyncStoragePersister }}
-      >
-        {children}
-      </PersistQueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </trpc.Provider>
   );
 };

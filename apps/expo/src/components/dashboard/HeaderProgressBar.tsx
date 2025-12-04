@@ -1,4 +1,4 @@
-import { styled } from "nativewind";
+// import { styled } from "nativewind";
 import { Dimensions, View } from "react-native";
 import Animated, {
   interpolateColor,
@@ -14,7 +14,8 @@ import { transitions } from "~/utils/motion";
 import Stripes from "../../../assets/icons/stripes.svg";
 import StyledMotiView from "../StyledMotiView";
 
-const StyledAnimatedText = styled(Animated.Text);
+// const StyledAnimatedText = styled(Animated.Text);
+const StyledAnimatedText = Animated.Text;
 
 const { width } = Dimensions.get("screen");
 const progressBarWidth = width - screenPadding * 2;

@@ -1,4 +1,4 @@
-import type { Fund } from ".prisma/client";
+import type { Fund } from "api";
 import { shallow } from "zustand/shallow";
 import { createWithEqualityFn } from "zustand/traditional";
 

@@ -1,5 +1,5 @@
 import { MotiView } from "moti";
-import { styled } from "nativewind";
+// import { styled } from "nativewind";
 import {
   type ComponentPropsWithoutRef,
   type ElementRef,
@@ -13,4 +13,5 @@ const StyledMotiView = forwardRef<
 >((props, ref) => <MotiView {...props} ref={ref} />);
 StyledMotiView.displayName = "StyledMotiView";
 
-export default styled(StyledMotiView);
+// export default styled(StyledMotiView);
+export default StyledMotiView;

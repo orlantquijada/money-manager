@@ -31,37 +31,37 @@ const timestampFields = {
     .$onUpdate(() => new Date()),
 };
 
-export const User = pgTable("users", {
+export const users = pgTable("users", {
   id: text()
     .primaryKey()
     .$defaultFn(() => createId()),
   name: text(),
 });
 
-export const userRelations = relations(User, ({ many }) => ({
-  folders: many(Folder),
-  stores: many(Store),
-  transactions: many(Transaction),
+export const userRelations = relations(users, ({ many }) => ({
+  folders: many(folders),
+  stores: many(stores),
+  transactions: many(transactions),
 }));
 
-export const Folder = pgTable("folders", {
+export const folders = pgTable("folders", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: text().notNull(),
   userId: text()
     .notNull()
-    .references(() => User.id, { onDelete: "cascade" }),
+    .references(() => users.id, { onDelete: "cascade" }),
   ...timestampFields,
 });
 
-export const folderRelations = relations(Folder, ({ one, many }) => ({
-  user: one(User, {
-    fields: [Folder.userId],
-    references: [User.id],
+export const folderRelations = relations(folders, ({ one, many }) => ({
+  user: one(users, {
+    fields: [folders.userId],
+    references: [users.id],
   }),
-  funds: many(Fund),
+  funds: many(funds),
 }));
 
-export const Fund = pgTable("funds", {
+export const funds = pgTable("funds", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: text().notNull(),
   budgetedAmount: decimal({ precision: 12, scale: 2 }).notNull().default("0"),
@@ -70,47 +70,47 @@ export const Fund = pgTable("funds", {
   timeMode: timeModeEnum().notNull(),
   folderId: integer()
     .notNull()
-    .references(() => Folder.id, { onDelete: "cascade" }),
+    .references(() => folders.id, { onDelete: "cascade" }),
   ...timestampFields,
 });
 
-export const fundRelations = relations(Fund, ({ one, many }) => ({
-  folder: one(Folder, {
-    fields: [Fund.folderId],
-    references: [Folder.id],
+export const fundRelations = relations(funds, ({ one, many }) => ({
+  folder: one(folders, {
+    fields: [funds.folderId],
+    references: [folders.id],
   }),
-  transactions: many(Transaction),
-  stores: many(Store),
+  transactions: many(transactions),
+  stores: many(stores),
 }));
 
-export const Store = pgTable(
+export const stores = pgTable(
   "stores",
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     name: text().notNull(),
     userId: text()
       .notNull()
-      .references(() => User.id, { onDelete: "cascade" }),
-    lastSelectedFundId: integer().references(() => Fund.id, {
+      .references(() => users.id, { onDelete: "cascade" }),
+    lastSelectedFundId: integer().references(() => funds.id, {
       onDelete: "cascade",
     }),
   },
   (t) => [unique().on(t.userId, t.name)]
 );
 
-export const storeRelations = relations(Store, ({ one, many }) => ({
-  user: one(User, {
-    fields: [Store.userId],
-    references: [User.id],
+export const storeRelations = relations(stores, ({ one, many }) => ({
+  user: one(users, {
+    fields: [stores.userId],
+    references: [users.id],
   }),
-  lastSelectedFund: one(Fund, {
-    fields: [Store.lastSelectedFundId],
-    references: [Fund.id],
+  lastSelectedFund: one(funds, {
+    fields: [stores.lastSelectedFundId],
+    references: [funds.id],
   }),
-  transactions: many(Transaction),
+  transactions: many(transactions),
 }));
 
-export const Transaction = pgTable("transactions", {
+export const transactions = pgTable("transactions", {
   id: text()
     .primaryKey()
     .$defaultFn(() => createId()),
@@ -119,24 +119,24 @@ export const Transaction = pgTable("transactions", {
   note: text(),
   fundId: integer()
     .notNull()
-    .references(() => Fund.id, { onDelete: "cascade" }),
-  storeId: integer().references(() => Store.id, {
+    .references(() => funds.id, { onDelete: "cascade" }),
+  storeId: integer().references(() => stores.id, {
     onDelete: "cascade",
   }),
-  userId: text().references(() => User.id, { onDelete: "cascade" }),
+  userId: text().references(() => users.id, { onDelete: "cascade" }),
 });
 
-export const transactionRelations = relations(Transaction, ({ one }) => ({
-  fund: one(Fund, {
-    fields: [Transaction.fundId],
-    references: [Fund.id],
+export const transactionRelations = relations(transactions, ({ one }) => ({
+  fund: one(funds, {
+    fields: [transactions.fundId],
+    references: [funds.id],
   }),
-  store: one(Store, {
-    fields: [Transaction.storeId],
-    references: [Store.id],
+  store: one(stores, {
+    fields: [transactions.storeId],
+    references: [stores.id],
   }),
-  user: one(User, {
-    fields: [Transaction.userId],
-    references: [User.id],
+  user: one(users, {
+    fields: [transactions.userId],
+    references: [users.id],
   }),
 }));

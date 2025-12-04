@@ -1,4 +1,4 @@
-import { useUser } from "@clerk/clerk-expo";
+// import { useUser } from "@clerk/clerk-expo";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Platform } from "react-native";
 import CreateFolder from "~/screens/create-folder";
@@ -8,15 +8,17 @@ import TransactionsPage from "~/screens/transactions-list";
 import Welcome from "~/screens/welcome";
 import type { RootStackParamList } from "~/types";
 import { mauveDark, violet } from "~/utils/colors";
-import { useOnboarding } from "~/utils/hooks/useOnboarding";
+// import { useOnboarding } from "~/utils/hooks/useOnboarding";
 
 import RootTabs from "./tabs";
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
 export default function Routes() {
-  const { isSignedIn } = useUser();
-  const { loaded } = useOnboarding();
+  // const { isSignedIn } = useUser();
+  const isSignedIn = true;
+  // const { loaded } = useOnboarding();
+  const loaded = true;
 
   if (!loaded) {
     return null;

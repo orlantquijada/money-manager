@@ -1,13 +1,13 @@
-import type { Folder } from ".prisma/client";
 import { FlashList } from "@shopify/flash-list";
-import clsx from "clsx";
+import type { Folder } from "api";
+import { clsx } from "clsx";
 import { type ComponentProps, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { mauveDark } from "~/utils/colors";
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
 import { trpc } from "~/utils/trpc";
-import FolderClosed from "../../../assets/icons/folder-duo-light.svg";
-import FolderOpen from "../../../assets/icons/folder-open-duo.svg";
+// import FolderClosed from "../../../assets/icons/folder-duo-light.svg";
+// import FolderOpen from "../../../assets/icons/folder-open-duo.svg";
 import CreateFooter from "../CreateFooter";
 import Presence from "../Presence";
 import ScaleDownPressable from "../ScaleDownPressable";
@@ -20,10 +20,11 @@ type Props = {
 export default function ChooseFolder({ onBackPress }: Props) {
   const createFund = trpc.fund.create.useMutation();
   const { data } = trpc.folder.list.useQuery();
-  const utils = trpc.useContext();
+  const utils = trpc.useUtils();
   const navigation = useRootStackNavigation();
   const { formData, setFormValues } = useFormData();
-  const [selectedId, setSelectedId] = useState<Folder["id"]>(formData.folderId);
+  // const [selectedId, setSelectedId] = useState<Folder["id"]>(formData.folderId);
+  const [selectedId, setSelectedId] = useState(formData.folderId);
 
   const handleBackPress = () => {
     onBackPress();
@@ -126,7 +127,7 @@ type FolderCardProps = {
 } & Omit<ComponentProps<typeof ScaleDownPressable>, "children">;
 
 function FolderCard({ folder, selected = false, ...rest }: FolderCardProps) {
-  const Icon = selected ? FolderOpen : FolderClosed;
+  // const Icon = selected ? FolderOpen : FolderClosed;
 
   return (
     <ScaleDownPressable
@@ -136,7 +137,7 @@ function FolderCard({ folder, selected = false, ...rest }: FolderCardProps) {
       className="flex-row items-center rounded-xl p-4"
       {...rest}
     >
-      <Icon height={16} width={16} />
+      {/* <Icon height={16} width={16} /> */}
       <Text
         className={clsx(
           "ml-2 shrink font-satoshi-medium text-base text-mauveDark12",

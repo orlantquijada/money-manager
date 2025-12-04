@@ -1,4 +1,4 @@
-import { useUser } from "@clerk/clerk-expo";
+// import { useUser } from "@clerk/clerk-expo";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,7 +10,7 @@ import { getRandomChoice } from "~/utils/functions";
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
 import { trpc } from "~/utils/trpc";
 
-import CrossIcon from "../../assets/icons/cross.svg";
+// import CrossIcon from "../../assets/icons/cross.svg";
 
 export default function CreateFolder() {
   return (
@@ -91,14 +91,14 @@ function Close() {
       className="flex h-8 w-8 items-center justify-center rounded-full bg-mauveDark12"
       onPress={navigation.goBack}
     >
-      <CrossIcon />
+      {/* <CrossIcon /> */}
     </Pressable>
   );
 }
 
 function useCreateFolder() {
   const utils = trpc.useContext();
-  const { user } = useUser();
+  // const { user } = useUser();
 
   return trpc.folder.create.useMutation({
     // optimistic update stuff
@@ -114,7 +114,8 @@ function useCreateFolder() {
           createdAt: null,
           updatedAt: null,
           funds: [],
-          userId: user?.id || "",
+          // userId: user?.id || "",
+          userId: "",
         },
         ...previousFolders,
       ]);

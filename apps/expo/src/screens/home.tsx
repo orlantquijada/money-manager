@@ -1,11 +1,12 @@
 import { FlashList } from "@shopify/flash-list";
 import type { inferProcedureOutput } from "@trpc/server";
 import type { AppRouter } from "api";
-import React, { type ComponentProps } from "react";
+import type { ComponentProps } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { trpc } from "~/utils/trpc";
-import Plus from "../../assets/icons/plus-rec.svg";
+
+// import Plus from "../../assets/icons/plus-rec.svg";
 
 const PostCard: React.FC<{
   post: inferProcedureOutput<AppRouter["folder"]["list"]>[number];
@@ -45,7 +46,7 @@ const CreatePost: React.FC = () => {
         }}
       >
         <Text className="font-satoshi text-sm text-violet11">
-          Publish post <Plus />
+          {/* Publish post <Plus /> */}
         </Text>
       </TouchableOpacity>
     </View>

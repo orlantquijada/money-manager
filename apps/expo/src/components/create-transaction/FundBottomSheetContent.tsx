@@ -1,10 +1,10 @@
-import type { Fund } from ".prisma/client";
 import {
   BottomSheetFlatList,
   useBottomSheet,
   useBottomSheetModal,
 } from "@gorhom/bottom-sheet";
-import clsx from "clsx";
+import type { Fund } from "api";
+import { clsx } from "clsx";
 import { MotiView } from "moti";
 import { Skeleton } from "moti/skeleton";
 import { memo, useMemo, useState } from "react";
@@ -17,8 +17,8 @@ import {
 } from "~/utils/functions";
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore";
 import { trpc } from "~/utils/trpc";
-import CheckIcon from "../../../assets/icons/checkbox-circle-duo-dark.svg";
-import ChevronDownIcon from "../../../assets/icons/hero-icons/chevron-down.svg";
+// import CheckIcon from "../../../assets/icons/checkbox-circle-duo-dark.svg";
+// import ChevronDownIcon from "../../../assets/icons/hero-icons/chevron-down.svg";
 import ScaleDownPressable from "../ScaleDownPressable";
 import FundSectionList from "./FundSectionList";
 
@@ -52,12 +52,12 @@ export function FundBottomSheetContent() {
           opacity={0.5}
           scale={0.9}
         >
-          <ChevronDownIcon
-            color={mauveDark.mauve12}
-            height={20}
-            strokeWidth={3}
-            width={20}
-          />
+          {/* <ChevronDownIcon */}
+          {/*   color={mauveDark.mauve12} */}
+          {/*   height={20} */}
+          {/*   strokeWidth={3} */}
+          {/*   width={20} */}
+          {/* /> */}
         </ScaleDownPressable>
 
         <TextInput
@@ -180,9 +180,9 @@ const FundList = memo(({ searchText }: { searchText: string }) => {
                   </Text>
                 </View>
 
-                {selected ? (
-                  <CheckIcon color={mauveDark.mauve12} height={20} width={20} />
-                ) : null}
+                {/* {selected ? ( */}
+                {/*   <CheckIcon color={mauveDark.mauve12} height={20} width={20} /> */}
+                {/* ) : null} */}
               </View>
             </ScaleDownPressable>
           </View>

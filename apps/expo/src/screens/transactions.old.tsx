@@ -12,7 +12,7 @@ import {
 } from "~/utils/functions";
 
 // import ChartIcon from "../../assets/icons/chart-column.svg"
-import ChartIcon from "../../assets/icons/calendar-dates.svg";
+// import ChartIcon from "../../assets/icons/calendar-dates.svg";
 
 export default function TransactionsScreen() {
   return (
@@ -24,12 +24,12 @@ export default function TransactionsScreen() {
             Expense Structure
           </Text>
           <Pressable className="flex-row items-center justify-center">
-            <ChartIcon
-              // color={mauveDark.mauve12}
-              height={20}
-              strokeWidth={3}
-              width={20}
-            />
+            {/* <ChartIcon */}
+            {/*   // color={mauveDark.mauve12} */}
+            {/*   height={20} */}
+            {/*   strokeWidth={3} */}
+            {/*   width={20} */}
+            {/* /> */}
             <Text className="ml-2 font-satoshi-medium text-mauve12 text-sm">
               This Week
             </Text>

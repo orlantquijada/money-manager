@@ -1,12 +1,13 @@
 import { Pressable, Text, View } from "react-native";
 import Button from "~/components/Button";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useOnboarding } from "~/utils/hooks/useOnboarding";
+// import { useOnboarding } from "~/utils/hooks/useOnboarding";
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
 
 export default function Onboarding() {
   const navigation = useRootStackNavigation();
-  const { handleSetFirstLaunch } = useOnboarding();
+  // const { handleSetFirstLaunch } = useOnboarding();
+  const handleSetFirstLaunch = () => {};
 
   return (
     <SafeAreaView className="flex-1 bg-violet1">

@@ -7,17 +7,17 @@ import CreateTransaction from "~/screens/create-transaction";
 import Home from "~/screens/home/page";
 import TransactionsScreen from "~/screens/transactions";
 import type { RootBottomTabParamList } from "~/types";
-import { mauveDark, violet } from "~/utils/colors";
+import { violet } from "~/utils/colors";
 
 // import Presence from "~/components/Presence"
 // import Budget from "~/components/Budget"
 
-import ActivityIcon from "../../assets/icons/activity-rec-duo-dark.svg";
-import ActivityFilledIcon from "../../assets/icons/activity-rec-filled-dark.svg";
-import HomeIcon from "../../assets/icons/home-duo-dark.svg";
-import HomeFilledIcon from "../../assets/icons/home-filled-dark.svg";
-import PlusRecIcon from "../../assets/icons/plus-rec-duo-dark.svg";
-import PlusRecFilledIcon from "../../assets/icons/plus-rec-filled-dark.svg";
+// import ActivityIcon from "../../assets/icons/activity-rec-duo-dark.svg";
+// import ActivityFilledIcon from "../../assets/icons/activity-rec-filled-dark.svg";
+// import HomeIcon from "../../assets/icons/home-duo-dark.svg";
+// import HomeFilledIcon from "../../assets/icons/home-filled-dark.svg";
+// import PlusRecIcon from "../../assets/icons/plus-rec-duo-dark.svg";
+// import PlusRecFilledIcon from "../../assets/icons/plus-rec-filled-dark.svg";
 
 import TabBar from "./TabBar";
 
@@ -37,42 +37,48 @@ export default function RootTabs() {
       <Tab.Screen
         component={CreateTransaction}
         name="AddTransaction"
-        options={{
-          tabBarIcon: ({ focused }) =>
-            focused ? (
-              <PlusRecFilledIcon
-                color={mauveDark.mauve12}
-                height={size}
-                width={size}
-              />
-            ) : (
-              <PlusRecIcon height={size} width={size} />
-            ),
-        }}
+        options={
+          {
+            // tabBarIcon: ({ focused }) =>
+            //   focused ? (
+            //     <PlusRecFilledIcon
+            //       color={mauveDark.mauve12}
+            //       height={size}
+            //       width={size}
+            //     />
+            //   ) : (
+            //     <PlusRecIcon height={size} width={size} />
+            //   ),
+          }
+        }
       />
       <Tab.Screen
         component={Home}
         name="Home"
-        options={{
-          tabBarIcon: ({ focused }) =>
-            focused ? (
-              <HomeFilledIcon height={size} width={size} />
-            ) : (
-              <HomeIcon height={size} width={size} />
-            ),
-        }}
+        options={
+          {
+            // tabBarIcon: ({ focused }) =>
+            //   focused ? (
+            //     <HomeFilledIcon height={size} width={size} />
+            //   ) : (
+            //     <HomeIcon height={size} width={size} />
+            //   ),
+          }
+        }
       />
       <Tab.Screen
         component={TransactionsScreen}
         name="Transactions"
-        options={{
-          tabBarIcon: ({ focused }) =>
-            focused ? (
-              <ActivityFilledIcon height={size} width={size} />
-            ) : (
-              <ActivityIcon height={size} width={size} />
-            ),
-        }}
+        options={
+          {
+            // tabBarIcon: ({ focused }) =>
+            //   focused ? (
+            //     <ActivityFilledIcon height={size} width={size} />
+            //   ) : (
+            //     <ActivityIcon height={size} width={size} />
+            //   ),
+          }
+        }
       />
     </Tab.Navigator>
   );

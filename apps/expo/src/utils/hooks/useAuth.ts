@@ -1,62 +1,56 @@
-import {
-  useClerk,
-  useSignIn as useClerkSignIn,
-  useSignUp as useClerkSignUp,
-  useUser,
-} from "@clerk/clerk-expo";
 import { useState } from "react";
-import {
-  clearCredId,
-  createUsername,
-  creds,
-  getCredId,
-  setCredId,
-} from "../lib/auth";
+import { clearCredId } from "../lib/auth";
 import { trpc } from "../trpc";
 
 export function useSignUp() {
-  const { isLoaded, signUp, setActive } = useClerkSignUp();
+  const isLoaded = false;
+  const signUp = () => {};
+  const setActive = () => {};
   const createUser = trpc.user.create.useMutation();
   const [loading, setLoading] = useState(false);
 
-  const handleSignUp = async () => {
-    if (!(isLoaded && creds)) {
-      return;
-    }
+  const handleSignUp = async () => {};
 
-    try {
-      setLoading(true);
-      const credId = await getCredId();
-      if (credId) {
-        throw new Error("User already exists");
-      }
+  // const handleSignUp = async () => {
+  //   if (!(isLoaded && creds)) {
+  //     return;
+  //   }
 
-      const username = createUsername();
-      const res = await signUp.create({
-        username,
-        password: creds.dpw,
-      });
+  //   try {
+  //     setLoading(true);
+  //     const credId = await getCredId();
+  //     if (credId) {
+  //       throw new Error("User already exists");
+  //     }
 
-      if (
-        res.createdSessionId &&
-        res.status === "complete" &&
-        res.createdUserId
-      ) {
-        await createUser.mutateAsync({ id: res.createdUserId });
-        await setActive({ session: res.createdSessionId });
-        await setCredId(username);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //     const username = createUsername();
+  //     const res = await signUp.create({
+  //       username,
+  //       password: creds.dpw,
+  //     });
+
+  //     if (
+  //       res.createdSessionId &&
+  //       res.status === "complete" &&
+  //       res.createdUserId
+  //     ) {
+  //       await createUser.mutateAsync({ id: res.createdUserId });
+  //       await setActive({ session: res.createdSessionId });
+  //       await setCredId(username);
+  //       setLoading(false);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   return { handleSignUp, loading };
 }
 
 export function useRemoveUser() {
-  const { isLoaded, user } = useUser();
+  // const { isLoaded, user } = useUser();
+  const isLoaded = false;
+  const user = null;
   const removeUser = trpc.user.remove.useMutation();
   const [loading, setLoading] = useState(false);
 
@@ -80,7 +74,9 @@ export function useRemoveUser() {
 }
 
 export function useSignOut() {
-  const { signOut, loaded } = useClerk();
+  // const { signOut, loaded } = useClerk();
+  const signOut = () => {};
+  const loaded = false;
   const [loading, setLoading] = useState(false);
 
   const handleSignOut = async () => {
@@ -101,34 +97,40 @@ export function useSignOut() {
 }
 
 export function useSignIn() {
-  const { isLoaded, signIn, setActive } = useClerkSignIn();
+  // const { isLoaded, signIn, setActive } = useClerkSignIn();
+  const isLoaded = false;
+  const signIn = () => {};
+  const setActive = () => {};
+
   const [loading, setLoading] = useState(false);
 
-  const handleSignIn = async () => {
-    if (!(isLoaded && creds)) {
-      return;
-    }
+  const handleSignIn = async () => {};
 
-    try {
-      setLoading(true);
-      const id = await getCredId();
-      if (!id) {
-        throw new Error("No cred id set");
-      }
+  // const handleSignIn = async () => {
+  //   if (!(isLoaded && creds)) {
+  //     return;
+  //   }
 
-      const res = await signIn.create({
-        identifier: id,
-        password: creds.dpw,
-      });
+  //   try {
+  //     setLoading(true);
+  //     const id = await getCredId();
+  //     if (!id) {
+  //       throw new Error("No cred id set");
+  //     }
 
-      if (res.status === "complete" && res.createdSessionId) {
-        await setActive({ session: res.createdSessionId });
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  //     const res = await signIn.create({
+  //       identifier: id,
+  //       password: creds.dpw,
+  //     });
+
+  //     if (res.status === "complete" && res.createdSessionId) {
+  //       await setActive({ session: res.createdSessionId });
+  //       setLoading(false);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   return { handleSignIn, loading };
 }

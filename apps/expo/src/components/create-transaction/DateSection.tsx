@@ -15,7 +15,7 @@ import { formatRelativeDate } from "~/utils/functions";
 import { useTransactionStore } from "~/utils/hooks/useTransactionStore";
 import { transitions } from "~/utils/motion";
 
-import CalendarIcon from "../../../assets/icons/calendar-duo-dark.svg";
+// import CalendarIcon from "../../../assets/icons/calendar-duo-dark.svg";
 import { AnimateHeight } from "../AnimateHeight";
 
 type IOSMode = NonNullable<IOSNativeProps["mode"]>;
@@ -45,7 +45,7 @@ export default function DateSection({ defaultOpen }: { defaultOpen: boolean }) {
       }}
     >
       <View className="h-16 flex-row items-center px-4">
-        <CalendarIcon height={20} width={20} />
+        {/* <CalendarIcon height={20} width={20} /> */}
 
         <View className="ml-4 h-full grow flex-row items-center justify-between">
           <Pressable

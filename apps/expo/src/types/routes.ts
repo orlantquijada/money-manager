@@ -1,5 +1,5 @@
-import type { Folder, Fund } from ".prisma/client";
 import type { NavigatorScreenParams } from "@react-navigation/native";
+import type { Folder, Fund } from "api";
 
 export type HomeTabsParamList = {
   Budgets?: { recentlyAddedToFolderId?: Folder["id"] };

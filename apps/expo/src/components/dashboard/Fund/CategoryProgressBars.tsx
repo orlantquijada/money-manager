@@ -1,4 +1,4 @@
-import type { FundType } from ".prisma/client";
+import type { FundType } from "api";
 import type { FC } from "react";
 import type { FundWithMeta } from "~/types";
 import NonNegotiableProgressBars from "./NonNegotiableProgressBars";

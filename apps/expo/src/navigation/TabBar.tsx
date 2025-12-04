@@ -123,12 +123,12 @@ export default function TabBar({
                 {/*     <Icon focused={isFocused} /> */}
                 {/*   </MotiView> */}
                 {/* ) : null} */}
-                {Icon ? (
-                  <Animated.View style={{ opacity }}>
-                    {/* @ts-expect-error annoyting to handle (just check https://reactnavigation.org/docs/bottom-tab-navigator/) */}
-                    <Icon focused={isFocused} />
-                  </Animated.View>
-                ) : null}
+                {/* @ts-expect-error annoyting to handle (just check https://reactnavigation.org/docs/bottom-tab-navigator/) */}
+                {/* {Icon ? ( */}
+                {/*   <Animated.View style={{ opacity }}> */}
+                {/*     <Icon focused={isFocused} /> */}
+                {/*   </Animated.View> */}
+                {/* ) : null} */}
               </ScaleDownPressable>
             </View>
           );

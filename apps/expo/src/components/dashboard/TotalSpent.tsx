@@ -1,4 +1,3 @@
-import { useLayoutEffect, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, {
   type LayoutAnimationFunction,
@@ -6,24 +5,20 @@ import Animated, {
   withDelay,
   withSpring,
 } from "react-native-reanimated";
-import * as ContextMenu from "zeego/context-menu";
+// import * as ContextMenu from "zeego/context-menu";
 
-import { lime } from "~/utils/colors";
 import { toCurrencyShort } from "~/utils/functions";
 import { useSignOut } from "~/utils/hooks/useAuth";
 import { useRootStackNavigation } from "~/utils/hooks/useRootStackNavigation";
 import { transitions } from "~/utils/motion";
-import { trpc } from "~/utils/trpc";
-import ArrowDown from "../../../assets/icons/hero-icons/arrow-down.svg";
-import Button from "../Button";
 
 export default function TotalSpent() {
   const totalSpent = useTotalSpent();
 
-  const enabled = useRef(false);
-  useLayoutEffect(() => {
-    enabled.current = true;
-  }, []);
+  // const enabled = useRef(false);
+  // useLayoutEffect(() => {
+  //   enabled.current = true;
+  // }, []);
 
   const navigation = useRootStackNavigation();
   const { handleSignOut } = useSignOut();
@@ -40,7 +35,7 @@ export default function TotalSpent() {
         >
           <Animated.Text
             className="mr-2 font-nunito-bold text-4xl text-mauve12"
-            entering={enabled.current ? (CustomSlideInDown as any) : undefined}
+            // entering={enabled.current ? (CustomSlideInDown as any) : undefined}
             exiting={CustomSlideOutUp as any}
             // FIX: initial animation not working on IOS
             // disable initial animation
@@ -61,7 +56,7 @@ export default function TotalSpent() {
             .delay(delay)}
         >
           <View className="aspect-square h-5 items-center justify-center rounded-full bg-lime4">
-            <ArrowDown color={lime.lime11} height={16} width={16} />
+            {/* <ArrowDown color={lime.lime11} height={16} width={16} /> */}
           </View>
           <Text className="font-satoshi-medium text-lime11 text-sm"> 25%</Text>
         </Animated.View>
@@ -75,35 +70,37 @@ export default function TotalSpent() {
 }
 
 export function Dropdown() {
-  return (
-    <ContextMenu.Root>
-      <ContextMenu.Trigger>
-        <Button>
-          <Text>Hello</Text>
-        </Button>
-      </ContextMenu.Trigger>
+  return null;
 
-      <ContextMenu.Content>
-        <ContextMenu.Label>Label</ContextMenu.Label>
-        <ContextMenu.Item
-          destructive
-          key="item 1"
-          onSelect={() => {
-            console.log("wow");
-          }}
-        >
-          <ContextMenu.ItemTitle>Hello World</ContextMenu.ItemTitle>
+  // return (
+  //   <ContextMenu.Root>
+  //     <ContextMenu.Trigger>
+  //       <Button>
+  //         <Text>Hello</Text>
+  //       </Button>
+  //     </ContextMenu.Trigger>
 
-          <ContextMenu.ItemIcon
-            ios={{
-              name: "trash", // required
-              scale: "small",
-            }}
-          />
-        </ContextMenu.Item>
-      </ContextMenu.Content>
-    </ContextMenu.Root>
-  );
+  //     <ContextMenu.Content>
+  //       <ContextMenu.Label>Label</ContextMenu.Label>
+  //       <ContextMenu.Item
+  //         destructive
+  //         key="item 1"
+  //         onSelect={() => {
+  //           console.log("wow");
+  //         }}
+  //       >
+  //         <ContextMenu.ItemTitle>Hello World</ContextMenu.ItemTitle>
+
+  //         <ContextMenu.ItemIcon
+  //           ios={{
+  //             name: "trash", // required
+  //             scale: "small",
+  //           }}
+  //         />
+  //       </ContextMenu.Item>
+  //     </ContextMenu.Content>
+  //   </ContextMenu.Root>
+  // );
 }
 
 const offset = 40;
@@ -157,13 +154,14 @@ const CustomSlideInDown: LayoutAnimationFunction = (_) => {
 function useTotalSpent() {
   // NOTE: `allThisMonth` is called twice (it's used in transactions list) but bec. of react-query
   // it doesn't query twice since it's already cached
-  const { data: total } = trpc.transaction.allThisMonth.useQuery(undefined, {
-    select: (transactions) =>
-      transactions.reduce((total, current) => {
-        const amount = Number(current.amount);
-        return total + amount;
-      }, 0),
-  });
+  // const { data: total } = trpc.transaction.allThisMonth.useQuery(undefined, {
+  //   select: (transactions) =>
+  //     transactions.reduce((total, current) => {
+  //       const amount = Number(current.amount);
+  //       return total + amount;
+  //     }, 0),
+  // });
 
-  return total || 0;
+  // return total || 0;
+  return 0;
 }

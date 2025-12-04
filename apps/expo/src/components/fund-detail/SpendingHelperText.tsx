@@ -1,4 +1,4 @@
-import type { TimeMode } from ".prisma/client";
+import type { TimeMode } from "api";
 import { getWeekOfMonth, isThisMonth } from "date-fns";
 import type { FC } from "react";
 import { Text } from "react-native";
