@@ -15,6 +15,7 @@
     }
   },
   "scripts": {
+    "dev": "pnpm with-env drizzle-kit studio",
     "with-env": "dotenv -e ../../.env --",
     "generate": "pnpm with-env drizzle-kit generate",
     "studio": "pnpm with-env drizzle-kit studio",

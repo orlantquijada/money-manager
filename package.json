@@ -12,7 +12,8 @@
     "lint": "turbo lint",
     "lint:ws": "pnpm dlx sherif@latest",
     "type-check": "turbo type-check",
-    "build:server": "pnpm build --filter=server"
+    "build:server": "pnpm build --filter=server",
+    "studio": "pnpm --filter db studio"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
