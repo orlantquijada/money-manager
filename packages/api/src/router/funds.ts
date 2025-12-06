@@ -12,10 +12,11 @@ import {
 } from "drizzle-orm";
 import { z } from "zod";
 
-import { protectedProcedure, router } from "../trpc";
+import { protectedProcedure, publicProcedure, router } from "../trpc";
 import { fundTypeSchema, timeModeSchema } from "../utils/enums";
 
 export const fundsRouter = router({
+  hello: publicProcedure.query(() => "hello"),
   create: protectedProcedure
     .input(
       z.object({

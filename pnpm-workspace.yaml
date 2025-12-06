@@ -1,24 +1,24 @@
 packages:
-  - apps/expo
-  - apps/server
+  - apps/*
   - packages/api
   - packages/db
   - packages/config/*
 
 catalog:
   '@biomejs/biome': 2.3.8
+  '@t3-oss/env-core': 0.13.8
+  '@tanstack/react-query': ^5.90.11
+  '@trpc/client': 11.7.2
+  '@trpc/server': ^11.7.1
+  '@trpc/tanstack-react-query': ^11.7.2
+  '@types/pg': 8.15.6
+  date-fns: 4.1.0
+  dotenv-cli: 6.0.0
+  drizzle-orm: 0.44.7
+  pg: 8.16.3
   superjson: 2.2.6
+  tsup: 8.5.1
+  tsx: 4.21.0
   typescript: 5.9.3
   ultracite: 6.3.8
   zod: 4.1.13
-  '@t3-oss/env-core': 0.13.8
-  'dotenv-cli': 6.0.0 
-  tsup: 8.5.1
-  tsx: 4.21.0
-  'date-fns': 4.1.0
-  '@types/pg': 8.15.6
-  pg: 8.16.3
-  drizzle-orm: 0.44.7
-  "@trpc/client": ^11.7.1
-  "@trpc/server": ^11.7.1
-  "@trpc/tanstack-react-query": ^11.7.1

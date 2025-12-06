@@ -22,7 +22,7 @@
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "@manypkg/cli": "^0.19.2",
-    "turbo": "^2.2.3",
+    "turbo": "^2.6.3",
     "typescript": "catalog:",
     "ultracite": "catalog:"
   }
