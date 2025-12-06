@@ -3,35 +3,19 @@
   "$schema": "https://turborepo.org/schema.json",
   "globalEnv": ["DATABASE_URL"],
   "tasks": {
-    "db:generate": {
-      "inputs": ["prisma/schema.prisma"],
-      "cache": false
-    },
-    "db:push": {
-      "inputs": ["prisma/schema.prisma"],
-      "cache": false
-    },
-    "db:deploy": {
-      "inputs": ["prisma/schema.prisma"],
-      "cache": false
+    "topo": {
+      "dependsOn": ["^topo"]
     },
     "dev": {
-      "dependsOn": ["^db:generate"],
+      "dependsOn": ["^dev"],
       "cache": false
     },
-    "build:deploy": {
-      "dependsOn": ["build", "^db:deploy"],
-      "outputs": ["dist/**", "public/**"]
-    },
     "build": {
-      "dependsOn": ["^build", "^db:generate"],
-      "outputs": [".expo/**", "dist/**", "public/**"]
-    },
-    "start": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "outputs": [".expo/**", "dist/**", "api/**"]
     },
     "lint": {
-      "outputs": []
+      "dependsOn": ["^topo", "^build"]
     },
     "clean": {
       "cache": false
@@ -40,8 +24,8 @@
       "cache": false
     },
     "type-check": {
-      "dependsOn": ["^db:generate"],
-      "cache": false
+      "dependsOn": ["^topo", "^build"],
+      "outputs": [".cache/tsbuildinfo.json"]
     }
   }
 }

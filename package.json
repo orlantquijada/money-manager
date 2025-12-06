@@ -8,20 +8,14 @@
     "clean": "rm -rf node_modules",
     "start": "turbo start",
     "clean:ws": "turbo clean",
-    "db:generate": "turbo db:generate",
-    "db:push": "turbo db:push db:generate",
-    "db:deploy": "turbo db:deploy",
     "dev": "turbo dev --parallel",
-    "lint": "turbo lint && manypkg check",
+    "lint": "turbo lint",
     "lint:ws": "pnpm dlx sherif@latest",
     "type-check": "turbo type-check",
-    "build:deploy": "turbo build:deploy",
-    "build:server": "pnpm build --filter=server",
-    "start:server": "pnpm start --filter=server"
+    "build:server": "pnpm build --filter=server"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
-    "@manypkg/cli": "^0.19.2",
     "turbo": "^2.6.3",
     "typescript": "catalog:",
     "ultracite": "catalog:"

@@ -1,6 +1,6 @@
 import { endOfMonth, startOfMonth } from "date-fns";
 import { transactions } from "db/schema";
-import { and, count, desc, eq, gte, lt, sum } from "drizzle-orm";
+import { and, desc, eq, gte, lt, sum } from "drizzle-orm";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../trpc";
@@ -38,32 +38,33 @@ export const transactionsRouter = router({
         })
         .optional()
     )
-    .query(({ ctx, input }) => {
-      return [];
-      const now = new Date();
-      return ctx.db.query.transactions.findMany({
-        where: and(
-          // TODO: implement auth
-          // eq(Transaction.userId, ctx.auth.userId || ""),
-          gte(transactions.date, startOfMonth(now)),
-          lt(transactions.date, endOfMonth(now)),
-          input?.fundId ? eq(transactions.fundId, input.fundId) : undefined
-        ),
-        with: {
-          fund: {
-            columns: {
-              name: true,
-            },
-          },
-          store: {
-            columns: {
-              name: true,
-            },
-          },
-        },
-        orderBy: desc(transactions.date),
-      });
-    }),
+    .query(() => {}),
+  // .query(({ ctx, input }) => {
+  //   return [];
+  //   const now = new Date();
+  //   return ctx.db.query.transactions.findMany({
+  //     where: and(
+  //       // TODO: implement auth
+  //       // eq(Transaction.userId, ctx.auth.userId || ""),
+  //       gte(transactions.date, startOfMonth(now)),
+  //       lt(transactions.date, endOfMonth(now)),
+  //       input?.fundId ? eq(transactions.fundId, input.fundId) : undefined
+  //     ),
+  //     with: {
+  //       fund: {
+  //         columns: {
+  //           name: true,
+  //         },
+  //       },
+  //       store: {
+  //         columns: {
+  //           name: true,
+  //         },
+  //       },
+  //     },
+  //     orderBy: desc(transactions.date),
+  //   });
+  // }),
   retrieve: protectedProcedure.input(z.string()).query(({ ctx, input }) =>
     ctx.db.query.transactions.findFirst({
       where: and(
@@ -125,22 +126,23 @@ export const transactionsRouter = router({
       return ctx.db.insert(transactions).values(_input);
     }),
 
-  totalThisMonth: protectedProcedure.query(({ ctx }) => {
-    return 0;
-
-    ctx.db
-      .select({ amount: sum(transactions.amount).mapWith(Number) })
-      .from(transactions)
-      .where(
-        and(
-          // TODO: implement auth
-          // eq(Transaction.userId, ctx.auth.userId || ""),
-          gte(transactions.date, startOfMonth(new Date())),
-          lt(transactions.date, endOfMonth(new Date()))
-        )
-      )
-      .then((data) => data[0]?.amount || 0);
-  }),
+  totalThisMonth: protectedProcedure.query(() => {}),
+  // totalThisMonth: protectedProcedure.query(({ ctx }) => {
+  //   return 0;
+  //
+  //   ctx.db
+  //     .select({ amount: sum(transactions.amount).mapWith(Number) })
+  //     .from(transactions)
+  //     .where(
+  //       and(
+  //         // TODO: implement auth
+  //         // eq(Transaction.userId, ctx.auth.userId || ""),
+  //         gte(transactions.date, startOfMonth(new Date())),
+  //         lt(transactions.date, endOfMonth(new Date()))
+  //       )
+  //     )
+  //     .then((data) => data[0]?.amount || 0);
+  // }),
 
   byFund: protectedProcedure
     .input(z.number().optional())
@@ -169,28 +171,29 @@ export const transactionsRouter = router({
       }));
     }),
 
-  countByFund: protectedProcedure.query(async ({ ctx }) => {
-    return [];
-
-    const counts = await ctx.db
-      .select({
-        fundId: transactions.fundId,
-        count: count(transactions.id),
-      })
-      .from(transactions)
-      .where(
-        and(
-          // TODO: implement auth
-          // eq(transactions.userId, ctx.auth.userId || ""),
-          gte(transactions.date, startOfMonth(new Date())),
-          lt(transactions.date, endOfMonth(new Date()))
-        )
-      )
-      .groupBy(transactions.fundId);
-
-    return counts.map((c) => ({
-      ...c,
-      _count: c.count, // Match Prisma response shape
-    }));
-  }),
+  countByFund: protectedProcedure.query(() => {}),
+  // countByFund: protectedProcedure.query(async ({ ctx }) => {
+  //   return [];
+  //
+  //   const counts = await ctx.db
+  //     .select({
+  //       fundId: transactions.fundId,
+  //       count: count(transactions.id),
+  //     })
+  //     .from(transactions)
+  //     .where(
+  //       and(
+  //         // TODO: implement auth
+  //         // eq(transactions.userId, ctx.auth.userId || ""),
+  //         gte(transactions.date, startOfMonth(new Date())),
+  //         lt(transactions.date, endOfMonth(new Date()))
+  //       )
+  //     )
+  //     .groupBy(transactions.fundId);
+  //
+  //   return counts.map((c) => ({
+  //     ...c,
+  //     _count: c.count, // Match Prisma response shape
+  //   }));
+  // }),
 });

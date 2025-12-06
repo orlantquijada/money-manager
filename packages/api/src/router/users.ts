@@ -11,7 +11,7 @@ export const usersRouter = router({
       })
     )
     .mutation(({ ctx, input }) => ctx.db.insert(users).values(input)),
-  remove: protectedProcedure.mutation(({ ctx }) => {
+  remove: protectedProcedure.mutation(() => {
     // TODO: implement auth
     // ctx.db.delete(users).where(eq(users.id, ctx.auth.userId || ""))
   }),

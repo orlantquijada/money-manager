@@ -1,4 +1,3 @@
-import os from "node:os";
 import { serve } from "@hono/node-server";
 import { trpcServer } from "@hono/trpc-server";
 import { appRouter } from "api";
@@ -9,15 +8,13 @@ import { env } from "../env.js";
 
 const isDev = process.env.NODE_ENV === "development";
 
-const { start, app } = createServer();
+const { app, start } = createApp();
 
-if (isDev) {
-  start();
-}
+start();
 
 export default app;
 
-function createServer() {
+function createApp() {
   const app = new Hono();
 
   app.use(logger());
@@ -37,33 +34,17 @@ function createServer() {
   );
 
   const start = () => {
-    const host = isDev ? getHostIP() : "0.0.0.0";
-    const port = isDev ? 3000 : Number(process.env.PORT);
+    if (!isDev) {
+      return;
+    }
 
+    const port = 3000;
     serve({
       fetch: app.fetch,
       port,
-      hostname: host,
     });
-
-    if (isDev) {
-      console.log(`listening on ${host}:${port}`);
-    }
+    console.log(`listening on :${port}`);
   };
 
-  return { start, app };
-}
-
-function getHostIP() {
-  const interfaces = os.networkInterfaces();
-  const ipv4Interface = Object.values(interfaces)
-    .flat()
-    .find(
-      (intf) =>
-        intf?.family === "IPv4" &&
-        !intf.internal &&
-        intf.address.startsWith("192.168")
-    );
-
-  return ipv4Interface?.address ?? "";
+  return { app, start };
 }

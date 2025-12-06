@@ -1,10 +1,11 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["api/index.ts"],
+  entry: ["./src/index.ts"],
   format: ["esm"],
-  outDir: "public",
+  outDir: "api",
   minify: true,
+  external: ["@hono/node-server"],
   noExternal: [
     "api",
     "db",
