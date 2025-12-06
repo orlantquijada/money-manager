@@ -4,13 +4,17 @@
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist public",
     "dev": "NODE_ENV=development pnpm with-env tsx watch api",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e ../../.env --",
+    "build": "pnpm with-env tsup",
+    "start": "pnpm with-env node public/index.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",
     "@hono/trpc-server": "^0.4.0",
+    "@t3-oss/env-core": "catalog:",
+    "api": "workspace:*",
     "hono": "^4.10.7",
-    "api": "workspace:*"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

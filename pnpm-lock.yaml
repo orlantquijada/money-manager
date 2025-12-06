@@ -80,12 +80,18 @@ importers:
       '@hono/trpc-server':
         specifier: ^0.4.0
         version: 0.4.0(@trpc/server@11.7.2(typescript@5.9.3))(hono@4.10.7)
+      '@t3-oss/env-core':
+        specifier: 'catalog:'
+        version: 0.13.8(typescript@5.9.3)(zod@4.1.13)
       api:
         specifier: workspace:*
         version: link:../../packages/api
       hono:
         specifier: ^4.10.7
         version: 4.10.7
+      zod:
+        specifier: 'catalog:'
+        version: 4.1.13
     devDependencies:
       '@biomejs/biome':
         specifier: 'catalog:'
