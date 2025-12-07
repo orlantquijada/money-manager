@@ -21,6 +21,7 @@
     "studio": "pnpm with-env drizzle-kit studio",
     "push": "pnpm with-env drizzle-kit push",
     "migrate": "pnpm with-env drizzle-kit migrate",
+    "seed": "pnpm with-env tsx src/seed.ts",
     "clean": "rm -rf ./.turbo/ ./dist/ ./node_modules/"
   },
   "dependencies": {
@@ -32,6 +33,8 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "tsx": "catalog:",
+    "date-fns": "catalog:",
     "@biomejs/biome": "catalog:",
     "@types/pg": "catalog:",
     "drizzle-kit": "^0.31.7",

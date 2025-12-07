@@ -1,6 +1,6 @@
 import { endOfMonth, startOfMonth } from "date-fns";
 import { transactions } from "db/schema";
-import { and, desc, eq, gte, lt, sum } from "drizzle-orm";
+import { and, count, desc, eq, gte, lt, sum } from "drizzle-orm";
 import { z } from "zod";
 
 import { protectedProcedure, router } from "../trpc";
@@ -12,6 +12,7 @@ export const transactionsRouter = router({
       // where: eq(Transaction.userId, ctx.auth.userId || ""),
     })
   ),
+
   recentByFund: protectedProcedure.input(z.number()).query(({ ctx, input }) =>
     ctx.db.query.transactions.findMany({
       where: and(
@@ -30,6 +31,7 @@ export const transactionsRouter = router({
       },
     })
   ),
+
   allThisMonth: protectedProcedure
     .input(
       z
@@ -38,33 +40,32 @@ export const transactionsRouter = router({
         })
         .optional()
     )
-    .query(() => {}),
-  // .query(({ ctx, input }) => {
-  //   return [];
-  //   const now = new Date();
-  //   return ctx.db.query.transactions.findMany({
-  //     where: and(
-  //       // TODO: implement auth
-  //       // eq(Transaction.userId, ctx.auth.userId || ""),
-  //       gte(transactions.date, startOfMonth(now)),
-  //       lt(transactions.date, endOfMonth(now)),
-  //       input?.fundId ? eq(transactions.fundId, input.fundId) : undefined
-  //     ),
-  //     with: {
-  //       fund: {
-  //         columns: {
-  //           name: true,
-  //         },
-  //       },
-  //       store: {
-  //         columns: {
-  //           name: true,
-  //         },
-  //       },
-  //     },
-  //     orderBy: desc(transactions.date),
-  //   });
-  // }),
+    .query(({ ctx, input }) => {
+      const now = new Date();
+      return ctx.db.query.transactions.findMany({
+        where: and(
+          // TODO: implement auth
+          // eq(Transaction.userId, ctx.auth.userId || ""),
+          gte(transactions.date, startOfMonth(now)),
+          lt(transactions.date, endOfMonth(now)),
+          input?.fundId ? eq(transactions.fundId, input.fundId) : undefined
+        ),
+        with: {
+          fund: {
+            columns: {
+              name: true,
+            },
+          },
+          store: {
+            columns: {
+              name: true,
+            },
+          },
+        },
+        orderBy: desc(transactions.date),
+      });
+    }),
+
   retrieve: protectedProcedure.input(z.string()).query(({ ctx, input }) =>
     ctx.db.query.transactions.findFirst({
       where: and(
@@ -74,6 +75,7 @@ export const transactionsRouter = router({
       ),
     })
   ),
+
   create: protectedProcedure
     .input(
       z.object({
@@ -100,22 +102,9 @@ export const transactionsRouter = router({
         // TODO: implement auth
         // const [createdStore] = await ctx.db
         //   .insert(Store)
-        //   .values({
-        //     name: store,
-        //     userId: ctx.auth.userId || "",
-        //     lastSelectedFundId: input.fundId,
-        //   })
-        //   .onConflictDoUpdate({
-        //     target: [Store.userId, Store.name],
-        //     set: {
-        //       lastSelectedFundId: input.fundId,
-        //     },
-        //   })
+        //   .values(...)
+        //   .onConflictDoUpdate(...)
         //   .returning({ id: Store.id });
-
-        // if (!createdStore) {
-        //   throw new Error("Failed to create or update store");
-        // }
 
         return ctx.db.insert(transactions).values({
           ..._input,
@@ -126,23 +115,22 @@ export const transactionsRouter = router({
       return ctx.db.insert(transactions).values(_input);
     }),
 
-  totalThisMonth: protectedProcedure.query(() => {}),
-  // totalThisMonth: protectedProcedure.query(({ ctx }) => {
-  //   return 0;
-  //
-  //   ctx.db
-  //     .select({ amount: sum(transactions.amount).mapWith(Number) })
-  //     .from(transactions)
-  //     .where(
-  //       and(
-  //         // TODO: implement auth
-  //         // eq(Transaction.userId, ctx.auth.userId || ""),
-  //         gte(transactions.date, startOfMonth(new Date())),
-  //         lt(transactions.date, endOfMonth(new Date()))
-  //       )
-  //     )
-  //     .then((data) => data[0]?.amount || 0);
-  // }),
+  totalThisMonth: protectedProcedure.query(async ({ ctx }) => {
+    const now = new Date();
+    const result = await ctx.db
+      .select({ amount: sum(transactions.amount).mapWith(Number) })
+      .from(transactions)
+      .where(
+        and(
+          // TODO: implement auth
+          // eq(Transaction.userId, ctx.auth.userId || ""),
+          gte(transactions.date, startOfMonth(now)),
+          lt(transactions.date, endOfMonth(now))
+        )
+      );
+
+    return result[0]?.amount ?? 0;
+  }),
 
   byFund: protectedProcedure
     .input(z.number().optional())
@@ -163,37 +151,35 @@ export const transactionsRouter = router({
         )
         .groupBy(transactions.fundId)
         .orderBy(desc(sum(transactions.amount)))
-        .limit(input || 100); // Default limit if not provided, though Prisma didn't have default
+        .limit(input || 100);
 
       return txns.map((t) => ({
         ...t,
-        _sum: { amount: t.amount }, // Match Prisma response shape if needed by frontend
+        _sum: { amount: t.amount },
       }));
     }),
 
-  countByFund: protectedProcedure.query(() => {}),
-  // countByFund: protectedProcedure.query(async ({ ctx }) => {
-  //   return [];
-  //
-  //   const counts = await ctx.db
-  //     .select({
-  //       fundId: transactions.fundId,
-  //       count: count(transactions.id),
-  //     })
-  //     .from(transactions)
-  //     .where(
-  //       and(
-  //         // TODO: implement auth
-  //         // eq(transactions.userId, ctx.auth.userId || ""),
-  //         gte(transactions.date, startOfMonth(new Date())),
-  //         lt(transactions.date, endOfMonth(new Date()))
-  //       )
-  //     )
-  //     .groupBy(transactions.fundId);
-  //
-  //   return counts.map((c) => ({
-  //     ...c,
-  //     _count: c.count, // Match Prisma response shape
-  //   }));
-  // }),
+  countByFund: protectedProcedure.query(async ({ ctx }) => {
+    const now = new Date();
+    const counts = await ctx.db
+      .select({
+        fundId: transactions.fundId,
+        count: count(transactions.id),
+      })
+      .from(transactions)
+      .where(
+        and(
+          // TODO: implement auth
+          // eq(transactions.userId, ctx.auth.userId || ""),
+          gte(transactions.date, startOfMonth(now)),
+          lt(transactions.date, endOfMonth(now))
+        )
+      )
+      .groupBy(transactions.fundId);
+
+    return counts.map((c) => ({
+      ...c,
+      _count: c.count,
+    }));
+  }),
 });

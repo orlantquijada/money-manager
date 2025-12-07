@@ -312,9 +312,15 @@ importers:
       '@types/pg':
         specifier: 'catalog:'
         version: 8.15.6
+      date-fns:
+        specifier: 'catalog:'
+        version: 4.1.0
       drizzle-kit:
         specifier: ^0.31.7
         version: 0.31.7
+      tsx:
+        specifier: 'catalog:'
+        version: 4.21.0
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
