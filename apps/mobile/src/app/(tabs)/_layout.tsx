@@ -11,6 +11,9 @@ import type {
 import { withLayoutContext } from "expo-router";
 import Animated from "react-native-reanimated";
 
+import { PlusRecDuoDark, PlusRecFilledDark } from "@/icons";
+import { mauveDark } from "@/utils/colors";
+
 const { Navigator } = createMaterialTopTabNavigator();
 const MaterialTopTabs = withLayoutContext<
   MaterialTopTabNavigationOptions,
@@ -19,13 +22,25 @@ const MaterialTopTabs = withLayoutContext<
   MaterialTopTabNavigationEventMap
 >(Navigator);
 
+const size = 24;
+
 export default function TabLayout() {
   return (
     <MaterialTopTabs
       tabBar={(props) => <TabBar {...props} />}
       tabBarPosition="bottom"
     >
-      <MaterialTopTabs.Screen name="add-expense" />
+      <MaterialTopTabs.Screen
+        name="add-expense"
+        options={{
+          tabBarIcon: ({ focused }) =>
+            focused ? (
+              <PlusRecFilledDark color={mauveDark.mauveDark12} size={size} />
+            ) : (
+              <PlusRecDuoDark size={size} />
+            ),
+        }}
+      />
       <MaterialTopTabs.Screen name="index" />
       <MaterialTopTabs.Screen name="transactions" />
     </MaterialTopTabs>
