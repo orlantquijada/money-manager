@@ -1,6 +1,6 @@
-import Constants from "expo-constants";
-
 export const getBaseUrl = () => {
+  return "http://192.168.1.3:3000";
+
   /**
    * Gets the IP address of your host-machine. If it cannot automatically find it,
    * you'll have to manually set it. NOTE: Port 3000 should work for most but confirm
@@ -9,13 +9,16 @@ export const getBaseUrl = () => {
    * **NOTE**: This is only for development. In production, you'll want to set the
    * baseUrl to your production API URL.
    */
-  const debuggerHost = Constants.expoConfig?.hostUri;
-  const localhost = debuggerHost?.split(":")[0];
-
-  if (!localhost) {
-    throw new Error(
-      "Failed to get localhost. Please point to your production server."
-    );
-  }
-  return `http://${localhost}:3000`;
+  // const debuggerHost = Constants.expoConfig?.hostUri;
+  // const localhost = debuggerHost?.split(":")[0];
+  //
+  // console.log(JSON.stringify(Constants.expoConfig, null, 2));
+  //
+  // if (!localhost) {
+  //   throw new Error(
+  //     "Failed to get localhost. Please point to your production server."
+  //   );
+  // }
+  //
+  // return `http://${localhost}:3000`;
 };
