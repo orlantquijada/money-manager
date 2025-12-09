@@ -1,0 +1,115 @@
+import type { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
+import { Animated, Pressable, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ActivityRecDuoDark, HomeDuoDark, PlusRecDuoDark } from "@/icons";
+import { mauveDark } from "@/utils/colors";
+
+const tabbarHeight = 72;
+
+export default function TabBar({
+  navigation,
+  position,
+  state,
+}: MaterialTopTabBarProps) {
+  const insets = useSafeAreaInsets();
+  const inputRange = state.routes.map((_, i) => i);
+  const translateY = position.interpolate({
+    inputRange,
+    outputRange: inputRange.map((i) =>
+      i === 0 ? tabbarHeight + insets.bottom : 0
+    ),
+  });
+
+  const addExpenseRoute = state.routes.find(
+    ({ name }) => name === "add-expense"
+  );
+  const homeRoute = state.routes.find(({ name }) => name === "index");
+  const txnsRoute = state.routes.find(({ name }) => name === "transactions");
+
+  return (
+    <Animated.View style={{ transform: [{ translateY }] }}>
+      <View
+        className="absolute right-0 bottom-safe left-0 mx-4 flex-row items-center justify-center gap-x-10 rounded-[20px] bg-mauve12"
+        style={{
+          height: tabbarHeight,
+        }}
+      >
+        {state.routes.map((route, index) => {
+          const isFocused = state.index === index;
+
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
+
+            if (!(isFocused || event.defaultPrevented)) {
+              navigation.navigate(route.name);
+            }
+          };
+
+          const onLongPress = () => {
+            navigation.emit({
+              type: "tabLongPress",
+              target: route.key,
+            });
+          };
+
+          const createOpacityInterpolation = (
+            activeValue: number,
+            inactiveValue: number
+          ) =>
+            position.interpolate({
+              inputRange,
+              outputRange: inputRange.map((i) =>
+                // biome-ignore lint/nursery/noLeakedRender: <explanation>
+                i === index ? activeValue : inactiveValue
+              ),
+            });
+
+          const opacity = createOpacityInterpolation(1, 0.5);
+          const fillOpacity = createOpacityInterpolation(1, 0.2);
+          const outlineOpacity = createOpacityInterpolation(0, 1);
+
+          return (
+            <View key={route.key}>
+              <Pressable
+                className="transition-all active:scale-90"
+                hitSlop={10}
+                onLongPress={onLongPress}
+                onPress={onPress}
+              >
+                <Animated.View style={{ opacity }}>
+                  {route.name === addExpenseRoute?.name && (
+                    <PlusRecDuoDark
+                      color={mauveDark.mauveDark12}
+                      fillOpacity={fillOpacity}
+                      outlineOpacity={outlineOpacity}
+                    />
+                  )}
+
+                  {route.name === homeRoute?.name && (
+                    <HomeDuoDark
+                      color={mauveDark.mauveDark12}
+                      fillOpacity={fillOpacity}
+                      outlineOpacity={outlineOpacity}
+                    />
+                  )}
+
+                  {route.name === txnsRoute?.name && (
+                    <ActivityRecDuoDark
+                      color={mauveDark.mauveDark12}
+                      fillOpacity={fillOpacity}
+                      outlineOpacity={outlineOpacity}
+                    />
+                  )}
+                </Animated.View>
+              </Pressable>
+            </View>
+          );
+        })}
+      </View>
+    </Animated.View>
+  );
+}
