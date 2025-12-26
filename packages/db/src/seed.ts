@@ -1,9 +1,18 @@
 import { addDays, differenceInDays, startOfMonth, subDays } from "date-fns";
+import type { InferEnum } from "drizzle-orm";
 import { db } from "./client";
-import { folders, funds, stores, transactions, users } from "./schema";
+import {
+  folders,
+  funds,
+  type fundTypeEnum,
+  stores,
+  type timeModeEnum,
+  transactions,
+  users,
+} from "./schema";
 
-type FundType = "SPENDING" | "NON_NEGOTIABLE" | "TARGET";
-type TimeMode = "WEEKLY" | "MONTHLY" | "BIMONTHLY" | "EVENTUALLY";
+type FundType = InferEnum<typeof fundTypeEnum>;
+type TimeMode = InferEnum<typeof timeModeEnum>;
 
 type FundSeed = {
   name: string;
