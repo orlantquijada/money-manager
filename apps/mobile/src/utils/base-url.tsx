@@ -1,5 +1,5 @@
 export const getBaseUrl = () => {
-  return "http://192.168.1.3:3000";
+  return process.env.EXPO_PUBLIC_API_URL;
 
   /**
    * Gets the IP address of your host-machine. If it cannot automatically find it,
