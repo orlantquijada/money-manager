@@ -122,3 +122,39 @@ export function getFundTypeContinueBtnLabel(
   }
   return isPending ? "Saving..." : "Save";
 }
+
+export const FUND_NAME_PLACEHOLDERS = [
+  "Morning Coffee",
+  "Spotify Premium",
+  "Netflix",
+  "Grab Rides",
+  "Haircut",
+  "Phone Bill",
+  "Gym Membership",
+  "Rent",
+  "Electric Bill",
+  "Internet Bill",
+  "Water Bill",
+  "Dog Food",
+  "Cat Treats",
+  "Lunch at Work",
+  "Weekend Brunch",
+];
+
+export const FOLDER_NAME_PLACEHOLDERS = [
+  "Living Expenses",
+  "Subscriptions",
+  "Food & Dining",
+  "Transportation",
+  "Entertainment",
+  "Health & Fitness",
+  "Personal Care",
+  "Savings Goals",
+  "Bills & Utilities",
+  "Shopping",
+  "Travel",
+  "Education",
+  "Gifts & Donations",
+  "Home & Garden",
+  "Work Expenses",
+];

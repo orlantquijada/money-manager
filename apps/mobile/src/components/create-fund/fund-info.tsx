@@ -1,5 +1,5 @@
 import type { FundType } from "api";
-import type { ComponentProps, ReactNode } from "react";
+import { type ComponentProps, type ReactNode, useMemo } from "react";
 import {
   type LayoutChangeEvent,
   Pressable,
@@ -13,12 +13,16 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-
 import { Lock, ShoppingBag } from "@/icons";
-import { type CreateFundScreens, useCreateFundStore } from "@/lib/create-fund";
+import {
+  type CreateFundScreens,
+  FUND_NAME_PLACEHOLDERS,
+  useCreateFundStore,
+} from "@/lib/create-fund";
 import { cn } from "@/utils/cn";
 import { mauveDark } from "@/utils/colors";
 import { transitions } from "@/utils/motion";
+import { choice } from "@/utils/random";
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 import Presence from "../presence";
 import TextInput from "../text-input";
@@ -61,6 +65,7 @@ export default function FundInfo({ setScreen }: Props) {
   const setFundType = useCreateFundStore((s) => s.setFundType);
 
   const selectedType = useSharedValue(fundType);
+  const placeholder = useMemo(() => choice(FUND_NAME_PLACEHOLDERS), []);
 
   const {
     style,
@@ -86,7 +91,7 @@ export default function FundInfo({ setScreen }: Props) {
               </Text>
               <TextInput
                 onChangeText={setName}
-                placeholder="new-fund"
+                placeholder={placeholder}
                 value={name}
               />
             </View>
