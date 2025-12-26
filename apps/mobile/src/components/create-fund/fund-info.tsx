@@ -1,5 +1,5 @@
 import type { FundType } from "api";
-import { type ComponentProps, type ReactNode, useMemo } from "react";
+import { type ComponentProps, useMemo } from "react";
 import {
   type LayoutChangeEvent,
   Pressable,
@@ -23,6 +23,7 @@ import { cn } from "@/utils/cn";
 import { mauveDark } from "@/utils/colors";
 import { transitions } from "@/utils/motion";
 import { choice } from "@/utils/random";
+import type { IconComponent } from "@/utils/types";
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 import Presence from "../presence";
 import TextInput from "../text-input";
@@ -108,7 +109,7 @@ export default function FundInfo({ setScreen }: Props) {
               <Presence {...presenceProps[selectedType.get()]}>
                 <Animated.View
                   className="absolute right-0 left-0 rounded-xl bg-mauveDark4"
-                  style={style}
+                  style={[{ borderCurve: "continuous" }, style]}
                 />
               </Presence>
 
@@ -116,7 +117,7 @@ export default function FundInfo({ setScreen }: Props) {
                 <Presence {...presenceProps.SPENDING}>
                   <FundCard
                     description="Usually for groceries, transportation"
-                    icon={<ShoppingBag />}
+                    Icon={ShoppingBag}
                     label="For Spending"
                     onLayout={handleSpendingOnLayout}
                     onPress={() => {
@@ -130,7 +131,7 @@ export default function FundInfo({ setScreen }: Props) {
                 <Presence {...presenceProps.NON_NEGOTIABLE}>
                   <FundCard
                     description="Automatically set aside money for this budget. Usually for rent, electricity"
-                    icon={<Lock />}
+                    Icon={Lock}
                     label="Non-negotiables"
                     onLayout={handleNonNegotiableOnLayout}
                     onPress={() => {
@@ -187,42 +188,50 @@ type FundCardProps = {
   label: string;
   pillLabel?: string;
   description: string;
-  icon: ReactNode;
+  Icon: IconComponent;
 } & ComponentProps<typeof Pressable>;
 
 function FundCard({
   label,
   description,
   pillLabel,
-  icon,
+  Icon,
   className,
   ...props
 }: FundCardProps) {
+  const iconSize = 20;
   return (
     <Pressable
       className={cn(
-        "flex flex-row rounded-xl px-4 py-3 transition-all active:scale-[.98] active:opacity-70",
+        "flex flex-col gap-1.5 rounded-xl px-4 py-3 transition-all active:scale-[.98] active:opacity-70",
         className
       )}
       {...props}
     >
-      <View className="mt-1.5 mr-4">{icon}</View>
+      <View className="flex-row gap-4">
+        <Icon className="translate-y-1 self-start" size={20} />
 
-      <View className="flex-shrink">
-        <View className="flex-row items-center">
+        <View className="flex-row items-center gap-2">
           <Text className="font-satoshi-medium text-base text-mauveDark12">
             {label}
           </Text>
 
           {!!pillLabel && (
-            <View className="ml-2 justify-center rounded-full bg-mauveDark7 px-1.5 py-0.5">
+            <View
+              className="h-5 items-center justify-center rounded-full bg-mauveDark7 px-1.5"
+              style={{ borderCurve: "continuous" }}
+            >
               <Text className="font-satoshi-medium text-mauveDark10 text-xs tracking-wide">
                 {pillLabel}
               </Text>
             </View>
           )}
         </View>
-        <Text className="font-satoshi-medium text-base text-mauveDark10">
+      </View>
+
+      <View className="flex-row gap-4">
+        <View className="h-px" style={{ width: iconSize }} />
+        <Text className="shrink font-inter text-mauveDark10 text-sm">
           {description}
         </Text>
       </View>
