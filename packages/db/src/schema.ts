@@ -11,11 +11,7 @@ import {
   unique,
 } from "drizzle-orm/pg-core";
 
-export const fundTypeEnum = pgEnum("FundType", [
-  "SPENDING",
-  "NON_NEGOTIABLE",
-  "TARGET",
-]);
+export const fundTypeEnum = pgEnum("FundType", ["SPENDING", "NON_NEGOTIABLE"]);
 
 export const timeModeEnum = pgEnum("TimeMode", [
   "WEEKLY",
@@ -68,6 +64,7 @@ export const funds = pgTable("funds", {
   fundType: fundTypeEnum().default("SPENDING").notNull(),
   enabled: boolean().default(true).notNull(),
   timeMode: timeModeEnum().notNull(),
+  dueDay: integer(), // Day of month (1-31), only for NON_NEGOTIABLE funds
   folderId: integer()
     .notNull()
     .references(() => folders.id, { onDelete: "cascade" }),

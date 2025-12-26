@@ -67,7 +67,8 @@ const folderSeeds: FolderSeed[] = [
         name: "Online Courses",
         timeMode: "EVENTUALLY",
         budgetedAmount: 2000,
-        fundType: "TARGET",
+        // TODO: re-enable when TARGET fundtype is restored
+        // fundType: "TARGET",
       },
     ],
   },
@@ -88,7 +89,8 @@ const folderSeeds: FolderSeed[] = [
         name: "Gifts",
         timeMode: "EVENTUALLY",
         budgetedAmount: 2000,
-        fundType: "TARGET",
+        // TODO: re-enable when TARGET fundtype is restored
+        // fundType: "TARGET",
       },
     ],
   },
