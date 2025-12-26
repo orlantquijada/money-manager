@@ -1,7 +1,11 @@
 {
   "root": false,
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["ultracite/core", "ultracite/react"],
+  "extends": [
+    "ultracite/core",
+    "ultracite/react",
+    "../../tooling/biome/common.json"
+  ],
   "linter": {
     "rules": {
       "performance": {
@@ -10,14 +14,6 @@
       },
       "nursery": {
         "noLeakedRender": "off"
-      },
-      "style": {
-        "useConsistentTypeDefinitions": {
-          "level": "error",
-          "options": {
-            "style": "type"
-          }
-        }
       }
     }
   },
