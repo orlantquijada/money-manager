@@ -1,7 +1,7 @@
 {
   "name": "money-manager",
   "private": true,
-  "packageManager": "pnpm@10.24.0",
+  "packageManager": "pnpm@10.26.0",
   "scripts": {
     "preinstall": "npx -y only-allow pnpm",
     "build": "turbo build",
