@@ -1,12 +1,16 @@
 import type { TimeMode } from "api";
-import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import Animated, {
   FadeInDown,
   FadeOutUp,
   Reanimated3DefaultSpringConfig,
 } from "react-native-reanimated";
-import type { CreateFundScreens } from "@/lib/create-fund";
+import {
+  type CreateFundScreens,
+  getFundTypeContinueBtnLabel,
+  useCreateFundStore,
+  useSubmitFund,
+} from "@/lib/create-fund";
 import { mauveDark } from "@/utils/colors";
 import { transitions } from "@/utils/motion";
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
@@ -19,11 +23,16 @@ const DELAY = 40;
 
 type Props = {
   setScreen: (screen: CreateFundScreens) => void;
+  presetFolderId: number | null;
 };
 
-export default function SpendingInfo({ setScreen }: Props) {
-  const [selectedChoice, setSelectedChoice] = useState<TimeMode>();
+export default function SpendingInfo({ setScreen, presetFolderId }: Props) {
+  const timeMode = useCreateFundStore((s) => s.timeMode);
+  const setTimeMode = useCreateFundStore((s) => s.setTimeMode);
+  const budgetedAmount = useCreateFundStore((s) => s.budgetedAmount);
+  const setBudgetedAmount = useCreateFundStore((s) => s.setBudgetedAmount);
 
+  const { submit, isPending } = useSubmitFund();
   const { fadeProps, handleScroll } = useOverflowFadeEdge();
 
   return (
@@ -45,8 +54,8 @@ export default function SpendingInfo({ setScreen }: Props) {
               <Presence delay={DELAY} delayMultiplier={2}>
                 <Choice
                   choiceLabel="A"
-                  onPress={() => setSelectedChoice("WEEKLY")}
-                  selected={selectedChoice === "WEEKLY"}
+                  onPress={() => setTimeMode("WEEKLY")}
+                  selected={timeMode === "WEEKLY"}
                 >
                   Weekly
                 </Choice>
@@ -54,8 +63,8 @@ export default function SpendingInfo({ setScreen }: Props) {
               <Presence delay={DELAY} delayMultiplier={3}>
                 <Choice
                   choiceLabel="B"
-                  onPress={() => setSelectedChoice("MONTHLY")}
-                  selected={selectedChoice === "MONTHLY"}
+                  onPress={() => setTimeMode("MONTHLY")}
+                  selected={timeMode === "MONTHLY"}
                 >
                   Monthly
                 </Choice>
@@ -64,8 +73,8 @@ export default function SpendingInfo({ setScreen }: Props) {
               <Presence delay={DELAY} delayMultiplier={4}>
                 <Choice
                   choiceLabel="C"
-                  onPress={() => setSelectedChoice("BIMONTHLY")}
-                  selected={selectedChoice === "BIMONTHLY"}
+                  onPress={() => setTimeMode("BIMONTHLY")}
+                  selected={timeMode === "BIMONTHLY"}
                 >
                   Twice a Month
                 </Choice>
@@ -73,7 +82,7 @@ export default function SpendingInfo({ setScreen }: Props) {
             </View>
           </View>
 
-          {selectedChoice && (
+          {timeMode && (
             <Presence delay={DELAY} delayMultiplier={5}>
               <View className="gap-2.5">
                 <View className="flex-row">
@@ -84,13 +93,13 @@ export default function SpendingInfo({ setScreen }: Props) {
                     How much will you allocate{" "}
                   </Text>
                   <View className="relative">
-                    <TimeModeText
-                      key={selectedChoice}
-                      timeMode={selectedChoice}
-                    />
+                    <TimeModeText key={timeMode} timeMode={timeMode} />
                   </View>
                 </View>
-                <CurrencyInput defaultValue="10" />
+                <CurrencyInput
+                  onChangeText={(text) => setBudgetedAmount(Number(text) || 0)}
+                  value={budgetedAmount.toString()}
+                />
               </View>
             </Presence>
           )}
@@ -98,14 +107,20 @@ export default function SpendingInfo({ setScreen }: Props) {
       </FadingEdge>
 
       <CreateFooter
+        disabled={!timeMode || budgetedAmount <= 0 || isPending}
+        loading={isPending}
         onBackPress={() => {
           setScreen("fundInfo");
         }}
         onContinuePress={() => {
-          setScreen("chooseFolder");
+          if (presetFolderId) {
+            submit(presetFolderId);
+          } else {
+            setScreen("chooseFolder");
+          }
         }}
       >
-        Continue
+        {getFundTypeContinueBtnLabel(presetFolderId, isPending)}
       </CreateFooter>
     </>
   );

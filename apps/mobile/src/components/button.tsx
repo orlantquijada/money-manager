@@ -39,6 +39,7 @@ export default function Button({
     <Pressable
       {...props}
       className={cn(buttonVariants({ disabled, size, variant, className }))}
+      disabled={disabled}
     />
   );
 }

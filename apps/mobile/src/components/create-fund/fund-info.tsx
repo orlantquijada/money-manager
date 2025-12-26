@@ -15,7 +15,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { Lock, ShoppingBag } from "@/icons";
-import type { CreateFundScreens } from "@/lib/create-fund";
+import { type CreateFundScreens, useCreateFundStore } from "@/lib/create-fund";
 import { cn } from "@/utils/cn";
 import { mauveDark } from "@/utils/colors";
 import { transitions } from "@/utils/motion";
@@ -55,7 +55,12 @@ type Props = {
 };
 
 export default function FundInfo({ setScreen }: Props) {
-  const selectedType = useSharedValue<FundType>("SPENDING");
+  const name = useCreateFundStore((s) => s.name);
+  const setName = useCreateFundStore((s) => s.setName);
+  const fundType = useCreateFundStore((s) => s.fundType);
+  const setFundType = useCreateFundStore((s) => s.setFundType);
+
+  const selectedType = useSharedValue(fundType);
 
   const {
     style,
@@ -80,8 +85,9 @@ export default function FundInfo({ setScreen }: Props) {
                 What&apos;s the name of your fund?
               </Text>
               <TextInput
+                onChangeText={setName}
                 placeholder="new-fund"
-                // autoFocus={!dirty}
+                value={name}
               />
             </View>
           </Presence>
@@ -110,6 +116,7 @@ export default function FundInfo({ setScreen }: Props) {
                     onLayout={handleSpendingOnLayout}
                     onPress={() => {
                       selectedType.set("SPENDING");
+                      setFundType("SPENDING");
                     }}
                     pillLabel="Variable"
                   />
@@ -123,6 +130,7 @@ export default function FundInfo({ setScreen }: Props) {
                     onLayout={handleNonNegotiableOnLayout}
                     onPress={() => {
                       selectedType.set("NON_NEGOTIABLE");
+                      setFundType("NON_NEGOTIABLE");
                     }}
                     pillLabel="Fixed"
                   />
@@ -146,6 +154,7 @@ export default function FundInfo({ setScreen }: Props) {
       </FadingEdge>
 
       <CreateFooter
+        disabled={!name.trim()}
         hideBackButton
         onContinuePress={() => {
           navigateToNextScreen(selectedType.get(), setScreen);

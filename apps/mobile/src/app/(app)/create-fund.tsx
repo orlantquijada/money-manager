@@ -1,7 +1,8 @@
 import { AnimatePresence } from "@alloc/moti";
-import { Link } from "expo-router";
+import { useNavigation, usePreventRemove } from "@react-navigation/native";
+import { Link, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { Pressable } from "react-native";
+import { Alert, Pressable } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import ChooseFolder from "@/components/create-fund/choose-folder";
 import { FOOTER_HEIGHT } from "@/components/create-fund/footer";
@@ -9,10 +10,45 @@ import FundInfo from "@/components/create-fund/fund-info";
 import NonNegotiableInfo from "@/components/create-fund/non-negotiable-info";
 import SpendingInfo from "@/components/create-fund/spending-info";
 import { Cross } from "@/icons";
-import type { CreateFundScreens } from "@/lib/create-fund";
+import {
+  CreateFundProvider,
+  type CreateFundScreens,
+  useCreateFundIsDirty,
+} from "@/lib/create-fund";
 
 export default function CreateFund() {
+  return (
+    <CreateFundProvider>
+      <CreateFundContent />
+    </CreateFundProvider>
+  );
+}
+
+function CreateFundContent() {
+  const { folderId: folderIdParam } = useLocalSearchParams<{
+    folderId?: string;
+  }>();
   const [screen, setScreen] = useState<CreateFundScreens>("fundInfo");
+  const isDirty = useCreateFundIsDirty();
+  const navigation = useNavigation();
+
+  usePreventRemove(isDirty, ({ data }) => {
+    Alert.alert(
+      "Discard changes?",
+      "You have unsaved changes. Are you sure you want to discard them?",
+      [
+        { text: "Don't leave", style: "cancel" },
+        {
+          text: "Discard",
+          style: "destructive",
+          onPress: () => navigation.dispatch(data.action),
+        },
+      ]
+    );
+  });
+
+  // If folderId is provided via query param, skip the choose-folder step
+  const folderIdFromParam = folderIdParam ? Number(folderIdParam) : null;
 
   return (
     <KeyboardAvoidingView
@@ -28,11 +64,19 @@ export default function CreateFund() {
         )}
 
         {screen === "spendingInfo" && (
-          <SpendingInfo key="spendingInfo" setScreen={setScreen} />
+          <SpendingInfo
+            key="spendingInfo"
+            presetFolderId={folderIdFromParam}
+            setScreen={setScreen}
+          />
         )}
 
         {screen === "nonNegotiableInfo" && (
-          <NonNegotiableInfo key="nonNegotiableInfo" setScreen={setScreen} />
+          <NonNegotiableInfo
+            key="nonNegotiableInfo"
+            presetFolderId={folderIdFromParam}
+            setScreen={setScreen}
+          />
         )}
 
         {screen === "chooseFolder" && (

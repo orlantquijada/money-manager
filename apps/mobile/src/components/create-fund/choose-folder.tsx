@@ -1,7 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import type { Folder } from "api";
-import { useState } from "react";
 import {
   Pressable,
   type PressableProps,
@@ -11,7 +10,11 @@ import {
 } from "react-native";
 
 import { FolderClosedDuoCreate, FolderOpenDuo } from "@/icons";
-import type { CreateFundScreens } from "@/lib/create-fund";
+import {
+  type CreateFundScreens,
+  useCreateFundStore,
+  useSubmitFund,
+} from "@/lib/create-fund";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { mauveDark } from "@/utils/colors";
@@ -28,9 +31,13 @@ type Props = {
 
 export default function ChooseFolder({ setScreen }: Props) {
   const { fadeProps, handleScroll } = useOverflowFadeEdge();
-  const [selectedId, setSelectedId] = useState<number>();
+
+  const folderId = useCreateFundStore((s) => s.folderId);
+  const setFolderId = useCreateFundStore((s) => s.setFolderId);
+  const fundType = useCreateFundStore((s) => s.fundType);
 
   const { data } = useQuery(trpc.folder.list.queryOptions());
+  const { submit, isPending } = useSubmitFund();
 
   return (
     <>
@@ -50,7 +57,7 @@ export default function ChooseFolder({ setScreen }: Props) {
             <FlashList
               contentContainerStyle={{ paddingBottom: 8 }}
               data={data}
-              extraData={selectedId}
+              extraData={folderId}
               ItemSeparatorComponent={() => <View className="h-2" />}
               keyExtractor={(item) => item.id.toString()}
               numColumns={2}
@@ -64,8 +71,8 @@ export default function ChooseFolder({ setScreen }: Props) {
                   >
                     <FolderCard
                       folder={item}
-                      onPress={() => setSelectedId(item.id)}
-                      selected={item.id === selectedId}
+                      onPress={() => setFolderId(item.id)}
+                      selected={item.id === folderId}
                     />
                   </Presence>
                 );
@@ -75,12 +82,20 @@ export default function ChooseFolder({ setScreen }: Props) {
         </ScrollView>
       </FadingEdge>
       <CreateFooter
+        disabled={!folderId || isPending}
         onBackPress={() => {
-          setScreen("spendingInfo");
+          setScreen(
+            fundType === "SPENDING" ? "spendingInfo" : "nonNegotiableInfo"
+          );
         }}
-        onContinuePress={() => {}}
+        onContinuePress={() => {
+          if (!folderId) {
+            return;
+          }
+          submit(folderId);
+        }}
       >
-        Save
+        {isPending ? "Saving..." : "Save"}
       </CreateFooter>
     </>
   );

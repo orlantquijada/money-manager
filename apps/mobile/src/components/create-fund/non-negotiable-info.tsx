@@ -1,12 +1,16 @@
 import type { TimeMode } from "api";
-import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import Animated, {
   FadeInDown,
   FadeOutUp,
   Reanimated3DefaultSpringConfig,
 } from "react-native-reanimated";
-import type { CreateFundScreens } from "@/lib/create-fund";
+import {
+  type CreateFundScreens,
+  getFundTypeContinueBtnLabel,
+  useCreateFundStore,
+  useSubmitFund,
+} from "@/lib/create-fund";
 import { mauveDark } from "@/utils/colors";
 import { layoutSpringify, transitions } from "@/utils/motion";
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
@@ -19,11 +23,19 @@ const DELAY = 40;
 
 type Props = {
   setScreen: (screen: CreateFundScreens) => void;
+  presetFolderId: number | null;
 };
 
-export default function NonNegotiableInfo({ setScreen }: Props) {
-  const [selectedChoice, setSelectedChoice] = useState<TimeMode>();
+export default function NonNegotiableInfo({
+  setScreen,
+  presetFolderId,
+}: Props) {
+  const timeMode = useCreateFundStore((s) => s.timeMode);
+  const setTimeMode = useCreateFundStore((s) => s.setTimeMode);
+  const budgetedAmount = useCreateFundStore((s) => s.budgetedAmount);
+  const setBudgetedAmount = useCreateFundStore((s) => s.setBudgetedAmount);
 
+  const { submit, isPending } = useSubmitFund();
   const { fadeProps, handleScroll } = useOverflowFadeEdge();
 
   return (
@@ -46,9 +58,9 @@ export default function NonNegotiableInfo({ setScreen }: Props) {
                 <Choice
                   choiceLabel="A"
                   onPress={() => {
-                    setSelectedChoice("WEEKLY");
+                    setTimeMode("WEEKLY");
                   }}
-                  selected={selectedChoice === "WEEKLY"}
+                  selected={timeMode === "WEEKLY"}
                 >
                   Weekly
                 </Choice>
@@ -56,8 +68,8 @@ export default function NonNegotiableInfo({ setScreen }: Props) {
               <Presence delay={DELAY} delayMultiplier={3}>
                 <Choice
                   choiceLabel="B"
-                  onPress={() => setSelectedChoice("MONTHLY")}
-                  selected={selectedChoice === "MONTHLY"}
+                  onPress={() => setTimeMode("MONTHLY")}
+                  selected={timeMode === "MONTHLY"}
                 >
                   Monthly
                 </Choice>
@@ -65,7 +77,7 @@ export default function NonNegotiableInfo({ setScreen }: Props) {
             </View>
           </View>
 
-          {selectedChoice && (
+          {timeMode && (
             <Presence
               delay={DELAY}
               delayMultiplier={4}
@@ -80,13 +92,13 @@ export default function NonNegotiableInfo({ setScreen }: Props) {
                     How much is due{" "}
                   </Text>
                   <View className="relative">
-                    <TimeModeText
-                      key={selectedChoice}
-                      timeMode={selectedChoice}
-                    />
+                    <TimeModeText key={timeMode} timeMode={timeMode} />
                   </View>
                 </View>
-                <CurrencyInput defaultValue="0" />
+                <CurrencyInput
+                  onChangeText={(text) => setBudgetedAmount(Number(text) || 0)}
+                  value={budgetedAmount.toString()}
+                />
               </View>
             </Presence>
           )}
@@ -94,14 +106,20 @@ export default function NonNegotiableInfo({ setScreen }: Props) {
       </FadingEdge>
 
       <CreateFooter
+        disabled={!timeMode || budgetedAmount <= 0 || isPending}
+        loading={isPending}
         onBackPress={() => {
           setScreen("fundInfo");
         }}
         onContinuePress={() => {
-          setScreen("chooseFolder");
+          if (presetFolderId) {
+            submit(presetFolderId);
+          } else {
+            setScreen("chooseFolder");
+          }
         }}
       >
-        Continue
+        {getFundTypeContinueBtnLabel(presetFolderId, isPending)}
       </CreateFooter>
     </>
   );
