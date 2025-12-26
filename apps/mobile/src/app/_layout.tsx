@@ -1,5 +1,6 @@
 import "../global.css";
 import "react-native-reanimated";
+import "@/config/interop";
 
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
