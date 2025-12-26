@@ -1,0 +1,123 @@
+import { FlashList } from "@shopify/flash-list";
+import { useQuery } from "@tanstack/react-query";
+import type { Folder } from "api";
+import { useState } from "react";
+import {
+  Pressable,
+  type PressableProps,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+
+import { FolderClosedDuoCreate, FolderOpenDuo } from "@/icons";
+import type { CreateFundScreens } from "@/lib/create-fund";
+import { trpc } from "@/utils/api";
+import { cn } from "@/utils/cn";
+import { mauveDark } from "@/utils/colors";
+
+import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
+import Presence from "../presence";
+import CreateFooter from "./footer";
+
+const DELAY = 60;
+
+type Props = {
+  setScreen: (screen: CreateFundScreens) => void;
+};
+
+export default function ChooseFolder({ setScreen }: Props) {
+  const { fadeProps, handleScroll } = useOverflowFadeEdge();
+  const [selectedId, setSelectedId] = useState<number>();
+
+  const { data } = useQuery(trpc.folder.list.queryOptions());
+
+  return (
+    <>
+      <FadingEdge fadeColor={mauveDark.mauveDark1} {...fadeProps}>
+        <ScrollView
+          className="p-4 pt-0"
+          contentContainerClassName="pb-4 flex"
+          onScroll={handleScroll}
+        >
+          <Presence delay={DELAY} delayMultiplier={3}>
+            <Text className="font-satoshi-medium text-lg text-mauveDark12">
+              Select a folder.
+            </Text>
+          </Presence>
+
+          <View className="mt-3 h-full">
+            <FlashList
+              contentContainerStyle={{ paddingBottom: 8 }}
+              data={data}
+              extraData={selectedId}
+              ItemSeparatorComponent={() => <View className="h-2" />}
+              keyExtractor={(item) => item.id.toString()}
+              numColumns={2}
+              renderItem={({ item, index }) => {
+                // delay multipler 3 takes into account api loading
+                return (
+                  <Presence
+                    className={cn("flex-1", index % 2 ? "ml-1" : "mr-1")}
+                    delay={DELAY}
+                    delayMultiplier={3 + index}
+                  >
+                    <FolderCard
+                      folder={item}
+                      onPress={() => setSelectedId(item.id)}
+                      selected={item.id === selectedId}
+                    />
+                  </Presence>
+                );
+              }}
+            />
+          </View>
+        </ScrollView>
+      </FadingEdge>
+      <CreateFooter
+        onBackPress={() => {
+          setScreen("spendingInfo");
+        }}
+        onContinuePress={() => {}}
+      >
+        Save
+      </CreateFooter>
+    </>
+  );
+}
+
+type FolderCardProps = {
+  folder: Folder;
+  selected?: boolean;
+} & PressableProps;
+
+function FolderCard({
+  folder,
+  className,
+  selected = false,
+  ...rest
+}: FolderCardProps) {
+  const Icon = selected ? FolderOpenDuo : FolderClosedDuoCreate;
+
+  return (
+    <Pressable
+      className={cn(
+        "flex-row items-center rounded-xl bg-mauveDark4 p-4 transition-transform active:scale-95",
+        selected && "bg-mauveDark12"
+      )}
+      {...rest}
+    >
+      <Icon size={16} />
+
+      <Text
+        className={cn(
+          "ml-2 shrink font-satoshi-medium text-base text-mauveDark12",
+          selected && "text-mauveDark1"
+        )}
+        numberOfLines={1}
+      >
+        {folder.name}
+      </Text>
+    </Pressable>
+  );
+}
