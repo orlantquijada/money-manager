@@ -63,7 +63,6 @@ export default function TabBar({
             position.interpolate({
               inputRange,
               outputRange: inputRange.map((i) =>
-                // biome-ignore lint/nursery/noLeakedRender: <explanation>
                 i === index ? activeValue : inactiveValue
               ),
             });
