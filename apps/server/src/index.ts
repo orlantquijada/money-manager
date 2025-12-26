@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import { trpcServer } from "@hono/trpc-server";
-import { appRouter } from "api";
+import { appRouter, createTRPCContext } from "api";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -30,6 +30,7 @@ function createApp() {
     "/trpc/*",
     trpcServer({
       router: appRouter,
+      createContext: createTRPCContext,
     })
   );
 
