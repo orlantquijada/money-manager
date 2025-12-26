@@ -14,6 +14,15 @@ export default function AppLayout() {
           },
         }}
       />
+      <Stack.Screen
+        name="create-folder"
+        options={{
+          presentation: "modal",
+          contentStyle: {
+            backgroundColor: mauveDark.mauveDark1,
+          },
+        }}
+      />
     </Stack>
   );
 }
