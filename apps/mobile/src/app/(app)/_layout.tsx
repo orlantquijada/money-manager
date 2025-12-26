@@ -1,12 +1,19 @@
-import TabBar from "@/components/tab-bar";
-import MaterialTopTabs from "@/navigators/material-top-tabs";
+import { Stack } from "expo-router";
+import { mauveDark } from "@/utils/colors";
 
-export default function TabLayout() {
+export default function AppLayout() {
   return (
-    <MaterialTopTabs tabBar={TabBar} tabBarPosition="bottom">
-      <MaterialTopTabs.Screen name="add-expense" />
-      <MaterialTopTabs.Screen name="index" />
-      <MaterialTopTabs.Screen name="transactions" />
-    </MaterialTopTabs>
+    <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen
+        name="create-fund"
+        options={{
+          presentation: "modal",
+          contentStyle: {
+            backgroundColor: mauveDark.mauveDark1,
+          },
+        }}
+      />
+    </Stack>
   );
 }
