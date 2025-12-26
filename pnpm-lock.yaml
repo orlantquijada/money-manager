@@ -83,7 +83,13 @@ importers:
       '@expo-google-fonts/azeret-mono':
         specifier: ^0.4.1
         version: 0.4.1
+      '@expo-google-fonts/inter':
+        specifier: ^0.4.2
+        version: 0.4.2
       '@expo-google-fonts/nunito':
+        specifier: ^0.4.2
+        version: 0.4.2
+      '@expo-google-fonts/plus-jakarta-sans':
         specifier: ^0.4.2
         version: 0.4.2
       '@expo/vector-icons':
@@ -1453,8 +1459,14 @@ packages:
   '@expo-google-fonts/azeret-mono@0.4.1':
     resolution: {integrity: sha512-mAZp0of3QhFt7copxYt9JsPotOKQleDwk6gwLXOCfiz4mxnWtECQBAtPg/hOJrjuvgK6B3awxGqgdPcVBgpQ3w==}
 
+  '@expo-google-fonts/inter@0.4.2':
+    resolution: {integrity: sha512-syfiImMaDmq7cFi0of+waE2M4uSCyd16zgyWxdPOY7fN2VBmSLKEzkfbZgeOjJq61kSqPBNNtXjggiQiSD6gMQ==}
+
   '@expo-google-fonts/nunito@0.4.2':
     resolution: {integrity: sha512-1KCWphw/I2ugqfs9iRHUCkPTnomNgGPtF4AvqVquoEKxr0EL+mcLNLgeixsslbaSFevRR6/KJAE3sc8g0VaY0Q==}
+
+  '@expo-google-fonts/plus-jakarta-sans@0.4.2':
+    resolution: {integrity: sha512-6LYVmVGwjQvH+uzzWlVc9+oMj4lkNQ41aymVDjO+x8aFk8kCye20wOyLomYMZaMezA++Uf1mZRCw3W3Fy/hxEA==}
 
   '@expo/cli@54.0.20':
     resolution: {integrity: sha512-cwsXmhftvS0p9NNYOhXGnicBAZl9puWwRt19Qq5eQ6njLnaj8WvcR+kDZyADtgZxBsZiyVlrKXvnjt43HXywQA==}
@@ -6421,7 +6433,11 @@ snapshots:
 
   '@expo-google-fonts/azeret-mono@0.4.1': {}
 
+  '@expo-google-fonts/inter@0.4.2': {}
+
   '@expo-google-fonts/nunito@0.4.2': {}
+
+  '@expo-google-fonts/plus-jakarta-sans@0.4.2': {}
 
   '@expo/cli@54.0.20(expo-router@6.0.21)(expo@54.0.30)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(react@19.1.0))':
     dependencies:

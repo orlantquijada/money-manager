@@ -36,6 +36,13 @@ module.exports = {
         "nunito-semibold": ["Nunito_600SemiBold"],
         "nunito-bold": ["Nunito_700Bold"],
         "nunito-extra-bold": ["Nunito_800ExtraBold"],
+
+        inter: "Inter_400Regular",
+        "inter-italic": "Inter_400Regular_Italic",
+        "inter-medium": "Inter_500Medium",
+        "inter-medium-italic": "Inter_500Medium_Italic",
+        "inter-bold": "Inter_700Bold",
+        "inter-bold-italic": "Inter_700Bold_Italic",
       },
     },
   },
