@@ -46,7 +46,8 @@ export const { Provider: CreateFundProvider, useStore: useCreateFundStore } =
 
       setName: (name) => set({ name }),
 
-      setFundType: (fundType) => set({ ...initialFormState, fundType }),
+      setFundType: (fundType) =>
+        set((prev) => ({ ...initialFormState, fundType, name: prev.name })),
       setTimeMode: (timeMode) => set({ timeMode }),
       setBudgetedAmount: (budgetedAmount) => set({ budgetedAmount }),
       setFolderId: (folderId) => set({ folderId }),
