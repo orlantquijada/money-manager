@@ -1,9 +1,9 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FundType, TimeMode } from "api";
 import { useRouter } from "expo-router";
 import { createStore } from "zustand";
 
-import { queryClient, trpc } from "@/utils/api";
+import { trpc } from "@/utils/api";
 import { createScopedStore } from "@/utils/create-scoped-store";
 
 export type CreateFundScreens =
@@ -69,14 +69,17 @@ export function useCreateFundIsDirty() {
 
 export function useCreateFundMutation() {
   const store = useCreateFundStore();
+  const queryClient = useQueryClient();
 
-  return useMutation({
-    ...trpc.fund.create.mutationOptions(),
-    onSuccess: () => {
-      store.getState().reset();
-      queryClient.invalidateQueries({ queryKey: [["fund", "list"]] });
-    },
-  });
+  return useMutation(
+    trpc.fund.create.mutationOptions({
+      onSuccess: () => {
+        store.getState().reset();
+        queryClient.invalidateQueries(trpc.fund.list.pathFilter());
+        queryClient.invalidateQueries(trpc.folder.listWithFunds.pathFilter());
+      },
+    })
+  );
 }
 
 export function useSubmitFund() {
