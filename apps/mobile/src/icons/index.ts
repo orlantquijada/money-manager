@@ -1,6 +1,8 @@
 export { default as ActivityRecDuoDark } from "./activity-rec-duo-dark";
 export { default as ActivityRecFilledDark } from "./activity-rec-filled-dark";
 export { default as AlertTriangle } from "./alert-triangle";
+export { default as AnimatedArrowDown } from "./animated-arrow-down";
+export { default as ArrowDown } from "./arrow-down";
 export { default as CalendarDates } from "./calendar-dates";
 export { default as CalendarDuoDark } from "./calendar-duo-dark";
 export { default as ChartColumn } from "./chart-column";

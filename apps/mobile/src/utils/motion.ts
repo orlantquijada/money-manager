@@ -3,8 +3,10 @@ import {
   LinearTransition,
   Reanimated3DefaultSpringConfig,
   type WithTimingConfig,
+  withDelay,
   withRepeat,
   withSequence,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 
@@ -69,7 +71,43 @@ export function flicker({
   );
 }
 
-export const layoutSpringify = LinearTransition.springify()
-  .stiffness(transitions.snappy.stiffness)
-  .damping(transitions.snappy.damping)
-  .mass(Reanimated3DefaultSpringConfig.mass);
+type SpringConfigKeys = Exclude<keyof typeof transitions, "noTransition">;
+
+export function layoutSpringify(config: SpringConfigKeys) {
+  return LinearTransition.springify()
+    .stiffness(transitions[config].stiffness)
+    .damping(transitions[config].damping)
+    .mass(Reanimated3DefaultSpringConfig.mass);
+}
+
+export const totalSpentSlideOutUpConfig = {
+  offset: 40,
+  delay: 150,
+};
+
+export function TotalSpentSlideOutUp() {
+  "worklet";
+
+  const { delay, offset } = totalSpentSlideOutUpConfig;
+
+  const animations = {
+    transform: [
+      {
+        translateY: withDelay(
+          delay,
+          withSpring(-offset, transitions.lessSnappy)
+        ),
+      },
+    ],
+    opacity: withDelay(delay, withSpring(0, transitions.lessSnappy)),
+  };
+  const initialValues = {
+    transform: [{ translateY: 0 }],
+    opacity: 1,
+  };
+
+  return {
+    animations,
+    initialValues,
+  };
+}

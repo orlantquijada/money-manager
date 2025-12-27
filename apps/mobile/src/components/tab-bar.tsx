@@ -23,7 +23,9 @@ export default function TabBar({
   const addExpenseRoute = state.routes.find(
     ({ name }) => name === "add-expense"
   );
-  const homeRoute = state.routes.find(({ name }) => name === "index");
+  const dashboardRoute = state.routes.find(
+    ({ name }) => name === "(dashboard)"
+  );
   const txnsRoute = state.routes.find(({ name }) => name === "transactions");
 
   return (
@@ -88,7 +90,7 @@ export default function TabBar({
                     />
                   )}
 
-                  {route.name === homeRoute?.name && (
+                  {route.name === dashboardRoute?.name && (
                     <HomeDuoDark
                       color={mauveDark.mauveDark12}
                       fillOpacity={fillOpacity}

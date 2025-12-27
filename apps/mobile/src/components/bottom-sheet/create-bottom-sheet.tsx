@@ -5,7 +5,7 @@ import {
   BottomSheetView,
   useBottomSheet,
 } from "@gorhom/bottom-sheet";
-import { useRouter } from "expo-router";
+import { type Href, useRouter } from "expo-router";
 import type { Ref } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -25,7 +25,6 @@ export default function DashboardCreateBottomSheet({
 
   return (
     <BottomSheetModal
-      // animationConfigs={springConfigs}
       backdropComponent={CreateBackdrop}
       backgroundStyle={{
         backgroundColor: "transparent",
@@ -61,47 +60,59 @@ function CreateBackdrop(props: BottomSheetBackdropProps) {
   );
 }
 
+const CREATE_ITEMS: Array<{
+  title: string;
+  description: string;
+  Icon: IconComponent;
+  pathname: Href;
+}> = [
+  {
+    title: "Transaction",
+    description: "Add transactions to track your spending",
+    Icon: ShoppingBag,
+    pathname: "/add-expense",
+  },
+  {
+    title: "Fund",
+    description: "Manage your money for different goals",
+    Icon: WalletDuo,
+    pathname: "/create-fund",
+  },
+  {
+    title: "Folder",
+    description: "Add folders to organize your funds",
+    Icon: FolderClosedDuoCreate,
+    pathname: "/create-folder",
+  },
+];
+
 function Content() {
   const router = useRouter();
   const { close } = useBottomSheet();
 
   return (
-    <BottomSheetView className="flex-1 border-t border-t-mauveDark1 bg-mauveDark1">
+    <BottomSheetView className="flex-1 border-t border-t-mauveDark1 bg-mauveDark1 pb-2">
       <View className="mb-6 flex-row items-center justify-between px-6">
         <Text className="font-satoshi-bold text-mauveDark12 text-xl">
           Create
         </Text>
       </View>
 
-      <CreateCard
-        className="border-mauveDark7 border-b-hairline"
-        description="Add folders to organize your funds"
-        Icon={FolderClosedDuoCreate}
-        onPress={() => {
-          close();
-          router.push({ pathname: "/create-folder" });
-        }}
-        title="Folder"
-      />
-      <CreateCard
-        className="border-mauveDark7 border-b-hairline"
-        description="Manage your money for different goals"
-        Icon={WalletDuo}
-        onPress={() => {
-          close();
-          router.push({ pathname: "/create-fund" });
-        }}
-        title="Fund"
-      />
-      <CreateCard
-        description="Add transactions to track your spending"
-        Icon={ShoppingBag}
-        onPress={() => {
-          close();
-          router.push({ pathname: "/add-expense" });
-        }}
-        title="Transaction"
-      />
+      {CREATE_ITEMS.map((item, index) => (
+        <CreateCard
+          className={
+            index !== 0 ? "border-mauveDark7 border-b-hairline" : undefined
+          }
+          description={item.description}
+          Icon={item.Icon}
+          key={item.title}
+          onPress={() => {
+            close();
+            router.push(item.pathname);
+          }}
+          title={item.title}
+        />
+      ))}
     </BottomSheetView>
   );
 }

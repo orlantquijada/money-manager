@@ -1,4 +1,4 @@
-import { endOfMonth, startOfMonth } from "date-fns";
+import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import { transactions } from "db/schema";
 import { and, count, desc, eq, gte, lt, sum } from "drizzle-orm";
 import { z } from "zod";
@@ -126,6 +126,24 @@ export const transactionsRouter = router({
           // eq(Transaction.userId, ctx.auth.userId || ""),
           gte(transactions.date, startOfMonth(now)),
           lt(transactions.date, endOfMonth(now))
+        )
+      );
+
+    return result[0]?.amount ?? 0;
+  }),
+
+  totalLastMonth: protectedProcedure.query(async ({ ctx }) => {
+    const now = new Date();
+    const lastMonth = subMonths(now, 1);
+    const result = await ctx.db
+      .select({ amount: sum(transactions.amount).mapWith(Number) })
+      .from(transactions)
+      .where(
+        and(
+          // TODO: implement auth
+          // eq(Transaction.userId, ctx.auth.userId || ""),
+          gte(transactions.date, startOfMonth(lastMonth)),
+          lt(transactions.date, endOfMonth(lastMonth))
         )
       );
 

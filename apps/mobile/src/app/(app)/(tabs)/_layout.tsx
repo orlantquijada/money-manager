@@ -5,7 +5,7 @@ export default function TabLayout() {
   return (
     <MaterialTopTabs tabBar={TabBar} tabBarPosition="bottom">
       <MaterialTopTabs.Screen name="add-expense" />
-      <MaterialTopTabs.Screen name="index" />
+      <MaterialTopTabs.Screen name="(dashboard)" />
       <MaterialTopTabs.Screen name="transactions" />
     </MaterialTopTabs>
   );

@@ -19,6 +19,8 @@ import {
   PlusJakartaSans_400Regular_Italic,
   PlusJakartaSans_500Medium,
   PlusJakartaSans_500Medium_Italic,
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_600SemiBold_Italic,
   PlusJakartaSans_700Bold,
   PlusJakartaSans_700Bold_Italic,
 } from "@expo-google-fonts/plus-jakarta-sans";
@@ -44,6 +46,8 @@ function useAppFonts() {
     "Satoshi-Italic": PlusJakartaSans_400Regular_Italic,
     "Satoshi-Medium": PlusJakartaSans_500Medium,
     "Satoshi-MediumItalic": PlusJakartaSans_500Medium_Italic,
+    "Satoshi-SemiBold": PlusJakartaSans_600SemiBold,
+    "Satoshi-SemiBoldItalic": PlusJakartaSans_600SemiBold_Italic,
     "Satoshi-Bold": PlusJakartaSans_700Bold,
     "Satoshi-BoldItalic": PlusJakartaSans_700Bold_Italic,
 

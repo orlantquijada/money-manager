@@ -28,8 +28,11 @@ module.exports = {
         "satoshi-italic": ["Satoshi-Italic"],
         "satoshi-medium": ["Satoshi-Medium"],
         "satoshi-medium-italic": ["Satoshi-MediumItalic"],
+        "satoshi-semibold": "Satoshi-SemiBold",
+        "satoshi-semibold-italic": "Satoshi-SemiBoldItalic",
         "satoshi-bold": ["Satoshi-Bold"],
         "satoshi-bold-italic": ["Satoshi-BoldItalic"],
+
         "azeret-mono-regular": ["AzeretMono_400Regular"],
         nunito: ["Nunito_400Regular"],
         "nunito-medium": ["Nunito_500Medium"],

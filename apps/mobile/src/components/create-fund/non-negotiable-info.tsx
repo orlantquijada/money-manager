@@ -81,7 +81,7 @@ export default function NonNegotiableInfo({
             <Presence
               delay={DELAY}
               delayMultiplier={4}
-              layout={layoutSpringify}
+              layout={layoutSpringify("snappy")}
             >
               <View className="gap-2.5">
                 <View className="flex-row">
