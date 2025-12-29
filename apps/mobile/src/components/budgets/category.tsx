@@ -1,5 +1,5 @@
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { Pressable, StyleSheet, useWindowDimensions } from "react-native";
 import LeanText from "@/components/lean-text";
 import LeanView from "@/components/lean-view";
@@ -16,14 +16,43 @@ type CategoryProps = {
   fund: FundWithMeta;
 };
 
+/**
+ * Calculates progress for each bar based on total spending.
+ * Distributes spending from the current period backwards.
+ * Returns progress as 0-1 values where 1 = full (nothing spent), 0 = empty (fully spent).
+ */
+function useFundProgress(fund: FundWithMeta) {
+  return useMemo(() => {
+    const barCount = getTimeModeMultiplier(fund.timeMode);
+    const budgetedAmount = fund.budgetedAmount;
+
+    const progressBars: number[] = [];
+    let remaining = fund.totalSpent;
+
+    // Fill bars from the end (current period) to the start (oldest period)
+    for (let i = barCount - 1; i >= 0; i--) {
+      if (remaining >= budgetedAmount) {
+        progressBars[i] = 0; // Fully spent
+        remaining -= budgetedAmount;
+      } else {
+        progressBars[i] = 1 - remaining / budgetedAmount; // Partially spent
+        remaining = 0;
+      }
+    }
+
+    const overspentRatio = remaining / budgetedAmount;
+
+    return { progressBars, overspentRatio };
+  }, [fund.timeMode, fund.budgetedAmount, fund.totalSpent]);
+}
+
 export default function Category({ fund }: CategoryProps) {
   const ref = useRef<BottomSheetModal>(null);
   const { width: deviceWidth } = useWindowDimensions();
 
   const barCount = getTimeModeMultiplier(fund.timeMode);
   const barWidth = deviceWidth / barCount;
-
-  // const ProgressBars = CategoryProgressBars[fund.fundType];
+  const { progressBars } = useFundProgress(fund);
 
   return (
     <>
@@ -47,24 +76,15 @@ export default function Category({ fund }: CategoryProps) {
         </LeanView>
 
         <LeanView className="flex-row gap-2">
-          {Array.from({ length: barCount }).map((_, index) => {
+          {progressBars.map((progress, index) => {
             const isCurrentPeriod = index === barCount - 1;
-            // TODO: Calculate actual progress for each period
-            // const _progress = isCurrentPeriod ? 0.2 : 1;
-            let _progress = 1;
-
-            if (barCount > 1) {
-              if (index === barCount - 1) _progress = 0;
-              if (index === barCount - 2) _progress = 0.3;
-            }
 
             return (
               <ProgressBar
                 barWidth={barWidth}
                 highlight={barCount > 1 ? isCurrentPeriod : false}
                 key={index}
-                // progress={index === barCount - 1 ? progress : _progress}
-                progress={_progress}
+                progress={progress}
               />
             );
           })}
