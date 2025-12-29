@@ -36,70 +36,53 @@ export const foldersRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const now = new Date();
-      const dateStart = input?.startDate ?? startOfMonth(now);
-      const dateEnd = input?.endDate ?? endOfMonth(now);
+      const dateRange = {
+        start: input?.startDate ?? startOfMonth(now),
+        end: input?.endDate ?? endOfMonth(now),
+      };
 
-      // Fetch all folders with their funds
       const foldersWithFunds = await ctx.db.query.folders.findMany({
         // TODO: implement auth
         // where: eq(folders.userId, ctx.auth.userId || ""),
         with: {
-          funds: {
-            orderBy: (funds, { asc }) => asc(funds.createdAt),
-          },
+          funds: { orderBy: (funds, { asc }) => asc(funds.createdAt) },
         },
         orderBy: (folders, { desc }) => desc(folders.createdAt),
       });
 
-      const fundIds = foldersWithFunds.flatMap((folder) =>
-        folder.funds.map((fund) => fund.id)
+      const allFundIds = foldersWithFunds.flatMap((f) =>
+        f.funds.map((fund) => fund.id)
       );
 
-      // Return early if no funds exist
-      if (fundIds.length === 0) {
-        return foldersWithFunds.map((folder) => ({
-          ...folder,
-          funds: folder.funds.map((fund) => ({
-            ...fund,
-            budgetedAmount: Number(fund.budgetedAmount),
-            totalSpent: 0,
-          })),
-        }));
-      }
+      const spentByFund =
+        allFundIds.length > 0
+          ? await ctx.db
+              .select({
+                fundId: transactions.fundId,
+                amount: sum(transactions.amount).mapWith(Number),
+              })
+              .from(transactions)
+              .where(
+                and(
+                  inArray(transactions.fundId, allFundIds),
+                  gte(transactions.date, dateRange.start),
+                  lte(transactions.date, dateRange.end)
+                )
+              )
+              .groupBy(transactions.fundId)
+          : [];
 
-      // Calculate total spent per fund within date range
-      const totalSpentByFund = await ctx.db
-        .select({
-          fundId: transactions.fundId,
-          amount: sum(transactions.amount).mapWith(Number),
-        })
-        .from(transactions)
-        .where(
-          and(
-            inArray(transactions.fundId, fundIds),
-            gte(transactions.date, dateStart),
-            lte(transactions.date, dateEnd)
-          )
-        )
-        .groupBy(transactions.fundId);
-
-      // Map spending to each fund
       const spentMap = new Map(
-        totalSpentByFund.map((t) => [t.fundId, t.amount ?? 0])
+        spentByFund.map((t) => [t.fundId, t.amount ?? 0])
       );
 
       return foldersWithFunds.map((folder) => ({
         ...folder,
-        funds: folder.funds.map((fund) => {
-          const budgetedAmount = Number(fund.budgetedAmount);
-          const totalSpent = spentMap.get(fund.id) ?? 0;
-
-          return {
-            ...fund,
-            budgetedAmount,
-            totalSpent,
-          };
-        }),
+        funds: folder.funds.map((fund) => ({
+          ...fund,
+          budgetedAmount: Number(fund.budgetedAmount),
+          totalSpent: spentMap.get(fund.id) ?? 0,
+        })),
       }));
     }),
 

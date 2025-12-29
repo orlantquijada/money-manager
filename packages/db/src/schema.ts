@@ -3,6 +3,7 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   decimal,
+  index,
   integer,
   pgEnum,
   pgTable,
@@ -107,21 +108,25 @@ export const storeRelations = relations(stores, ({ one, many }) => ({
   transactions: many(transactions),
 }));
 
-export const transactions = pgTable("transactions", {
-  id: text()
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  amount: decimal({ precision: 12, scale: 2 }).default("0"),
-  date: timestamp().defaultNow(),
-  note: text(),
-  fundId: integer()
-    .notNull()
-    .references(() => funds.id, { onDelete: "cascade" }),
-  storeId: integer().references(() => stores.id, {
-    onDelete: "cascade",
-  }),
-  userId: text().references(() => users.id, { onDelete: "cascade" }),
-});
+export const transactions = pgTable(
+  "transactions",
+  {
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    amount: decimal({ precision: 12, scale: 2 }).default("0"),
+    date: timestamp().defaultNow(),
+    note: text(),
+    fundId: integer()
+      .notNull()
+      .references(() => funds.id, { onDelete: "cascade" }),
+    storeId: integer().references(() => stores.id, {
+      onDelete: "cascade",
+    }),
+    userId: text().references(() => users.id, { onDelete: "cascade" }),
+  },
+  (t) => [index("idx_transactions_fund_date").on(t.fundId, t.date)]
+);
 
 export const transactionRelations = relations(transactions, ({ one }) => ({
   fund: one(funds, {

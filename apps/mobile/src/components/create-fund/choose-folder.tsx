@@ -1,13 +1,7 @@
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import type { Folder } from "api";
-import {
-  Pressable,
-  type PressableProps,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, type PressableProps, ScrollView } from "react-native";
 
 import { FolderClosedDuoCreate, FolderOpenDuo } from "@/icons";
 import {
@@ -20,6 +14,8 @@ import { cn } from "@/utils/cn";
 import { mauveDark } from "@/utils/colors";
 
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
+import LeanText from "../lean-text";
+import LeanView from "../lean-view";
 import Presence from "../presence";
 import CreateFooter from "./footer";
 
@@ -48,17 +44,17 @@ export default function ChooseFolder({ setScreen }: Props) {
           onScroll={handleScroll}
         >
           <Presence delay={DELAY} delayMultiplier={3}>
-            <Text className="font-satoshi-medium text-lg text-mauveDark12">
+            <LeanText className="font-satoshi-medium text-lg text-mauveDark12">
               Select a folder.
-            </Text>
+            </LeanText>
           </Presence>
 
-          <View className="mt-3 h-full">
+          <LeanView className="mt-3 h-full">
             <FlashList
               contentContainerStyle={{ paddingBottom: 8 }}
               data={data}
               extraData={folderId}
-              ItemSeparatorComponent={() => <View className="h-2" />}
+              ItemSeparatorComponent={() => <LeanView className="h-2" />}
               keyExtractor={(item) => item.id.toString()}
               numColumns={2}
               renderItem={({ item, index }) => {
@@ -78,7 +74,7 @@ export default function ChooseFolder({ setScreen }: Props) {
                 );
               }}
             />
-          </View>
+          </LeanView>
         </ScrollView>
       </FadingEdge>
       <CreateFooter
@@ -112,8 +108,6 @@ function FolderCard({
   selected = false,
   ...rest
 }: FolderCardProps) {
-  const Icon = selected ? FolderOpenDuo : FolderClosedDuoCreate;
-
   return (
     <Pressable
       className={cn(
@@ -122,17 +116,22 @@ function FolderCard({
       )}
       {...rest}
     >
-      <Icon size={16} />
+      {selected ? (
+        <FolderOpenDuo color={mauveDark.mauveDark1} size={16} />
+      ) : (
+        <FolderClosedDuoCreate color={mauveDark.mauveDark12} size={16} />
+      )}
 
-      <Text
+      <LeanText
         className={cn(
           "ml-2 shrink font-satoshi-medium text-base text-mauveDark12",
-          selected && "text-mauveDark1"
+          selected && "text-mauveDark3"
         )}
+        ellipsizeMode="tail"
         numberOfLines={1}
       >
         {folder.name}
-      </Text>
+      </LeanText>
     </Pressable>
   );
 }

@@ -8,6 +8,9 @@
           "options": {
             "style": "type"
           }
+        },
+        "useBlockStatements": {
+          "level": "off"
         }
       }
     }

@@ -209,7 +209,11 @@ function FundCard({
       {...props}
     >
       <View className="flex-row gap-4">
-        <Icon className="translate-y-1 self-start" size={20} />
+        <Icon
+          className="translate-y-1 self-start"
+          color={mauveDark.mauveDark12}
+          size={20}
+        />
 
         <View className="flex-row items-center gap-2">
           <Text className="font-satoshi-medium text-base text-mauveDark12">

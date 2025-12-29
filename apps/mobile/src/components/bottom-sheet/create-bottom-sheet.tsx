@@ -142,7 +142,11 @@ function CreateCard({
       onPress={onPress}
     >
       <View className="flex-row items-center gap-4">
-        <Icon className="translate-y-1 self-start" size={iconSize} />
+        <Icon
+          className="translate-y-1 self-start"
+          color={mauveDark.mauveDark12}
+          size={iconSize}
+        />
         <Text className="font-satoshi-medium text-base text-mauveDark12">
           {title}
         </Text>

@@ -25,5 +25,6 @@ export { default as PlusRecDuoDark } from "./plus-rec-duo-dark";
 export { default as PlusRecFilledDark } from "./plus-rec-filled-dark";
 export { default as SearchDuo } from "./search-duo";
 export { default as ShoppingBag } from "./shopping-bag";
+export { default as Stripes } from "./stripes";
 export { default as TriangleLeft } from "./triangle-left";
 export { default as WalletDuo } from "./wallet-duo";

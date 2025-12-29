@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ActivityRecDuoDark, HomeDuoDark, PlusRecDuoDark } from "@/icons";
 import { mauveDark } from "@/utils/colors";
 
-const tabbarHeight = 72;
+export const TAB_BAR_HEIGHT = 72;
 
 export default function TabBar({
   navigation,
@@ -16,7 +16,7 @@ export default function TabBar({
   const translateY = position.interpolate({
     inputRange,
     outputRange: inputRange.map((i) =>
-      i === 0 ? tabbarHeight + insets.bottom : 0
+      i === 0 ? TAB_BAR_HEIGHT + insets.bottom : 0
     ),
   });
 
@@ -31,9 +31,11 @@ export default function TabBar({
   return (
     <Animated.View style={{ transform: [{ translateY }] }}>
       <View
-        className="absolute right-0 bottom-safe left-0 mx-4 flex-row items-center justify-center gap-x-10 rounded-[20px] bg-mauve12"
+        className="absolute inset-x-0 bottom-safe mx-4 flex-row items-center justify-center gap-x-10 bg-mauve12"
         style={{
-          height: tabbarHeight,
+          height: TAB_BAR_HEIGHT,
+          borderRadius: 20,
+          borderCurve: "continuous",
         }}
       >
         {state.routes.map((route, index) => {

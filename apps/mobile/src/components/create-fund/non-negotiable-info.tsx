@@ -74,13 +74,22 @@ export default function NonNegotiableInfo({
                   Monthly
                 </Choice>
               </Presence>
+              <Presence delay={DELAY} delayMultiplier={4}>
+                <Choice
+                  choiceLabel="C"
+                  onPress={() => setTimeMode("BIMONTHLY")}
+                  selected={timeMode === "BIMONTHLY"}
+                >
+                  Bimonthly
+                </Choice>
+              </Presence>
             </View>
           </View>
 
           {timeMode && (
             <Presence
               delay={DELAY}
-              delayMultiplier={4}
+              delayMultiplier={5}
               layout={layoutSpringify("snappy")}
             >
               <View className="gap-2.5">
@@ -151,4 +160,5 @@ function TimeModeText({ timeMode }: { timeMode: TimeMode }) {
 const readableTimeModeMap: Partial<Record<TimeMode, string>> = {
   WEEKLY: "weekly",
   MONTHLY: "monthly",
+  BIMONTHLY: "twice a month",
 };

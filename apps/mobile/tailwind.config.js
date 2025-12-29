@@ -18,6 +18,7 @@ module.exports = {
         ...colors.light.mauve,
         ...colors.light.lime,
         ...colors.light.red,
+        ...colors.light.pink,
         ...colors.dark.mauveDark,
         ...colors.dark.limeDark,
         ...colors.dark.redDark,

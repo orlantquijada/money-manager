@@ -37,7 +37,7 @@ export default function DashboardLayout() {
         </View>
 
         <Tabs>
-          <TabList className="!justify-start flex-row gap-2 border-b border-b-mauve5">
+          <TabList className="!justify-start flex-row gap-2 border-b-hairline border-b-mauve5">
             <TabTrigger asChild href="/" name="budgets">
               <TabButton className="ml-4">Budgets</TabButton>
             </TabTrigger>

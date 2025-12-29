@@ -1,3 +1,6 @@
+// Regex pattern for parsing HSL strings - hoisted for performance
+const HSL_REGEX = /hsl\(([^)]+)\)/;
+
 export const violet = {
   violet1: "hsl(255, 65.0%, 99.4%)",
   violet2: "hsl(252, 100%, 99.0%)",
@@ -58,11 +61,27 @@ export const red = {
   red12: "hsl(350, 63.0%, 24.0%)",
 };
 
+export const pink = {
+  pink1: "hsl(322, 100%, 99.4%)",
+  pink2: "hsl(323, 100%, 98.4%)",
+  pink3: "hsl(323, 86.3%, 96.5%)",
+  pink4: "hsl(323, 78.7%, 94.2%)",
+  pink5: "hsl(323, 72.2%, 91.1%)",
+  pink6: "hsl(323, 66.3%, 86.6%)",
+  pink7: "hsl(323, 62.0%, 80.1%)",
+  pink8: "hsl(323, 60.3%, 72.4%)",
+  pink9: "hsl(322, 65.0%, 54.5%)",
+  pink10: "hsl(322, 63.9%, 50.7%)",
+  pink11: "hsl(322, 75.0%, 46.0%)",
+  pink12: "hsl(320, 70.0%, 13.5%)",
+};
+
 const light = {
   violet,
   mauve,
   lime,
   red,
+  pink,
 } as const;
 
 export const mauveDark = {
@@ -151,5 +170,20 @@ const colors = {
   light,
   dark,
 };
+
+/**
+ * Converts an HSL string to HSLA with a given opacity
+ * @param hsl - HSL string in format "hsl(H, S%, L%)"
+ * @param opacity - Opacity value between 0 and 1
+ * @returns HSLA string in format "hsla(H, S%, L%, opacity)"
+ */
+export function hslToHsla(hsl: string, opacity: number): string {
+  // Extract the values from hsl(H, S%, L%) format
+  const match = hsl.match(HSL_REGEX);
+  if (!match) {
+    throw new Error(`Invalid HSL format: ${hsl}`);
+  }
+  return `hsla(${match[1]}, ${opacity})`;
+}
 
 export default colors;
