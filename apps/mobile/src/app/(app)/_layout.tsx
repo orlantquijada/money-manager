@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { mauveDark } from "@/utils/colors";
+import { mauveDark, violet } from "@/utils/colors";
 
 export default function AppLayout() {
   return (
@@ -20,6 +20,15 @@ export default function AppLayout() {
           presentation: "modal",
           contentStyle: {
             backgroundColor: mauveDark.mauveDark1,
+          },
+        }}
+      />
+      <Stack.Screen
+        name="fund/[id]"
+        options={{
+          presentation: "modal",
+          contentStyle: {
+            backgroundColor: violet.violet1,
           },
         }}
       />
