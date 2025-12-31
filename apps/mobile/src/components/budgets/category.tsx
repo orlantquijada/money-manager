@@ -3,10 +3,10 @@ import { useMemo } from "react";
 import { Pressable, useWindowDimensions } from "react-native";
 import LeanText from "@/components/lean-text";
 import LeanView from "@/components/lean-view";
-import useToggle from "@/hooks/use-toggle";
 import type { FundWithMeta } from "@/lib/fund";
 import { getTimeModeMultiplier } from "@/lib/fund";
 import ProgressBar from "./progress-bar";
+import QuickStatSpending from "./quick-stat/spending";
 
 export const CATEGORY_HEIGHT = 56;
 
@@ -66,7 +66,7 @@ export default function Category({ fund }: CategoryProps) {
             {fund.name}
           </LeanText>
 
-          <HelperText fund={fund} />
+          <QuickStatSpending fund={fund} />
         </LeanView>
 
         <LeanView className="flex-row gap-2">
@@ -85,32 +85,5 @@ export default function Category({ fund }: CategoryProps) {
         </LeanView>
       </Pressable>
     </Link>
-  );
-}
-
-export type HelperTextProps = {
-  showDefault?: boolean;
-  fund: FundWithMeta;
-};
-
-// const TextMap: Record<FundType, FC<HelperTextProps>> = {
-//   SPENDING: SpendingHelperText,
-//   NON_NEGOTIABLE: NonNegotiableHelperText,
-// };
-
-function HelperText({ fund }: { fund: FundWithMeta }) {
-  const [showDefault, { toggle }] = useToggle(true);
-
-  // const Text = TextMap[fund.fundType];
-
-  return (
-    <Pressable
-      className="transition-all active:opacity-70"
-      hitSlop={10}
-      onPress={toggle}
-    >
-      {/* <Text fund={fund} showDefault={showDefault} /> */}
-      <LeanText className="font-satoshi text-mauve9 text-xs">Hello</LeanText>
-    </Pressable>
   );
 }
