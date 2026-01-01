@@ -28,6 +28,7 @@ import { useState } from "react";
 import {
   Image,
   PlatformColor,
+  Pressable,
   Text as RNText,
   ScrollView,
   StyleSheet,
@@ -535,6 +536,142 @@ export default function Hello() {
               </Text>
             </Host>
           </View>
+        </Section>
+
+        {/* ===== GLASS ICON BUTTONS ===== */}
+        <Section title="Glass Icon Buttons">
+          <RNText className="mb-2 text-gray-400 text-sm">
+            Icon buttons using GlassView with isInteractive
+          </RNText>
+
+          <View className="relative mb-4 h-48 overflow-hidden rounded-2xl">
+            <Image
+              source={{
+                uri: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&h=300&fit=crop",
+              }}
+              style={StyleSheet.absoluteFill}
+            />
+
+            {/* Row of circular icon buttons */}
+            <View
+              style={{
+                position: "absolute",
+                top: 20,
+                left: 20,
+                right: 20,
+                flexDirection: "row",
+                gap: 12,
+              }}
+            >
+              {/* Circular Icon Button - with onPress */}
+              <Pressable onPress={() => console.log("Add pressed!")}>
+                <GlassView
+                  isInteractive
+                  style={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: 28,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <RNText style={{ fontSize: 24 }}>➕</RNText>
+                </GlassView>
+              </Pressable>
+
+              {/* Circular Icon Button - Tinted */}
+              <GlassView
+                isInteractive
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 28,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                tintColor="#6366f1"
+              >
+                <RNText style={{ fontSize: 24 }}>❤️</RNText>
+              </GlassView>
+
+              {/* Rounded Square Icon Button */}
+              <GlassView
+                glassEffectStyle="clear"
+                isInteractive
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 16,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <RNText style={{ fontSize: 24 }}>⚙️</RNText>
+              </GlassView>
+            </View>
+
+            {/* Pill-shaped icon + label button */}
+            <GlassView
+              isInteractive
+              style={{
+                position: "absolute",
+                bottom: 20,
+                left: 20,
+                paddingHorizontal: 20,
+                paddingVertical: 12,
+                borderRadius: 24,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              <RNText style={{ fontSize: 18 }}>🎵</RNText>
+              <RNText className="font-semibold text-black">Play</RNText>
+            </GlassView>
+
+            {/* Another pill button */}
+            <GlassView
+              isInteractive
+              style={{
+                position: "absolute",
+                bottom: 20,
+                right: 20,
+                paddingHorizontal: 20,
+                paddingVertical: 12,
+                borderRadius: 24,
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+              }}
+              tintColor="#10b981"
+            >
+              <RNText style={{ fontSize: 18 }}>✓</RNText>
+              <RNText className="font-semibold text-black">Done</RNText>
+            </GlassView>
+          </View>
+
+          {/* SwiftUI Button with systemImage */}
+          <RNText className="mb-2 font-medium text-white">
+            SwiftUI Button with Glass Variant
+          </RNText>
+          <Host matchContents>
+            <HStack spacing={12}>
+              <Button
+                onPress={() => console.log("Glass icon pressed")}
+                systemImage="plus"
+                variant="glass"
+              >
+                Add
+              </Button>
+              <Button
+                onPress={() => console.log("Glass prominent pressed")}
+                systemImage="heart.fill"
+                variant="glassProminent"
+              >
+                Like
+              </Button>
+            </HStack>
+          </Host>
         </Section>
 
         {/* ===== BOTTOM SHEET ===== */}
