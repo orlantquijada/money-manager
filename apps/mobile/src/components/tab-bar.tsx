@@ -1,10 +1,27 @@
 import type { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
+import type { ComponentType } from "react";
+import { useCallback, useMemo } from "react";
 import { Animated, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { ActivityRecDuoDark, HomeDuoDark, PlusRecDuoDark } from "@/icons";
 import { mauveDark } from "@/utils/colors";
+import type { TabBarIconProps } from "@/utils/types";
 
 export const TAB_BAR_HEIGHT = 72;
+
+type RouteConfig = {
+  name: string;
+  icon: ComponentType<TabBarIconProps>;
+};
+
+const ROUTE_CONFIG: RouteConfig[] = [
+  { name: "(dashboard)", icon: HomeDuoDark },
+  { name: "add-expense", icon: PlusRecDuoDark },
+  { name: "transactions", icon: ActivityRecDuoDark },
+];
+
+const ROUTE_MAP = new Map(ROUTE_CONFIG.map((config) => [config.name, config]));
 
 export default function TabBar({
   navigation,
@@ -12,21 +29,22 @@ export default function TabBar({
   state,
 }: MaterialTopTabBarProps) {
   const insets = useSafeAreaInsets();
-  const inputRange = state.routes.map((_, i) => i);
-  const translateY = position.interpolate({
-    inputRange,
-    outputRange: inputRange.map((i) =>
-      i === 0 ? TAB_BAR_HEIGHT + insets.bottom : 0
-    ),
-  });
 
-  const addExpenseRoute = state.routes.find(
-    ({ name }) => name === "add-expense"
+  const inputRange = useMemo(
+    () => state.routes.map((_, i) => i),
+    [state.routes]
   );
-  const dashboardRoute = state.routes.find(
-    ({ name }) => name === "(dashboard)"
+
+  const translateY = useMemo(
+    () =>
+      position.interpolate({
+        inputRange,
+        outputRange: inputRange.map((i) =>
+          i === 0 ? TAB_BAR_HEIGHT + insets.bottom : 0
+        ),
+      }),
+    [position, inputRange, insets.bottom]
   );
-  const txnsRoute = state.routes.find(({ name }) => name === "transactions");
 
   return (
     <Animated.View style={{ transform: [{ translateY }] }}>
@@ -38,81 +56,106 @@ export default function TabBar({
           borderCurve: "continuous",
         }}
       >
-        {state.routes.map((route, index) => {
-          const isFocused = state.index === index;
-
-          const onPress = () => {
-            const event = navigation.emit({
-              type: "tabPress",
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (!(isFocused || event.defaultPrevented)) {
-              navigation.navigate(route.name);
-            }
-          };
-
-          const onLongPress = () => {
-            navigation.emit({
-              type: "tabLongPress",
-              target: route.key,
-            });
-          };
-
-          const createOpacityInterpolation = (
-            activeValue: number,
-            inactiveValue: number
-          ) =>
-            position.interpolate({
-              inputRange,
-              outputRange: inputRange.map((i) =>
-                i === index ? activeValue : inactiveValue
-              ),
-            });
-
-          const opacity = createOpacityInterpolation(1, 0.5);
-          const fillOpacity = createOpacityInterpolation(1, 0.2);
-          const outlineOpacity = createOpacityInterpolation(0, 1);
-
-          return (
-            <View key={route.key}>
-              <Pressable
-                className="transition-all active:scale-90"
-                hitSlop={10}
-                onLongPress={onLongPress}
-                onPress={onPress}
-              >
-                <Animated.View style={{ opacity }}>
-                  {route.name === addExpenseRoute?.name && (
-                    <PlusRecDuoDark
-                      color={mauveDark.mauveDark12}
-                      fillOpacity={fillOpacity}
-                      outlineOpacity={outlineOpacity}
-                    />
-                  )}
-
-                  {route.name === dashboardRoute?.name && (
-                    <HomeDuoDark
-                      color={mauveDark.mauveDark12}
-                      fillOpacity={fillOpacity}
-                      outlineOpacity={outlineOpacity}
-                    />
-                  )}
-
-                  {route.name === txnsRoute?.name && (
-                    <ActivityRecDuoDark
-                      color={mauveDark.mauveDark12}
-                      fillOpacity={fillOpacity}
-                      outlineOpacity={outlineOpacity}
-                    />
-                  )}
-                </Animated.View>
-              </Pressable>
-            </View>
-          );
-        })}
+        {state.routes.map((route, index) => (
+          <TabItem
+            index={index}
+            inputRange={inputRange}
+            isFocused={state.index === index}
+            key={route.key}
+            navigation={navigation}
+            position={position}
+            route={route}
+          />
+        ))}
       </View>
     </Animated.View>
+  );
+}
+
+function useTabBarAnimations(
+  position: MaterialTopTabBarProps["position"],
+  inputRange: number[],
+  index: number
+) {
+  return useMemo(() => {
+    const createInterpolation = (activeValue: number, inactiveValue: number) =>
+      position.interpolate({
+        inputRange,
+        outputRange: inputRange.map((i) =>
+          i === index ? activeValue : inactiveValue
+        ),
+      });
+
+    return {
+      opacity: createInterpolation(1, 0.5),
+      fillOpacity: createInterpolation(1, 0.2),
+      outlineOpacity: createInterpolation(0, 1),
+    };
+  }, [position, inputRange, index]);
+}
+
+type TabItemProps = {
+  route: MaterialTopTabBarProps["state"]["routes"][number];
+  index: number;
+  isFocused: boolean;
+  position: MaterialTopTabBarProps["position"];
+  inputRange: number[];
+  navigation: MaterialTopTabBarProps["navigation"];
+};
+
+function TabItem({
+  route,
+  index,
+  isFocused,
+  position,
+  inputRange,
+  navigation,
+}: TabItemProps) {
+  const { opacity, fillOpacity, outlineOpacity } = useTabBarAnimations(
+    position,
+    inputRange,
+    index
+  );
+
+  const config = ROUTE_MAP.get(route.name);
+
+  const handlePress = useCallback(() => {
+    const event = navigation.emit({
+      type: "tabPress",
+      target: route.key,
+      canPreventDefault: true,
+    });
+
+    if (!(isFocused || event.defaultPrevented)) {
+      navigation.navigate(route.name);
+    }
+  }, [navigation, route.key, route.name, isFocused]);
+
+  const handleLongPress = useCallback(() => {
+    navigation.emit({
+      type: "tabLongPress",
+      target: route.key,
+    });
+  }, [navigation, route.key]);
+
+  if (!config) return null;
+
+  const Icon = config.icon;
+
+  return (
+    <Pressable
+      className="transition-all active:scale-90"
+      hitSlop={10}
+      onLongPress={handleLongPress}
+      onPress={handlePress}
+    >
+      <Animated.View style={{ opacity }}>
+        <Icon
+          color={mauveDark.mauveDark12}
+          fillOpacity={fillOpacity}
+          outlineOpacity={outlineOpacity}
+        />
+      </Animated.View>
+    </Pressable>
   );
 }
