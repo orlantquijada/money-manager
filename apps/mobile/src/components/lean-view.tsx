@@ -1,7 +1,7 @@
 import { createElement, type Ref } from "react";
-import type { TextProps, View } from "react-native";
+import type { View, ViewProps } from "react-native";
 
-export default function LeanView(props: TextProps & { ref?: Ref<View> }) {
+export default function LeanView(props: ViewProps & { ref?: Ref<View> }) {
   return createElement("RCTView", props);
 }
 LeanView.displayName = "RCTView";
