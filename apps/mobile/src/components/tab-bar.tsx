@@ -3,7 +3,8 @@ import type { ComponentType } from "react";
 import { useCallback, useMemo } from "react";
 import { Animated, Pressable, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
+import { useSyncTabPosition } from "@/hooks/use-sync-tab-position";
+import { useTabChangeHaptics } from "@/hooks/use-tab-change-haptics";
 import { ActivityRecDuoDark, HomeDuoDark, PlusRecDuoDark } from "@/icons";
 import { mauveDark } from "@/utils/colors";
 import type { TabBarIconProps } from "@/utils/types";
@@ -29,6 +30,8 @@ export default function TabBar({
   state,
 }: MaterialTopTabBarProps) {
   const insets = useSafeAreaInsets();
+  useSyncTabPosition(position, state.routes);
+  useTabChangeHaptics(state.index);
 
   const inputRange = useMemo(
     () => state.routes.map((_, i) => i),

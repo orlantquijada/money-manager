@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Amount, useAmount } from "@/components/add-expense/amount";
 import Numpad from "@/components/add-expense/numpad";
+import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import { DateSelector } from "@/components/date-selector.ios";
 import GlassButtonIcon from "@/components/glass-button-icon";
 import { Cross } from "@/icons";
@@ -13,13 +14,15 @@ export default function AddExpense() {
   const [date, setDate] = useState(new Date());
 
   return (
-    <SafeAreaView className="flex-1 bg-mauveDark1">
-      <View className="flex-1 px-4 pb-8">
-        <Header className="mt-8 mb-auto" date={date} onDateChange={setDate} />
+    <AnimatedTabScreen index={0}>
+      <SafeAreaView className="flex-1 bg-mauveDark1">
+        <View className="flex-1 px-4 pb-8">
+          <Header className="mt-8 mb-auto" date={date} onDateChange={setDate} />
 
-        <CreateTransactionForm />
-      </View>
-    </SafeAreaView>
+          <CreateTransactionForm />
+        </View>
+      </SafeAreaView>
+    </AnimatedTabScreen>
   );
 }
 

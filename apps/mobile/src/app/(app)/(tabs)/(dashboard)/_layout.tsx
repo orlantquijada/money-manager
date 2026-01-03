@@ -1,5 +1,3 @@
-import { Host, HStack, Text as SwiftText } from "@expo/ui/swift-ui";
-import { frame, glassEffect } from "@expo/ui/swift-ui/modifiers";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import {
   TabList,
@@ -11,6 +9,7 @@ import {
 import { useRef } from "react";
 import { Pressable, type PressableProps, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
 import TotalSpent from "@/components/dashboard/total-spent";
 import GlassButtonIcon from "@/components/glass-button-icon";
@@ -22,7 +21,7 @@ export default function DashboardLayout() {
   const ref = useRef<BottomSheetModal>(null);
 
   return (
-    <>
+    <AnimatedTabScreen index={1}>
       <DashboardCreateBottomSheet ref={ref} />
 
       <SafeAreaView className="flex-1 bg-violet1">
@@ -59,13 +58,11 @@ export default function DashboardLayout() {
           <TabSlot />
         </Tabs>
       </SafeAreaView>
-    </>
+    </AnimatedTabScreen>
   );
 }
 
 function AddButton({ className, ...props }: PressableProps) {
-  const SIZE = 40;
-
   return (
     <GlassButtonIcon
       glassViewProps={{
@@ -78,60 +75,6 @@ function AddButton({ className, ...props }: PressableProps) {
     >
       <Plus className="size-6 text-mauve1" />
     </GlassButtonIcon>
-  );
-
-  return (
-    <Pressable {...props} className={cn("bg-mauve1 p-4", className)}>
-      {/* <GlassView */}
-      {/*   glassEffectStyle="regular" */}
-      {/*   isInteractive */}
-      {/*   style={{ */}
-      {/*     // width: 40, */}
-      {/*     width: 64, */}
-      {/*     aspectRatio: 1, */}
-      {/*     borderRadius: 999, */}
-      {/*     justifyContent: "center", */}
-      {/*     alignItems: "center", */}
-      {/*   }} */}
-      {/* > */}
-      {/*   <Plus className="text-mauveDark1" size={20} /> */}
-      {/* </GlassView> */}
-
-      <Host matchContents>
-        <HStack
-          modifiers={[
-            frame({ height: SIZE, width: SIZE }),
-            glassEffect({
-              glass: {
-                variant: "regular",
-                interactive: true,
-                // tint: "#e9e8ea",
-                tint: "#1a1523",
-                // tint: "#ededef",
-              },
-              shape: "circle",
-            }),
-          ]}
-        >
-          <SwiftText color="#fdfcfd" size={24}>
-            +
-          </SwiftText>
-        </HStack>
-      </Host>
-
-      {/* <View */}
-      {/*   style={{ */}
-      {/*     // width: 40, */}
-      {/*     width: 64, */}
-      {/*     aspectRatio: 1, */}
-      {/*     borderRadius: 999, */}
-      {/*     justifyContent: "center", */}
-      {/*     alignItems: "center", */}
-      {/*   }} */}
-      {/* > */}
-      {/*   <Plus className="text-mauveDark1" size={20} /> */}
-      {/* </View> */}
-    </Pressable>
   );
 }
 
