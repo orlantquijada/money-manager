@@ -101,7 +101,9 @@ function Content() {
       {CREATE_ITEMS.map((item, index) => (
         <CreateCard
           className={
-            index !== 0 ? "border-mauveDark7 border-b-hairline" : undefined
+            index !== CREATE_ITEMS.length - 1
+              ? "border-mauveDark7 border-b-hairline"
+              : undefined
           }
           description={item.description}
           Icon={item.Icon}
