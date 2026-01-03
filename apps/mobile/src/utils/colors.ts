@@ -31,6 +31,22 @@ export const mauve = {
   mauve12: "hsl(260, 25.0%, 11.0%)",
 };
 
+// liquid glass not supporting hsl
+export const mauveRgb = {
+  mauve1: "#fdfcfd",
+  mauve2: "#f9f8f9",
+  mauve3: "#f4f2f4",
+  mauve4: "#eeedef",
+  mauve5: "#e9e8ea",
+  mauve6: "#e4e2e4",
+  mauve7: "#dcdbdd",
+  mauve8: "#c8c7cb",
+  mauve9: "#908e96",
+  mauve10: "#86848d",
+  mauve11: "#6f6e77",
+  mauve12: "#1a1523",
+};
+
 export const lime = {
   lime1: "hsl(85, 50.0%, 98.7%)",
   lime2: "hsl(85, 66.7%, 96.5%)",
@@ -97,6 +113,21 @@ export const mauveDark = {
   mauveDark10: "hsl(247, 3.4%, 50.7%)",
   mauveDark11: "hsl(253, 4.0%, 63.7%)",
   mauveDark12: "hsl(256, 6.0%, 93.2%)",
+};
+
+export const mauveDarkRgb = {
+  mauveDark1: "#161618",
+  mauveDark2: "#1c1c1f",
+  mauveDark3: "#232326",
+  mauveDark4: "#28282c",
+  mauveDark5: "#2e2e32",
+  mauveDark6: "#34343a",
+  mauveDark7: "#3e3e44",
+  mauveDark8: "#504f57",
+  mauveDark9: "#706f78",
+  mauveDark10: "#7e7d86",
+  mauveDark11: "#a09fa6",
+  mauveDark12: "#ededef",
 };
 
 export const limeDark = {

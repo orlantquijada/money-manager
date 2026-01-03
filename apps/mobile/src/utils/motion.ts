@@ -111,3 +111,67 @@ export function TotalSpentSlideOutUp() {
     initialValues,
   };
 }
+
+const digitSlideConfig = {
+  offset: 40,
+};
+
+export function DigitSlideIn() {
+  "worklet";
+
+  const { offset } = digitSlideConfig;
+
+  const animations = {
+    transform: [{ translateY: withSpring(0, transitions.snappier) }],
+    opacity: withSpring(1, transitions.snappier),
+  };
+  const initialValues = {
+    transform: [{ translateY: offset }],
+    opacity: 0,
+  };
+
+  return {
+    animations,
+    initialValues,
+  };
+}
+
+export function DigitSlideOutDown() {
+  "worklet";
+
+  const { offset } = digitSlideConfig;
+
+  const animations = {
+    transform: [{ translateY: withSpring(offset, transitions.snappier) }],
+    opacity: withSpring(0, transitions.snappier),
+  };
+  const initialValues = {
+    transform: [{ translateY: 0 }],
+    opacity: 1,
+  };
+
+  return {
+    animations,
+    initialValues,
+  };
+}
+
+export function DigitSlideOutUp() {
+  "worklet";
+
+  const { offset } = digitSlideConfig;
+
+  const animations = {
+    transform: [{ translateY: withSpring(-offset, transitions.snappier) }],
+    opacity: withSpring(0, transitions.snappier),
+  };
+  const initialValues = {
+    transform: [{ translateY: 0 }],
+    opacity: 1,
+  };
+
+  return {
+    animations,
+    initialValues,
+  };
+}

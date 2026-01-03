@@ -1,179 +1,82 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
-import Button from "@/components/button";
-import ModalCloseBtn from "@/components/modal-close-btn";
-import TextInput, { CurrencyInput } from "@/components/text-input";
-import { trpc } from "@/utils/api";
+import { View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Amount, useAmount } from "@/components/add-expense/amount";
+import Numpad from "@/components/add-expense/numpad";
+import { DateSelector } from "@/components/date-selector.ios";
+import GlassButtonIcon from "@/components/glass-button-icon";
+import { Cross } from "@/icons";
 import { cn } from "@/utils/cn";
-import { mauveDark } from "@/utils/colors";
-import { toCurrencyNarrow } from "@/utils/format";
 
 export default function AddExpense() {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const [selectedFundId, setSelectedFundId] = useState<number | null>(null);
-  const [amount, setAmount] = useState("");
-  const [note, setNote] = useState("");
-
-  const { data: funds, isLoading } = useQuery(trpc.fund.list.queryOptions());
-
-  const createTransaction = useMutation(
-    trpc.transaction.create.mutationOptions({
-      onSuccess: () => {
-        queryClient.invalidateQueries();
-        router.replace({ pathname: "/(app)/(tabs)/(dashboard)" });
-      },
-    })
-  );
-
-  const parsedAmount = Number.parseFloat(amount) || 0;
-  const canSubmit = selectedFundId !== null && parsedAmount > 0;
-
-  const handleSubmit = () => {
-    if (!canSubmit) {
-      return;
-    }
-
-    createTransaction.mutate({
-      fundId: selectedFundId,
-      amount: parsedAmount,
-      note: note.trim() || undefined,
-    });
-  };
+  const [date, setDate] = useState(new Date());
 
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      className="flex-1 bg-mauveDark1 pt-4"
-      keyboardVerticalOffset={100}
+    <SafeAreaView className="flex-1 bg-mauveDark1">
+      <View className="flex-1 px-4 pb-8">
+        <Header className="mt-8 mb-auto" date={date} onDateChange={setDate} />
+
+        <CreateTransactionForm />
+      </View>
+    </SafeAreaView>
+  );
+}
+
+type HeaderProps = {
+  className?: string;
+  date: Date;
+  onDateChange: (date: Date) => void;
+};
+
+function Header({ className, date, onDateChange }: HeaderProps) {
+  return (
+    <View
+      className={cn(
+        "h-10 w-full flex-row items-center justify-between",
+        className
+      )}
     >
-      <Link asChild href={{ pathname: "/" }} replace>
-        <ModalCloseBtn className="mb-6 ml-4" />
-      </Link>
+      <DateSelector date={date} onDateChange={onDateChange} />
 
-      <View className="flex-1 px-4">
-        {/* Amount Input */}
-        <View className="mb-8 gap-2.5">
-          <Text className="font-satoshi-medium text-lg text-mauveDark12">
-            How much did you spend?
-          </Text>
-          <CurrencyInput
-            autoFocus
-            onChangeText={setAmount}
-            placeholder="0.00"
-            value={amount}
-          />
-        </View>
+      <Close />
+    </View>
+  );
+}
 
-        {/* Fund Selection */}
-        <View className="mb-8 flex-1 gap-2.5">
-          <Text className="font-satoshi-medium text-lg text-mauveDark12">
-            From which fund?
-          </Text>
+function Close() {
+  return (
+    <Link asChild href={{ pathname: "/" }}>
+      <GlassButtonIcon>
+        <Cross className="size-6 text-mauveDark11" />
+      </GlassButtonIcon>
+    </Link>
+  );
+}
 
-          {isLoading ? (
-            <View className="flex-1 items-center justify-center">
-              <ActivityIndicator color={mauveDark.mauveDark11} />
-            </View>
-          ) : (
-            <ScrollView
-              className="flex-1"
-              contentContainerClassName="gap-2 pb-4"
-              showsVerticalScrollIndicator={false}
-            >
-              {funds?.map((fund) => {
-                const remaining = fund.budgetedAmount - fund.totalSpent;
-                const isSelected = selectedFundId === fund.id;
+function CreateTransactionForm() {
+  const { amount, handleKeyPress } = useAmount();
 
-                return (
-                  <Pressable
-                    className={cn(
-                      "flex-row items-center justify-between rounded-xl px-4 py-3 transition-all active:scale-[.98] active:opacity-70",
-                      isSelected ? "bg-violet4" : "bg-mauveDark4"
-                    )}
-                    key={fund.id}
-                    onPress={() => setSelectedFundId(fund.id)}
-                    style={{ borderCurve: "continuous" }}
-                  >
-                    <View className="flex-1">
-                      <Text
-                        className={cn(
-                          "font-satoshi-medium text-base",
-                          isSelected ? "text-violet11" : "text-mauveDark12"
-                        )}
-                      >
-                        {fund.name}
-                      </Text>
-                      <Text
-                        className={cn(
-                          "font-inter text-sm",
-                          isSelected ? "text-violet10" : "text-mauveDark10"
-                        )}
-                      >
-                        {toCurrencyNarrow(remaining)} remaining
-                      </Text>
-                    </View>
+  return (
+    <>
+      <View
+        className="relative flex-grow items-center justify-center"
+        // style={{ minHeight: screenHeight * 0.25 }}
+      >
+        <Amount amount={amount} />
 
-                    {isSelected && (
-                      <View
-                        className="h-5 w-5 items-center justify-center rounded-full bg-violet9"
-                        style={{ borderCurve: "continuous" }}
-                      >
-                        <View className="h-2 w-2 rounded-full bg-white" />
-                      </View>
-                    )}
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
-          )}
-        </View>
-
-        {/* Note Input */}
-        <View className="mb-6 gap-2.5">
-          <Text className="font-satoshi-medium text-lg text-mauveDark12">
-            Note{" "}
-            <Text className="font-inter text-mauveDark10 text-sm">
-              (optional)
-            </Text>
-          </Text>
-          <TextInput
-            onChangeText={setNote}
-            placeholder="What was this for?"
-            value={note}
-          />
-        </View>
+        {/* <View className="absolute top-0 w-3/5 translate-y-2 self-center"> */}
+        {/*   <TransactionFlowChoices /> */}
+        {/* </View> */}
       </View>
 
-      {/* Submit Button */}
-      <View className="border-mauveDark4 border-t px-4 py-4">
-        <Button
-          className="h-12 w-full"
-          disabled={!canSubmit || createTransaction.isPending}
-          onPress={handleSubmit}
-        >
-          <Text
-            className={cn(
-              "font-satoshi-medium text-base",
-              !canSubmit || createTransaction.isPending
-                ? "text-mauveDark8"
-                : "text-mauveDark1"
-            )}
-          >
-            {createTransaction.isPending ? "Adding..." : "Add Expense"}
-          </Text>
-        </Button>
-      </View>
-    </KeyboardAvoidingView>
+      {/* <FormDetailsPreview */}
+      {/*   handlePresentModalPress={handlePresentModalPress} */}
+      {/*   openFundListBottomSheet={openFundListBottomSheet} */}
+      {/*   openStoreListBottomSheet={openStoreListBottomSheet} */}
+      {/* /> */}
+
+      <Numpad className="-mx-4 px-4" onPress={handleKeyPress} />
+    </>
   );
 }
