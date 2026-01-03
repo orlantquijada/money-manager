@@ -741,3 +741,280 @@ export default function Hello() {
     </SafeAreaView>
   );
 }
+
+// import {
+//   BottomSheet,
+//   Button,
+//   ContextMenu,
+//   DateTimePicker,
+//   Divider,
+//   Host,
+//   Image,
+//   List,
+//   Picker,
+//   Section,
+//   Section as SwiftUISection,
+//   Switch,
+//   Text,
+// } from "@expo/ui/swift-ui";
+// import { hidden, padding } from "@expo/ui/swift-ui/modifiers";
+// import { isToday, isYesterday, subDays } from "date-fns";
+// import { useState } from "react";
+// import { Text as RNText, StyleSheet, View } from "react-native";
+//
+// const videoLink =
+//   "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_2MB.mp4";
+//
+// const monthDateFormat = new Intl.DateTimeFormat("en-US", {
+//   month: "long",
+//   day: "numeric",
+// });
+//
+// export default function ContextMenuScreen() {
+//   const [selectedIndex, setSelectedIndex] = useState<number>(1);
+//   const [switchChecked, setSwitchChecked] = useState<boolean>(true);
+//   const [switch2Checked, setSwitch2Checked] = useState<boolean>(true);
+//
+//   const [isOpened, setIsOpened] = useState(false);
+//
+//   const today = new Date();
+//   const yesterday = subDays(today, 1);
+//
+//   const [date, setDate] = useState(today);
+//
+//   let dateLabel = "";
+//   if (isToday(date)) dateLabel = "Today";
+//   else if (isYesterday(date)) dateLabel = "Yesterday";
+//   else dateLabel = monthDateFormat.format(date);
+//
+//   return (
+//     <Host style={{ flex: 1 }}>
+//       <BottomSheet
+//         isOpened={isOpened}
+//         modifiers={[hidden()]}
+//         onIsOpenedChange={setIsOpened}
+//       >
+//         <DateTimePicker
+//           initialDate={date.toISOString()}
+//           onDateSelected={setDate}
+//           variant="graphical"
+//         />
+//       </BottomSheet>
+//
+//       <List>
+//         <Section title="Context Menu with glass effect button">
+//           <ContextMenu
+//             // modifiers={[fixedSize({ horizontal: false, vertical: false })]}
+//             modifiers={[padding({ all: 10 })]}
+//           >
+//             <ContextMenu.Items>
+//               <Button onPress={() => setDate(today)}>Today</Button>
+//               <Button onPress={() => setDate(yesterday)}>Yesterday</Button>
+//               <Button onPress={() => setIsOpened(true)}>Custom</Button>
+//               {/* <Picker */}
+//               {/*   label="Doggos" */}
+//               {/*   onOptionSelected={({ nativeEvent: { index } }) => */}
+//               {/*     setSelectedIndex(index) */}
+//               {/*   } */}
+//               {/*   options={["very", "veery", "veeery", "much"]} */}
+//               {/*   selectedIndex={selectedIndex} */}
+//               {/*   variant="menu" */}
+//               {/* /> */}
+//             </ContextMenu.Items>
+//             <ContextMenu.Trigger>
+//               <Button
+//                 color="#232326"
+//                 modifiers={[
+//                   // zIndex(1),
+//                   padding({ all: 16 }),
+//                   // border({ color: "red", width: 2 }),
+//                   // foregroundStyle({ type: "hierarchical", style: "tertiary" }),
+//                 ]}
+//                 variant="glassProminent"
+//                 // variant="glassProminent"
+//               >
+//                 {dateLabel}
+//               </Button>
+//             </ContextMenu.Trigger>
+//           </ContextMenu>
+//         </Section>
+//         <Section title="Single-Press Context Menu">
+//           <ContextMenu>
+//             <ContextMenu.Items>
+//               <Button
+//                 onPress={() => console.log("Pressed1")}
+//                 systemImage="person.crop.circle.badge.xmark"
+//               >
+//                 Hello
+//               </Button>
+//               <Button
+//                 onPress={() => console.log("Pressed2")}
+//                 systemImage="heart"
+//                 variant="bordered"
+//               >
+//                 I love
+//               </Button>
+//               <Picker
+//                 label="Doggos"
+//                 onOptionSelected={({ nativeEvent: { index } }) => {
+//                   setSelectedIndex(index);
+//                 }}
+//                 options={["very", "veery", "veeery", "much"]}
+//                 selectedIndex={selectedIndex}
+//                 variant="menu"
+//               />
+//               {/* {["very", "veery", "veeery", "much"].map((option, index) => ( */}
+//               {/*   <Text key={index} modifiers={[tag(index)]}> */}
+//               {/*     {option} */}
+//               {/*   </Text> */}
+//               {/* ))} */}
+//             </ContextMenu.Items>
+//             <ContextMenu.Trigger>
+//               <Text color="accentColor">Show Menu</Text>
+//             </ContextMenu.Trigger>
+//           </ContextMenu>
+//         </Section>
+//         <Section title="Long-Press Context Menu">
+//           <ContextMenu activationMethod="longPress">
+//             <ContextMenu.Items>
+//               <Switch
+//                 label="Do u love doggos?"
+//                 onValueChange={setSwitchChecked}
+//                 value={switchChecked}
+//                 variant="checkbox"
+//               />
+//               <Switch
+//                 label="Will u marry doggos?"
+//                 onValueChange={setSwitch2Checked}
+//                 // systemImage="heart.slash"
+//                 value={switch2Checked}
+//                 variant="switch"
+//               />
+//               <Button role="destructive" systemImage="hand.thumbsdown">
+//                 I don't like doggos 😡
+//               </Button>
+//               <ContextMenu>
+//                 <ContextMenu.Items>
+//                   <Button>I hate</Button>
+//                   <Button>doggos</Button>
+//                   <ContextMenu>
+//                     <ContextMenu.Items>
+//                       <Button>I KILL</Button>
+//                       <Button>DOGGOS</Button>
+//                     </ContextMenu.Items>
+//                     <ContextMenu.Trigger>
+//                       <Button>👹Very evil submenu 👺</Button>
+//                     </ContextMenu.Trigger>
+//                   </ContextMenu>
+//                 </ContextMenu.Items>
+//                 <ContextMenu.Trigger>
+//                   <Button systemImage="heart.slash">Evil submenu</Button>
+//                 </ContextMenu.Trigger>
+//               </ContextMenu>
+//             </ContextMenu.Items>
+//             <ContextMenu.Trigger>
+//               <Host matchContents>
+//                 <Button
+//                   controlSize="small"
+//                   systemImage="heart.slash"
+//                   variant="glassProminent"
+//                 >
+//                   Evil submenu
+//                 </Button>
+//                 {/* <View style={styles.longPressMenu}> */}
+//                 {/*   <VideoView */}
+//                 {/*     contentFit="cover" */}
+//                 {/*     player={player} */}
+//                 {/*     style={styles.longPressMenu} */}
+//                 {/*   /> */}
+//                 {/* </View> */}
+//               </Host>
+//             </ContextMenu.Trigger>
+//             <ContextMenu.Preview>
+//               <View style={styles.preview}>
+//                 <RNText>This is a preview</RNText>
+//               </View>
+//             </ContextMenu.Preview>
+//           </ContextMenu>
+//         </Section>
+//         <Section title="Context Menu Dismissal Behavior">
+//           <ContextMenu>
+//             <ContextMenu.Items>
+//               <Button onPress={() => console.log("Pressed3")}>
+//                 Do not dismiss
+//               </Button>
+//               <Button
+//                 // modifiers={[menuActionDismissBehavior("automatic")]}
+//                 onPress={() => console.log("Pressed1")}
+//               >
+//                 Automatically dismiss
+//               </Button>
+//               <Button
+//                 // modifiers={[menuActionDismissBehavior("enabled")]}
+//                 onPress={() => console.log("Pressed2")}
+//               >
+//                 Always dismiss
+//               </Button>
+//             </ContextMenu.Items>
+//             <ContextMenu.Trigger>
+//               <Text color="accentColor">Show menu</Text>
+//             </ContextMenu.Trigger>
+//           </ContextMenu>
+//         </Section>
+//         <Section title="SwiftUI Section and Divider Components">
+//           <ContextMenu>
+//             <ContextMenu.Items>
+//               <Button role="destructive">Delete</Button>
+//               <Divider />
+//               <Button onPress={() => console.log("Pressed3")}>
+//                 Add to favorites
+//               </Button>
+//               <SwiftUISection title="Primary actions">
+//                 <Button onPress={() => console.log("Pressed1")}>First</Button>
+//                 <Button onPress={() => console.log("Pressed2")}>Second</Button>
+//               </SwiftUISection>
+//             </ContextMenu.Items>
+//             <ContextMenu.Trigger>
+//               <Text color="accentColor">Show menu</Text>
+//             </ContextMenu.Trigger>
+//           </ContextMenu>
+//         </Section>
+//         <Section title="Menu item with title and subtitle">
+//           <ContextMenu>
+//             <ContextMenu.Items>
+//               <Button role="destructive">
+//                 <Image systemName="trash" />
+//                 <Text>Red color item</Text>
+//                 <Text>Subtitle</Text>
+//               </Button>
+//             </ContextMenu.Items>
+//             <ContextMenu.Trigger>
+//               <Text>Show Menu</Text>
+//             </ContextMenu.Trigger>
+//           </ContextMenu>
+//         </Section>
+//       </List>
+//     </Host>
+//   );
+// }
+//
+// ContextMenuScreen.navigationOptions = {
+//   title: "Context Menu",
+// };
+//
+// const styles = StyleSheet.create({
+//   menuIcon: {
+//     width: 32,
+//     height: 32,
+//   },
+//   longPressMenu: {
+//     width: 200,
+//     height: 200,
+//   },
+//   preview: {
+//     width: 300,
+//     height: 200,
+//     padding: 20,
+//     backgroundColor: "#ffeeee",
+//   },
+// });
