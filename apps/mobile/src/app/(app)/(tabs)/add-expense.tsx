@@ -9,13 +9,14 @@ import { DateSelector } from "@/components/date-selector.ios";
 import GlassButtonIcon from "@/components/glass-button-icon";
 import { Cross } from "@/icons";
 import { cn } from "@/utils/cn";
+import { mauveRgb } from "@/utils/colors";
 
 export default function AddExpense() {
   const [date, setDate] = useState(new Date());
 
   return (
     <AnimatedTabScreen index={0}>
-      <SafeAreaView className="flex-1 bg-mauveDark1">
+      <SafeAreaView className="flex-1 bg-mauve1">
         <View className="flex-1 px-4 pb-8">
           <Header className="mt-8 mb-auto" date={date} onDateChange={setDate} />
 
@@ -50,8 +51,12 @@ function Header({ className, date, onDateChange }: HeaderProps) {
 function Close() {
   return (
     <Link asChild href={{ pathname: "/" }}>
-      <GlassButtonIcon>
-        <Cross className="size-6 text-mauveDark11" />
+      <GlassButtonIcon
+        glassViewProps={{
+          tintColor: mauveRgb.mauve1,
+        }}
+      >
+        <Cross className="size-6 text-mauve11" />
       </GlassButtonIcon>
     </Link>
   );

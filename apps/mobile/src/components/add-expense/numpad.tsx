@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { ChevronLeft } from "@/icons";
 import { cn } from "@/utils/cn";
-import { mauveDark } from "@/utils/colors";
+import { mauve } from "@/utils/colors";
 import LeanText from "../lean-text";
 import LeanView from "../lean-view";
 
@@ -35,12 +35,12 @@ function NumberButton({
     <Pressable
       {...rest}
       className={cn(
-        "group h-12 flex-1 items-center justify-center rounded-lg bg-mauveDark1 transition-all active:bg-mauveDark3",
+        "group h-12 flex-1 items-center justify-center rounded-lg bg-mauve1 transition-all active:bg-mauve3",
         className
       )}
       style={[{ borderCurve: "continuous" }, style]}
     >
-      <LeanText className="font-nunito-bold text-2xl text-mauveDark12 transition-all group-active:scale-125">
+      <LeanText className="font-nunito-bold text-2xl text-mauve12 transition-all group-active:scale-125">
         {children}
       </LeanText>
     </Pressable>
@@ -74,11 +74,7 @@ export default function Numpad({ className, onPress, ...props }: Props) {
         <NumberButton onPress={() => onPress?.(".")}>.</NumberButton>
         <NumberButton onPress={() => onPress?.("0")}>0</NumberButton>
         <NumberButton onPress={() => onPress?.("backspace")}>
-          <ChevronLeft
-            color={mauveDark.mauveDark12}
-            size={20}
-            strokeWidth={3.5}
-          />
+          <ChevronLeft color={mauve.mauve12} size={20} strokeWidth={3.5} />
         </NumberButton>
       </LeanView>
     </LeanView>

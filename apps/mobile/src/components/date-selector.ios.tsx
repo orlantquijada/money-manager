@@ -12,6 +12,7 @@ import { frame, padding } from "@expo/ui/swift-ui/modifiers";
 import { isToday, isYesterday, subDays } from "date-fns";
 import { useState } from "react";
 import type { ViewStyle } from "react-native";
+import { mauveRgb } from "@/utils/colors";
 
 const monthDateFormat = new Intl.DateTimeFormat("en-US", {
   month: "long",
@@ -86,6 +87,7 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
     >
       <BottomSheet isOpened={isOpened} onIsOpenedChange={handleIsOpenedChange}>
         <DateTimePicker
+          color={mauveRgb.mauve12}
           initialDate={date.toISOString()}
           onDateSelected={handleDateSelect}
           variant="graphical"
@@ -115,7 +117,7 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
         </ContextMenu.Items>
         <ContextMenu.Trigger>
           <Button
-            color="#232326"
+            color={mauveRgb.mauve1}
             controlSize="large"
             modifiers={[
               padding({ all: BTN_CLIP_PADDING }),
@@ -124,12 +126,13 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
             variant="glassProminent"
           >
             <HStack alignment="center" spacing={10}>
-              <Text color="#ededef" weight="medium">
+              <Text color={mauveRgb.mauve12} weight="medium">
                 {dateLabel}
               </Text>
               <Image
                 // color={PlatformColor("secondaryLabel") as unknown as string}
-                color="#a09fa6"
+                // color={mauveDarkRgb.mauveDark11}
+                color={mauveRgb.mauve11}
                 size={16}
                 systemName="chevron.up.chevron.down"
               />

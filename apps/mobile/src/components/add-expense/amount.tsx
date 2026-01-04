@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import { Text, View } from "react-native";
 import Animated from "react-native-reanimated";
 import {
   DigitSlideIn,
@@ -8,6 +7,7 @@ import {
   layoutSpringify,
 } from "@/utils/motion";
 import LeanText from "../lean-text";
+import LeanView from "../lean-view";
 import type { NumpadKey } from "./numpad";
 
 const formatter = Intl.NumberFormat("en-PH", {
@@ -82,9 +82,9 @@ export function Amount({ amount }: { amount: number }) {
   const formattedAmount = formatter.format(amount);
 
   return (
-    <View className="relative w-full flex-row justify-center">
+    <LeanView className="relative w-full flex-row justify-center">
       {/* <View className="w-full flex-row justify-center overflow-hidden"> */}
-      <View className="w-full flex-row justify-center">
+      <LeanView className="w-full flex-row justify-center">
         {[...formattedAmount].map((char, i) => (
           <Animated.View
             className="relative"
@@ -94,16 +94,16 @@ export function Amount({ amount }: { amount: number }) {
             layout={layoutSpringify("snappier")}
           >
             {i === 0 && (
-              <LeanText className="absolute top-0 -left-2/3 pt-1.5 font-nunito-bold text-4xl text-mauveDark12">
+              <LeanText className="absolute top-0 -left-2/3 pt-1.5 font-nunito-bold text-4xl text-mauve12">
                 ₱
               </LeanText>
             )}
-            <Text className="pt-2.5 font-nunito-extra-bold text-6xl text-mauveDark12">
+            <LeanText className="pt-2.5 font-nunito-extra-bold text-6xl text-mauve12">
               {char}
-            </Text>
+            </LeanText>
           </Animated.View>
         ))}
-      </View>
-    </View>
+      </LeanView>
+    </LeanView>
   );
 }
