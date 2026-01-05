@@ -26,14 +26,14 @@ function BottomSheetModal({
     <GorhomBottomSheetModal
       backdropComponent={Backdrop}
       backgroundStyle={[
-        { backgroundColor: mauveDark.mauveDark3 },
+        { backgroundColor: mauveDark.mauve3 },
         backgroundStyle,
       ]}
       handleIndicatorStyle={[
         {
           width: 80,
           height: 4,
-          backgroundColor: mauveDark.mauveDark6,
+          backgroundColor: mauveDark.mauve6,
         },
         handleIndicatorStyle,
       ]}
@@ -62,7 +62,7 @@ function Backdrop({
   const containerStyle = useMemo(
     () => [
       style,
-      { backgroundColor: mauveDark.mauveDark1 },
+      { backgroundColor: mauveDark.mauve1 },
       containerAnimatedStyle,
     ],
     [style, containerAnimatedStyle]

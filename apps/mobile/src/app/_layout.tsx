@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { configureReanimatedLogger } from "react-native-reanimated";
+import { SafeAreaListener } from "react-native-safe-area-context";
+import { Uniwind } from "uniwind";
 
 import { ThemeProvider, useTheme } from "@/components/theme-provider";
 import { useFonts } from "@/hooks/use-fonts";
@@ -57,16 +59,22 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <KeyboardProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <ThemeProvider>
-            <BottomSheetModalProvider>
-              <AppContent />
-            </BottomSheetModalProvider>
-          </ThemeProvider>
-        </GestureHandlerRootView>
-      </KeyboardProvider>
-    </QueryClientProvider>
+    <SafeAreaListener
+      onChange={({ insets }) => {
+        Uniwind.updateInsets(insets);
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <KeyboardProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <ThemeProvider>
+              <BottomSheetModalProvider>
+                <AppContent />
+              </BottomSheetModalProvider>
+            </ThemeProvider>
+          </GestureHandlerRootView>
+        </KeyboardProvider>
+      </QueryClientProvider>
+    </SafeAreaListener>
   );
 }

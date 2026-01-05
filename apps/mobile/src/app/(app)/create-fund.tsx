@@ -53,7 +53,7 @@ function CreateFundContent() {
   return (
     <KeyboardAvoidingView
       behavior="padding"
-      className="flex-1 bg-mauveDark1 pt-4"
+      className="flex-1 bg-background pt-4"
       keyboardVerticalOffset={FOOTER_HEIGHT}
     >
       <Link asChild href={{ pathname: "/" }} replace>

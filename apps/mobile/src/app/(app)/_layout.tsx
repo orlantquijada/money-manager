@@ -10,7 +10,7 @@ export default function AppLayout() {
         options={{
           presentation: "modal",
           contentStyle: {
-            backgroundColor: mauveDark.mauveDark1,
+            backgroundColor: mauveDark.mauve1,
           },
         }}
       />
@@ -19,7 +19,7 @@ export default function AppLayout() {
         options={{
           presentation: "modal",
           contentStyle: {
-            backgroundColor: mauveDark.mauveDark1,
+            backgroundColor: mauveDark.mauve1,
           },
         }}
       />

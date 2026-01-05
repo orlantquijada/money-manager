@@ -1,12 +1,16 @@
 import type { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
+import { GlassView } from "expo-glass-effect";
 import type { ComponentType } from "react";
 import { useCallback, useMemo } from "react";
-import { Animated, Pressable } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StyledLeanView } from "@/config/interop";
 import { useSyncTabPosition } from "@/hooks/use-sync-tab-position";
 import { useTabChangeHaptics } from "@/hooks/use-tab-change-haptics";
 import { ActivityRecDuoDark, HomeDuoDark, PlusRecDuoDark } from "@/icons";
 import type { TabBarIconProps } from "@/utils/types";
+import { ScalePressable } from "./scale-pressable";
+import { useThemeColor } from "./theme-provider";
 
 export const TAB_BAR_HEIGHT = 72;
 
@@ -48,27 +52,43 @@ export default function TabBar({
     [position, inputRange, insets.bottom]
   );
 
+  const tintColor = useThemeColor("tabBar");
+
   return (
     <Animated.View
-      className="absolute inset-x-0 bottom-safe mx-4 flex-row items-center justify-center gap-x-10 border border-border bg-tab-bar"
+      className="absolute inset-x-0 mx-4"
       style={{
+        bottom: insets.bottom,
         height: TAB_BAR_HEIGHT,
-        borderRadius: 20,
-        borderCurve: "continuous",
         transform: [{ translateY }],
       }}
     >
-      {state.routes.map((route, index) => (
-        <TabItem
-          index={index}
-          inputRange={inputRange}
-          isFocused={state.index === index}
-          key={route.key}
-          navigation={navigation}
-          position={position}
-          route={route}
-        />
-      ))}
+      <GlassView
+        glassEffectStyle="regular"
+        isInteractive
+        style={[
+          StyleSheet.absoluteFill,
+          {
+            borderRadius: 20,
+            borderCurve: "continuous",
+          },
+        ]}
+        tintColor={tintColor}
+      >
+        <StyledLeanView className="absolute inset-0 flex-row items-center justify-center gap-10">
+          {state.routes.map((route, index) => (
+            <TabItem
+              index={index}
+              inputRange={inputRange}
+              isFocused={state.index === index}
+              key={route.key}
+              navigation={navigation}
+              position={position}
+              route={route}
+            />
+          ))}
+        </StyledLeanView>
+      </GlassView>
     </Animated.View>
   );
 }
@@ -139,24 +159,27 @@ function TabItem({
     });
   }, [navigation, route.key]);
 
+  const tabBarColor = useThemeColor("tabBar-foreground");
+
   if (!config) return null;
 
   const Icon = config.icon;
 
   return (
-    <Pressable
-      className="transition-all active:scale-90"
+    <ScalePressable
+      disableOpacity
       hitSlop={10}
       onLongPress={handleLongPress}
       onPress={handlePress}
+      scaleValue={1.25}
     >
       <Animated.View style={{ opacity }}>
         <Icon
-          className="text-tab-bar-foreground"
+          color={tabBarColor}
           fillOpacity={fillOpacity}
           outlineOpacity={outlineOpacity}
         />
       </Animated.View>
-    </Pressable>
+    </ScalePressable>
   );
 }

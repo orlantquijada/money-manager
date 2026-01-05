@@ -1,4 +1,5 @@
-import { Path, Svg } from "react-native-svg";
+import { Path } from "react-native-svg";
+import { StyledSvg } from "@/config/interop";
 import type { IconProps } from "@/utils/types";
 
 export default function Icon({
@@ -7,7 +8,7 @@ export default function Icon({
   size = 15,
 }: IconProps) {
   return (
-    <Svg
+    <StyledSvg
       className={className}
       fill="none"
       height={size}
@@ -15,6 +16,6 @@ export default function Icon({
       width={size}
     >
       <Path d="M9 4L9 11L4.5 7.5L9 4Z" fill={color} />
-    </Svg>
+    </StyledSvg>
   );
 }

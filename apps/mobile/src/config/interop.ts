@@ -1,23 +1,26 @@
-import { cssInterop } from "nativewind";
-import { Svg } from "react-native-svg";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
+
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Path, Svg } from "react-native-svg";
+import { withUniwind } from "uniwind";
 import LeanText from "@/components/lean-text";
 import LeanView from "@/components/lean-view";
 
-cssInterop(Svg, {
-  className: {
-    target: "style",
-    nativeStyleToProp: { width: true, height: true },
+export const StyledSvg = withUniwind(Svg);
+export const StyledPath = withUniwind(Path, {
+  fill: {
+    fromClassName: "fillClassName",
+    styleProperty: "color",
+  },
+  stroke: {
+    fromClassName: "strokeClassName",
+    styleProperty: "color",
   },
 });
 
-cssInterop(LeanView, {
-  className: {
-    target: "style",
-  },
-});
+export const StyledLeanView = withUniwind(LeanView);
+export const StyledLeanText = withUniwind(LeanText);
 
-cssInterop(LeanText, {
-  className: {
-    target: "style",
-  },
-});
+export const StyledSafeAreaView = withUniwind(SafeAreaView);
+
+export const StyledBottomSheetView = withUniwind(BottomSheetView);

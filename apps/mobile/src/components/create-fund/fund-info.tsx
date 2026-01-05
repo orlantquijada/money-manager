@@ -1,18 +1,17 @@
 import type { FundType } from "api";
-import { type ComponentProps, useMemo } from "react";
-import {
-  type LayoutChangeEvent,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { useMemo } from "react";
+import { type LayoutChangeEvent, ScrollView } from "react-native";
 import Animated, {
   type SharedValue,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import {
+  ScalePressable,
+  type ScalePressableProps,
+} from "@/components/scale-pressable";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { Lock, ShoppingBag } from "@/icons";
 import {
   type CreateFundScreens,
@@ -20,13 +19,13 @@ import {
   useCreateFundStore,
 } from "@/lib/create-fund";
 import { cn } from "@/utils/cn";
-import { mauveDark } from "@/utils/colors";
 import { transitions } from "@/utils/motion";
 import { choice } from "@/utils/random";
 import type { IconComponent } from "@/utils/types";
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 import Presence from "../presence";
 import TextInput from "../text-input";
+import { useThemeColor } from "../theme-provider";
 import CreateFooter from "./footer";
 
 const DELAY = 40;
@@ -60,6 +59,7 @@ type Props = {
 };
 
 export default function FundInfo({ setScreen }: Props) {
+  const backgroundColor = useThemeColor("background");
   const name = useCreateFundStore((s) => s.name);
   const setName = useCreateFundStore((s) => s.setName);
   const fundType = useCreateFundStore((s) => s.fundType);
@@ -79,41 +79,41 @@ export default function FundInfo({ setScreen }: Props) {
 
   return (
     <>
-      <FadingEdge fadeColor={mauveDark.mauveDark1} {...fadeProps}>
+      <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
         <ScrollView
           className="p-4 pt-0"
           contentContainerClassName="pb-4 flex gap-y-8"
           onScroll={handleScroll}
         >
           <Presence delay={DELAY} delayMultiplier={5} exitDelayMultiplier={1}>
-            <View className="gap-2.5">
-              <Text className="font-satoshi-medium text-lg text-mauveDark12">
+            <StyledLeanView className="gap-2.5">
+              <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
                 What&apos;s the name of your fund?
-              </Text>
+              </StyledLeanText>
               <TextInput
                 onChangeText={setName}
                 placeholder={placeholder}
                 value={name}
               />
-            </View>
+            </StyledLeanView>
           </Presence>
 
-          <View className="gap-y-2.5">
+          <StyledLeanView className="gap-y-2.5">
             <Presence delay={DELAY} delayMultiplier={6} exitDelayMultiplier={2}>
-              <Text className="font-satoshi-medium text-lg text-mauveDark12">
+              <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
                 Choose a fund type
-              </Text>
+              </StyledLeanText>
             </Presence>
 
-            <View className="relative">
+            <StyledLeanView className="relative">
               <Presence {...presenceProps[selectedType.get()]}>
                 <Animated.View
-                  className="absolute right-0 left-0 rounded-xl bg-mauveDark4"
+                  className="absolute right-0 left-0 rounded-xl bg-muted"
                   style={[{ borderCurve: "continuous" }, style]}
                 />
               </Presence>
 
-              <View style={{ gap: FUND_CARDS_GAP }}>
+              <StyledLeanView style={{ gap: FUND_CARDS_GAP }}>
                 <Presence {...presenceProps.SPENDING}>
                   <FundCard
                     description="Usually for groceries, transportation"
@@ -153,9 +153,9 @@ export default function FundInfo({ setScreen }: Props) {
                 {/*     }} */}
                 {/*   /> */}
                 {/* </Presence> */}
-              </View>
-            </View>
-          </View>
+              </StyledLeanView>
+            </StyledLeanView>
+          </StyledLeanView>
         </ScrollView>
       </FadingEdge>
 
@@ -189,7 +189,7 @@ type FundCardProps = {
   pillLabel?: string;
   description: string;
   Icon: IconComponent;
-} & ComponentProps<typeof Pressable>;
+} & ScalePressableProps;
 
 function FundCard({
   label,
@@ -201,45 +201,40 @@ function FundCard({
 }: FundCardProps) {
   const iconSize = 20;
   return (
-    <Pressable
-      className={cn(
-        "flex flex-col gap-1.5 rounded-xl px-4 py-3 transition-all active:scale-[.98] active:opacity-70",
-        className
-      )}
+    <ScalePressable
+      className={cn("flex flex-col gap-1.5 rounded-xl px-4 py-3", className)}
+      opacityValue={0.7}
+      scaleValue={0.98}
       {...props}
     >
-      <View className="flex-row gap-4">
-        <Icon
-          className="translate-y-1 self-start"
-          color={mauveDark.mauveDark12}
-          size={20}
-        />
+      <StyledLeanView className="flex-row gap-4">
+        <Icon className="translate-y-1 self-start text-foreground" size={20} />
 
-        <View className="flex-row items-center gap-2">
-          <Text className="font-satoshi-medium text-base text-mauveDark12">
+        <StyledLeanView className="flex-row items-center gap-2">
+          <StyledLeanText className="font-satoshi-medium text-base text-foreground">
             {label}
-          </Text>
+          </StyledLeanText>
 
           {!!pillLabel && (
-            <View
-              className="h-5 items-center justify-center rounded-full bg-mauveDark7 px-1.5"
+            <StyledLeanView
+              className="h-5 items-center justify-center rounded-full bg-mauve-7 px-1.5"
               style={{ borderCurve: "continuous" }}
             >
-              <Text className="font-satoshi-medium text-mauveDark10 text-xs tracking-wide">
+              <StyledLeanText className="font-satoshi-medium text-foreground-muted text-xs tracking-wide">
                 {pillLabel}
-              </Text>
-            </View>
+              </StyledLeanText>
+            </StyledLeanView>
           )}
-        </View>
-      </View>
+        </StyledLeanView>
+      </StyledLeanView>
 
-      <View className="flex-row gap-4">
-        <View className="h-px" style={{ width: iconSize }} />
-        <Text className="shrink font-inter text-mauveDark10 text-sm">
+      <StyledLeanView className="flex-row gap-4">
+        <StyledLeanView className="h-px" style={{ width: iconSize }} />
+        <StyledLeanText className="shrink font-inter text-foreground-muted text-sm">
           {description}
-        </Text>
-      </View>
-    </Pressable>
+        </StyledLeanText>
+      </StyledLeanView>
+    </ScalePressable>
   );
 }
 

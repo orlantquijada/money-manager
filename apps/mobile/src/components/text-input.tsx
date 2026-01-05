@@ -1,28 +1,28 @@
 import type { ReactNode } from "react";
 import {
   TextInput as RNTextInput,
-  Text,
   type TextInputProps,
-  View,
   type ViewProps,
 } from "react-native";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { cn } from "@/utils/cn";
-import { mauveDark } from "@/utils/colors";
+import { useThemeColor } from "./theme-provider";
 
 const slots = {
-  container: "h-10 rounded-xl bg-mauveDark4 px-4 flex-row items-center",
+  container: "h-10 rounded-xl bg-muted px-4 flex-row items-center",
   input:
-    "font-satoshi text-base text-mauveDark12 placeholder:text-mauveDark9 flex-1",
+    "font-satoshi text-base text-foreground placeholder:text-foreground-muted flex-1",
 };
 
 type Props = TextInputProps;
 
 export default function TextInput({ className, style, ...props }: Props) {
+  const cursorColor = useThemeColor("foreground");
   return (
     <RNTextInput
       className={cn(slots.container, slots.input, className)}
-      cursorColor={mauveDark.mauveDark12}
-      selectionColor={mauveDark.mauveDark12}
+      cursorColor={cursorColor}
+      selectionColor={cursorColor}
       style={[{ lineHeight: undefined, borderCurve: "continuous" }, style]}
       {...props}
     />
@@ -43,8 +43,10 @@ export function InputGroup({
   style,
   ...props
 }: InputGroupProps) {
+  const cursorColor = useThemeColor("foreground");
+
   return (
-    <View
+    <StyledLeanView
       {...containerProps}
       className={cn(slots.container, containerProps?.className)}
       style={[{ borderCurve: "continuous" }, containerProps?.style]}
@@ -53,14 +55,14 @@ export function InputGroup({
 
       <RNTextInput
         className={cn(slots.input, "h-full", className)}
-        cursorColor={mauveDark.mauveDark12}
-        selectionColor={mauveDark.mauveDark12}
+        cursorColor={cursorColor}
+        selectionColor={cursorColor}
         style={[{ lineHeight: undefined }, style]}
         {...props}
       />
 
       {right}
-    </View>
+    </StyledLeanView>
   );
 }
 
@@ -71,12 +73,12 @@ export function CurrencyInput(props: InputGroupProps) {
       containerProps={{ className: "gap-2" }}
       keyboardType="decimal-pad"
       left={
-        <Text
-          className="font-azeret-mono-regular text-mauveDark12"
+        <StyledLeanText
+          className="font-azeret-mono-regular text-foreground"
           style={{ lineHeight: undefined }}
         >
           ₱
-        </Text>
+        </StyledLeanText>
       }
       placeholder="0.00"
       {...props}

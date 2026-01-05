@@ -1,19 +1,21 @@
-import { Pressable, type PressableProps } from "react-native";
 import { Cross } from "@/icons";
 import { cn } from "@/utils/cn";
+import { ScalePressable, type ScalePressableProps } from "./scale-pressable";
 
-type Props = PressableProps;
+type Props = ScalePressableProps;
 
 export default function ModalCloseBtn({ className, ...props }: Props) {
   return (
-    <Pressable
+    <ScalePressable
       className={cn(
-        "flex size-8 items-center justify-center rounded-full bg-mauveDark12 transition-all active:scale-90",
+        "flex size-8 items-center justify-center rounded-full bg-background-tertiary",
         className
       )}
+      disableOpacity
+      scaleValue={0.9}
       {...props}
     >
-      <Cross />
-    </Pressable>
+      <Cross className="text-foreground-muted" />
+    </ScalePressable>
   );
 }

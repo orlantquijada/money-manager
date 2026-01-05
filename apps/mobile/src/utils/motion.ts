@@ -175,3 +175,8 @@ export function DigitSlideOutUp() {
     initialValues,
   };
 }
+
+export const TW_TRANSITION_ALL = {
+  duration: 150,
+  easing: Easing.bezier(0.4, 0, 0.2, 1),
+} satisfies WithTimingConfig;

@@ -2,7 +2,7 @@ import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import type { Folder } from "api";
 import { Pressable, type PressableProps, ScrollView } from "react-native";
-
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { FolderClosedDuoCreate, FolderOpenDuo } from "@/icons";
 import {
   type CreateFundScreens,
@@ -11,12 +11,10 @@ import {
 } from "@/lib/create-fund";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
-import { mauveDark } from "@/utils/colors";
 
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
-import LeanText from "../lean-text";
-import LeanView from "../lean-view";
 import Presence from "../presence";
+import { useThemeColor } from "../theme-provider";
 import CreateFooter from "./footer";
 
 const DELAY = 60;
@@ -26,6 +24,7 @@ type Props = {
 };
 
 export default function ChooseFolder({ setScreen }: Props) {
+  const backgroundColor = useThemeColor("background");
   const { fadeProps, handleScroll } = useOverflowFadeEdge();
 
   const folderId = useCreateFundStore((s) => s.folderId);
@@ -37,24 +36,24 @@ export default function ChooseFolder({ setScreen }: Props) {
 
   return (
     <>
-      <FadingEdge fadeColor={mauveDark.mauveDark1} {...fadeProps}>
+      <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
         <ScrollView
           className="p-4 pt-0"
           contentContainerClassName="pb-4 flex"
           onScroll={handleScroll}
         >
           <Presence delay={DELAY} delayMultiplier={3}>
-            <LeanText className="font-satoshi-medium text-lg text-mauveDark12">
+            <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
               Select a folder.
-            </LeanText>
+            </StyledLeanText>
           </Presence>
 
-          <LeanView className="mt-3 h-full">
+          <StyledLeanView className="mt-3 h-full">
             <FlashList
               contentContainerStyle={{ paddingBottom: 8 }}
               data={data}
               extraData={folderId}
-              ItemSeparatorComponent={() => <LeanView className="h-2" />}
+              ItemSeparatorComponent={() => <StyledLeanView className="h-2" />}
               keyExtractor={(item) => item.id.toString()}
               numColumns={2}
               renderItem={({ item, index }) => {
@@ -74,7 +73,7 @@ export default function ChooseFolder({ setScreen }: Props) {
                 );
               }}
             />
-          </LeanView>
+          </StyledLeanView>
         </ScrollView>
       </FadingEdge>
       <CreateFooter
@@ -111,27 +110,27 @@ function FolderCard({
   return (
     <Pressable
       className={cn(
-        "flex-row items-center rounded-xl bg-mauveDark4 p-4 transition-transform active:scale-95",
-        selected && "bg-mauveDark12"
+        "flex-row items-center rounded-xl bg-muted p-4 transition-transform active:scale-95",
+        selected && "bg-foreground"
       )}
       {...rest}
     >
       {selected ? (
-        <FolderOpenDuo color={mauveDark.mauveDark1} size={16} />
+        <FolderOpenDuo className="text-background" size={16} />
       ) : (
-        <FolderClosedDuoCreate color={mauveDark.mauveDark12} size={16} />
+        <FolderClosedDuoCreate className="text-foreground" size={16} />
       )}
 
-      <LeanText
+      <StyledLeanText
         className={cn(
-          "ml-2 shrink font-satoshi-medium text-base text-mauveDark12",
-          selected && "text-mauveDark3"
+          "ml-2 shrink font-satoshi-medium text-base text-foreground",
+          selected && "text-muted"
         )}
         ellipsizeMode="tail"
         numberOfLines={1}
       >
         {folder.name}
-      </LeanText>
+      </StyledLeanText>
     </Pressable>
   );
 }

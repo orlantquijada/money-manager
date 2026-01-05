@@ -36,7 +36,7 @@ export default function CreateFolder() {
   return (
     <KeyboardAvoidingView
       behavior="padding"
-      className="flex-1 bg-mauveDark1 pt-4"
+      className="flex-1 bg-background pt-4"
       keyboardVerticalOffset={FOOTER_HEIGHT}
     >
       <Link asChild href={{ pathname: "/" }} replace>
@@ -49,8 +49,8 @@ export default function CreateFolder() {
       >
         <View className="flex gap-y-8">
           <Presence delayMultiplier={3}>
-            <View className="gap-[10px]">
-              <Text className="font-satoshi-medium text-lg text-mauveDark12">
+            <View className="gap-2.5">
+              <Text className="font-satoshi-medium text-foreground text-lg">
                 What&apos;s the name of your folder?
               </Text>
               <TextInput

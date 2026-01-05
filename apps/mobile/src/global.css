@@ -1,3 +1,393 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "uniwind";
+
+/*
+ * Radix Colors - Raw sRGB hex values
+ * Using hex values directly instead of @radix-ui/colors CSS imports
+ * to avoid P3 color space issues with Uniwind.
+ * Source: https://www.radix-ui.com/colors
+ */
+
+@layer theme {
+  :root {
+    /* ===== LIGHT THEME ===== */
+    @variant light {
+      /* Mauve */
+      --mauve-1: #fdfcfd;
+      --mauve-2: #faf9fb;
+      --mauve-3: #f2eff3;
+      --mauve-4: #eae7ec;
+      --mauve-5: #e3dfe6;
+      --mauve-6: #dbd8e0;
+      --mauve-7: #d0cdd7;
+      --mauve-8: #bcbac7;
+      --mauve-9: #8e8c99;
+      --mauve-10: #84828e;
+      --mauve-11: #65636d;
+      --mauve-12: #211f26;
+
+      /* Mauve Alpha */
+      --mauve-a1: rgba(85, 0, 85, 0.012);
+      --mauve-a2: rgba(53, 0, 106, 0.024);
+      --mauve-a3: rgba(34, 0, 68, 0.063);
+      --mauve-a4: rgba(30, 0, 60, 0.095);
+      --mauve-a5: rgba(27, 0, 54, 0.126);
+      --mauve-a6: rgba(24, 0, 49, 0.157);
+      --mauve-a7: rgba(19, 0, 40, 0.197);
+      --mauve-a8: rgba(15, 0, 35, 0.271);
+      --mauve-a9: rgba(8, 0, 24, 0.448);
+      --mauve-a10: rgba(5, 0, 20, 0.491);
+      --mauve-a11: rgba(3, 0, 13, 0.612);
+      --mauve-a12: rgba(4, 0, 12, 0.879);
+
+      /* Violet */
+      --violet-1: #fdfcfe;
+      --violet-2: #faf8ff;
+      --violet-3: #f4f0fe;
+      --violet-4: #ebe4ff;
+      --violet-5: #e1d9ff;
+      --violet-6: #d4cafe;
+      --violet-7: #c2b5f5;
+      --violet-8: #aa99ec;
+      --violet-9: #6e56cf;
+      --violet-10: #654dc4;
+      --violet-11: #6550b9;
+      --violet-12: #2f265f;
+
+      /* Lime */
+      --lime-1: #fcfdfa;
+      --lime-2: #f8faf3;
+      --lime-3: #eef6d6;
+      --lime-4: #e2f0bd;
+      --lime-5: #d3e7a6;
+      --lime-6: #c2da91;
+      --lime-7: #abc978;
+      --lime-8: #8db654;
+      --lime-9: #bdee63;
+      --lime-10: #b0e64c;
+      --lime-11: #5c7c2f;
+      --lime-12: #37401c;
+
+      /* Red */
+      --red-1: #fffcfc;
+      --red-2: #fff7f7;
+      --red-3: #feebec;
+      --red-4: #ffdbdc;
+      --red-5: #ffcdce;
+      --red-6: #fdbdbe;
+      --red-7: #f4a9aa;
+      --red-8: #eb8e90;
+      --red-9: #e5484d;
+      --red-10: #dc3e42;
+      --red-11: #ce2c31;
+      --red-12: #641723;
+
+      /* Pink */
+      --pink-1: #fffcfe;
+      --pink-2: #fef7fb;
+      --pink-3: #fee9f5;
+      --pink-4: #fbdcef;
+      --pink-5: #f6cee7;
+      --pink-6: #efbfdd;
+      --pink-7: #e7acd0;
+      --pink-8: #dd93c2;
+      --pink-9: #d6409f;
+      --pink-10: #cf3897;
+      --pink-11: #c2298a;
+      --pink-12: #651249;
+
+      /* Semantic tokens - Light */
+      --color-background: var(--mauve-1);
+      --color-background-secondary: var(--mauve-2);
+      --color-background-tertiary: var(--mauve-3);
+
+      --color-foreground: var(--mauve-12);
+      --color-foreground-secondary: var(--mauve-11);
+      --color-foreground-muted: var(--mauve-9);
+
+      --color-card: var(--mauve-2);
+      --color-card-foreground: var(--mauve-12);
+
+      --color-primary: var(--violet-9);
+      --color-primary-foreground: var(--violet-1);
+
+      --color-muted: var(--mauve-3);
+      --color-muted-foreground: var(--mauve-11);
+
+      --color-accent: var(--violet-8);
+      --color-accent-foreground: var(--mauve-12);
+      --color-accent-secondary: var(--mauve-4);
+
+      --color-destructive: var(--red-9);
+      --color-destructive-foreground: var(--red-1);
+
+      --color-border: var(--mauve-6);
+      --color-border-secondary: var(--mauve-5);
+
+      --color-tab-bar: var(--mauve-1);
+      --color-tab-bar-foreground: var(--mauve-12);
+    }
+
+    /* ===== DARK THEME ===== */
+    @variant dark {
+      /* Mauve Dark */
+      --mauve-1: #121113;
+      --mauve-2: #1a191b;
+      --mauve-3: #232225;
+      --mauve-4: #2b292d;
+      --mauve-5: #323035;
+      --mauve-6: #3c393f;
+      --mauve-7: #49474e;
+      --mauve-8: #625f69;
+      --mauve-9: #6f6d78;
+      --mauve-10: #7c7a85;
+      --mauve-11: #b5b2bc;
+      --mauve-12: #eeeef0;
+
+      /* Mauve Alpha Dark */
+      --mauve-a1: rgba(0, 0, 0, 0);
+      --mauve-a2: rgba(184, 184, 255, 0.034);
+      --mauve-a3: rgba(206, 206, 255, 0.077);
+      --mauve-a4: rgba(204, 204, 255, 0.111);
+      --mauve-a5: rgba(206, 206, 255, 0.145);
+      --mauve-a6: rgba(212, 212, 255, 0.188);
+      --mauve-a7: rgba(214, 214, 255, 0.239);
+      --mauve-a8: rgba(210, 210, 255, 0.315);
+      --mauve-a9: rgba(214, 214, 255, 0.448);
+      --mauve-a10: rgba(218, 218, 253, 0.504);
+      --mauve-a11: rgba(224, 224, 251, 0.628);
+      --mauve-a12: rgba(240, 240, 253, 0.926);
+
+      /* Violet Dark */
+      --violet-1: #14121f;
+      --violet-2: #1b1525;
+      --violet-3: #291f43;
+      --violet-4: #33255b;
+      --violet-5: #3c2e69;
+      --violet-6: #473876;
+      --violet-7: #56468b;
+      --violet-8: #6958ad;
+      --violet-9: #6e56cf;
+      --violet-10: #7d66d9;
+      --violet-11: #baa7ff;
+      --violet-12: #e2ddfe;
+
+      /* Lime Dark */
+      --lime-1: #11130c;
+      --lime-2: #151a10;
+      --lime-3: #1f2917;
+      --lime-4: #29371d;
+      --lime-5: #334423;
+      --lime-6: #3d522a;
+      --lime-7: #496231;
+      --lime-8: #577538;
+      --lime-9: #bdee63;
+      --lime-10: #d4ff70;
+      --lime-11: #bde56c;
+      --lime-12: #e3f7ba;
+
+      /* Red Dark */
+      --red-1: #191111;
+      --red-2: #201314;
+      --red-3: #3b1219;
+      --red-4: #500f1c;
+      --red-5: #611623;
+      --red-6: #72232d;
+      --red-7: #8c333a;
+      --red-8: #b54548;
+      --red-9: #e5484d;
+      --red-10: #ec5d5e;
+      --red-11: #ff9592;
+      --red-12: #ffd1d9;
+
+      /* Pink Dark */
+      --pink-1: #191117;
+      --pink-2: #21121d;
+      --pink-3: #37172f;
+      --pink-4: #4b143d;
+      --pink-5: #591c47;
+      --pink-6: #692955;
+      --pink-7: #833869;
+      --pink-8: #a84885;
+      --pink-9: #d6409f;
+      --pink-10: #de51a8;
+      --pink-11: #ff8dcc;
+      --pink-12: #fdd1ea;
+
+      /* Semantic tokens - Dark */
+      --color-background: var(--mauve-1);
+      --color-background-secondary: var(--mauve-2);
+      --color-background-tertiary: var(--mauve-3);
+
+      --color-foreground: var(--mauve-12);
+      --color-foreground-secondary: var(--mauve-11);
+      --color-foreground-muted: var(--mauve-9);
+
+      --color-card: var(--mauve-2);
+      --color-card-foreground: var(--mauve-12);
+
+      --color-primary: var(--violet-9);
+      --color-primary-foreground: var(--violet-12);
+
+      --color-muted: var(--mauve-3);
+      --color-muted-foreground: var(--mauve-11);
+
+      --color-accent: var(--violet-8);
+      --color-accent-foreground: var(--mauve-12);
+      --color-accent-secondary: var(--mauve-4);
+
+      --color-destructive: var(--red-9);
+      --color-destructive-foreground: var(--red-12);
+
+      --color-border: var(--mauve-6);
+      --color-border-secondary: var(--mauve-5);
+
+      --color-tab-bar: var(--mauve-1);
+      --color-tab-bar-foreground: var(--mauve-12);
+    }
+  }
+}
+
+/* Map Radix CSS variables to Tailwind color tokens */
+@theme {
+  /* Mauve scale */
+  --color-mauve-1: var(--mauve-1);
+  --color-mauve-2: var(--mauve-2);
+  --color-mauve-3: var(--mauve-3);
+  --color-mauve-4: var(--mauve-4);
+  --color-mauve-5: var(--mauve-5);
+  --color-mauve-6: var(--mauve-6);
+  --color-mauve-7: var(--mauve-7);
+  --color-mauve-8: var(--mauve-8);
+  --color-mauve-9: var(--mauve-9);
+  --color-mauve-10: var(--mauve-10);
+  --color-mauve-11: var(--mauve-11);
+  --color-mauve-12: var(--mauve-12);
+
+  /* Mauve alpha */
+  --color-mauve-a1: var(--mauve-a1);
+  --color-mauve-a2: var(--mauve-a2);
+  --color-mauve-a3: var(--mauve-a3);
+  --color-mauve-a4: var(--mauve-a4);
+  --color-mauve-a5: var(--mauve-a5);
+  --color-mauve-a6: var(--mauve-a6);
+  --color-mauve-a7: var(--mauve-a7);
+  --color-mauve-a8: var(--mauve-a8);
+  --color-mauve-a9: var(--mauve-a9);
+  --color-mauve-a10: var(--mauve-a10);
+  --color-mauve-a11: var(--mauve-a11);
+  --color-mauve-a12: var(--mauve-a12);
+
+  /* Violet scale */
+  --color-violet-1: var(--violet-1);
+  --color-violet-2: var(--violet-2);
+  --color-violet-3: var(--violet-3);
+  --color-violet-4: var(--violet-4);
+  --color-violet-5: var(--violet-5);
+  --color-violet-6: var(--violet-6);
+  --color-violet-7: var(--violet-7);
+  --color-violet-8: var(--violet-8);
+  --color-violet-9: var(--violet-9);
+  --color-violet-10: var(--violet-10);
+  --color-violet-11: var(--violet-11);
+  --color-violet-12: var(--violet-12);
+
+  /* Lime scale */
+  --color-lime-1: var(--lime-1);
+  --color-lime-2: var(--lime-2);
+  --color-lime-3: var(--lime-3);
+  --color-lime-4: var(--lime-4);
+  --color-lime-5: var(--lime-5);
+  --color-lime-6: var(--lime-6);
+  --color-lime-7: var(--lime-7);
+  --color-lime-8: var(--lime-8);
+  --color-lime-9: var(--lime-9);
+  --color-lime-10: var(--lime-10);
+  --color-lime-11: var(--lime-11);
+  --color-lime-12: var(--lime-12);
+
+  /* Red scale */
+  --color-red-1: var(--red-1);
+  --color-red-2: var(--red-2);
+  --color-red-3: var(--red-3);
+  --color-red-4: var(--red-4);
+  --color-red-5: var(--red-5);
+  --color-red-6: var(--red-6);
+  --color-red-7: var(--red-7);
+  --color-red-8: var(--red-8);
+  --color-red-9: var(--red-9);
+  --color-red-10: var(--red-10);
+  --color-red-11: var(--red-11);
+  --color-red-12: var(--red-12);
+
+  /* Pink scale */
+  --color-pink-1: var(--pink-1);
+  --color-pink-2: var(--pink-2);
+  --color-pink-3: var(--pink-3);
+  --color-pink-4: var(--pink-4);
+  --color-pink-5: var(--pink-5);
+  --color-pink-6: var(--pink-6);
+  --color-pink-7: var(--pink-7);
+  --color-pink-8: var(--pink-8);
+  --color-pink-9: var(--pink-9);
+  --color-pink-10: var(--pink-10);
+  --color-pink-11: var(--pink-11);
+  --color-pink-12: var(--pink-12);
+
+  /* Semantic tokens mapped for Tailwind */
+  --color-background: var(--color-background);
+  --color-background-secondary: var(--color-background-secondary);
+  --color-background-tertiary: var(--color-background-tertiary);
+
+  --color-foreground: var(--color-foreground);
+  --color-foreground-secondary: var(--color-foreground-secondary);
+  --color-foreground-muted: var(--color-foreground-muted);
+
+  --color-card: var(--color-card);
+  --color-card-foreground: var(--color-card-foreground);
+
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+  --color-accent-secondary: var(--color-accent-secondary);
+
+  --color-destructive: var(--color-destructive);
+  --color-destructive-foreground: var(--color-destructive-foreground);
+
+  --color-border: var(--color-border);
+  --color-border-secondary: var(--color-border-secondary);
+
+  --color-tab-bar: var(--color-tab-bar);
+  --color-tab-bar-foreground: var(--color-tab-bar-foreground);
+
+  /* Fonts - single font per variant, no fallbacks */
+  --font-satoshi: "Satoshi-Regular";
+  --font-satoshi-italic: "Satoshi-Italic";
+  --font-satoshi-medium: "Satoshi-Medium";
+  --font-satoshi-medium-italic: "Satoshi-MediumItalic";
+  --font-satoshi-semibold: "Satoshi-SemiBold";
+  --font-satoshi-semibold-italic: "Satoshi-SemiBoldItalic";
+  --font-satoshi-bold: "Satoshi-Bold";
+  --font-satoshi-bold-italic: "Satoshi-BoldItalic";
+
+  --font-azeret-mono-regular: "AzeretMono_400Regular";
+  --font-nunito: "Nunito_400Regular";
+  --font-nunito-medium: "Nunito_500Medium";
+  --font-nunito-semibold: "Nunito_600SemiBold";
+  --font-nunito-bold: "Nunito_700Bold";
+  --font-nunito-extra-bold: "Nunito_800ExtraBold";
+
+  --font-inter: "Inter_400Regular";
+  --font-inter-italic: "Inter_400Regular_Italic";
+  --font-inter-medium: "Inter_500Medium";
+  --font-inter-medium-italic: "Inter_500Medium_Italic";
+  --font-inter-bold: "Inter_700Bold";
+  --font-inter-bold-italic: "Inter_700Bold_Italic";
+
+  --border-width-hairline: hairlineWidth();
+}

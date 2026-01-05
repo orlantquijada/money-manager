@@ -12,8 +12,7 @@ import { frame, padding } from "@expo/ui/swift-ui/modifiers";
 import { isToday, isYesterday, subDays } from "date-fns";
 import { useState } from "react";
 import type { ViewStyle } from "react-native";
-import { mauveDarkRgb, mauveRgb } from "@/utils/colors";
-import { useTheme } from "./theme-provider";
+import { useThemeColor } from "./theme-provider";
 
 const monthDateFormat = new Intl.DateTimeFormat("en-US", {
   month: "long",
@@ -53,7 +52,9 @@ const BTN_CLIP_PADDING = 16;
 
 export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
   const [isOpened, setIsOpened] = useState(false);
-  const { isDark } = useTheme();
+  const foregroundColor = useThemeColor("foreground");
+  const mutedColor = useThemeColor("muted");
+  const foregroundSecondary = useThemeColor("foreground-secondary");
 
   // Skip the first `onDateSelected` callback - it's triggered on mount, not by user interaction
   const [shouldDismissOnSelect, setShouldDismissOnSelect] = useState(false);
@@ -89,7 +90,7 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
     >
       <BottomSheet isOpened={isOpened} onIsOpenedChange={handleIsOpenedChange}>
         <DateTimePicker
-          color={isDark ? mauveDarkRgb.mauveDark12 : mauveRgb.mauve12}
+          color={foregroundColor}
           initialDate={date.toISOString()}
           onDateSelected={handleDateSelect}
           variant="graphical"
@@ -119,7 +120,7 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
         </ContextMenu.Items>
         <ContextMenu.Trigger>
           <Button
-            color={isDark ? mauveDarkRgb.mauveDark1 : mauveRgb.mauve1}
+            color={mutedColor}
             controlSize="large"
             modifiers={[
               padding({ all: BTN_CLIP_PADDING }),
@@ -128,16 +129,13 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
             variant="glassProminent"
           >
             <HStack alignment="center" spacing={10}>
-              <Text
-                color={isDark ? mauveDarkRgb.mauveDark12 : mauveRgb.mauve12}
-                weight="medium"
-              >
+              <Text color={foregroundColor} weight="medium">
                 {dateLabel}
               </Text>
               <Image
                 // color={PlatformColor("secondaryLabel") as unknown as string}
                 // color={mauveDarkRgb.mauveDark11}
-                color={isDark ? mauveDarkRgb.mauveDark11 : mauveRgb.mauve11}
+                color={foregroundSecondary}
                 size={16}
                 systemName="chevron.up.chevron.down"
               />

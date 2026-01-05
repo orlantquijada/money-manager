@@ -1,8 +1,10 @@
 import type { PropsWithChildren } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
+import { ScalePressable } from "@/components/scale-pressable";
+import { StyledLeanText } from "@/config/interop";
 import { cn } from "@/utils/cn";
-import { mauveDark } from "@/utils/colors";
 import Button from "../button";
+import { useThemeColor } from "../theme-provider";
 
 type Props = {
   disabled?: boolean;
@@ -22,26 +24,27 @@ export default function CreateFooter({
   onContinuePress,
   children,
 }: PropsWithChildren<Props>) {
+  const activityIndicatorColor = useThemeColor("background");
+
   return (
     <View
-      className="flex flex-row items-center justify-between border-t border-t-mauveDark8 bg-mauveDark1 px-4"
+      className="flex flex-row items-center justify-between border-t border-t-mauve-8 bg-background px-4"
       style={{
         height: FOOTER_HEIGHT,
       }}
     >
-      <Pressable
-        className={cn(
-          "h-8 justify-center transition-all active:scale-95 active:opacity-50",
-          hideBackButton && "opacity-0"
-        )}
+      <ScalePressable
+        className={cn("h-8 justify-center", hideBackButton && "opacity-0!")}
         disabled={hideBackButton}
         hitSlop={{ left: 20, right: 20, top: 5, bottom: 5 }}
         onPress={onBackPress}
+        opacityValue={0.5}
+        scaleValue={0.95}
       >
-        <Text className="font-satoshi-medium text-mauveDark12 text-sm">
+        <StyledLeanText className="font-satoshi-medium text-foreground text-sm">
           Back
-        </Text>
-      </Pressable>
+        </StyledLeanText>
+      </ScalePressable>
 
       <Button
         className="min-w-20 active:scale-95"
@@ -52,19 +55,19 @@ export default function CreateFooter({
         {loading && (
           <ActivityIndicator
             className="absolute"
-            color={mauveDark.mauveDark1}
+            color={activityIndicatorColor}
             size="small"
           />
         )}
 
-        <Text
+        <StyledLeanText
           className={cn(
-            "font-satoshi-medium text-mauveDark1 text-sm",
+            "font-satoshi-medium text-background text-sm",
             loading && "opacity-0"
           )}
         >
           {children}
-        </Text>
+        </StyledLeanText>
       </Button>
     </View>
   );

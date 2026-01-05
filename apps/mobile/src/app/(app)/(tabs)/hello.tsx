@@ -35,7 +35,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyledSafeAreaView } from "@/config/interop";
 import { mauveDark } from "@/utils/colors";
 
 // Section component for organizing the showcase
@@ -85,7 +85,7 @@ export default function Hello() {
   const [textValue, setTextValue] = useState("Hello SwiftUI!");
 
   return (
-    <SafeAreaView className="flex-1 bg-black">
+    <StyledSafeAreaView className="flex-1 bg-black">
       <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
         <RNText className="mb-6 font-bold text-2xl text-white">
           SwiftUI Components Showcase
@@ -242,7 +242,7 @@ export default function Hello() {
               <VStack spacing={8}>
                 <Text>Wheel Picker</Text>
                 <Picker
-                  color={mauveDark.mauveDark1}
+                  color={mauveDark.mauve1}
                   label="qwe"
                   onOptionSelected={({ nativeEvent: { index } }) =>
                     setWheelIndex(index)
@@ -738,7 +738,7 @@ export default function Hello() {
       {/*   rows={3} */}
       {/*   style={{ width, aspectRatio: 1 }} */}
       {/* /> */}
-    </SafeAreaView>
+    </StyledSafeAreaView>
   );
 }
 

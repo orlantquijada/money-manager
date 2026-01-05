@@ -1,16 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import Button from "@/components/button";
 import ModalCloseBtn from "@/components/modal-close-btn";
+import { ScalePressable } from "@/components/scale-pressable";
 import TextInput, { CurrencyInput } from "@/components/text-input";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
@@ -83,7 +78,7 @@ export default function AddExpense() {
 
           {isLoading ? (
             <View className="flex-1 items-center justify-center">
-              <ActivityIndicator color={mauveDark.mauveDark11} />
+              <ActivityIndicator color={mauveDark.mauve11} />
             </View>
           ) : (
             <ScrollView
@@ -96,13 +91,14 @@ export default function AddExpense() {
                 const isSelected = selectedFundId === fund.id;
 
                 return (
-                  <Pressable
+                  <ScalePressable
                     className={cn(
-                      "flex-row items-center justify-between rounded-xl px-4 py-3 transition-all active:scale-[.98] active:opacity-70",
+                      "flex-row items-center justify-between rounded-xl px-4 py-3",
                       isSelected ? "bg-violet4" : "bg-mauveDark4"
                     )}
                     key={fund.id}
                     onPress={() => setSelectedFundId(fund.id)}
+                    scaleValue={0.98}
                     style={{ borderCurve: "continuous" }}
                   >
                     <View className="flex-1">
@@ -132,7 +128,7 @@ export default function AddExpense() {
                         <View className="h-2 w-2 rounded-full bg-white" />
                       </View>
                     )}
-                  </Pressable>
+                  </ScalePressable>
                 );
               })}
             </ScrollView>

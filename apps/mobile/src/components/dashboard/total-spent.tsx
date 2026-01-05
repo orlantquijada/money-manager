@@ -90,7 +90,7 @@ function ProgressIndicator({ isIncrease, percentage }: ProgressIndicatorProps) {
       <View
         className={cn(
           "aspect-square h-5 items-center justify-center rounded-full transition-all",
-          isIncrease ? "bg-red4" : "bg-lime4"
+          isIncrease ? "bg-red-4" : "bg-lime-4"
         )}
       >
         <AnimatedArrowDown
@@ -105,7 +105,7 @@ function ProgressIndicator({ isIncrease, percentage }: ProgressIndicatorProps) {
       <Text
         className={cn(
           "font-satoshi-medium text-sm transition-all",
-          isIncrease ? "text-red11" : "text-lime11"
+          isIncrease ? "text-red-11" : "text-lime-11"
         )}
       >
         {percentage}%

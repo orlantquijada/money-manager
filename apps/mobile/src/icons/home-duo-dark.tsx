@@ -1,5 +1,5 @@
-import { Svg } from "react-native-svg";
 import { AnimatedPath } from "@/components/ui/animated-svg";
+import { StyledSvg } from "@/config/interop";
 import type { TabBarIconProps } from "@/utils/types";
 
 export default function Icon({
@@ -10,7 +10,7 @@ export default function Icon({
   outlineOpacity,
 }: TabBarIconProps) {
   return (
-    <Svg
+    <StyledSvg
       className={className}
       fill="none"
       height={size}
@@ -29,6 +29,6 @@ export default function Icon({
         fillRule="evenodd"
         opacity={outlineOpacity}
       />
-    </Svg>
+    </StyledSvg>
   );
 }

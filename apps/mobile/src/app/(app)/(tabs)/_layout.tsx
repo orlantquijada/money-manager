@@ -19,8 +19,8 @@ function TabsContent() {
         screenOptions={{
           sceneStyle: {
             backgroundColor: isDark
-              ? themeDark.background.secondary
-              : theme.background.secondary,
+              ? themeDark.background.tertiary
+              : theme.background.tertiary,
           },
         }}
         tabBar={TabBar}

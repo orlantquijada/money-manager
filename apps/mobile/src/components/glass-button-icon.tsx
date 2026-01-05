@@ -1,3 +1,4 @@
+import { mauve } from "@radix-ui/colors";
 import { GlassView, type GlassViewProps } from "expo-glass-effect";
 import type { ReactNode } from "react";
 import { Pressable, type PressableProps, StyleSheet } from "react-native";
@@ -31,7 +32,7 @@ export default function GlassButtonIcon({
           },
           style,
         ]}
-        tintColor="#232326"
+        tintColor={mauve.mauve1}
         {..._glassViewProps}
       >
         {children}

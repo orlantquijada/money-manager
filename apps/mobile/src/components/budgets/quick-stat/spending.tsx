@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Pressable, Text } from "react-native";
+import { Text } from "react-native";
+import { ScalePressable } from "@/components/scale-pressable";
 import {
   type FundWithMeta,
   getMonthlyBudget,
@@ -69,10 +70,11 @@ export default function QuickStatSpending({ fund }: Props) {
   const { value, label } = getStat();
 
   return (
-    <Pressable
-      className="transition-all active:scale-95 active:opacity-70"
+    <ScalePressable
       hitSlop={10}
       onPress={cycleMode}
+      opacityValue={0.7}
+      scaleValue={0.95}
     >
       <Text className={cn("font-satoshi text-xs", textColor)}>
         <Text className={cn("font-nunito-bold text-xs", textColor)}>
@@ -80,6 +82,6 @@ export default function QuickStatSpending({ fund }: Props) {
         </Text>{" "}
         {label}
       </Text>
-    </Pressable>
+    </ScalePressable>
   );
 }

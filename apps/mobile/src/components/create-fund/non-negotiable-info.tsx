@@ -11,11 +11,12 @@ import {
   useCreateFundStore,
   useSubmitFund,
 } from "@/lib/create-fund";
-import { mauveDark } from "@/utils/colors";
+
 import { layoutSpringify, transitions } from "@/utils/motion";
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 import Presence from "../presence";
 import { CurrencyInput } from "../text-input";
+import { useThemeColor } from "../theme-provider";
 import Choice from "./choice";
 import CreateFooter from "./footer";
 
@@ -36,11 +37,12 @@ export default function NonNegotiableInfo({
   const setBudgetedAmount = useCreateFundStore((s) => s.setBudgetedAmount);
 
   const { submit, isPending } = useSubmitFund();
+  const backgroundColor = useThemeColor("background");
   const { fadeProps, handleScroll } = useOverflowFadeEdge();
 
   return (
     <>
-      <FadingEdge fadeColor={mauveDark.mauveDark1} {...fadeProps}>
+      <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
         <ScrollView
           className="p-4 pt-0"
           contentContainerClassName="pb-4 flex gap-y-8"
@@ -48,7 +50,7 @@ export default function NonNegotiableInfo({
         >
           <View>
             <Presence delay={DELAY} delayMultiplier={1}>
-              <Text className="font-satoshi-medium text-lg text-mauveDark12">
+              <Text className="font-satoshi-medium text-foreground text-lg">
                 When is this due?
               </Text>
             </Presence>
@@ -95,7 +97,7 @@ export default function NonNegotiableInfo({
               <View className="gap-2.5">
                 <View className="flex-row">
                   <Text
-                    className="font-satoshi-medium text-lg text-mauveDark12"
+                    className="font-satoshi-medium text-foreground text-lg"
                     style={{ lineHeight: undefined }}
                   >
                     How much is due{" "}
@@ -148,7 +150,7 @@ function TimeModeText({ timeMode }: { timeMode: TimeMode }) {
         .mass(Reanimated3DefaultSpringConfig.mass)}
     >
       <Text
-        className="font-satoshi-medium text-lg text-mauveDark12"
+        className="font-satoshi-medium text-foreground text-lg"
         style={{ lineHeight: undefined }}
       >
         {readableTimeModeMap[timeMode]}?

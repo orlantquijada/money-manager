@@ -1,16 +1,16 @@
 import type { Folder } from "api";
 import { Link } from "expo-router";
-import { Pressable, Text } from "react-native";
+import { Text } from "react-native";
 import Animated, {
   type SharedValue,
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import { ScalePressable } from "@/components/scale-pressable";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { FolderClosedDuoCreate, FolderOpenDuo } from "@/icons";
 import type { FundWithMeta } from "@/lib/fund";
 import AnimateHeight from "../animate-height";
-import LeanText from "../lean-text";
-import LeanView from "../lean-view";
 import Category from "./category";
 
 type Props = {
@@ -32,23 +32,25 @@ export default function Budget({
   };
 
   return (
-    <LeanView>
-      <Pressable
-        className="h-14 flex-row items-center justify-between gap-3 rounded-2xl border-border border-hairline bg-card p-4 transition-all active:scale-[.98]"
+    <StyledLeanView>
+      <ScalePressable
+        className="h-14 flex-row items-center justify-between gap-3 rounded-2xl border-border border-hairline bg-card p-4"
+        disableOpacity
         onPress={toggle}
+        scaleValue={0.98}
         style={{ borderCurve: "continuous" }}
       >
-        <LeanView className="shrink flex-row items-center gap-3">
+        <StyledLeanView className="shrink flex-row items-center gap-3">
           <FolderIcon open={open} />
 
-          <LeanText
+          <StyledLeanText
             className="shrink font-satoshi-medium text-base text-foreground"
             ellipsizeMode="tail"
             numberOfLines={1}
           >
             {folderName}
-          </LeanText>
-        </LeanView>
+          </StyledLeanText>
+        </StyledLeanView>
 
         {/* <Text */}
         {/*   className={cn( */}
@@ -59,10 +61,10 @@ export default function Budget({
         {/*   <Text className="font-nunito">{toCurrencyNarrow(amountLeft)} </Text> */}
         {/*   left */}
         {/* </Text> */}
-      </Pressable>
+      </ScalePressable>
 
       <Categories folderId={folderId} funds={funds} open={open} />
-    </LeanView>
+    </StyledLeanView>
   );
 }
 
@@ -75,31 +77,35 @@ function Categories({
 }) {
   if (!funds.length) {
     return (
-      <LeanView className="overflow-hidden">
+      <StyledLeanView className="overflow-hidden">
         <AnimateHeight isExpanded={open}>
           <Link
             asChild
             href={{ pathname: "/create-fund", params: { folderId } }}
           >
-            <Pressable className="h-12 w-full items-center justify-center transition-all active:scale-95 active:opacity-70">
+            <ScalePressable
+              className="h-12 w-full items-center justify-center"
+              opacityValue={0.7}
+              scaleValue={0.95}
+            >
               <Text className="font-satoshi text-foreground-muted text-sm">
                 Add a fund to this folder
               </Text>
-            </Pressable>
+            </ScalePressable>
           </Link>
         </AnimateHeight>
-      </LeanView>
+      </StyledLeanView>
     );
   }
 
   return (
-    <LeanView className="overflow-hidden">
+    <StyledLeanView className="overflow-hidden">
       <AnimateHeight isExpanded={open}>
         {funds.map((fund) => (
           <Category fund={fund} key={fund.id} />
         ))}
       </AnimateHeight>
-    </LeanView>
+    </StyledLeanView>
   );
 }
 
@@ -121,13 +127,13 @@ function FolderIcon({ open }: { open: SharedValue<boolean> }) {
   const { closedIconStyle, openIconStyle } = useIconStyles(open);
 
   return (
-    <LeanView className="relative size-4">
+    <StyledLeanView className="relative size-4">
       <Animated.View className="absolute inset-0" style={openIconStyle}>
         <FolderOpenDuo className="text-foreground" size={16} />
       </Animated.View>
       <Animated.View className="absolute inset-0" style={closedIconStyle}>
         <FolderClosedDuoCreate className="text-foreground" size={16} />
       </Animated.View>
-    </LeanView>
+    </StyledLeanView>
   );
 }

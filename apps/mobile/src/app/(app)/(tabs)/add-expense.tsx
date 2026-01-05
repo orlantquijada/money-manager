@@ -1,29 +1,28 @@
 import { Link } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Amount, useAmount } from "@/components/add-expense/amount";
 import Numpad from "@/components/add-expense/numpad";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import { DateSelector } from "@/components/date-selector.ios";
 import GlassButtonIcon from "@/components/glass-button-icon";
-import { useTheme } from "@/components/theme-provider";
+import { useThemeColor } from "@/components/theme-provider";
+import { StyledSafeAreaView } from "@/config/interop";
 import { Cross } from "@/icons";
 import { cn } from "@/utils/cn";
-import { mauveDarkRgb, mauveRgb } from "@/utils/colors";
 
 export default function AddExpense() {
   const [date, setDate] = useState(new Date());
 
   return (
     <AnimatedTabScreen index={0}>
-      <SafeAreaView className="flex-1 bg-background">
+      <StyledSafeAreaView className="flex-1 bg-background">
         <View className="flex-1 px-4 pb-8">
           <Header className="mt-8 mb-auto" date={date} onDateChange={setDate} />
 
           <CreateTransactionForm />
         </View>
-      </SafeAreaView>
+      </StyledSafeAreaView>
     </AnimatedTabScreen>
   );
 }
@@ -50,16 +49,16 @@ function Header({ className, date, onDateChange }: HeaderProps) {
 }
 
 function Close() {
-  const { isDark } = useTheme();
+  const mutedColor = useThemeColor("muted");
 
   return (
     <Link asChild href={{ pathname: "/" }}>
       <GlassButtonIcon
         glassViewProps={{
-          tintColor: isDark ? mauveDarkRgb.mauveDark1 : mauveRgb.mauve1,
+          tintColor: mutedColor,
         }}
       >
-        <Cross className="size-6 text-foreground-secondary" />
+        <Cross className="text-foreground-secondary" size={24} />
       </GlassButtonIcon>
     </Link>
   );
@@ -71,7 +70,7 @@ function CreateTransactionForm() {
   return (
     <>
       <View
-        className="relative flex-grow items-center justify-center"
+        className="relative grow items-center justify-center"
         // style={{ minHeight: screenHeight * 0.25 }}
       >
         <Amount amount={amount} />

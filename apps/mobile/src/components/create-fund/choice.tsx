@@ -36,23 +36,23 @@ export default function Choice({
     >
       <View
         className={cn(
-          "flex h-10 flex-row items-center justify-between rounded-xl bg-mauveDark4 px-2",
-          selected && "bg-mauveDark12"
+          "flex h-10 flex-row items-center justify-between rounded-xl bg-muted px-2",
+          selected && "bg-foreground"
         )}
         style={{ borderCurve: "continuous" }}
       >
         <View className="flex flex-row">
           <View
             className={cn(
-              "mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-mauveDark12",
-              selected && "bg-mauveDark4"
+              "mr-2 flex h-6 w-6 items-center justify-center rounded-lg bg-foreground",
+              selected && "bg-muted"
             )}
             style={{ borderCurve: "continuous" }}
           >
             <Text
               className={cn(
-                "flex items-center justify-center text-center font-satoshi-bold text-mauveDark1 text-sm",
-                selected && "text-mauveDark12"
+                "flex items-center justify-center text-center font-satoshi-bold text-background text-sm",
+                selected && "text-foreground"
               )}
             >
               {choiceLabel}
@@ -61,8 +61,8 @@ export default function Choice({
 
           <Text
             className={cn(
-              "font-satoshi text-base text-mauveDark12",
-              selected && "text-mauveDark1"
+              "font-satoshi text-base text-foreground",
+              selected && "text-background"
             )}
           >
             {children}

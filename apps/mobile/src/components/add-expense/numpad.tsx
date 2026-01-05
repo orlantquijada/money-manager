@@ -1,16 +1,57 @@
-import type { ReactNode } from "react";
-import {
-  Pressable,
-  type PressableProps,
-  type ViewProps,
-  type ViewStyle,
-} from "react-native";
+import { type ReactNode, useCallback } from "react";
+import type { PressableProps, ViewProps, ViewStyle } from "react-native";
+import Animated, {
+  interpolate,
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { StyledLeanView } from "@/config/interop";
 import { ChevronLeft } from "@/icons";
 import { cn } from "@/utils/cn";
-import { mauve, mauveDarkRgb } from "@/utils/colors";
-import LeanText from "../lean-text";
-import LeanView from "../lean-view";
-import { useTheme } from "../theme-provider";
+import { TW_TRANSITION_ALL } from "@/utils/motion";
+import { AnimatedPressable } from "../animated-pressable";
+import { useThemeColor } from "../theme-provider";
+
+function useNumberButtonAnimation(
+  onPressIn?: PressableProps["onPressIn"],
+  onPressOut?: PressableProps["onPressOut"]
+) {
+  const bgColor = useThemeColor("background");
+  const activeBgColor = useThemeColor("muted");
+  const pressed = useSharedValue(0);
+
+  const pressableStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      pressed.value,
+      [0, 1],
+      [bgColor, activeBgColor]
+    ),
+  }));
+
+  const textStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: interpolate(pressed.value, [0, 1], [1, 1.25]) }],
+  }));
+
+  const handlePressIn = useCallback(
+    (e: Parameters<NonNullable<PressableProps["onPressIn"]>>[0]) => {
+      pressed.value = withTiming(1, TW_TRANSITION_ALL);
+      onPressIn?.(e);
+    },
+    [pressed, onPressIn]
+  );
+
+  const handlePressOut = useCallback(
+    (e: Parameters<NonNullable<PressableProps["onPressOut"]>>[0]) => {
+      pressed.value = withTiming(0, TW_TRANSITION_ALL);
+      onPressOut?.(e);
+    },
+    [pressed, onPressOut]
+  );
+
+  return { pressableStyle, textStyle, handlePressIn, handlePressOut };
+}
 
 export type NumpadKey =
   | "0"
@@ -30,21 +71,31 @@ function NumberButton({
   children,
   style,
   className,
+  onPressIn,
+  onPressOut,
   ...rest
 }: PressableProps & { children?: ReactNode; style?: ViewStyle }) {
+  const { pressableStyle, textStyle, handlePressIn, handlePressOut } =
+    useNumberButtonAnimation(onPressIn, onPressOut);
+
   return (
-    <Pressable
+    <AnimatedPressable
       {...rest}
       className={cn(
-        "group h-12 flex-1 items-center justify-center rounded-lg bg-background transition-all active:bg-muted",
+        "h-12 flex-1 items-center justify-center rounded-lg",
         className
       )}
-      style={[{ borderCurve: "continuous" }, style]}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      style={[{ borderCurve: "continuous" }, pressableStyle, style]}
     >
-      <LeanText className="font-nunito-bold text-2xl text-foreground transition-all group-active:scale-125">
+      <Animated.Text
+        className="font-nunito-bold text-2xl text-foreground"
+        style={textStyle}
+      >
         {children}
-      </LeanText>
-    </Pressable>
+      </Animated.Text>
+    </AnimatedPressable>
   );
 }
 
@@ -53,15 +104,14 @@ type Props = ViewProps & {
 };
 
 export default function Numpad({ className, onPress, ...props }: Props) {
-  const { isDark } = useTheme();
   return (
-    <LeanView {...props} className={cn("gap-2", className)}>
+    <StyledLeanView {...props} className={cn("gap-2", className)}>
       {[
         [1, 2, 3],
         [4, 5, 6],
         [7, 8, 9],
       ].map((row) => (
-        <LeanView className="flex-row gap-2" key={row[0]}>
+        <StyledLeanView className="flex-row gap-2" key={row[0]}>
           {row.map((num) => (
             <NumberButton
               key={num}
@@ -70,19 +120,19 @@ export default function Numpad({ className, onPress, ...props }: Props) {
               {num}
             </NumberButton>
           ))}
-        </LeanView>
+        </StyledLeanView>
       ))}
-      <LeanView className="flex-row gap-2">
+      <StyledLeanView className="flex-row gap-2">
         <NumberButton onPress={() => onPress?.(".")}>.</NumberButton>
         <NumberButton onPress={() => onPress?.("0")}>0</NumberButton>
         <NumberButton onPress={() => onPress?.("backspace")}>
           <ChevronLeft
-            color={isDark ? mauveDarkRgb.mauveDark12 : mauve.mauve12}
+            className="text-foreground"
             size={20}
             strokeWidth={3.5}
           />
         </NumberButton>
-      </LeanView>
-    </LeanView>
+      </StyledLeanView>
+    </StyledLeanView>
   );
 }

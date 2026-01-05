@@ -2,17 +2,19 @@ import {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
   BottomSheetModal,
-  BottomSheetView,
   useBottomSheet,
 } from "@gorhom/bottom-sheet";
 import { type Href, useRouter } from "expo-router";
 import type { Ref } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ScalePressable } from "@/components/scale-pressable";
+import { StyledBottomSheetView } from "@/config/interop";
 import { FolderClosedDuoCreate, ShoppingBag, WalletDuo } from "@/icons";
 import { cn } from "@/utils/cn";
-import { mauveA, mauveDark } from "@/utils/colors";
+import { mauveA } from "@/utils/colors";
 import type { IconComponent } from "@/utils/types";
+import { useThemeColor } from "../theme-provider";
 
 type DashboardCreateBottomSheetProps = {
   ref: Ref<BottomSheetModal>;
@@ -22,6 +24,8 @@ export default function DashboardCreateBottomSheet({
   ref,
 }: DashboardCreateBottomSheetProps) {
   const insets = useSafeAreaInsets();
+  const handleIndicatorColor = useThemeColor("foreground-muted");
+  const handleBackgroundColor = useThemeColor("background");
 
   return (
     <BottomSheetModal
@@ -31,8 +35,12 @@ export default function DashboardCreateBottomSheet({
       }}
       bottomInset={insets.bottom}
       detached
-      handleIndicatorStyle={{ backgroundColor: mauveDark.mauveDark8 }}
-      handleStyle={{ backgroundColor: mauveDark.mauveDark1 }}
+      handleIndicatorStyle={{
+        backgroundColor: handleIndicatorColor,
+      }}
+      handleStyle={{
+        backgroundColor: handleBackgroundColor,
+      }}
       index={0}
       name="dashboard-create"
       ref={ref}
@@ -91,9 +99,9 @@ function Content() {
   const { close } = useBottomSheet();
 
   return (
-    <BottomSheetView className="flex-1 border-t border-t-mauveDark1 bg-mauveDark1 pb-2">
+    <StyledBottomSheetView className="flex-1 bg-background pb-2">
       <View className="mb-6 flex-row items-center justify-between px-6">
-        <Text className="font-satoshi-bold text-mauveDark12 text-xl">
+        <Text className="font-satoshi-bold text-foreground text-xl">
           Create
         </Text>
       </View>
@@ -102,7 +110,7 @@ function Content() {
         <CreateCard
           className={
             index !== CREATE_ITEMS.length - 1
-              ? "border-mauveDark7 border-b-hairline"
+              ? "border-mauve-7 border-b-hairline"
               : undefined
           }
           description={item.description}
@@ -115,7 +123,7 @@ function Content() {
           title={item.title}
         />
       ))}
-    </BottomSheetView>
+    </StyledBottomSheetView>
   );
 }
 
@@ -136,29 +144,27 @@ function CreateCard({
 }: CreateCardProps) {
   const iconSize = 18;
   return (
-    <Pressable
-      className={cn(
-        "w-full gap-1.5 bg-mauveDark1 px-6 py-4 transition-all active:scale-[.98] active:opacity-70",
-        className
-      )}
+    <ScalePressable
+      className={cn("w-full gap-1.5 bg-background px-6 py-4", className)}
       onPress={onPress}
+      opacityValue={0.7}
+      scaleValue={0.98}
     >
       <View className="flex-row items-center gap-4">
         <Icon
-          className="translate-y-1 self-start"
-          color={mauveDark.mauveDark12}
+          className="translate-y-1 self-start text-foreground"
           size={iconSize}
         />
-        <Text className="font-satoshi-medium text-base text-mauveDark12">
+        <Text className="font-satoshi-medium text-base text-foreground">
           {title}
         </Text>
       </View>
       <View className="flex-row items-center gap-4">
         <View className="h-px" style={{ width: iconSize }} />
-        <Text className="shrink font-inter text-mauveDark10 text-sm">
+        <Text className="shrink font-inter text-foreground-muted text-sm">
           {description}
         </Text>
       </View>
-    </Pressable>
+    </ScalePressable>
   );
 }

@@ -8,7 +8,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-mauveDark12",
+        default: "bg-foreground",
       },
       disabled: {
         false: null,
@@ -19,7 +19,11 @@ const buttonVariants = cva(
       },
     },
     compoundVariants: [
-      { variant: "default", disabled: true, className: "bg-mauveDark11" },
+      {
+        variant: "default",
+        disabled: true,
+        className: "bg-foreground-secondary",
+      },
     ],
     defaultVariants: { variant: "default", size: "default" },
   }

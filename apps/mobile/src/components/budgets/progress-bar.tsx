@@ -1,9 +1,8 @@
 import { StyleSheet } from "react-native";
+import { StyledLeanView } from "@/config/interop";
 import { cn } from "@/utils/cn";
-import { violet, violetDark } from "@/utils/colors";
 import { clamp } from "@/utils/math";
-import LeanView from "../lean-view";
-import { useTheme } from "../theme-provider";
+import { useThemeColor } from "../theme-provider";
 
 type Props = {
   barWidth: number;
@@ -20,37 +19,35 @@ export default function ProgressBar({
   // color = violet.violet6,
 }: Props) {
   const clampedProgress = clamp(progress, 0, 1);
-  const { isDark } = useTheme();
-
-  const color = isDark ? violetDark.violetDark8 : violet.violet6;
+  const color = useThemeColor("accent");
 
   return (
-    <LeanView
-      className={cn("h-2 flex-grow rounded-full")}
+    <StyledLeanView
+      className={cn("h-2 grow rounded-full")}
       style={{
         borderCurve: "continuous",
         borderColor: color,
         borderWidth: highlight ? 1 : StyleSheet.hairlineWidth,
       }}
     >
-      <LeanView
+      <StyledLeanView
         className="absolute inset-0 overflow-hidden rounded-full bg-muted"
         style={{ borderCurve: "continuous" }}
       />
 
       {highlight && (
-        <LeanView
+        <StyledLeanView
           className="absolute -bottom-2 h-1 w-1 self-center rounded-full"
           style={{ backgroundColor: color }}
         />
       )}
 
       {/* Thumb */}
-      <LeanView
+      <StyledLeanView
         className="absolute inset-0 overflow-hidden rounded-full"
         style={{ borderCurve: "continuous" }}
       >
-        <LeanView
+        <StyledLeanView
           className="h-full w-full rounded-full"
           style={{
             borderCurve: "continuous",
@@ -58,7 +55,7 @@ export default function ProgressBar({
             transform: [{ translateX: `${(clampedProgress - 1) * 100}%` }],
           }}
         />
-      </LeanView>
-    </LeanView>
+      </StyledLeanView>
+    </StyledLeanView>
   );
 }

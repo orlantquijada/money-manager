@@ -1,8 +1,8 @@
 import { Link } from "expo-router";
 import { useMemo } from "react";
-import { Pressable, useWindowDimensions } from "react-native";
-import LeanText from "@/components/lean-text";
-import LeanView from "@/components/lean-view";
+import { useWindowDimensions } from "react-native";
+import { ScalePressable } from "@/components/scale-pressable";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import type { FundWithMeta } from "@/lib/fund";
 import { getTimeModeMultiplier } from "@/lib/fund";
 import ProgressBar from "./progress-bar";
@@ -53,23 +53,25 @@ export default function Category({ fund }: CategoryProps) {
 
   return (
     <Link asChild href={{ pathname: "/fund/[id]", params: { id: fund.id } }}>
-      <Pressable
-        className="justify-center gap-2 px-4 transition-all active:scale-[.98] active:opacity-70"
+      <ScalePressable
+        className="justify-center gap-2 px-4"
+        opacityValue={0.7}
+        scaleValue={0.98}
         style={{ height: CATEGORY_HEIGHT }}
       >
-        <LeanView className="flex-row items-center justify-between gap-3">
-          <LeanText
+        <StyledLeanView className="flex-row items-center justify-between gap-3">
+          <StyledLeanText
             className="shrink font-satoshi-medium text-base text-foreground"
             ellipsizeMode="tail"
             numberOfLines={1}
           >
             {fund.name}
-          </LeanText>
+          </StyledLeanText>
 
           <QuickStatSpending fund={fund} />
-        </LeanView>
+        </StyledLeanView>
 
-        <LeanView className="flex-row gap-2">
+        <StyledLeanView className="flex-row gap-2">
           {progressBars.map((progress, index) => {
             const isCurrentPeriod = index === barCount - 1;
 
@@ -82,8 +84,8 @@ export default function Category({ fund }: CategoryProps) {
               />
             );
           })}
-        </LeanView>
-      </Pressable>
+        </StyledLeanView>
+      </ScalePressable>
     </Link>
   );
 }

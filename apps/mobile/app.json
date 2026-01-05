@@ -36,6 +36,12 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "expo-color-space-plugin",
+        {
+          "colorSpace": "displayP3"
+        }
       ]
     ],
     "experiments": {

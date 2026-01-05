@@ -15,7 +15,7 @@ import {
 import { leftToRight, topToBottom } from "@/constants/linear-gradient";
 import { useScrollReachedEdge } from "@/hooks/use-scroll-reached-edge";
 import { cn } from "@/utils/cn";
-import { hslToHsla } from "@/utils/colors";
+import { hexToTransparent } from "@/utils/colors";
 import AnimatedLinearGradient, {
   type AnimatedLinearGradientProps,
 } from "./animated-linear-gradient";
@@ -115,7 +115,7 @@ export default function FadingEdge({
     [isVertical, endFadeSize]
   );
 
-  const fadeColorTransparent = hslToHsla(fadeColor, 0);
+  const fadeColorTransparent = hexToTransparent(fadeColor, 0);
 
   const startGradient = useMemo(
     () =>
