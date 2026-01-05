@@ -2,10 +2,12 @@ import { ScrollView, Text } from "react-native";
 import Budget from "@/components/budgets/budget";
 import FadingEdge, { useOverflowFadeEdge } from "@/components/fading-edge";
 import { TAB_BAR_HEIGHT } from "@/components/tab-bar";
+import { useTheme } from "@/components/theme-provider";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
-import { violet } from "@/utils/colors";
+import { theme, themeDark } from "@/utils/colors";
 
 export default function BudgetsScreen() {
+  const { isDark } = useTheme();
   const { data: foldersWithFunds, isLoading } = useFoldersWithFunds();
   const { fadeProps, handleScroll } = useOverflowFadeEdge({
     offset: { end: 0 },
@@ -13,7 +15,9 @@ export default function BudgetsScreen() {
 
   return (
     <FadingEdge
-      fadeColor={violet.violet1}
+      fadeColor={
+        isDark ? themeDark.background.DEFAULT : theme.background.DEFAULT
+      }
       {...fadeProps}
       style={{ marginBottom: TAB_BAR_HEIGHT }}
     >

@@ -28,7 +28,9 @@ export default function QuickStatSpending({ fund }: Props) {
   };
 
   const textColor =
-    isOverspent && mode !== "spent" ? "text-red9" : "text-mauve9";
+    isOverspent && mode !== "spent"
+      ? "text-destructive"
+      : "text-foreground-muted";
 
   const getStat = (): { value: string; label: string } => {
     switch (mode) {

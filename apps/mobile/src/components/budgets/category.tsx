@@ -59,7 +59,7 @@ export default function Category({ fund }: CategoryProps) {
       >
         <LeanView className="flex-row items-center justify-between gap-3">
           <LeanText
-            className="shrink font-satoshi-medium text-base text-violet12"
+            className="shrink font-satoshi-medium text-base text-foreground"
             ellipsizeMode="tail"
             numberOfLines={1}
           >

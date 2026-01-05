@@ -1,8 +1,9 @@
 import { StyleSheet } from "react-native";
 import { cn } from "@/utils/cn";
-import { violet } from "@/utils/colors";
+import { violet, violetDark } from "@/utils/colors";
 import { clamp } from "@/utils/math";
 import LeanView from "../lean-view";
+import { useTheme } from "../theme-provider";
 
 type Props = {
   barWidth: number;
@@ -13,15 +14,15 @@ type Props = {
 };
 
 export default function ProgressBar({
-  barWidth,
+  barWidth: _barWidth,
   highlight,
   progress = 1,
-  color = violet.violet6,
+  // color = violet.violet6,
 }: Props) {
   const clampedProgress = clamp(progress, 0, 1);
+  const { isDark } = useTheme();
 
-  const stripeColor1 = "#AA99EC"; // violet.violet8 or similar
-  const stripeColor2 = "#D7CFF9"; // violet.violet4 or similar
+  const color = isDark ? violetDark.violetDark8 : violet.violet6;
 
   return (
     <LeanView
@@ -33,7 +34,7 @@ export default function ProgressBar({
       }}
     >
       <LeanView
-        className="absolute inset-0 overflow-hidden rounded-full bg-mauve3"
+        className="absolute inset-0 overflow-hidden rounded-full bg-muted"
         style={{ borderCurve: "continuous" }}
       />
 

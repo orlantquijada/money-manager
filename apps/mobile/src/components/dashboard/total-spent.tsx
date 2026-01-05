@@ -48,7 +48,7 @@ export default function TotalSpent() {
           <Skeleton height={40} width={120} />
         ) : (
           <Animated.Text
-            className="mr-2 font-nunito-bold text-4xl text-mauve12"
+            className="mr-2 font-nunito-bold text-4xl text-foreground"
             entering={FadeIn.duration(300).delay(100)}
             exiting={TotalSpentSlideOutUp}
             key={thisMonthTotal}
@@ -66,7 +66,7 @@ export default function TotalSpent() {
         )}
       </View>
 
-      <Text className="mr-1 font-satoshi-medium text-base text-mauve10">
+      <Text className="mr-1 font-satoshi-medium text-base text-foreground-muted">
         Total spent this month
       </Text>
     </View>

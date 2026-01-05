@@ -26,7 +26,7 @@ export function AnimatedTabScreen({ children, index }: AnimatedTabScreenProps) {
 
     return position.interpolate({
       inputRange: [index - 1, index, index + 1],
-      outputRange: [32, 0, 32],
+      outputRange: [48, 0, 48],
       extrapolate: "clamp",
     });
   }, [position, index]);

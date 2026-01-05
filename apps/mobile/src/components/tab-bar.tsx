@@ -1,12 +1,11 @@
 import type { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import type { ComponentType } from "react";
 import { useCallback, useMemo } from "react";
-import { Animated, Pressable, View } from "react-native";
+import { Animated, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSyncTabPosition } from "@/hooks/use-sync-tab-position";
 import { useTabChangeHaptics } from "@/hooks/use-tab-change-haptics";
 import { ActivityRecDuoDark, HomeDuoDark, PlusRecDuoDark } from "@/icons";
-import { mauveDark } from "@/utils/colors";
 import type { TabBarIconProps } from "@/utils/types";
 
 export const TAB_BAR_HEIGHT = 72;
@@ -50,27 +49,26 @@ export default function TabBar({
   );
 
   return (
-    <Animated.View style={{ transform: [{ translateY }] }}>
-      <View
-        className="absolute inset-x-0 bottom-safe mx-4 flex-row items-center justify-center gap-x-10 bg-mauve12"
-        style={{
-          height: TAB_BAR_HEIGHT,
-          borderRadius: 20,
-          borderCurve: "continuous",
-        }}
-      >
-        {state.routes.map((route, index) => (
-          <TabItem
-            index={index}
-            inputRange={inputRange}
-            isFocused={state.index === index}
-            key={route.key}
-            navigation={navigation}
-            position={position}
-            route={route}
-          />
-        ))}
-      </View>
+    <Animated.View
+      className="absolute inset-x-0 bottom-safe mx-4 flex-row items-center justify-center gap-x-10 border border-border bg-tab-bar"
+      style={{
+        height: TAB_BAR_HEIGHT,
+        borderRadius: 20,
+        borderCurve: "continuous",
+        transform: [{ translateY }],
+      }}
+    >
+      {state.routes.map((route, index) => (
+        <TabItem
+          index={index}
+          inputRange={inputRange}
+          isFocused={state.index === index}
+          key={route.key}
+          navigation={navigation}
+          position={position}
+          route={route}
+        />
+      ))}
     </Animated.View>
   );
 }
@@ -154,7 +152,7 @@ function TabItem({
     >
       <Animated.View style={{ opacity }}>
         <Icon
-          color={mauveDark.mauveDark12}
+          className="text-tab-bar-foreground"
           fillOpacity={fillOpacity}
           outlineOpacity={outlineOpacity}
         />

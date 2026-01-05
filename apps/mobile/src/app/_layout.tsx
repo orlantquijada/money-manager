@@ -12,6 +12,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { configureReanimatedLogger } from "react-native-reanimated";
 
+import { ThemeProvider, useTheme } from "@/components/theme-provider";
 import { useFonts } from "@/hooks/use-fonts";
 import { queryClient } from "@/utils/api";
 
@@ -24,6 +25,23 @@ export const unstable_settings = {
 };
 
 SplashScreen.preventAutoHideAsync();
+
+function AppContent() {
+  const { isDark } = useTheme();
+
+  return (
+    <>
+      <Stack>
+        <Stack.Screen name="(app)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="modal"
+          options={{ presentation: "modal", title: "Modal" }}
+        />
+      </Stack>
+      <StatusBar style={isDark ? "light" : "dark"} />
+    </>
+  );
+}
 
 export default function RootLayout() {
   const loaded = useFonts();
@@ -42,16 +60,11 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <KeyboardProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-            <Stack>
-              <Stack.Screen name="(app)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="modal"
-                options={{ presentation: "modal", title: "Modal" }}
-              />
-            </Stack>
-            <StatusBar style="dark" />
-          </BottomSheetModalProvider>
+          <ThemeProvider>
+            <BottomSheetModalProvider>
+              <AppContent />
+            </BottomSheetModalProvider>
+          </ThemeProvider>
         </GestureHandlerRootView>
       </KeyboardProvider>
     </QueryClientProvider>

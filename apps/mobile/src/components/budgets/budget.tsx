@@ -8,7 +8,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { FolderClosedDuoCreate, FolderOpenDuo } from "@/icons";
 import type { FundWithMeta } from "@/lib/fund";
-import { mauve } from "@/utils/colors";
 import AnimateHeight from "../animate-height";
 import LeanText from "../lean-text";
 import LeanView from "../lean-view";
@@ -35,7 +34,7 @@ export default function Budget({
   return (
     <LeanView>
       <Pressable
-        className="h-14 flex-row items-center justify-between gap-3 rounded-2xl border-hairline border-mauve6 bg-mauve2 p-4 transition-all active:scale-[.98]"
+        className="h-14 flex-row items-center justify-between gap-3 rounded-2xl border-border border-hairline bg-card p-4 transition-all active:scale-[.98]"
         onPress={toggle}
         style={{ borderCurve: "continuous" }}
       >
@@ -43,7 +42,7 @@ export default function Budget({
           <FolderIcon open={open} />
 
           <LeanText
-            className="shrink font-satoshi-medium text-base text-mauve12"
+            className="shrink font-satoshi-medium text-base text-foreground"
             ellipsizeMode="tail"
             numberOfLines={1}
           >
@@ -83,7 +82,7 @@ function Categories({
             href={{ pathname: "/create-fund", params: { folderId } }}
           >
             <Pressable className="h-12 w-full items-center justify-center transition-all active:scale-95 active:opacity-70">
-              <Text className="font-satoshi text-mauve12/50 text-sm">
+              <Text className="font-satoshi text-foreground-muted text-sm">
                 Add a fund to this folder
               </Text>
             </Pressable>
@@ -124,10 +123,10 @@ function FolderIcon({ open }: { open: SharedValue<boolean> }) {
   return (
     <LeanView className="relative size-4">
       <Animated.View className="absolute inset-0" style={openIconStyle}>
-        <FolderOpenDuo color={mauve.mauve12} size={16} />
+        <FolderOpenDuo className="text-foreground" size={16} />
       </Animated.View>
       <Animated.View className="absolute inset-0" style={closedIconStyle}>
-        <FolderClosedDuoCreate color={mauve.mauve12} size={16} />
+        <FolderClosedDuoCreate className="text-foreground" size={16} />
       </Animated.View>
     </LeanView>
   );

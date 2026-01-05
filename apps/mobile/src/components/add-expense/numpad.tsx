@@ -7,9 +7,10 @@ import {
 } from "react-native";
 import { ChevronLeft } from "@/icons";
 import { cn } from "@/utils/cn";
-import { mauve } from "@/utils/colors";
+import { mauve, mauveDarkRgb } from "@/utils/colors";
 import LeanText from "../lean-text";
 import LeanView from "../lean-view";
+import { useTheme } from "../theme-provider";
 
 export type NumpadKey =
   | "0"
@@ -35,12 +36,12 @@ function NumberButton({
     <Pressable
       {...rest}
       className={cn(
-        "group h-12 flex-1 items-center justify-center rounded-lg bg-mauve1 transition-all active:bg-mauve3",
+        "group h-12 flex-1 items-center justify-center rounded-lg bg-background transition-all active:bg-muted",
         className
       )}
       style={[{ borderCurve: "continuous" }, style]}
     >
-      <LeanText className="font-nunito-bold text-2xl text-mauve12 transition-all group-active:scale-125">
+      <LeanText className="font-nunito-bold text-2xl text-foreground transition-all group-active:scale-125">
         {children}
       </LeanText>
     </Pressable>
@@ -52,6 +53,7 @@ type Props = ViewProps & {
 };
 
 export default function Numpad({ className, onPress, ...props }: Props) {
+  const { isDark } = useTheme();
   return (
     <LeanView {...props} className={cn("gap-2", className)}>
       {[
@@ -74,7 +76,11 @@ export default function Numpad({ className, onPress, ...props }: Props) {
         <NumberButton onPress={() => onPress?.(".")}>.</NumberButton>
         <NumberButton onPress={() => onPress?.("0")}>0</NumberButton>
         <NumberButton onPress={() => onPress?.("backspace")}>
-          <ChevronLeft color={mauve.mauve12} size={20} strokeWidth={3.5} />
+          <ChevronLeft
+            color={isDark ? mauveDarkRgb.mauveDark12 : mauve.mauve12}
+            size={20}
+            strokeWidth={3.5}
+          />
         </NumberButton>
       </LeanView>
     </LeanView>

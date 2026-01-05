@@ -94,11 +94,11 @@ export function Amount({ amount }: { amount: number }) {
             layout={layoutSpringify("snappier")}
           >
             {i === 0 && (
-              <LeanText className="absolute top-0 -left-2/3 pt-1.5 font-nunito-bold text-4xl text-mauve12">
+              <LeanText className="absolute top-0 -left-2/3 pt-1.5 font-nunito-bold text-4xl text-foreground">
                 ₱
               </LeanText>
             )}
-            <LeanText className="pt-2.5 font-nunito-extra-bold text-6xl text-mauve12">
+            <LeanText className="pt-2.5 font-nunito-extra-bold text-6xl text-foreground">
               {char}
             </LeanText>
           </Animated.View>

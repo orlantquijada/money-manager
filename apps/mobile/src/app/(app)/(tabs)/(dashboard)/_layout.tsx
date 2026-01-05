@@ -13,9 +13,10 @@ import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
 import TotalSpent from "@/components/dashboard/total-spent";
 import GlassButtonIcon from "@/components/glass-button-icon";
+import { useTheme } from "@/components/theme-provider";
 import { Plus } from "@/icons";
 import { cn } from "@/utils/cn";
-import { mauveRgb } from "@/utils/colors";
+import { mauveDarkRgb, mauveRgb } from "@/utils/colors";
 
 export default function DashboardLayout() {
   const ref = useRef<BottomSheetModal>(null);
@@ -24,7 +25,7 @@ export default function DashboardLayout() {
     <AnimatedTabScreen index={1}>
       <DashboardCreateBottomSheet ref={ref} />
 
-      <SafeAreaView className="flex-1 bg-violet1">
+      <SafeAreaView className="flex-1 bg-background">
         <View className="my-8 w-full flex-row items-start justify-between px-4">
           <TotalSpent />
 
@@ -46,7 +47,7 @@ export default function DashboardLayout() {
         </View>
 
         <Tabs>
-          <TabList className="!justify-start flex-row gap-2 border-b-hairline border-b-mauve5">
+          <TabList className="!justify-start flex-row gap-2 border-b-border-secondary border-b-hairline">
             <TabTrigger asChild href="/" name="budgets">
               <TabButton className="ml-4">Budgets</TabButton>
             </TabTrigger>
@@ -63,17 +64,19 @@ export default function DashboardLayout() {
 }
 
 function AddButton({ className, ...props }: PressableProps) {
+  const { isDark } = useTheme();
+
   return (
     <GlassButtonIcon
       glassViewProps={{
-        tintColor: mauveRgb.mauve12,
+        tintColor: isDark ? mauveDarkRgb.mauveDark12 : mauveRgb.mauve12,
         style: {
           borderRadius: 16,
         },
       }}
       onPress={props.onPress}
     >
-      <Plus className="size-6 text-mauve1" />
+      <Plus className="size-6 text-background" />
     </GlassButtonIcon>
   );
 }
@@ -96,8 +99,8 @@ function TabButton({
       >
         <Text
           className={cn(
-            "font-satoshi-semibold text-base text-mauve12/50",
-            isFocused && "text-mauve12"
+            "font-satoshi-semibold text-base text-foreground-muted",
+            isFocused && "text-foreground"
           )}
         >
           {children}
@@ -105,7 +108,7 @@ function TabButton({
       </Pressable>
 
       {isFocused && (
-        <View className="absolute inset-x-0 bottom-0 h-0.5 bg-mauve12" />
+        <View className="absolute inset-x-0 bottom-0 h-0.5 bg-foreground" />
       )}
     </View>
   );

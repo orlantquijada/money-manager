@@ -100,6 +100,21 @@ const light = {
   pink,
 } as const;
 
+export const violetDark = {
+  violetDark1: "hsl(250, 20.0%, 10.2%)",
+  violetDark2: "hsl(255, 30.3%, 12.9%)",
+  violetDark3: "hsl(253, 37.0%, 18.4%)",
+  violetDark4: "hsl(252, 40.1%, 22.5%)",
+  violetDark5: "hsl(252, 42.2%, 26.2%)",
+  violetDark6: "hsl(251, 44.3%, 31.1%)",
+  violetDark7: "hsl(250, 46.8%, 38.9%)",
+  violetDark8: "hsl(250, 51.8%, 51.6%)",
+  violetDark9: "hsl(252, 56.0%, 57.5%)",
+  violetDark10: "hsl(251, 63.2%, 63.2%)",
+  violetDark11: "hsl(250, 95.0%, 76.8%)",
+  violetDark12: "hsl(252, 87.0%, 96.4%)",
+};
+
 export const mauveDark = {
   mauveDark1: "hsl(246, 6.0%, 9.0%)",
   mauveDark2: "hsl(240, 5.1%, 11.6%)",
@@ -201,6 +216,96 @@ const colors = {
   light,
   dark,
 };
+
+export const theme = {
+  background: {
+    DEFAULT: mauve.mauve1,
+    secondary: mauve.mauve2,
+    tertiary: mauve.mauve3,
+  },
+  foreground: {
+    DEFAULT: mauve.mauve12,
+    secondary: mauve.mauve11,
+    muted: mauve.mauve9,
+  },
+  card: {
+    DEFAULT: mauve.mauve2,
+    foreground: mauve.mauve12,
+  },
+  primary: {
+    DEFAULT: violet.violet9,
+    foreground: violet.violet1,
+  },
+  muted: {
+    DEFAULT: mauve.mauve3,
+    foreground: mauve.mauve11,
+  },
+  accent: {
+    DEFAULT: violet.violet8,
+    foreground: mauve.mauve12,
+    secondary: mauve.mauve4,
+  },
+  destructive: {
+    DEFAULT: red.red9,
+    foreground: red.red1,
+  },
+  border: {
+    DEFAULT: mauve.mauve6,
+    secondary: mauve.mauve5,
+  },
+  tabBar: {
+    // DEFAULT: mauve.mauve12,
+    // foreground: mauve.mauve1,
+    DEFAULT: mauve.mauve1,
+    foreground: mauve.mauve12,
+  },
+} as const;
+
+export type ThemeTokens = typeof theme;
+
+export const themeDark = {
+  background: {
+    DEFAULT: mauveDark.mauveDark1,
+    secondary: mauveDark.mauveDark2,
+    tertiary: mauveDark.mauveDark3,
+  },
+  foreground: {
+    DEFAULT: mauveDark.mauveDark12,
+    secondary: mauveDark.mauveDark11,
+    muted: mauveDark.mauveDark9,
+  },
+  card: {
+    DEFAULT: mauveDark.mauveDark2,
+    foreground: mauveDark.mauveDark12,
+  },
+  primary: {
+    DEFAULT: violetDark.violetDark9,
+    foreground: violetDark.violetDark12,
+  },
+  muted: {
+    DEFAULT: mauveDark.mauveDark3,
+    foreground: mauveDark.mauveDark11,
+  },
+  accent: {
+    DEFAULT: violetDark.violetDark8,
+    foreground: mauveDark.mauveDark12,
+    secondary: mauveDark.mauveDark4,
+  },
+  destructive: {
+    DEFAULT: redDark.redDark9,
+    foreground: redDark.redDark12,
+  },
+  border: {
+    DEFAULT: mauveDark.mauveDark6,
+    secondary: mauveDark.mauveDark5,
+  },
+  tabBar: {
+    // DEFAULT: mauveDark.mauveDark12,
+    // foreground: mauveDark.mauveDark1,
+    DEFAULT: mauveDark.mauveDark1,
+    foreground: mauveDark.mauveDark12,
+  },
+} satisfies ThemeTokens;
 
 /**
  * Converts an HSL string to HSLA with a given opacity
