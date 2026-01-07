@@ -97,32 +97,39 @@
       --pink-12: #651249;
 
       /* Semantic tokens - Light */
-      --color-background: var(--mauve-1);
-      --color-background-secondary: var(--mauve-2);
-      --color-background-tertiary: var(--mauve-3);
+      /* shadcn pattern: background is slightly tinted, cards pop with pure white */
+      --color-background: var(--mauve-2);
+      --color-background-secondary: var(--mauve-3);
+      --color-background-tertiary: var(--mauve-4);
 
       --color-foreground: var(--mauve-12);
       --color-foreground-secondary: var(--mauve-11);
       --color-foreground-muted: var(--mauve-9);
 
-      --color-card: var(--mauve-2);
+      /* Cards are lighter than background for visual hierarchy */
+      --color-card: var(--mauve-1);
       --color-card-foreground: var(--mauve-12);
 
       --color-primary: var(--violet-9);
-      --color-primary-foreground: var(--violet-1);
+      --color-primary-foreground: #ffffff;
 
-      --color-muted: var(--mauve-3);
+      --color-secondary: var(--mauve-4);
+      --color-secondary-foreground: var(--mauve-12);
+
+      --color-muted: var(--mauve-4);
       --color-muted-foreground: var(--mauve-11);
 
-      --color-accent: var(--violet-8);
+      --color-accent: var(--mauve-4);
       --color-accent-foreground: var(--mauve-12);
-      --color-accent-secondary: var(--mauve-4);
+      --color-accent-secondary: var(--mauve-5);
 
       --color-destructive: var(--red-9);
-      --color-destructive-foreground: var(--red-1);
+      --color-destructive-foreground: #ffffff;
 
       --color-border: var(--mauve-6);
       --color-border-secondary: var(--mauve-5);
+      --color-input: var(--mauve-6);
+      --color-ring: var(--mauve-8);
 
       --color-tab-bar: var(--mauve-1);
       --color-tab-bar-foreground: var(--mauve-12);
@@ -229,18 +236,23 @@
       --color-primary: var(--violet-9);
       --color-primary-foreground: var(--violet-12);
 
+      --color-secondary: var(--mauve-4);
+      --color-secondary-foreground: var(--mauve-12);
+
       --color-muted: var(--mauve-3);
       --color-muted-foreground: var(--mauve-11);
 
-      --color-accent: var(--violet-8);
+      --color-accent: var(--mauve-4);
       --color-accent-foreground: var(--mauve-12);
-      --color-accent-secondary: var(--mauve-4);
+      --color-accent-secondary: var(--mauve-5);
 
       --color-destructive: var(--red-9);
       --color-destructive-foreground: var(--red-12);
 
       --color-border: var(--mauve-6);
       --color-border-secondary: var(--mauve-5);
+      --color-input: var(--mauve-6);
+      --color-ring: var(--mauve-8);
 
       --color-tab-bar: var(--mauve-1);
       --color-tab-bar-foreground: var(--mauve-12);
@@ -349,6 +361,9 @@
   --color-primary: var(--color-primary);
   --color-primary-foreground: var(--color-primary-foreground);
 
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+
   --color-muted: var(--color-muted);
   --color-muted-foreground: var(--color-muted-foreground);
 
@@ -361,6 +376,8 @@
 
   --color-border: var(--color-border);
   --color-border-secondary: var(--color-border-secondary);
+  --color-input: var(--color-input);
+  --color-ring: var(--color-ring);
 
   --color-tab-bar: var(--color-tab-bar);
   --color-tab-bar-foreground: var(--color-tab-bar-foreground);

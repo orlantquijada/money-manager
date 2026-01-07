@@ -25,41 +25,49 @@ import {
 } from "@radix-ui/colors";
 
 export const theme = {
+  // shadcn pattern: background is slightly tinted, cards pop with pure white
   background: {
-    DEFAULT: mauve.mauve1,
-    secondary: mauve.mauve2,
-    tertiary: mauve.mauve3,
+    DEFAULT: mauve.mauve2,
+    secondary: mauve.mauve3,
+    tertiary: mauve.mauve4,
   },
   foreground: {
     DEFAULT: mauve.mauve12,
     secondary: mauve.mauve11,
     muted: mauve.mauve9,
   },
+  // Cards are lighter than background for visual hierarchy
   card: {
-    DEFAULT: mauve.mauve2,
+    DEFAULT: mauve.mauve1,
     foreground: mauve.mauve12,
   },
   primary: {
     DEFAULT: violet.violet9,
-    foreground: violet.violet1,
+    foreground: violet.violet1, // almost white, good contrast on violet-9
+  },
+  secondary: {
+    DEFAULT: mauve.mauve4,
+    foreground: mauve.mauve12,
   },
   muted: {
-    DEFAULT: mauve.mauve3,
+    DEFAULT: mauve.mauve4,
     foreground: mauve.mauve11,
   },
   accent: {
-    DEFAULT: violet.violet8,
+    DEFAULT: mauve.mauve4,
     foreground: mauve.mauve12,
-    secondary: mauve.mauve4,
+    secondary: mauve.mauve5,
   },
   destructive: {
     DEFAULT: red.red9,
-    foreground: red.red1,
+    foreground: red.red1, // almost white, good contrast on red-9
   },
   border: {
     DEFAULT: mauve.mauve6,
     secondary: mauve.mauve5,
   },
+  input: mauve.mauve6,
+  ring: mauve.mauve8,
   tabBar: {
     DEFAULT: mauve.mauve1,
     foreground: mauve.mauve12,
@@ -87,14 +95,18 @@ export const themeDark = {
     DEFAULT: violetDark.violet9,
     foreground: violetDark.violet12,
   },
+  secondary: {
+    DEFAULT: mauveDark.mauve4,
+    foreground: mauveDark.mauve12,
+  },
   muted: {
     DEFAULT: mauveDark.mauve3,
     foreground: mauveDark.mauve11,
   },
   accent: {
-    DEFAULT: violetDark.violet8,
+    DEFAULT: mauveDark.mauve4,
     foreground: mauveDark.mauve12,
-    secondary: mauveDark.mauve4,
+    secondary: mauveDark.mauve5,
   },
   destructive: {
     DEFAULT: redDark.red9,
@@ -104,6 +116,8 @@ export const themeDark = {
     DEFAULT: mauveDark.mauve6,
     secondary: mauveDark.mauve5,
   },
+  input: mauveDark.mauve6,
+  ring: mauveDark.mauve8,
   tabBar: {
     DEFAULT: mauveDark.mauve1,
     foreground: mauveDark.mauve12,
