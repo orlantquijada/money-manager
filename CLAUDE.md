@@ -6,6 +6,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Money Manager is an envelope budgeting application built as a monorepo with a React Native mobile app (Expo) and a tRPC server backend. The app helps users track expenses, manage budgets through "funds" organized in folders, and follows the envelope budgeting system.
 
+## Development Focus
+
+**Current focus: iOS**. Development prioritizes iOS to streamline iteration without managing two platforms. Cross-platform code is maintained but new features target iOS first.
+
+When building UI, prefer native iOS components and patterns:
+- Use `@expo/ui` SwiftUI components where they provide a better native experience
+- Apply liquid glass effects (`expo-glass-effect`) tastefully—not on every component
+- Use SF Symbols (`expo-symbols`) for icons where appropriate
+- Add haptic feedback (`expo-haptics`) for meaningful interactions
+
 ## Tech Stack
 
 - **Monorepo Management**: Turborepo with pnpm workspaces
@@ -210,6 +220,21 @@ Tasks are defined in `turbo.json`:
 - **Typed Routes**: Expo Router typed routes enabled
 - **Edge-to-edge**: Android edge-to-edge display enabled
 - Key libraries: `@gorhom/bottom-sheet`, `@shopify/flash-list`, `react-native-reanimated`, `react-native-gesture-handler`
+
+### iOS Native Features
+Platform-specific components use the `*.ios.tsx` file extension (e.g., `date-selector.ios.tsx`).
+
+**Available iOS libraries:**
+- **`@expo/ui`**: SwiftUI components—`Button` (with `glassProminent` variant), `DateTimePicker`, `Picker`, `Switch`, `TextField`, `ContextMenu`, `BottomSheet`, layout components (`VStack`, `HStack`), and modifiers like `glassEffect()`
+- **`expo-glass-effect`**: `GlassView` and `GlassContainer` for liquid glass/frosted glass effects
+- **`expo-symbols`**: SF Symbols via `SymbolView` component
+- **`expo-haptics`**: Haptic feedback for tactile interactions
+
+**Usage guidelines:**
+- Use SwiftUI components for pickers, date selectors, and context menus—they feel native
+- Apply glass effects to key interactive elements (tab bars, floating buttons), not every surface
+- Use SF Symbols for system-style icons; keep custom icons for brand elements
+- Add haptics to meaningful actions (tab changes, confirmations), not every tap
 
 ### Database Schema Changes
 When modifying `packages/db/src/schema.ts`:
