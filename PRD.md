@@ -49,10 +49,12 @@ People who are intimidated by budgeting but want to take control of their financ
 | Educational tooltips | ⬜ Todo | P2 |
 
 ### Phase 3: Insights
-*Goal: Users understand spending patterns*
+*Goal: Users understand spending patterns through subtle, encouraging guidance*
 
 | Feature | Status | Priority |
 |---------|--------|----------|
+| AI opt-in toggle + Settings | ⬜ Todo | P1 |
+| Contextual whispers | ⬜ Todo | P1 |
 | Spending trends | ⬜ Todo | P1 |
 | Category breakdown | ⬜ Todo | P1 |
 | Budget health indicators | ⬜ Todo | P1 |
@@ -108,6 +110,14 @@ Stores (merchants, linked to last-used fund)
 
 ---
 
+## Privacy & AI
+
+- **Opt-in only** — AI features off by default
+- **No training** — User data never trains AI models
+- **Reversible** — Disabling AI clears cached insights
+
+---
+
 ## Design System
 
 ### Components
@@ -156,6 +166,7 @@ Updated `GlassButton` with shadcn-like API for proper text button sizing.
 - Apple Watch app
 - Shared budgets
 - Optional bank sync
+- **Wrapped** - Annual spending summary (like Spotify Wrapped)
 
 ---
 
