@@ -24,7 +24,11 @@ export function useUserProvisioning() {
 
   useEffect(() => {
     // Only provision once per session and when signed in
-    if (isSignedIn && !hasProvisioned.current && !ensureUserMutation.isPending) {
+    if (
+      isSignedIn &&
+      !hasProvisioned.current &&
+      !ensureUserMutation.isPending
+    ) {
       hasProvisioned.current = true;
       ensureUserMutation.mutate({
         name: user?.fullName ?? user?.firstName ?? null,

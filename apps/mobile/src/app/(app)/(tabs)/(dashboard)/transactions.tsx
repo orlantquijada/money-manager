@@ -1,11 +1,38 @@
-import { ScrollView, Text } from "react-native";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
+
+import { TransactionList } from "@/components/transactions";
+import { StyledLeanView } from "@/config/interop";
+import { trpc } from "@/utils/api";
 
 export default function TransactionsScreen() {
+  const queryClient = useQueryClient();
+
+  const {
+    data: transactions = [],
+    isLoading,
+    isFetching,
+  } = useQuery(trpc.transaction.allThisMonth.queryOptions());
+
+  const handleRefresh = useCallback(() => {
+    queryClient.invalidateQueries({
+      queryKey: trpc.transaction.allThisMonth.queryKey(),
+    });
+  }, [queryClient]);
+
+  if (isLoading) {
+    return (
+      <StyledLeanView className="flex-1 items-center justify-center">
+        {/* Could add a skeleton here */}
+      </StyledLeanView>
+    );
+  }
+
   return (
-    <ScrollView className="flex-1 px-4" contentContainerClassName="pb-8">
-      <Text className="text-center text-mauve10">
-        Transactions will appear here
-      </Text>
-    </ScrollView>
+    <TransactionList
+      isRefreshing={isFetching && !isLoading}
+      onRefresh={handleRefresh}
+      transactions={transactions}
+    />
   );
 }

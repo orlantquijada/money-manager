@@ -11,13 +11,13 @@ export const createTRPCContext = async (opts: CreateContextOptions = {}) => {
   if (opts.authToken) {
     try {
       const secretKey = process.env.CLERK_SECRET_KEY;
-      if (!secretKey) {
-        console.warn("CLERK_SECRET_KEY not set");
-      } else {
+      if (secretKey) {
         const verified = await verifyToken(opts.authToken, {
           secretKey,
         });
         userId = verified.sub;
+      } else {
+        console.warn("CLERK_SECRET_KEY not set");
       }
     } catch (error) {
       console.error("Token verification failed:", error);

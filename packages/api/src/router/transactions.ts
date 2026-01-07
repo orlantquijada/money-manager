@@ -73,8 +73,22 @@ export const transactionsRouter = router({
         // TODO: implement auth
         // eq(Transaction.userId, ctx.auth.userId || "")
       ),
+      with: {
+        fund: {
+          columns: { name: true },
+        },
+        store: {
+          columns: { name: true },
+        },
+      },
     })
   ),
+
+  delete: protectedProcedure
+    .input(z.string())
+    .mutation(({ ctx, input }) =>
+      ctx.db.delete(transactions).where(eq(transactions.id, input))
+    ),
 
   create: protectedProcedure
     .input(

@@ -25,10 +25,7 @@ function BottomSheetModal({
   return (
     <GorhomBottomSheetModal
       backdropComponent={Backdrop}
-      backgroundStyle={[
-        { backgroundColor: mauveDark.mauve3 },
-        backgroundStyle,
-      ]}
+      backgroundStyle={[{ backgroundColor: mauveDark.mauve3 }, backgroundStyle]}
       handleIndicatorStyle={[
         {
           width: 80,

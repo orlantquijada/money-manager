@@ -49,9 +49,7 @@ export default function CreateFooter({
 
   const renderButtonContent = () => {
     if (loading) {
-      return (
-        <ActivityIndicator color={activityIndicatorColor} size="small" />
-      );
+      return <ActivityIndicator color={activityIndicatorColor} size="small" />;
     }
 
     const currentIconColor = isDisabled ? disabledIconColor : iconColor;

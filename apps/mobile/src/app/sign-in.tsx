@@ -1,7 +1,7 @@
 import { useSSO } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
@@ -53,10 +53,13 @@ export default function SignInScreen() {
   }, [startGoogleFlow, router]);
 
   return (
-    <View className="flex-1 px-6 pt-safe-offset-20 pb-safe-offset-8" style={{ backgroundColor }}>
+    <View
+      className="flex-1 px-6 pt-safe-offset-20 pb-safe-offset-8"
+      style={{ backgroundColor }}
+    >
       {/* Header */}
       <Animated.View entering={FadeInDown.delay(100).springify()}>
-        <Text className="text-4xl font-bold" style={{ color: foreground }}>
+        <Text className="font-bold text-4xl" style={{ color: foreground }}>
           Welcome to{"\n"}Money Manager
         </Text>
         <Text className="mt-4 text-lg" style={{ color: foregroundSecondary }}>
@@ -71,8 +74,8 @@ export default function SignInScreen() {
             className="h-14 flex-row items-center justify-center gap-3 rounded-2xl bg-black"
             onPress={handleAppleSignIn}
           >
-            <AppleIcon width={20} height={20} color="#fff" />
-            <Text className="text-base font-semibold text-white">
+            <AppleIcon color="#fff" height={20} width={20} />
+            <Text className="font-semibold text-base text-white">
               Continue with Apple
             </Text>
           </ScalePressable>
@@ -83,15 +86,18 @@ export default function SignInScreen() {
             className="h-14 flex-row items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white"
             onPress={handleGoogleSignIn}
           >
-            <GoogleIcon width={20} height={20} />
-            <Text className="text-base font-semibold text-gray-900">
+            <GoogleIcon height={20} width={20} />
+            <Text className="font-semibold text-base text-gray-900">
               Continue with Google
             </Text>
           </ScalePressable>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(400).springify()}>
-          <Text className="mt-4 text-center text-sm" style={{ color: foregroundSecondary }}>
+          <Text
+            className="mt-4 text-center text-sm"
+            style={{ color: foregroundSecondary }}
+          >
             By continuing, you agree to our Terms of Service and Privacy Policy.
           </Text>
         </Animated.View>

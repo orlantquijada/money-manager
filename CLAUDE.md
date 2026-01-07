@@ -189,6 +189,7 @@ Recently migrated from Nativewind to **Uniwind** (Tailwind CSS v4 for React Nati
 **Uniwind Component Conventions:**
 - Use `StyledLeanView` and `StyledLeanText` from `apps/mobile/src/components/interop.ts` as the default view and text components
 - When using `StyledLeanText` with `numberOfLines`, you **must** also add an `ellipsizeMode` prop (e.g., `ellipsizeMode="tail"`)
+- Use `font-nunito-bold` for numeric/currency values (e.g., amounts, totals)
 
 ### Environment Variables
 

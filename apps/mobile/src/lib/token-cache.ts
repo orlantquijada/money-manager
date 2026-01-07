@@ -1,5 +1,5 @@
-import * as SecureStore from "expo-secure-store";
 import type { TokenCache } from "@clerk/clerk-expo";
+import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
 const createTokenCache = (): TokenCache => {
@@ -32,4 +32,5 @@ const createTokenCache = (): TokenCache => {
 };
 
 // SecureStore is not supported on web
-export const tokenCache = Platform.OS !== "web" ? createTokenCache() : undefined;
+export const tokenCache =
+  Platform.OS !== "web" ? createTokenCache() : undefined;
