@@ -136,6 +136,7 @@ function useCreateFolderForm() {
       { name },
       {
         onSuccess: () => {
+          setName("");
           router.replace("/");
         },
       }
