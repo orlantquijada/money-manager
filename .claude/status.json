@@ -1,0 +1,48 @@
+{
+  "currentFocus": "Add expense flow",
+  "lastUpdated": "2026-01-08",
+  "phases": {
+    "phase1_core": {
+      "name": "Core Tracking",
+      "goal": "Basic budgeting works end-to-end",
+      "tasks": {
+        "authentication": "done",
+        "user_provisioning": "todo",
+        "add_expense_flow": "in_progress",
+        "transactions_tab": "todo",
+        "polish_bug_fixes": "todo"
+      }
+    },
+    "phase2_onboarding": {
+      "name": "Onboarding",
+      "goal": "New users set up in < 3 minutes",
+      "tasks": {
+        "welcome_flow": "todo",
+        "guided_setup_wizard": "todo",
+        "budget_templates": "todo",
+        "educational_content": "todo"
+      }
+    },
+    "phase3_insights": {
+      "name": "Insights",
+      "goal": "Users understand spending patterns through subtle guidance",
+      "tasks": {
+        "ai_foundation": "todo",
+        "contextual_whispers": "todo",
+        "spending_trends": "todo",
+        "category_breakdown": "todo",
+        "budget_health": "todo",
+        "streaks_habits": "todo"
+      }
+    },
+    "phase4_polish": {
+      "name": "Animation & Polish",
+      "goal": "Every interaction feels intentional",
+      "tasks": {
+        "screen_transitions": "todo",
+        "micro_interactions": "todo",
+        "gesture_driven_ux": "todo"
+      }
+    }
+  }
+}

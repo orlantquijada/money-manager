@@ -16,6 +16,35 @@ When building UI, prefer native iOS components and patterns:
 - Use SF Symbols (`expo-symbols`) for icons where appropriate
 - Add haptic feedback (`expo-haptics`) for meaningful interactions
 
+## State Management (Progress Tracking)
+
+Progress is tracked using two files:
+
+1. **`.claude/status.json`** - Structured task status
+   - Machine-readable JSON with task statuses ("todo", "in_progress", "done")
+   - Update task status when completing features
+   - Keep `currentFocus` accurate
+   - Update `lastUpdated` timestamp
+
+2. **`PROGRESS.md`** - Freeform progress notes
+   - Add dated entries for significant progress
+   - Document blockers and decisions
+   - Keep "Current Session" section updated
+
+3. **Git commits** - Use commits as checkpoints
+   - Commit after completing meaningful chunks of work
+   - Commit messages should reference what was completed
+
+**When finishing a task:**
+1. Update `.claude/status.json` (change task status to "done")
+2. Add a note to `PROGRESS.md`
+3. Prompt the user to commit the checkpoint
+
+**Reference docs:**
+- `PRD.md` - Product requirements (stable reference, rarely changes)
+- `.claude/status.json` - Current task status (changes frequently)
+- `PROGRESS.md` - Progress notes and context (changes frequently)
+
 ## Tech Stack
 
 - **Monorepo Management**: Turborepo with pnpm workspaces
