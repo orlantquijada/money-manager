@@ -1,30 +1,28 @@
 ---
-allowed-tools: Read(*), Glob(apps/mobile/src/**), Write(apps/mobile/src/**), Edit(apps/mobile/src/**), Bash(pnpm:*)
-description: Generate iOS screens and components following Money Manager design patterns
-model: claude-opus-4-5-20251101
+name: design
+description: Generate iOS screens and components for Money Manager following design patterns. Use when building UI components, screens, or features for the mobile app, or when the user mentions design, styling, glass effects, or iOS-specific features.
 ---
 
-## Context (Always Loaded)
+# Design Skill
 
-- Color tokens: !`cat apps/mobile/src/global.css`
-- Base components: !`cat apps/mobile/src/config/interop.ts`
-- Motion utilities: !`cat apps/mobile/src/utils/motion.ts`
+Generate iOS screens and components following Money Manager design patterns.
 
-## Reference Files (Load When Needed)
+## Before You Start
 
-| Need | File |
-|------|------|
-| Component/Screen templates | `.claude/skills/design/component-patterns.md` |
-| iOS features (Glass, Symbols, Haptics, SwiftUI) | `.claude/skills/design/ios-enhancements.md` |
-| Animations, depth, anti-patterns | `.claude/skills/design/anti-patterns.md` |
+Read these codebase files to understand the design system:
+- `apps/mobile/src/global.css` - Color tokens and theme variables
+- `apps/mobile/src/config/interop.ts` - Base styled components
+- `apps/mobile/src/utils/motion.ts` - Animation utilities
+
+## Reference Files (Read When Needed)
+
+| When you need... | Read this file |
+|------------------|----------------|
+| Component/Screen templates | `component-patterns.md` |
+| iOS features (Glass, Symbols, Haptics, SwiftUI) | `ios-enhancements.md` |
+| Animation guidance, depth, avoiding generic AI aesthetics | `anti-patterns.md` |
 | Database schema | `packages/db/src/schema.ts` |
 | Project conventions | `CLAUDE.md` |
-
----
-
-## Your Task
-
-The user wants you to design and implement: **{{USER_INPUT}}**
 
 ---
 
@@ -39,15 +37,15 @@ Identify the type of work:
 Ask clarifying questions if ambiguous.
 
 ### 2. Research Existing Patterns
-- Use Glob to find similar components in `apps/mobile/src/components/`
+- Search for similar components in `apps/mobile/src/components/`
 - Read 2-3 similar components to understand patterns
 - Identify which base components to reuse (`StyledLeanView`, `StyledLeanText`, `ScalePressable`)
 
 ### 3. Load Relevant References
-Based on task type, read the appropriate reference file:
-- Building a component/screen? → `design/component-patterns.md`
-- Adding iOS features? → `design/ios-enhancements.md`
-- Need animation/depth guidance? → `design/anti-patterns.md`
+Based on task type, read the appropriate reference file from this skill folder:
+- Building a component/screen? → `component-patterns.md`
+- Adding iOS features? → `ios-enhancements.md`
+- Need animation/depth guidance? → `anti-patterns.md`
 
 ### 4. Implement with Critical Conventions (MUST FOLLOW)
 
@@ -102,8 +100,8 @@ Always add `style={{ borderCurve: "continuous" }}`
 
 ## Remember
 
-- **Be Distinctive**: Avoid generic "AI slop"—read `design/anti-patterns.md`
-- **Be Proactive**: Apply iOS enhancements—read `design/ios-enhancements.md`
+- **Be Distinctive**: Avoid generic "AI slop"—read `anti-patterns.md`
+- **Be Proactive**: Apply iOS enhancements—read `ios-enhancements.md`
 - **Be Orchestrated**: Focus on high-impact animation moments, not scattered micro-interactions
 - **Be Layered**: Create depth through glass effects and z-layering
 
