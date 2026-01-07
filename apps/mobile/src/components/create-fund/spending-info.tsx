@@ -1,17 +1,17 @@
 import type { TimeMode } from "api";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView } from "react-native";
 import Animated, {
   FadeInDown,
   FadeOutUp,
   Reanimated3DefaultSpringConfig,
 } from "react-native-reanimated";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import {
   type CreateFundScreens,
   getFundTypeContinueBtnLabel,
   useCreateFundStore,
   useSubmitFund,
 } from "@/lib/create-fund";
-
 import { transitions } from "@/utils/motion";
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 import Presence from "../presence";
@@ -41,18 +41,18 @@ export default function SpendingInfo({ setScreen, presetFolderId }: Props) {
     <>
       <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
         <ScrollView
-          className="p-4 pt-0"
-          contentContainerClassName="pb-4 flex gap-y-8"
+          className="px-4 pt-20"
+          contentContainerClassName="pb-safe-offset-4 flex gap-y-8"
           onScroll={handleScroll}
         >
-          <View className="mb-8">
+          <StyledLeanView className="mb-8">
             <Presence delay={DELAY} delayMultiplier={1}>
-              <Text className="font-satoshi-medium text-foreground text-lg">
+              <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
                 How frequent do you use this fund?
-              </Text>
+              </StyledLeanText>
             </Presence>
 
-            <View className="mt-2.5 flex w-3/5 gap-2">
+            <StyledLeanView className="mt-2.5 flex w-3/5 gap-2">
               <Presence delay={DELAY} delayMultiplier={2}>
                 <Choice
                   choiceLabel="A"
@@ -81,28 +81,32 @@ export default function SpendingInfo({ setScreen, presetFolderId }: Props) {
                   Twice a Month
                 </Choice>
               </Presence>
-            </View>
-          </View>
+            </StyledLeanView>
+          </StyledLeanView>
 
           {timeMode && (
             <Presence delay={DELAY} delayMultiplier={5}>
-              <View className="gap-2.5">
-                <View className="flex-row">
-                  <Text
+              <StyledLeanView className="gap-2.5">
+                <StyledLeanView className="flex-row">
+                  <StyledLeanText
                     className="font-satoshi-medium text-foreground text-lg"
                     style={{ lineHeight: undefined }}
                   >
                     How much will you allocate{" "}
-                  </Text>
-                  <View className="relative">
+                  </StyledLeanText>
+                  <StyledLeanView className="relative">
                     <TimeModeText key={timeMode} timeMode={timeMode} />
-                  </View>
-                </View>
-                <CurrencyInput
-                  onChangeText={(text) => setBudgetedAmount(Number(text) || 0)}
-                  value={budgetedAmount.toString()}
-                />
-              </View>
+                  </StyledLeanView>
+                </StyledLeanView>
+                <StyledLeanView className="px-4">
+                  <CurrencyInput
+                    onChangeText={(text) =>
+                      setBudgetedAmount(Number(text) || 0)
+                    }
+                    value={budgetedAmount.toString()}
+                  />
+                </StyledLeanView>
+              </StyledLeanView>
             </Presence>
           )}
         </ScrollView>
@@ -141,12 +145,12 @@ function TimeModeText({ timeMode }: { timeMode: TimeMode }) {
         .stiffness(transitions.snappy.stiffness)
         .mass(Reanimated3DefaultSpringConfig.mass)}
     >
-      <Text
+      <StyledLeanText
         className="font-satoshi-medium text-foreground text-lg"
         style={{ lineHeight: undefined }}
       >
         {readableTimeModeMap[timeMode]}?
-      </Text>
+      </StyledLeanText>
     </Animated.View>
   );
 }

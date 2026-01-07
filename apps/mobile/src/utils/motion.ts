@@ -11,6 +11,11 @@ import {
 } from "react-native-reanimated";
 
 export const transitions = {
+  lessBounce: {
+    stiffness: 200,
+    damping: 18,
+    mass: Reanimated3DefaultSpringConfig.mass,
+  },
   bounce: {
     stiffness: 260,
     damping: 10,

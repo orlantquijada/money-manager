@@ -44,8 +44,8 @@ export default function NonNegotiableInfo({
     <>
       <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
         <ScrollView
-          className="p-4 pt-0"
-          contentContainerClassName="pb-4 flex gap-y-8"
+          className="px-4 pt-20"
+          contentContainerClassName="pb-safe-offset-4 flex gap-y-8"
           onScroll={handleScroll}
         >
           <View>

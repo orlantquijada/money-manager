@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Link, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
-import ModalCloseBtn from "@/components/modal-close-btn";
+import { GlassCloseButton } from "@/components/glass-button-icon";
 import { trpc } from "@/utils/api";
 
 export default function FundDetailScreen() {
@@ -16,9 +16,8 @@ export default function FundDetailScreen() {
   return (
     <View className="flex-1 bg-violet1 pt-4">
       <View className="flex-row items-center justify-between px-4 pb-4">
-        <Link asChild href={{ pathname: "/" }} replace>
-          <ModalCloseBtn />
-        </Link>
+        <GlassCloseButton />
+
         <Text className="font-satoshi-medium text-lg text-violet12">
           Transactions
         </Text>

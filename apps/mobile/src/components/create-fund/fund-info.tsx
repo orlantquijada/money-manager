@@ -81,8 +81,8 @@ export default function FundInfo({ setScreen }: Props) {
     <>
       <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
         <ScrollView
-          className="p-4 pt-0"
-          contentContainerClassName="pb-4 flex gap-y-8"
+          className="px-4 pt-20"
+          contentContainerClassName="pb-safe-offset-4 flex gap-y-8 flex-1"
           onScroll={handleScroll}
         >
           <Presence delay={DELAY} delayMultiplier={5} exitDelayMultiplier={1}>
@@ -217,7 +217,7 @@ function FundCard({
 
           {!!pillLabel && (
             <StyledLeanView
-              className="h-5 items-center justify-center rounded-full bg-mauve-7 px-1.5"
+              className="h-5 items-center justify-center rounded-full bg-background-secondary px-1.5"
               style={{ borderCurve: "continuous" }}
             >
               <StyledLeanText className="font-satoshi-medium text-foreground-muted text-xs tracking-wide">
@@ -282,7 +282,7 @@ function useAnimations(selectedType: SharedValue<FundType>) {
         {
           translateY: withSpring(
             translateY[selectedType.get()],
-            transitions.snappy
+            transitions.lessBounce
           ),
         },
       ],

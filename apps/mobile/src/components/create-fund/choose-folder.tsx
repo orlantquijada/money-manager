@@ -1,7 +1,7 @@
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import type { Folder } from "api";
-import { Pressable, type PressableProps, ScrollView } from "react-native";
+import { type PressableProps, ScrollView } from "react-native";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { FolderClosedDuoCreate, FolderOpenDuo } from "@/icons";
 import {
@@ -14,6 +14,7 @@ import { cn } from "@/utils/cn";
 
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 import Presence from "../presence";
+import { ScalePressable } from "../scale-pressable";
 import { useThemeColor } from "../theme-provider";
 import CreateFooter from "./footer";
 
@@ -38,8 +39,8 @@ export default function ChooseFolder({ setScreen }: Props) {
     <>
       <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
         <ScrollView
-          className="p-4 pt-0"
-          contentContainerClassName="pb-4 flex"
+          className="px-4 pt-20"
+          contentContainerClassName="pb-safe-offset-4 flex"
           onScroll={handleScroll}
         >
           <Presence delay={DELAY} delayMultiplier={3}>
@@ -108,11 +109,12 @@ function FolderCard({
   ...rest
 }: FolderCardProps) {
   return (
-    <Pressable
+    <ScalePressable
       className={cn(
-        "flex-row items-center rounded-xl bg-muted p-4 transition-transform active:scale-95",
+        "flex-row items-center rounded-xl bg-muted p-4",
         selected && "bg-foreground"
       )}
+      scaleValue={0.95}
       {...rest}
     >
       {selected ? (
@@ -131,6 +133,6 @@ function FolderCard({
       >
         {folder.name}
       </StyledLeanText>
-    </Pressable>
+    </ScalePressable>
   );
 }

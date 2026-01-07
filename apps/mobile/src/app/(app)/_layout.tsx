@@ -1,37 +1,26 @@
 import { Stack } from "expo-router";
-import { mauveDark, violet } from "@/utils/colors";
+import type { ComponentProps } from "react";
+import { useThemeColor } from "@/components/theme-provider";
+
+const modalHeaderOptions = {
+  presentation: "modal",
+} satisfies ComponentProps<typeof Stack.Screen>["options"];
 
 export default function AppLayout() {
+  const backgroundColor = useThemeColor("background");
+
   return (
-    <Stack initialRouteName="(tabs)" screenOptions={{ headerShown: false }}>
+    <Stack
+      initialRouteName="(tabs)"
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor },
+      }}
+    >
       <Stack.Screen name="(tabs)" />
-      <Stack.Screen
-        name="create-fund"
-        options={{
-          presentation: "modal",
-          contentStyle: {
-            backgroundColor: mauveDark.mauve1,
-          },
-        }}
-      />
-      <Stack.Screen
-        name="create-folder"
-        options={{
-          presentation: "modal",
-          contentStyle: {
-            backgroundColor: mauveDark.mauve1,
-          },
-        }}
-      />
-      <Stack.Screen
-        name="fund/[id]"
-        options={{
-          presentation: "modal",
-          contentStyle: {
-            backgroundColor: violet.violet1,
-          },
-        }}
-      />
+      <Stack.Screen name="create-fund" options={modalHeaderOptions} />
+      <Stack.Screen name="create-folder" options={modalHeaderOptions} />
+      <Stack.Screen name="fund/[id]" options={modalHeaderOptions} />
     </Stack>
   );
 }

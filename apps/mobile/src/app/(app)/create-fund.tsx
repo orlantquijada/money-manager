@@ -1,15 +1,15 @@
 import { AnimatePresence } from "@alloc/moti";
 import { useNavigation, usePreventRemove } from "@react-navigation/native";
-import { Link, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Alert } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChooseFolder from "@/components/create-fund/choose-folder";
-import { FOOTER_HEIGHT } from "@/components/create-fund/footer";
 import FundInfo from "@/components/create-fund/fund-info";
 import NonNegotiableInfo from "@/components/create-fund/non-negotiable-info";
 import SpendingInfo from "@/components/create-fund/spending-info";
-import ModalCloseBtn from "@/components/modal-close-btn";
+import { GlassCloseButton } from "@/components/glass-button-icon";
 import {
   CreateFundProvider,
   type CreateFundScreens,
@@ -24,6 +24,9 @@ export default function CreateFund() {
   );
 }
 
+const BUTTON_HEIGHT = 48;
+const PADDING_Y = 16 * 2;
+
 function CreateFundContent() {
   const { folderId: folderIdParam } = useLocalSearchParams<{
     folderId?: string;
@@ -31,6 +34,8 @@ function CreateFundContent() {
   const [screen, setScreen] = useState<CreateFundScreens>("fundInfo");
   const isDirty = useCreateFundIsDirty();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const footerHeight = insets.bottom + BUTTON_HEIGHT + PADDING_Y;
 
   usePreventRemove(isDirty, ({ data }) => {
     Alert.alert(
@@ -53,12 +58,10 @@ function CreateFundContent() {
   return (
     <KeyboardAvoidingView
       behavior="padding"
-      className="flex-1 bg-background pt-4"
-      keyboardVerticalOffset={FOOTER_HEIGHT}
+      className="relative flex-1 bg-background"
+      keyboardVerticalOffset={footerHeight}
     >
-      <Link asChild href={{ pathname: "/" }} replace>
-        <ModalCloseBtn className="mb-12 ml-4" />
-      </Link>
+      <GlassCloseButton className="absolute top-4 right-4 z-10" />
 
       <AnimatePresence mode="wait">
         {screen === "fundInfo" && (

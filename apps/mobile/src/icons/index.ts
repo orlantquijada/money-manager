@@ -9,6 +9,7 @@ export { default as ChartColumn } from "./chart-column";
 export { default as CheckboxCircle } from "./checkbox-circle";
 export { default as CheckboxCircleDuoDark } from "./checkbox-circle-duo-dark";
 export { default as ChevronLeft } from "./chevron-left";
+export { default as ChevronRight } from "./chevron-right";
 export { default as Cross } from "./cross";
 export { default as FolderClosedDuoCreate } from "./folder-closed-duo-create";
 export { default as FolderDuo } from "./folder-duo";

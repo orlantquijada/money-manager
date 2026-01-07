@@ -9,6 +9,9 @@ catalogs:
     '@biomejs/biome':
       specifier: ^2.3.10
       version: 2.3.10
+    '@t3-oss/env-core':
+      specifier: 0.13.8
+      version: 0.13.8
     '@tanstack/react-query':
       specifier: ^5.90.11
       version: 5.90.12
@@ -21,18 +24,39 @@ catalogs:
     '@trpc/tanstack-react-query':
       specifier: ^11.7.2
       version: 11.7.2
+    '@types/pg':
+      specifier: 8.15.6
+      version: 8.15.6
     date-fns:
       specifier: 4.1.0
       version: 4.1.0
+    dotenv-cli:
+      specifier: 6.0.0
+      version: 6.0.0
+    drizzle-orm:
+      specifier: 0.44.7
+      version: 0.44.7
+    pg:
+      specifier: 8.16.3
+      version: 8.16.3
     superjson:
       specifier: 2.2.6
       version: 2.2.6
+    tsup:
+      specifier: 8.5.1
+      version: 8.5.1
+    tsx:
+      specifier: 4.21.0
+      version: 4.21.0
     typescript:
       specifier: 5.9.3
       version: 5.9.3
     ultracite:
       specifier: 6.5.0
       version: 6.5.0
+    zod:
+      specifier: 4.1.13
+      version: 4.1.13
 
 importers:
 

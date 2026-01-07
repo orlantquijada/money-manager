@@ -1,14 +1,17 @@
 import { useNavigation, usePreventRemove } from "@react-navigation/native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { RouterOutputs } from "api";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
-import CreateFooter, { FOOTER_HEIGHT } from "@/components/create-fund/footer";
-import ModalCloseBtn from "@/components/modal-close-btn";
+import CreateFooter from "@/components/create-fund/footer";
+import FadingEdge, { useOverflowFadeEdge } from "@/components/fading-edge";
+import { GlassCloseButton } from "@/components/glass-button-icon";
 import Presence from "@/components/presence";
 import TextInput from "@/components/text-input";
+import { useThemeColor } from "@/components/theme-provider";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { FOLDER_NAME_PLACEHOLDERS } from "@/lib/create-fund";
 import { trpc } from "@/utils/api";
 import { choice } from "@/utils/random";
@@ -17,6 +20,8 @@ export default function CreateFolder() {
   const { name, setName, submit, isPending, isDirty } = useCreateFolderForm();
   const placeholder = useMemo(() => choice(FOLDER_NAME_PLACEHOLDERS), []);
   const navigation = useNavigation();
+  const backgroundColor = useThemeColor("background");
+  const { fadeProps, handleScroll } = useOverflowFadeEdge();
 
   usePreventRemove(isDirty, ({ data }) => {
     Alert.alert(
@@ -36,32 +41,31 @@ export default function CreateFolder() {
   return (
     <KeyboardAvoidingView
       behavior="padding"
-      className="flex-1 bg-background pt-4"
-      keyboardVerticalOffset={FOOTER_HEIGHT}
+      className="relative flex-1 bg-background"
     >
-      <Link asChild href={{ pathname: "/" }} replace>
-        <ModalCloseBtn className="mb-12 ml-4" />
-      </Link>
+      <GlassCloseButton className="absolute top-4 right-4 z-10" />
 
-      <ScrollView
-        className="p-4 pt-0"
-        contentContainerStyle={{ paddingBottom: 16 }}
-      >
-        <View className="flex gap-y-8">
-          <Presence delayMultiplier={3}>
-            <View className="gap-2.5">
-              <Text className="font-satoshi-medium text-foreground text-lg">
-                What&apos;s the name of your folder?
-              </Text>
-              <TextInput
-                onChangeText={setName}
-                placeholder={placeholder}
-                value={name}
-              />
-            </View>
-          </Presence>
-        </View>
-      </ScrollView>
+      <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
+        <ScrollView
+          contentContainerClassName="px-4 pt-20 pb-safe-offset-4 flex-1"
+          onScroll={handleScroll}
+        >
+          <StyledLeanView className="flex gap-y-8">
+            <Presence delayMultiplier={3}>
+              <StyledLeanView className="gap-2.5">
+                <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
+                  What&apos;s the name of your folder?
+                </StyledLeanText>
+                <TextInput
+                  onChangeText={setName}
+                  placeholder={placeholder}
+                  value={name}
+                />
+              </StyledLeanView>
+            </Presence>
+          </StyledLeanView>
+        </ScrollView>
+      </FadingEdge>
       <CreateFooter
         disabled={!name.trim()}
         hideBackButton

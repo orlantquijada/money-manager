@@ -11,7 +11,7 @@ import { useThemeColor } from "./theme-provider";
 const slots = {
   container: "h-10 rounded-xl bg-muted px-4 flex-row items-center",
   input:
-    "font-satoshi text-base text-foreground placeholder:text-foreground-muted flex-1",
+    "font-satoshi text-base text-foreground placeholder:text-foreground-muted",
 };
 
 type Props = TextInputProps;
@@ -69,7 +69,7 @@ export function InputGroup({
 export function CurrencyInput(props: InputGroupProps) {
   return (
     <InputGroup
-      className="font-azeret-mono-regular"
+      className="flex-1 font-azeret-mono-regular"
       containerProps={{ className: "gap-2" }}
       keyboardType="decimal-pad"
       left={

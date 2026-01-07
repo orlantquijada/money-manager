@@ -1,14 +1,11 @@
-import { Link } from "expo-router";
 import { useState } from "react";
 import { View } from "react-native";
 import { Amount, useAmount } from "@/components/add-expense/amount";
 import Numpad from "@/components/add-expense/numpad";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import { DateSelector } from "@/components/date-selector.ios";
-import GlassButtonIcon from "@/components/glass-button-icon";
-import { useThemeColor } from "@/components/theme-provider";
+import { GlassCloseButton } from "@/components/glass-button-icon";
 import { StyledSafeAreaView } from "@/config/interop";
-import { Cross } from "@/icons";
 import { cn } from "@/utils/cn";
 
 export default function AddExpense() {
@@ -43,24 +40,8 @@ function Header({ className, date, onDateChange }: HeaderProps) {
     >
       <DateSelector date={date} onDateChange={onDateChange} />
 
-      <Close />
+      <GlassCloseButton />
     </View>
-  );
-}
-
-function Close() {
-  const mutedColor = useThemeColor("muted");
-
-  return (
-    <Link asChild href={{ pathname: "/" }}>
-      <GlassButtonIcon
-        glassViewProps={{
-          tintColor: mutedColor,
-        }}
-      >
-        <Cross className="text-foreground-secondary" size={24} />
-      </GlassButtonIcon>
-    </Link>
   );
 }
 

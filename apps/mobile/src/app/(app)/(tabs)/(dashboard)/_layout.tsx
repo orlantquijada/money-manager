@@ -69,11 +69,11 @@ function AddButton({ className, ...props }: PressableProps) {
   return (
     <GlassButtonIcon
       glassViewProps={{
-        tintColor,
         style: {
           borderRadius: 16,
         },
       }}
+      tintColor={tintColor}
       {...props}
     >
       <Plus className="text-background" size={24} />
