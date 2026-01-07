@@ -245,3 +245,22 @@ When modifying `packages/db/src/schema.ts`:
 1. Run `pnpm generate` to create migration files
 2. Run `pnpm push` to apply changes (dev) or `pnpm migrate` (production)
 3. The schema uses `snake_case` for database column names (configured in drizzle.config.ts)
+
+### Currency & Number Formatting
+Use the `Intl.NumberFormat` API to render currency amounts in the UI. This provides:
+- Locale-aware formatting
+- Proper currency symbols
+- Correct decimal places and grouping
+- Native support across all platforms
+
+Example:
+```typescript
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
+formatter.format(amount); // "$1,234.56"
+```
+
+If appropriate, you may create or refactor a shared currency formatter utility to encapsulate this logic and provide a consistent API across the application.
