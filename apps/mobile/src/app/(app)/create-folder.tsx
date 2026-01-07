@@ -66,13 +66,22 @@ export default function CreateFolder() {
           </StyledLeanView>
         </ScrollView>
       </FadingEdge>
+      {/*
+        Try different variants:
+        - variant="text" → "Save Folder" text button
+        - variant="text-check" → "Save Folder" with checkmark icon
+        - variant="icon-only" isFinalAction → checkmark icon only
+        - variant="icon-only" → chevron icon (default, for continue steps)
+      */}
       <CreateFooter
         disabled={!name.trim()}
         hideBackButton
+        isFinalAction
         loading={isPending}
         onContinuePress={submit}
+        variant="text"
       >
-        Save
+        Save Folder
       </CreateFooter>
     </KeyboardAvoidingView>
   );

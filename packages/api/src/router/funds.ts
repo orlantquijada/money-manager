@@ -38,15 +38,14 @@ export const fundsRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
     const now = new Date();
 
-    // Fetch all funds with folder join
+    // Fetch all funds with folder join, filtered by user
     const _funds = await ctx.db
       .select({
         ...getTableColumns(funds),
       })
       .from(funds)
       .innerJoin(folders, eq(funds.folderId, folders.id))
-      // TODO: implement auth
-      // .where(eq(folders.userId, ctx.auth.userId || ""))
+      .where(eq(folders.userId, ctx.userId))
       .orderBy(asc(funds.name));
 
     if (_funds.length === 0) {

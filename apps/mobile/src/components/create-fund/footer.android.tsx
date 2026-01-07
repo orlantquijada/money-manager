@@ -1,10 +1,13 @@
 import type { PropsWithChildren } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { ScalePressable } from "@/components/scale-pressable";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { Check, ChevronRight } from "@/icons";
 import { cn } from "@/utils/cn";
 import Button from "../button";
 import { useThemeColor } from "../theme-provider";
+
+type ButtonVariant = "text" | "text-check" | "icon-only";
 
 type Props = {
   disabled?: boolean;
@@ -12,6 +15,18 @@ type Props = {
   onBackPress?: () => void;
   onContinuePress?: () => void;
   hideBackButton?: boolean;
+  /**
+   * Button style variant:
+   * - "text": Text label only (default for final actions)
+   * - "text-check": Text label with checkmark icon
+   * - "icon-only": Checkmark icon for final actions, chevron for continue
+   */
+  variant?: ButtonVariant;
+  /**
+   * Whether this is a final/destructive action (e.g., Save, Create)
+   * When true and variant is "icon-only", shows checkmark instead of chevron
+   */
+  isFinalAction?: boolean;
 };
 
 export const FOOTER_HEIGHT = 64;
@@ -23,8 +38,60 @@ export default function CreateFooter({
   onBackPress,
   onContinuePress,
   children,
+  variant = "text",
+  isFinalAction = false,
 }: PropsWithChildren<Props>) {
   const activityIndicatorColor = useThemeColor("background");
+  const iconColor = useThemeColor("background");
+  const disabledIconColor = useThemeColor("muted-foreground");
+
+  const isDisabled = disabled || loading;
+
+  const renderButtonContent = () => {
+    if (loading) {
+      return (
+        <ActivityIndicator color={activityIndicatorColor} size="small" />
+      );
+    }
+
+    const currentIconColor = isDisabled ? disabledIconColor : iconColor;
+
+    switch (variant) {
+      case "text":
+        return (
+          <StyledLeanText
+            className={cn(
+              "font-satoshi-medium text-background text-sm",
+              isDisabled && "opacity-50"
+            )}
+          >
+            {children}
+          </StyledLeanText>
+        );
+
+      case "text-check":
+        return (
+          <View className="flex-row items-center gap-1.5">
+            <StyledLeanText
+              className={cn(
+                "font-satoshi-medium text-background text-sm",
+                isDisabled && "opacity-50"
+              )}
+            >
+              {children}
+            </StyledLeanText>
+            <Check color={currentIconColor} size={16} />
+          </View>
+        );
+
+      case "icon-only":
+        return isFinalAction ? (
+          <Check color={currentIconColor} size={20} />
+        ) : (
+          <ChevronRight color={currentIconColor} size={20} />
+        );
+    }
+  };
 
   return (
     <StyledLeanView
@@ -48,27 +115,16 @@ export default function CreateFooter({
       )}
 
       <Button
-        className="ml-auto min-w-20"
-        disabled={disabled || loading}
+        className={cn(
+          "ml-auto",
+          variant === "icon-only" ? "min-w-12" : "min-w-20",
+          isDisabled && "opacity-50"
+        )}
+        disabled={isDisabled}
         hitSlop={12}
         onPress={onContinuePress}
       >
-        {loading && (
-          <ActivityIndicator
-            className="absolute"
-            color={activityIndicatorColor}
-            size="small"
-          />
-        )}
-
-        <StyledLeanText
-          className={cn(
-            "font-satoshi-medium text-background text-sm",
-            loading && "opacity-0"
-          )}
-        >
-          {children}
-        </StyledLeanText>
+        {renderButtonContent()}
       </Button>
     </StyledLeanView>
   );

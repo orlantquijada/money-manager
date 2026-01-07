@@ -30,7 +30,13 @@ function createApp() {
     "/trpc/*",
     trpcServer({
       router: appRouter,
-      createContext: createTRPCContext,
+      createContext: (_opts, c) => {
+        const authHeader = c.req.header("Authorization");
+        const authToken = authHeader?.startsWith("Bearer ")
+          ? authHeader.slice(7)
+          : null;
+        return createTRPCContext({ authToken });
+      },
     })
   );
 

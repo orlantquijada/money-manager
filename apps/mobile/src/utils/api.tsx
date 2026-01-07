@@ -4,7 +4,7 @@ import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import type { AppRouter } from "api";
 import superjson from "superjson";
 
-// import { authClient } from "./auth";
+import { authTokenStore } from "@/lib/auth-token";
 import { getBaseUrl } from "./base-url";
 
 export const queryClient = new QueryClient();
@@ -25,10 +25,11 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
           const headers = new Map<string, string>();
           headers.set("x-trpc-source", "expo-react");
 
-          // const cookies = authClient.getCookie();
-          // if (cookies) {
-          //   headers.set("Cookie", cookies);
-          // }
+          const token = authTokenStore.getToken();
+          if (token) {
+            headers.set("Authorization", `Bearer ${token}`);
+          }
+
           return headers;
         },
       }),

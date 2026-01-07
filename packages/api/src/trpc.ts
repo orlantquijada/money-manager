@@ -1,9 +1,9 @@
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import z, { ZodError } from "zod";
 import type { createTRPCContext } from "./context";
 
-const t = initTRPC.context<typeof createTRPCContext>().create({
+const t = initTRPC.context<Awaited<ReturnType<typeof createTRPCContext>>>().create({
   transformer: superjson,
   errorFormatter: ({ shape, error }) => ({
     ...shape,
@@ -19,4 +19,19 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 
 export const router = t.router;
 export const publicProcedure = t.procedure;
-export const protectedProcedure = t.procedure;
+
+// Protected procedure that requires authentication
+export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+  if (!ctx.userId) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You must be logged in to access this resource",
+    });
+  }
+  return next({
+    ctx: {
+      ...ctx,
+      userId: ctx.userId, // Now guaranteed to be non-null
+    },
+  });
+});

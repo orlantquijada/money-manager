@@ -6,6 +6,7 @@ export { default as ArrowDown } from "./arrow-down";
 export { default as CalendarDates } from "./calendar-dates";
 export { default as CalendarDuoDark } from "./calendar-duo-dark";
 export { default as ChartColumn } from "./chart-column";
+export { default as Check } from "./check";
 export { default as CheckboxCircle } from "./checkbox-circle";
 export { default as CheckboxCircleDuoDark } from "./checkbox-circle-duo-dark";
 export { default as ChevronLeft } from "./chevron-left";

@@ -9,5 +9,6 @@ export const env = createEnv({
     CORS_ORIGIN: isDev
       ? z._default(z.string(), "*")
       : z.string().check(z.minLength(1)),
+    CLERK_SECRET_KEY: z.string().check(z.minLength(1)),
   },
 });

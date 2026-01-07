@@ -12,10 +12,9 @@ export const foldersRouter = router({
       })
     )
     .mutation(({ input, ctx }) => {
-      // TODO: implement auth
       return ctx.db.insert(folders).values({
         ...input,
-        userId: "igipxef036i5dc5k5rguz5a8", // TODO: replace with ctx.auth.userId when auth is implemented
+        userId: ctx.userId,
       });
     }),
 
@@ -42,8 +41,7 @@ export const foldersRouter = router({
       };
 
       const foldersWithFunds = await ctx.db.query.folders.findMany({
-        // TODO: implement auth
-        // where: eq(folders.userId, ctx.auth.userId || ""),
+        where: eq(folders.userId, ctx.userId),
         with: {
           funds: { orderBy: (funds, { asc }) => asc(funds.createdAt) },
         },
@@ -88,8 +86,7 @@ export const foldersRouter = router({
 
   list: protectedProcedure.query(({ ctx }) =>
     ctx.db.query.folders.findMany({
-      // TODO: implement auth
-      // where: eq(folders.userId, ctx.auth.userId || ""),
+      where: eq(folders.userId, ctx.userId),
     })
   ),
 });
