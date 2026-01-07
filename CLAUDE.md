@@ -186,6 +186,10 @@ Recently migrated from Nativewind to **Uniwind** (Tailwind CSS v4 for React Nati
 - Type definitions in `apps/mobile/uniwind-types.d.ts`
 - Uses `class-variance-authority` for component variants
 
+**Uniwind Component Conventions:**
+- Use `StyledLeanView` and `StyledLeanText` from `apps/mobile/src/components/interop.ts` as the default view and text components
+- When using `StyledLeanText` with `numberOfLines`, you **must** also add an `ellipsizeMode` prop (e.g., `ellipsizeMode="tail"`)
+
 ### Environment Variables
 
 Environment variables are loaded from `.env` in the repository root:
