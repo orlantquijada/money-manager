@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm type-check:*)",
+      "Bash(pnpm tsc:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Skill(commit)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpm lint"
+          }
+        ]
+      }
+    ]
+  }
+}
