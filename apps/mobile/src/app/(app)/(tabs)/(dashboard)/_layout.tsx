@@ -11,7 +11,7 @@ import { type PressableProps, View } from "react-native";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
 import TotalSpent from "@/components/dashboard/total-spent";
-import GlassButtonIcon from "@/components/glass-button-icon";
+import GlassButton from "@/components/glass-button-icon";
 import { ScalePressable } from "@/components/scale-pressable";
 import { useThemeColor } from "@/components/theme-provider";
 import {
@@ -67,7 +67,7 @@ function AddButton({ className, ...props }: PressableProps) {
   const tintColor = useThemeColor("foreground");
 
   return (
-    <GlassButtonIcon
+    <GlassButton
       glassViewProps={{
         style: {
           borderRadius: 16,
@@ -77,7 +77,7 @@ function AddButton({ className, ...props }: PressableProps) {
       {...props}
     >
       <Plus className="text-background" size={24} />
-    </GlassButtonIcon>
+    </GlassButton>
   );
 }
 

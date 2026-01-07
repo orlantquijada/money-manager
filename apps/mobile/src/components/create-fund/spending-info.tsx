@@ -8,7 +8,6 @@ import Animated, {
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import {
   type CreateFundScreens,
-  getFundTypeContinueBtnLabel,
   useCreateFundStore,
   useSubmitFund,
 } from "@/lib/create-fund";
@@ -125,8 +124,9 @@ export default function SpendingInfo({ setScreen, presetFolderId }: Props) {
             setScreen("chooseFolder");
           }
         }}
+        variant={presetFolderId ? "text" : "icon-only"}
       >
-        {getFundTypeContinueBtnLabel(presetFolderId, isPending)}
+        {presetFolderId ? "Create Fund" : undefined}
       </CreateFooter>
     </>
   );

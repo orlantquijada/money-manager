@@ -1,14 +1,14 @@
 import type { PropsWithChildren } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator } from "react-native";
 import { useReanimatedKeyboardAnimation } from "react-native-keyboard-controller";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { Check, ChevronLeft, ChevronRight } from "@/icons";
-import GlassButtonIcon from "../glass-button-icon";
+import GlassButton from "../glass-button-icon";
 import { useThemeColor } from "../theme-provider";
 
-type ButtonVariant = "text" | "text-check" | "icon-only";
+type ButtonVariant = "text" | "icon-only";
 
 type Props = {
   disabled?: boolean;
@@ -18,9 +18,8 @@ type Props = {
   hideBackButton?: boolean;
   /**
    * Button style variant:
-   * - "text": Text label only (e.g., "Save Folder")
-   * - "text-check": Text label with checkmark icon
-   * - "icon-only": Checkmark for final actions, chevron for continue steps
+   * - "text": Pill-shaped button with text label (e.g., "Save Folder", "Create Fund")
+   * - "icon-only": Circular button with icon (chevron for next steps, checkmark for final actions)
    */
   variant?: ButtonVariant;
   /**
@@ -40,9 +39,9 @@ function BackButton({
   if (hideBackButton) return null;
 
   return (
-    <GlassButtonIcon onPress={onBackPress} tintColor={tintColor}>
+    <GlassButton onPress={onBackPress} tintColor={tintColor} variant="icon">
       <ChevronLeft color={iconColor} size={24} />
-    </GlassButtonIcon>
+    </GlassButton>
   );
 }
 
@@ -80,24 +79,11 @@ export default function CreateFooter({
       case "text":
         return (
           <StyledLeanText
-            className="font-satoshi-medium text-sm px-3"
+            className="font-satoshi-medium text-sm"
             style={{ color: currentIconColor }}
           >
             {children}
           </StyledLeanText>
-        );
-
-      case "text-check":
-        return (
-          <View className="flex-row items-center gap-1 px-2">
-            <StyledLeanText
-              className="font-satoshi-medium text-sm"
-              style={{ color: currentIconColor }}
-            >
-              {children}
-            </StyledLeanText>
-            <Check color={currentIconColor} size={18} />
-          </View>
         );
 
       case "icon-only":
@@ -106,13 +92,14 @@ export default function CreateFooter({
         ) : (
           <ChevronRight color={currentIconColor} size={24} />
         );
+
+      default:
+        return null;
     }
   };
 
-  // Use pill shape for text variants, circle for icon-only
-  const buttonSize = variant === "icon-only" ? "size-12" : undefined;
-  const buttonClassName =
-    variant !== "icon-only" ? "rounded-full px-2 py-2" : undefined;
+  // Determine button variant based on footer variant
+  const buttonVariant = variant === "icon-only" ? "icon" : "default";
 
   return (
     <Animated.View
@@ -125,15 +112,14 @@ export default function CreateFooter({
         className="relative ml-auto items-center justify-center"
         style={isDisabled ? { opacity: 0.5 } : undefined}
       >
-        <GlassButtonIcon
-          className={buttonClassName}
+        <GlassButton
           disabled={isDisabled}
           onPress={onContinuePress}
-          size={buttonSize}
           tintColor={currentTintColor}
+          variant={buttonVariant}
         >
           {renderButtonContent()}
-        </GlassButtonIcon>
+        </GlassButton>
       </StyledLeanView>
     </Animated.View>
   );

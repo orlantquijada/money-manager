@@ -11,38 +11,76 @@ import { useThemeColor } from "@/components/theme-provider";
 import { Cross } from "@/icons";
 import { cn } from "@/utils/cn";
 
-type GlassButtonIconProps = PressableProps & {
-  size?: "size-8" | "size-10" | "size-12";
+type GlassButtonVariant = "icon" | "default";
+type GlassButtonSize = "sm" | "md" | "lg";
+
+type GlassButtonProps = PressableProps & {
+  /**
+   * Button variant:
+   * - "icon": Circular button for icons (fixed size)
+   * - "default": Pill-shaped button that auto-sizes to content
+   */
+  variant?: GlassButtonVariant;
+  /**
+   * Size of the button:
+   * - For "icon" variant: affects the circle diameter (sm=32, md=40, lg=48)
+   * - For "default" variant: affects padding and min-height
+   */
+  size?: GlassButtonSize;
   glassViewProps?: GlassViewProps;
   children?: ReactNode;
   tintColor?: string;
 };
 
-export default function GlassButtonIcon({
+const iconSizeClasses: Record<GlassButtonSize, string> = {
+  sm: "size-8",
+  md: "size-10",
+  lg: "size-12",
+};
+
+const paddingBySize: Record<
+  GlassButtonSize,
+  { horizontal: number; vertical: number }
+> = {
+  sm: { horizontal: 12, vertical: 6 },
+  md: { horizontal: 16, vertical: 8 },
+  lg: { horizontal: 20, vertical: 10 },
+};
+
+export default function GlassButton({
   className,
   children,
-  size = "size-12",
+  variant = "icon",
+  size = "lg",
   glassViewProps = {},
   tintColor: tintColorProp,
   ...props
-}: GlassButtonIconProps) {
+}: GlassButtonProps) {
   const { style, ..._glassViewProps } = glassViewProps;
   const themeTintColor = useThemeColor("background");
   const tintColor = tintColorProp ?? themeTintColor;
 
+  const isIcon = variant === "icon";
+  const sizeClass = isIcon ? iconSizeClasses[size] : undefined;
+
   return (
-    <Pressable className={cn("relative", size, className)} {...props}>
+    <Pressable className={cn("relative", sizeClass, className)} {...props}>
       <GlassView
         glassEffectStyle="regular"
         isInteractive
         style={[
           {
-            ...StyleSheet.absoluteFillObject,
+            ...(isIcon ? StyleSheet.absoluteFillObject : {}),
             borderRadius: 999,
             justifyContent: "center",
             alignItems: "center",
             borderCurve: "continuous",
           } satisfies ViewStyle,
+          !isIcon && {
+            flexDirection: "row",
+            paddingHorizontal: paddingBySize[size].horizontal,
+            paddingVertical: paddingBySize[size].vertical,
+          },
           style,
         ]}
         tintColor={tintColor}
@@ -54,7 +92,7 @@ export default function GlassButtonIcon({
   );
 }
 
-type GlassCloseButtonProps = Omit<GlassButtonIconProps, "children"> & {
+type GlassCloseButtonProps = Omit<GlassButtonProps, "children" | "variant"> & {
   iconSize?: number;
 };
 
@@ -70,7 +108,7 @@ export function GlassCloseButton({
   const iconColor = useThemeColor("muted-foreground");
   const tintColor = useThemeColor("muted");
 
-  const handlePress: GlassButtonIconProps["onPress"] = (event) => {
+  const handlePress: GlassButtonProps["onPress"] = (event) => {
     if (onPress) {
       onPress(event);
     } else if (router.canDismiss()) {
@@ -81,8 +119,13 @@ export function GlassCloseButton({
   };
 
   return (
-    <GlassButtonIcon tintColor={tintColor} {...props} onPress={handlePress}>
+    <GlassButton
+      tintColor={tintColor}
+      variant="icon"
+      {...props}
+      onPress={handlePress}
+    >
       <Cross color={iconColor} size={iconSize} />
-    </GlassButtonIcon>
+    </GlassButton>
   );
 }

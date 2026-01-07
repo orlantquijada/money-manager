@@ -7,7 +7,6 @@ import Animated, {
 } from "react-native-reanimated";
 import {
   type CreateFundScreens,
-  getFundTypeContinueBtnLabel,
   useCreateFundStore,
   useSubmitFund,
 } from "@/lib/create-fund";
@@ -129,8 +128,9 @@ export default function NonNegotiableInfo({
             setScreen("chooseFolder");
           }
         }}
+        variant={presetFolderId ? "text" : "icon-only"}
       >
-        {getFundTypeContinueBtnLabel(presetFolderId, isPending)}
+        {presetFolderId ? "Create Fund" : undefined}
       </CreateFooter>
     </>
   );

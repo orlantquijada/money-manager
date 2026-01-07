@@ -79,6 +79,7 @@ export default function ChooseFolder({ setScreen }: Props) {
       </FadingEdge>
       <CreateFooter
         disabled={!folderId || isPending}
+        loading={isPending}
         onBackPress={() => {
           setScreen(
             fundType === "SPENDING" ? "spendingInfo" : "nonNegotiableInfo"
@@ -90,8 +91,9 @@ export default function ChooseFolder({ setScreen }: Props) {
           }
           submit(folderId);
         }}
+        variant="text"
       >
-        {isPending ? "Saving..." : "Save"}
+        Create Fund
       </CreateFooter>
     </>
   );
