@@ -74,64 +74,59 @@ export default function AddExpense() {
   return (
     <AnimatedTabScreen index={0}>
       <StyledSafeAreaView className="flex-1 bg-background">
-        <StyledLeanView className="flex-1 px-4">
-          <Header
-            className="mt-4"
-            date={date}
-            onCancel={handleCancel}
-            onDateChange={setDate}
-          />
+        <Header
+          className="mt-4 w-full"
+          date={date}
+          onCancel={handleCancel}
+          onDateChange={setDate}
+        />
 
+        <StyledLeanView className="flex-1 px-4">
           {/* Amount Display */}
           <StyledLeanView className="grow items-center justify-center">
             <Amount amount={amount} />
           </StyledLeanView>
 
           {/* Metadata Section */}
-          <StyledLeanView className="mb-6">
-            {/* Row 1: Store + Fund */}
-            <MetadataRow
-              segments={[
-                {
-                  label: selectedStore?.name || "Store",
-                  onPress: openStorePicker,
-                  hasValue: !!selectedStore,
-                },
-                {
-                  label: selectedFund?.name || "Fund",
-                  onPress: openFundPicker,
-                  hasValue: !!selectedFund,
-                },
-              ]}
-              showBorder
-            />
+          <StyledLeanView className="mb-10">
+            <StyledLeanView className="flex-row items-center justify-between gap-3">
+              {/* Row 1: Store + Fund */}
+              <MetadataRow
+                segments={[
+                  {
+                    label: selectedFund?.name || "Fund",
+                    onPress: openFundPicker,
+                    hasValue: !!selectedFund,
+                  },
+                  {
+                    label: selectedStore?.name || "Store",
+                    onPress: openStorePicker,
+                    hasValue: !!selectedStore,
+                  },
+                ]}
+              />
+              {/* Save Button */}
+              <SaveButton
+                disabled={!canSubmit}
+                loading={isPending}
+                onPress={submit}
+              />
+            </StyledLeanView>
 
             {/* Row 2: Note */}
             <TextInput
-              className="h-10 px-1 font-satoshi-medium text-base"
+              className="h-10 px-1 font-satoshi text-base text-foreground-secondary"
               cursorColor={foregroundColor}
               onChangeText={setNote}
               placeholder="Add a note..."
               placeholderTextColor={mutedForegroundColor}
               selectionColor={foregroundColor}
-              style={{
-                color: foregroundColor,
-                padding: 0,
-                lineHeight: undefined,
-              }}
+              style={{ lineHeight: undefined }}
               value={note}
             />
           </StyledLeanView>
 
-          <Numpad className="-mx-4 mb-6 px-4" onPress={handleKeyPress} />
-
-          {/* Save Button */}
-          <SaveButton
-            className="my-4"
-            disabled={!canSubmit}
-            loading={isPending}
-            onPress={submit}
-          />
+          <Numpad onPress={handleKeyPress} />
         </StyledLeanView>
       </StyledSafeAreaView>
 
@@ -153,12 +148,12 @@ function Header({ className, date, onDateChange, onCancel }: HeaderProps) {
   return (
     <StyledLeanView
       className={cn(
-        "h-10 w-full flex-row items-center justify-between",
+        "h-12 w-full flex-row items-center justify-between pl-4",
         className
       )}
     >
-      <DateSelector date={date} onDateChange={onDateChange} />
       <GlassCloseButton onPress={onCancel} />
+      <DateSelector date={date} onDateChange={onDateChange} />
     </StyledLeanView>
   );
 }

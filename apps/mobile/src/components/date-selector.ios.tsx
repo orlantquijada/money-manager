@@ -84,7 +84,7 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
   };
 
   return (
-    <Host matchContents style={{ marginLeft: -BTN_CLIP_PADDING, ...style }}>
+    <Host matchContents style={style}>
       <BottomSheet isOpened={isOpened} onIsOpenedChange={handleIsOpenedChange}>
         <DateTimePicker
           color={foregroundColor}
@@ -121,19 +121,19 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
             controlSize="large"
             modifiers={[
               padding({ all: BTN_CLIP_PADDING }),
-              frame({ width: 250, alignment: "leading" }),
+              frame({ width: 250, alignment: "trailing" }),
             ]}
             variant="glassProminent"
           >
-            <HStack alignment="center" spacing={10}>
-              <Text color={foregroundColor} weight="medium">
+            <HStack alignment="center" spacing={8}>
+              <Text color={foregroundColor} design="rounded" weight="medium">
                 {dateLabel}
               </Text>
               <Image
                 // color={PlatformColor("secondaryLabel") as unknown as string}
                 // color={mauveDarkRgb.mauveDark11}
                 color={foregroundSecondary}
-                size={16}
+                size={14}
                 systemName="chevron.up.chevron.down"
               />
             </HStack>

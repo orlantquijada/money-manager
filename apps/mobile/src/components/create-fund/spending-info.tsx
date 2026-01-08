@@ -97,14 +97,10 @@ export default function SpendingInfo({ setScreen, presetFolderId }: Props) {
                     <TimeModeText key={timeMode} timeMode={timeMode} />
                   </StyledLeanView>
                 </StyledLeanView>
-                <StyledLeanView className="px-4">
-                  <CurrencyInput
-                    onChangeText={(text) =>
-                      setBudgetedAmount(Number(text) || 0)
-                    }
-                    value={budgetedAmount.toString()}
-                  />
-                </StyledLeanView>
+                <CurrencyInput
+                  onChangeText={(text) => setBudgetedAmount(Number(text) || 0)}
+                  value={budgetedAmount.toString()}
+                />
               </StyledLeanView>
             </Presence>
           )}

@@ -43,7 +43,7 @@ export default function CreateFolder() {
       behavior="padding"
       className="relative flex-1 bg-background"
     >
-      <GlassCloseButton className="absolute top-4 right-4 z-10" />
+      <GlassCloseButton className="absolute top-4 left-4 z-10" />
 
       <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
         <ScrollView

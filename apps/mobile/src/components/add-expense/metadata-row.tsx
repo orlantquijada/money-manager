@@ -20,7 +20,7 @@ export function MetadataRow({
   return (
     <StyledLeanView
       className={cn(
-        "flex-row items-center py-3",
+        "flex-row items-center",
         showBorder && "border-mauve-7 border-b-hairline"
       )}
     >
@@ -28,7 +28,7 @@ export function MetadataRow({
         <StyledLeanView className="flex-row items-center" key={index}>
           {index > 0 && (
             <StyledLeanText className="mx-2 text-foreground-muted">
-              •
+              {/* — */}•
             </StyledLeanText>
           )}
           <ScalePressable

@@ -61,7 +61,7 @@ function CreateFundContent() {
       className="relative flex-1 bg-background"
       keyboardVerticalOffset={footerHeight}
     >
-      <GlassCloseButton className="absolute top-4 right-4 z-10" />
+      <GlassCloseButton className="absolute top-4 left-4 z-10" />
 
       <AnimatePresence mode="wait">
         {screen === "fundInfo" && (
