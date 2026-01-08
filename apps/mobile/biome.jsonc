@@ -22,5 +22,16 @@
       "tailwindDirectives": true,
       "cssModules": true
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["uniwind-types.d.ts"],
+      "formatter": {
+        "enabled": false
+      },
+      "linter": {
+        "enabled": false
+      }
+    }
+  ]
 }
