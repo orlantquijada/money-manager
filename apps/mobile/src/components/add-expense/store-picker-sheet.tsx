@@ -1,14 +1,13 @@
-import {
+import BottomSheet, {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
-  BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetTextInput,
-  useBottomSheet,
 } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
+import type { StorePick } from "api";
 import * as Haptics from "expo-haptics";
-import { type Ref, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FadingEdge, { useOverflowFadeEdge } from "@/components/fading-edge";
 import { ScalePressable } from "@/components/scale-pressable";
@@ -19,53 +18,49 @@ import {
   StyledLeanText,
   StyledLeanView,
 } from "@/config/interop";
+import { useAddExpenseStore } from "@/lib/add-expense";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { mauveA } from "@/utils/colors";
 
-type Store = {
-  id: number;
-  name: string;
-  lastSelectedFundId: number | null;
-};
-
 type StorePickerSheetProps = {
-  ref: Ref<BottomSheetModal>;
-  selectedStore: Store | null;
-  onSelect: (store: Store) => void;
+  isOpen: boolean;
+  onClose: () => void;
 };
 
-export function StorePickerSheet({
-  ref,
-  selectedStore,
-  onSelect,
-}: StorePickerSheetProps) {
+export function StorePickerSheet({ isOpen, onClose }: StorePickerSheetProps) {
   const handleIndicatorColor = useThemeColor("foreground-muted");
   const backgroundColor = useThemeColor("background");
 
   // Pre-fetch stores data before sheet opens
   const { data: stores } = useQuery(trpc.store.list.queryOptions());
 
+  // Handle sheet index change (detect close gesture)
+  const handleSheetChange = useCallback(
+    (index: number) => {
+      if (index === -1) {
+        onClose();
+      }
+    },
+    [onClose]
+  );
+
   return (
-    <BottomSheetModal
+    <BottomSheet
       backdropComponent={Backdrop}
       backgroundStyle={{ backgroundColor }}
       enableDynamicSizing={false}
+      enablePanDownToClose
       handleIndicatorStyle={{
         backgroundColor: handleIndicatorColor,
         width: 80,
       }}
-      index={0}
-      name="store-picker"
-      ref={ref}
+      index={isOpen ? 0 : -1}
+      onChange={handleSheetChange}
       snapPoints={["50%", "80%"]}
     >
-      <Content
-        onSelect={onSelect}
-        selectedStore={selectedStore}
-        stores={stores ?? []}
-      />
-    </BottomSheetModal>
+      <Content onClose={onClose} stores={stores ?? []} />
+    </BottomSheet>
   );
 }
 
@@ -81,15 +76,19 @@ function Backdrop(props: BottomSheetBackdropProps) {
 }
 
 type ContentProps = {
-  selectedStore: Store | null;
-  onSelect: (store: Store) => void;
-  stores: Store[];
+  stores: StorePick[];
+  onClose: () => void;
 };
 
-function Content({ selectedStore, onSelect, stores }: ContentProps) {
-  const { close } = useBottomSheet();
+function Content({ stores, onClose }: ContentProps) {
   const [search, setSearch] = useState("");
   const insets = useSafeAreaInsets();
+
+  // Get state from store
+  const selectedStore = useAddExpenseStore((s) => s.selectedStore);
+  const selectStoreWithFundDefault = useAddExpenseStore(
+    (s) => s.selectStoreWithFundDefault
+  );
 
   const foregroundColor = useThemeColor("foreground");
   const mutedColor = useThemeColor("foreground-muted");
@@ -113,23 +112,23 @@ function Content({ selectedStore, onSelect, stores }: ContentProps) {
 
   const showAddNew = search.trim().length > 0 && !exactMatch;
 
-  const handleSelect = (store: Store) => {
+  const handleSelect = (store: StorePick) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onSelect(store);
+    selectStoreWithFundDefault(store);
     setSearch("");
-    close();
+    onClose();
   };
 
   const handleAddNew = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    const newStore: Store = {
+    const newStore: StorePick = {
       id: 0,
       name: search.trim(),
       lastSelectedFundId: null,
     };
-    onSelect(newStore);
+    selectStoreWithFundDefault(newStore);
     setSearch("");
-    close();
+    onClose();
   };
 
   return (
@@ -211,7 +210,7 @@ function Content({ selectedStore, onSelect, stores }: ContentProps) {
 }
 
 type StoreRowProps = {
-  store: Store;
+  store: StorePick;
   isSelected: boolean;
   onPress: () => void;
 };

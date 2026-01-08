@@ -1,8 +1,6 @@
-import type { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import { useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { TextInput } from "react-native";
 import { Amount, useAmount } from "@/components/add-expense/amount";
 import { FundPickerSheet } from "@/components/add-expense/fund-picker-sheet";
@@ -15,121 +13,71 @@ import { DateSelector } from "@/components/date-selector.ios";
 import { GlassCloseButton } from "@/components/glass-button";
 import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanView, StyledSafeAreaView } from "@/config/interop";
+import { useSubmitTransaction } from "@/hooks/use-create-transaction";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
-import { useRecentFundsStore } from "@/stores/recent-funds";
-import { trpc } from "@/utils/api";
+import { AddExpenseProvider, useAddExpenseStore } from "@/lib/add-expense";
 import { cn } from "@/utils/cn";
 
-type FundWithFolder = {
-  id: number;
-  name: string;
-  folderId: number;
-  folderName: string;
-};
+// Wrapper component that provides the scoped store
+export default function AddExpenseScreen() {
+  return (
+    <AddExpenseProvider>
+      <AddExpense />
+    </AddExpenseProvider>
+  );
+}
 
-type Store = {
-  id: number;
-  name: string;
-  lastSelectedFundId: number | null;
-};
-
-export default function AddExpense() {
+function AddExpense() {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const addRecentFund = useRecentFundsStore((s) => s.addRecentFund);
   const mutedForegroundColor = useThemeColor("foreground-muted");
   const foregroundColor = useThemeColor("foreground");
 
-  // Bottom sheet refs
-  const fundPickerRef = useRef<BottomSheetModal>(null);
-  const storePickerRef = useRef<BottomSheetModal>(null);
+  // Bottom sheet open state (controlled, not imperative)
+  const [isFundPickerOpen, setIsFundPickerOpen] = useState(false);
+  const [isStorePickerOpen, setIsStorePickerOpen] = useState(false);
 
-  // Form state
-  const [date, setDate] = useState(new Date());
+  // Amount state (kept separate as specified)
   const { amount, handleKeyPress, reset: resetAmount } = useAmount();
-  const [selectedFundId, setSelectedFundId] = useState<number | null>(null);
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
-  const [note, setNote] = useState("");
 
-  // Data fetching
-  const { data: foldersWithFunds } = useFoldersWithFunds();
-
-  // Flatten funds with folder info
-  const allFunds = useMemo(() => {
-    if (!foldersWithFunds) return [];
-    return foldersWithFunds.flatMap((folder) =>
-      folder.funds.map((fund) => ({
-        ...fund,
-        folderName: folder.name,
-        folderId: folder.id,
-      }))
-    );
-  }, [foldersWithFunds]);
-
-  const selectedFund = useMemo(
-    () => allFunds.find((f) => f.id === selectedFundId) ?? null,
-    [allFunds, selectedFundId]
-  );
+  // Store state via Zustand
+  const date = useAddExpenseStore((s) => s.date);
+  const setDate = useAddExpenseStore((s) => s.setDate);
+  const selectedFundId = useAddExpenseStore((s) => s.selectedFundId);
+  const selectedStore = useAddExpenseStore((s) => s.selectedStore);
+  const note = useAddExpenseStore((s) => s.note);
+  const setNote = useAddExpenseStore((s) => s.setNote);
 
   // Transaction mutation
-  const createTransaction = useMutation(
-    trpc.transaction.create.mutationOptions({
-      onSuccess: (_data, variables) => {
-        addRecentFund(variables.fundId);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        queryClient.invalidateQueries();
-
-        // Reset form state before navigating
-        resetAmount();
-        setSelectedFundId(null);
-        setSelectedStore(null);
-        setNote("");
-        setDate(new Date());
-
-        router.navigate({ pathname: "/(app)/(tabs)/(dashboard)" });
-      },
-    })
+  const { submit, isPending, canSubmit } = useSubmitTransaction(
+    amount,
+    resetAmount
   );
 
-  const canSubmit = selectedFundId !== null && amount > 0;
-
-  const handleCancel = () => {
-    router.navigate("/(app)/(tabs)/(dashboard)");
-  };
-
-  const handleSubmit = () => {
-    if (!canSubmit) return;
-
-    createTransaction.mutate({
-      fundId: selectedFundId,
-      amount,
-      date: date.toISOString(),
-      note: note.trim() || undefined,
-      store: selectedStore?.name ?? "",
-    });
-  };
-
-  const handleFundSelect = (fund: FundWithFolder) => {
-    setSelectedFundId(fund.id);
-  };
-
-  const handleStoreSelect = (store: Store) => {
-    setSelectedStore(store);
-    // Smart default: pre-fill fund if store has one and no fund is selected
-    if (store.lastSelectedFundId && !selectedFundId) {
-      setSelectedFundId(store.lastSelectedFundId);
+  // Data fetching for fund display
+  const { data: foldersWithFunds } = useFoldersWithFunds();
+  const selectedFund = useMemo(() => {
+    if (!(foldersWithFunds && selectedFundId)) return null;
+    for (const folder of foldersWithFunds) {
+      const fund = folder.funds.find((f) => f.id === selectedFundId);
+      if (fund) return { ...fund, folderName: folder.name };
     }
-  };
+    return null;
+  }, [foldersWithFunds, selectedFundId]);
 
-  const openFundPicker = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    fundPickerRef.current?.present();
-  };
+  // Handlers
+  const handleCancel = useCallback(() => {
+    router.navigate("/(app)/(tabs)/(dashboard)");
+  }, [router]);
 
-  const openStorePicker = () => {
+  const openFundPicker = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    storePickerRef.current?.present();
-  };
+    setIsFundPickerOpen(true);
+  }, []);
+
+  const openStorePicker = useCallback(() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setIsStorePickerOpen(true);
+  }, []);
 
   return (
     <AnimatedTabScreen index={0}>
@@ -189,22 +137,20 @@ export default function AddExpense() {
           <SaveButton
             className="my-4"
             disabled={!canSubmit}
-            loading={createTransaction.isPending}
-            onPress={handleSubmit}
+            loading={isPending}
+            onPress={submit}
           />
         </StyledLeanView>
       </StyledSafeAreaView>
 
-      {/* Bottom Sheets */}
+      {/* Bottom Sheets - controlled via state */}
       <FundPickerSheet
-        onSelect={handleFundSelect}
-        ref={fundPickerRef}
-        selectedFundId={selectedFundId}
+        isOpen={isFundPickerOpen}
+        onClose={() => setIsFundPickerOpen(false)}
       />
       <StorePickerSheet
-        onSelect={handleStoreSelect}
-        ref={storePickerRef}
-        selectedStore={selectedStore}
+        isOpen={isStorePickerOpen}
+        onClose={() => setIsStorePickerOpen(false)}
       />
     </AnimatedTabScreen>
   );

@@ -17,3 +17,31 @@ export type Store = InferSelectModel<typeof stores>;
 
 export type FundType = InferEnum<typeof fundTypeEnum>;
 export type TimeMode = InferEnum<typeof timeModeEnum>;
+
+/**
+ * Lightweight store type for add-expense flow.
+ * Matches the shape returned by store.list endpoint.
+ */
+export type StorePick = {
+  id: number;
+  name: string;
+  lastSelectedFundId: number | null;
+};
+
+/**
+ * Fund with folder context, used in fund picker components.
+ */
+export type FundWithFolder = {
+  id: number;
+  name: string;
+  folderId: number;
+  folderName: string;
+};
+
+/**
+ * Extended fund with folder context including budget visualization data.
+ */
+export type FundWithFolderAndBudget = FundWithFolder & {
+  amountLeft: number;
+  progress: number;
+};

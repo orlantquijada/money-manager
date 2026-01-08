@@ -1,13 +1,12 @@
-import {
+import BottomSheet, {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
-  BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetTextInput,
-  useBottomSheet,
 } from "@gorhom/bottom-sheet";
+import type { FundWithFolderAndBudget } from "api";
 import * as Haptics from "expo-haptics";
-import { type Ref, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScalePressable } from "@/components/scale-pressable";
@@ -16,6 +15,7 @@ import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
 import ClockRewind from "@/icons/clock-rewind";
 import FolderDuo from "@/icons/folder-duo";
+import { useAddExpenseStore } from "@/lib/add-expense";
 import { fundWithMeta } from "@/lib/fund";
 import { useRecentFundsStore } from "@/stores/recent-funds";
 import { cn } from "@/utils/cn";
@@ -28,34 +28,25 @@ import {
   red,
   redDark,
 } from "@/utils/colors";
+import { exists } from "@/utils/fn";
 import { toCurrencyShort } from "@/utils/format";
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 
-type FundWithFolder = {
-  id: number;
-  name: string;
-  folderId: number;
-  folderName: string;
-  amountLeft: number;
-  progress: number;
-};
-
 type FundPickerSheetProps = {
-  ref: Ref<BottomSheetModal>;
-  selectedFundId: number | null;
-  onSelect: (fund: FundWithFolder) => void;
+  isOpen: boolean;
+  onClose: () => void;
 };
 
 type ListItem =
   | { type: "recents-header" }
-  | { type: "recent-fund"; fund: FundWithFolder }
+  | { type: "recent-fund"; fund: FundWithFolderAndBudget }
   | { type: "folder-header"; folderName: string; folderId: number }
-  | { type: "fund"; fund: FundWithFolder };
+  | { type: "fund"; fund: FundWithFolderAndBudget };
 
 // Helper: Transform folders data into flat fund list with budget info
 function transformFoldersToFunds(
   foldersWithFunds: ReturnType<typeof useFoldersWithFunds>["data"]
-): FundWithFolder[] {
+): FundWithFolderAndBudget[] {
   if (!foldersWithFunds) return [];
   return foldersWithFunds.flatMap((folder) =>
     folder.funds.map((fund) => {
@@ -73,10 +64,10 @@ function transformFoldersToFunds(
 }
 
 // Helper: Group funds by folder
-function groupFundsByFolder(funds: FundWithFolder[]) {
+function groupFundsByFolder(funds: FundWithFolderAndBudget[]) {
   const folderMap = new Map<
     number,
-    { name: string; id: number; funds: FundWithFolder[] }
+    { name: string; id: number; funds: FundWithFolderAndBudget[] }
   >();
   for (const fund of funds) {
     const existing = folderMap.get(fund.folderId);
@@ -95,8 +86,8 @@ function groupFundsByFolder(funds: FundWithFolder[]) {
 
 // Helper: Build list items from funds (with optional recents section)
 function buildListItems(
-  funds: FundWithFolder[],
-  recentFunds?: FundWithFolder[]
+  funds: FundWithFolderAndBudget[],
+  recentFunds?: FundWithFolderAndBudget[]
 ): ListItem[] {
   const listItems: ListItem[] = [];
 
@@ -127,11 +118,7 @@ function buildListItems(
   return listItems;
 }
 
-export function FundPickerSheet({
-  ref,
-  selectedFundId,
-  onSelect,
-}: FundPickerSheetProps) {
+export function FundPickerSheet({ isOpen, onClose }: FundPickerSheetProps) {
   const handleIndicatorColor = useThemeColor("foreground-muted");
   const backgroundColor = useThemeColor("background");
   const iconColor = useThemeColor("foreground-muted");
@@ -151,23 +138,33 @@ export function FundPickerSheet({
   const initialItems = useMemo(() => {
     const recentFunds = recentFundIds
       .map((id) => allFunds.find((f) => f.id === id))
-      .filter((f): f is FundWithFolder => f !== undefined);
+      .filter(exists);
 
     return buildListItems(allFunds, recentFunds);
   }, [allFunds, recentFundIds]);
 
+  // Handle sheet index change (detect close gesture)
+  const handleSheetChange = useCallback(
+    (index: number) => {
+      if (index === -1) {
+        onClose();
+      }
+    },
+    [onClose]
+  );
+
   return (
-    <BottomSheetModal
+    <BottomSheet
       backdropComponent={Backdrop}
       backgroundStyle={{ backgroundColor }}
       enableDynamicSizing={false}
+      enablePanDownToClose
       handleIndicatorStyle={{
         backgroundColor: handleIndicatorColor,
         width: 80,
       }}
-      index={0}
-      name="fund-picker"
-      ref={ref}
+      index={isOpen ? 0 : -1}
+      onChange={handleSheetChange}
       snapPoints={["50%", "80%"]}
     >
       <Content
@@ -175,10 +172,9 @@ export function FundPickerSheet({
         iconColor={iconColor}
         initialItems={initialItems}
         isDark={isDark}
-        onSelect={onSelect}
-        selectedFundId={selectedFundId}
+        onClose={onClose}
       />
-    </BottomSheetModal>
+    </BottomSheet>
   );
 }
 
@@ -194,25 +190,26 @@ function Backdrop(props: BottomSheetBackdropProps) {
 }
 
 type ContentProps = {
-  selectedFundId: number | null;
-  onSelect: (fund: FundWithFolder) => void;
-  allFunds: FundWithFolder[];
+  allFunds: FundWithFolderAndBudget[];
   initialItems: ListItem[];
   isDark: boolean;
   iconColor: string;
+  onClose: () => void;
 };
 
 function Content({
-  selectedFundId,
-  onSelect,
   allFunds,
   initialItems,
   isDark,
   iconColor,
+  onClose,
 }: ContentProps) {
-  const { close } = useBottomSheet();
   const [search, setSearch] = useState("");
   const insets = useSafeAreaInsets();
+
+  // Get state from store
+  const selectedFundId = useAddExpenseStore((s) => s.selectedFundId);
+  const setSelectedFundId = useAddExpenseStore((s) => s.setSelectedFundId);
 
   const { fadeProps, handleScroll } = useOverflowFadeEdge();
   const backgroundColor = useThemeColor("background");
@@ -237,10 +234,10 @@ function Content({
     return buildListItems(filteredFunds);
   }, [search, initialItems, allFunds]);
 
-  const handleSelect = (fund: FundWithFolder) => {
+  const handleSelect = (fund: FundWithFolderAndBudget) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onSelect(fund);
-    close();
+    setSelectedFundId(fund.id);
+    onClose();
   };
 
   const showEmptyState = items.length === 0 && search.trim();
@@ -376,10 +373,10 @@ function getBudgetStatusColor(progress: number, isDark: boolean) {
 }
 
 type FundRowProps = {
-  fund: FundWithFolder;
+  fund: FundWithFolderAndBudget;
   isDark: boolean;
   isSelected: boolean;
-  onSelect: (fund: FundWithFolder) => void;
+  onSelect: (fund: FundWithFolderAndBudget) => void;
 };
 
 function FundRow({ fund, isDark, isSelected, onSelect }: FundRowProps) {
