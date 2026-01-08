@@ -14,9 +14,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import FadingEdge, { useOverflowFadeEdge } from "@/components/fading-edge";
 import { ScalePressable } from "@/components/scale-pressable";
 import { useThemeColor } from "@/components/theme-provider";
-import { IconSymbol } from "@/components/ui/icon-symbol";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
+import ClockRewind from "@/icons/clock-rewind";
 import FolderDuo from "@/icons/folder-duo";
 import { fundWithMeta } from "@/lib/fund";
 import { useRecentFundsStore } from "@/stores/recent-funds";
@@ -291,7 +291,7 @@ function RecentsHeader() {
 
   return (
     <StyledLeanView className="flex-row items-center gap-2 px-6 py-2">
-      <IconSymbol color={mutedColor} name="clock.arrow.circlepath" size={14} />
+      <ClockRewind color={mutedColor} size={16} />
       <StyledLeanText
         className="font-satoshi-medium text-foreground-muted text-sm"
         ellipsizeMode="tail"
