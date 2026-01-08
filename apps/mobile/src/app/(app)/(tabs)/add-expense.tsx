@@ -1,6 +1,7 @@
+import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { TextInput } from "react-native";
 import { Amount, useAmount } from "@/components/add-expense/amount";
 import { FundPickerSheet } from "@/components/add-expense/fund-picker-sheet";
@@ -15,26 +16,17 @@ import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanView, StyledSafeAreaView } from "@/config/interop";
 import { useSubmitTransaction } from "@/hooks/use-create-transaction";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
-import { AddExpenseProvider, useAddExpenseStore } from "@/lib/add-expense";
+import { useAddExpenseStore } from "@/lib/add-expense";
 import { cn } from "@/utils/cn";
 
-// Wrapper component that provides the scoped store
-export default function AddExpenseScreen() {
-  return (
-    <AddExpenseProvider>
-      <AddExpense />
-    </AddExpenseProvider>
-  );
-}
-
-function AddExpense() {
+export default function AddExpense() {
   const router = useRouter();
   const mutedForegroundColor = useThemeColor("foreground-muted");
   const foregroundColor = useThemeColor("foreground");
 
-  // Bottom sheet open state (controlled, not imperative)
-  const [isFundPickerOpen, setIsFundPickerOpen] = useState(false);
-  const [isStorePickerOpen, setIsStorePickerOpen] = useState(false);
+  // Bottom sheet refs
+  const fundSheetRef = useRef<BottomSheetModal>(null);
+  const storeSheetRef = useRef<BottomSheetModal>(null);
 
   // Amount state (kept separate as specified)
   const { amount, handleKeyPress, reset: resetAmount } = useAmount();
@@ -71,12 +63,12 @@ function AddExpense() {
 
   const openFundPicker = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setIsFundPickerOpen(true);
+    fundSheetRef.current?.present();
   }, []);
 
   const openStorePicker = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setIsStorePickerOpen(true);
+    storeSheetRef.current?.present();
   }, []);
 
   return (
@@ -143,15 +135,9 @@ function AddExpense() {
         </StyledLeanView>
       </StyledSafeAreaView>
 
-      {/* Bottom Sheets - controlled via state */}
-      <FundPickerSheet
-        isOpen={isFundPickerOpen}
-        onClose={() => setIsFundPickerOpen(false)}
-      />
-      <StorePickerSheet
-        isOpen={isStorePickerOpen}
-        onClose={() => setIsStorePickerOpen(false)}
-      />
+      {/* Bottom Sheets */}
+      <FundPickerSheet ref={fundSheetRef} />
+      <StorePickerSheet ref={storeSheetRef} />
     </AnimatedTabScreen>
   );
 }

@@ -1,12 +1,14 @@
-import BottomSheet, {
+import {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
+  BottomSheetModal,
   BottomSheetScrollView,
   BottomSheetTextInput,
+  useBottomSheet,
 } from "@gorhom/bottom-sheet";
 import type { FundWithFolderAndBudget } from "api";
 import * as Haptics from "expo-haptics";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScalePressable } from "@/components/scale-pressable";
@@ -33,8 +35,7 @@ import { toCurrencyShort } from "@/utils/format";
 import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 
 type FundPickerSheetProps = {
-  isOpen: boolean;
-  onClose: () => void;
+  ref: React.Ref<BottomSheetModal>;
 };
 
 type ListItem =
@@ -118,7 +119,7 @@ function buildListItems(
   return listItems;
 }
 
-export function FundPickerSheet({ isOpen, onClose }: FundPickerSheetProps) {
+export function FundPickerSheet({ ref }: FundPickerSheetProps) {
   const handleIndicatorColor = useThemeColor("foreground-muted");
   const backgroundColor = useThemeColor("background");
   const iconColor = useThemeColor("foreground-muted");
@@ -143,18 +144,8 @@ export function FundPickerSheet({ isOpen, onClose }: FundPickerSheetProps) {
     return buildListItems(allFunds, recentFunds);
   }, [allFunds, recentFundIds]);
 
-  // Handle sheet index change (detect close gesture)
-  const handleSheetChange = useCallback(
-    (index: number) => {
-      if (index === -1) {
-        onClose();
-      }
-    },
-    [onClose]
-  );
-
   return (
-    <BottomSheet
+    <BottomSheetModal
       backdropComponent={Backdrop}
       backgroundStyle={{ backgroundColor }}
       enableDynamicSizing={false}
@@ -163,8 +154,7 @@ export function FundPickerSheet({ isOpen, onClose }: FundPickerSheetProps) {
         backgroundColor: handleIndicatorColor,
         width: 80,
       }}
-      index={isOpen ? 0 : -1}
-      onChange={handleSheetChange}
+      ref={ref}
       snapPoints={["50%", "80%"]}
     >
       <Content
@@ -172,9 +162,8 @@ export function FundPickerSheet({ isOpen, onClose }: FundPickerSheetProps) {
         iconColor={iconColor}
         initialItems={initialItems}
         isDark={isDark}
-        onClose={onClose}
       />
-    </BottomSheet>
+    </BottomSheetModal>
   );
 }
 
@@ -194,18 +183,12 @@ type ContentProps = {
   initialItems: ListItem[];
   isDark: boolean;
   iconColor: string;
-  onClose: () => void;
 };
 
-function Content({
-  allFunds,
-  initialItems,
-  isDark,
-  iconColor,
-  onClose,
-}: ContentProps) {
+function Content({ allFunds, initialItems, isDark, iconColor }: ContentProps) {
   const [search, setSearch] = useState("");
   const insets = useSafeAreaInsets();
+  const { close } = useBottomSheet();
 
   // Get state from store
   const selectedFundId = useAddExpenseStore((s) => s.selectedFundId);
@@ -237,7 +220,7 @@ function Content({
   const handleSelect = (fund: FundWithFolderAndBudget) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedFundId(fund.id);
-    onClose();
+    close();
   };
 
   const showEmptyState = items.length === 0 && search.trim();

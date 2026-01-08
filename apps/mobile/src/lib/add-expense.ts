@@ -1,7 +1,5 @@
 import type { StorePick } from "api";
-import { createStore } from "zustand";
-
-import { createScopedStore } from "@/utils/create-scoped-store";
+import { create } from "zustand";
 
 // State shape
 type AddExpenseState = {
@@ -24,41 +22,35 @@ type AddExpenseActions = {
 
 type AddExpenseStore = AddExpenseState & AddExpenseActions;
 
-const initialState: AddExpenseState = {
+const getInitialState = (): AddExpenseState => ({
   date: new Date(),
   selectedFundId: null,
   selectedStore: null,
   note: "",
-};
+});
 
-export const {
-  Provider: AddExpenseProvider,
-  useStore: useAddExpenseStore,
-  Context: AddExpenseContext,
-} = createScopedStore(() =>
-  createStore<AddExpenseStore>((set, get) => ({
-    ...initialState,
+export const useAddExpenseStore = create<AddExpenseStore>((set, get) => ({
+  ...getInitialState(),
 
-    setDate: (date) => set({ date }),
-    setSelectedFundId: (selectedFundId) => set({ selectedFundId }),
-    setSelectedStore: (selectedStore) => set({ selectedStore }),
-    setNote: (note) => set({ note }),
+  setDate: (date) => set({ date }),
+  setSelectedFundId: (selectedFundId) => set({ selectedFundId }),
+  setSelectedStore: (selectedStore) => set({ selectedStore }),
+  setNote: (note) => set({ note }),
 
-    selectStoreWithFundDefault: (store) => {
-      const { selectedFundId } = get();
-      set({
-        selectedStore: store,
-        // Auto-fill fund only if store has lastSelectedFundId and no fund is currently selected
-        selectedFundId:
-          store.lastSelectedFundId && !selectedFundId
-            ? store.lastSelectedFundId
-            : selectedFundId,
-      });
-    },
+  selectStoreWithFundDefault: (store) => {
+    const { selectedFundId } = get();
+    set({
+      selectedStore: store,
+      // Auto-fill fund only if store has lastSelectedFundId and no fund is currently selected
+      selectedFundId:
+        store.lastSelectedFundId && !selectedFundId
+          ? store.lastSelectedFundId
+          : selectedFundId,
+    });
+  },
 
-    reset: () => set({ ...initialState, date: new Date() }),
-  }))
-);
+  reset: () => set({ ...getInitialState(), date: new Date() }),
+}));
 
 /**
  * Selector for checking if form can be submitted.

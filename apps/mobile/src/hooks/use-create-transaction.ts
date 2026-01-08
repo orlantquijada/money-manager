@@ -14,7 +14,6 @@ export function useCreateTransactionMutation() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const addRecentFund = useRecentFundsStore((s) => s.addRecentFund);
-  const store = useAddExpenseStore();
 
   return useMutation(
     trpc.transaction.create.mutationOptions({
@@ -29,7 +28,7 @@ export function useCreateTransactionMutation() {
         queryClient.invalidateQueries();
 
         // Reset form state
-        store.getState().reset();
+        useAddExpenseStore.getState().reset();
 
         // Navigate back to dashboard
         router.navigate({ pathname: "/(app)/(tabs)/(dashboard)" });
