@@ -1,0 +1,185 @@
+{
+  "feature": "Transactions Tab with Stats",
+  "version": "1.0",
+  "created": "2026-01-09",
+  "items": [
+    {
+      "id": "TXN-001",
+      "category": "API",
+      "description": "transaction.stats endpoint returns spending aggregates by fund for selected period",
+      "steps_to_verify": [
+        "Call transaction.stats with period='month' returns totalSpent as number",
+        "byFund array contains fundId, fundName, amount, percentage for each fund",
+        "Percentages sum to 100 (within rounding tolerance)",
+        "Results sorted by amount descending",
+        "period='week' returns last 7 days data",
+        "period='3mo' returns last 3 calendar months",
+        "period='all' returns all-time data"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-002",
+      "category": "API",
+      "description": "transaction.list endpoint returns paginated transactions for selected period",
+      "steps_to_verify": [
+        "Returns transactions array with id, amount, date, note, fund.name, store.name",
+        "Accepts cursor param for pagination",
+        "Default limit is 50, respects custom limit",
+        "Returns nextCursor when more pages exist",
+        "Returns null/undefined nextCursor on last page",
+        "Transactions sorted by date descending",
+        "Period filter constrains results correctly"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-003",
+      "category": "UI Component",
+      "description": "Period filter chips allow single-selection between Week/Month/3mo/All",
+      "steps_to_verify": [
+        "4 chips displayed horizontally: Week, Month, 3 mo, All",
+        "Month selected by default on mount",
+        "Only one chip can be active at a time",
+        "Active chip has filled background, inactive has outline",
+        "Tapping chip triggers onChange callback with period value",
+        "No amounts shown on chips"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-004",
+      "category": "UI Component",
+      "description": "Pie chart displays spending distribution by fund with top 5 + Other grouping",
+      "steps_to_verify": [
+        "Pie chart renders with victory-native",
+        "Shows max 5 individual fund slices",
+        "Funds beyond top 5 grouped into 'Other' slice",
+        "If <=5 funds, no 'Other' slice shown",
+        "Uses monochromatic accent color palette (6 shades)",
+        "Tap slice highlights it and shows tooltip",
+        "Tooltip shows fund name and exact amount",
+        "Tap outside dismisses tooltip"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-005",
+      "category": "UI Component",
+      "description": "Stats header displays pie chart (60%) and quick stats panel (40%)",
+      "steps_to_verify": [
+        "Layout is side-by-side with 60/40 split",
+        "Left side contains pie chart",
+        "Right side shows total spent amount (large, bold)",
+        "Right side shows top 3 funds with amounts",
+        "If <3 funds have spending, shows only those that exist",
+        "Equal amounts use alphabetical fund name as tiebreaker",
+        "Header scrolls away with content (not sticky)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-006",
+      "category": "UI Component",
+      "description": "Transaction list shows date-grouped transactions with daily totals",
+      "steps_to_verify": [
+        "Transactions grouped by date in SectionList",
+        "Section headers show 'Today', 'Yesterday', or formatted date",
+        "Daily total displayed on right side of section header",
+        "Transaction row shows store name (or fund name fallback)",
+        "Transaction row shows formatted amount on right",
+        "Rows have no tap action (read-only)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-007",
+      "category": "UI Component",
+      "description": "Load More button handles pagination",
+      "steps_to_verify": [
+        "Load More button appears at bottom of list when nextCursor exists",
+        "Tapping button fetches next page",
+        "Button shows loading state while fetching",
+        "New transactions append to existing list",
+        "Button hidden when no more pages (nextCursor null)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-008",
+      "category": "UI State",
+      "description": "Empty state for new users (zero transactions ever)",
+      "steps_to_verify": [
+        "Stats header hidden entirely",
+        "Educational message displayed with icon",
+        "CTA button 'Go to Add Expense' visible",
+        "CTA navigates to Add Expense tab"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-009",
+      "category": "UI State",
+      "description": "Empty state for period with no transactions",
+      "steps_to_verify": [
+        "Stats header shows with zeroed/empty chart",
+        "Total displays as 0",
+        "Period-specific message in list area (e.g., 'No spending this week')",
+        "Suggestion to try different period shown"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-010",
+      "category": "UI State",
+      "description": "Loading states use skeleton placeholders and optimistic caching",
+      "steps_to_verify": [
+        "Initial load shows skeleton for stats header",
+        "Initial load shows spinner in list area",
+        "Cached data shown immediately on tab refocus",
+        "Fresh data fetched in background",
+        "UI updates when new data arrives"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-011",
+      "category": "Integration",
+      "description": "Period changes reset list and refetch all data",
+      "steps_to_verify": [
+        "Changing period clears current transaction list",
+        "Stats refetched with new period",
+        "Transaction list refetched with new period",
+        "Pagination resets (cursor cleared)",
+        "No chart animation (instant swap)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-012",
+      "category": "Integration",
+      "description": "Full tab assembly with header, chips, stats, and list",
+      "steps_to_verify": [
+        "Tab has standard header with 'Transactions' title",
+        "Period chips below header",
+        "Stats header below chips",
+        "Transaction list fills remaining space",
+        "All components respond to period selection",
+        "Tab accessible from bottom navigation"
+      ],
+      "passes": false
+    },
+    {
+      "id": "TXN-013",
+      "category": "Styling",
+      "description": "Chart colors use configurable monochromatic accent palette",
+      "steps_to_verify": [
+        "chart-colors.ts exports 6 shades derived from accent",
+        "Shades range from lightest to darkest",
+        "Colors used consistently across pie slices",
+        "Easy to change base color via single constant"
+      ],
+      "passes": false
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+# Transactions Tab Implementation Progress
+
+## Quick Reference
+- Spec: docs/specs/transactions-tab.md
+- PRD: docs/specs/transactions-tab-prd.json
+- API: packages/api/src/router/transactions.ts
+- Tab: apps/mobile/src/app/(app)/(tabs)/transactions.tsx
+- Components: apps/mobile/src/components/stats/
+
+---
+
+## Progress Log
+
+### 2026-01-09 - Initial Setup
+
+[TXN-001] PARTIAL - transaction.stats endpoint
+- Added periodSchema, getDateRangeForPeriod helper
+- Stats endpoint returns totalSpent + byFund with percentages
+- Files: packages/api/src/router/transactions.ts
+- TODO: verify all period filters work correctly
+- Note: funds import needed for innerJoin on fund names
+
+[TXN-002] DONE - transaction.list endpoint
+- Cursor-based pagination with date+id for deterministic ordering
+- Returns transactions with fund.name and store.name
+- Supports period filtering via getDateRangeForPeriod
+- Default limit 50, max 100
+- nextCursor returned when more pages exist
+- Files: packages/api/src/router/transactions.ts
+
+---
+
+## Next Steps
+- TXN-003: Create period-chips.tsx component
+- TXN-013: Create chart-colors.ts with accent palette
+- TXN-004: Pie chart with victory-native
+
+## Blockers
+(none)
+
+## Key Decisions
+- victory-native for charts (customizable, built on svg)
+- monochromatic accent palette (shadcn-style)
+- load more button (not infinite scroll)
+- no search in V1
+- rows read-only in V1
