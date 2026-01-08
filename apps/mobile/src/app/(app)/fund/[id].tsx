@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
-import { GlassCloseButton } from "@/components/glass-button-icon";
+import { GlassCloseButton } from "@/components/glass-button";
 import { trpc } from "@/utils/api";
 
 export default function FundDetailScreen() {

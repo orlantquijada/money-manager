@@ -5,7 +5,7 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { Check, ChevronLeft, ChevronRight } from "@/icons";
-import GlassButton from "../glass-button-icon";
+import GlassButton from "../glass-button";
 import { useThemeColor } from "../theme-provider";
 
 type ButtonVariant = "text" | "icon-only";

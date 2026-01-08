@@ -1,5 +1,6 @@
 import { GlassView, type GlassViewProps } from "expo-glass-effect";
 import { router } from "expo-router";
+import type { SymbolViewProps } from "expo-symbols";
 import type { ReactNode } from "react";
 import {
   Pressable,
@@ -8,6 +9,7 @@ import {
   type ViewStyle,
 } from "react-native";
 import { useThemeColor } from "@/components/theme-provider";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Cross } from "@/icons";
 import { cn } from "@/utils/cn";
 
@@ -126,6 +128,38 @@ export function GlassCloseButton({
       onPress={handlePress}
     >
       <Cross color={iconColor} size={iconSize} />
+    </GlassButton>
+  );
+}
+
+type GlassIconButtonProps = Omit<GlassButtonProps, "children" | "variant"> & {
+  icon: SymbolViewProps["name"];
+  iconSize?: number;
+};
+
+/**
+ * A glass button with an SF Symbol icon.
+ * Uses expo-symbols (SymbolView) for the icon.
+ */
+export function GlassIconButton({
+  icon,
+  iconSize = 18,
+  onPress,
+  size = "md",
+  ...props
+}: GlassIconButtonProps) {
+  const tintColor = useThemeColor("muted");
+  const iconColor = useThemeColor("muted-foreground");
+
+  return (
+    <GlassButton
+      onPress={onPress}
+      size={size}
+      tintColor={tintColor}
+      variant="icon"
+      {...props}
+    >
+      <IconSymbol color={iconColor} name={icon} size={iconSize} />
     </GlassButton>
   );
 }

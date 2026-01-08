@@ -205,3 +205,4 @@ import Animated, {
 | Uniform animations (same fade on everything) | Orchestrated reveals with meaningful delays and spring physics |
 | Timid color usage (muted, evenly-distributed) | Bold primary elements, sharp accent highlights, clear contrast |
 | Cookie-cutter component layouts | Ask what makes THIS screen unique |
+| SwiftUI `Host`/`HStack` with `glassEffect` outside ContextMenu | Use `GlassButton` + `IconSymbol` from existing components |

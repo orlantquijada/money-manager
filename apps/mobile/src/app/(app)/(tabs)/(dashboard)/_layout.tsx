@@ -11,7 +11,7 @@ import { type PressableProps, View } from "react-native";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
 import TotalSpent from "@/components/dashboard/total-spent";
-import GlassButton from "@/components/glass-button-icon";
+import GlassButton from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
 import { useThemeColor } from "@/components/theme-provider";
 import {

@@ -84,10 +84,7 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
   };
 
   return (
-    <Host
-      matchContents
-      style={{ flex: 1, marginLeft: -BTN_CLIP_PADDING, ...style }}
-    >
+    <Host matchContents style={{ marginLeft: -BTN_CLIP_PADDING, ...style }}>
       <BottomSheet isOpened={isOpened} onIsOpenedChange={handleIsOpenedChange}>
         <DateTimePicker
           color={foregroundColor}

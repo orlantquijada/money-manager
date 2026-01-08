@@ -1,5 +1,5 @@
 {
-  "currentFocus": "Add expense flow",
+  "currentFocus": "Transactions tab",
   "lastUpdated": "2026-01-08",
   "phases": {
     "phase1_core": {
@@ -8,7 +8,7 @@
       "tasks": {
         "authentication": "done",
         "user_provisioning": "todo",
-        "add_expense_flow": "in_progress",
+        "add_expense_flow": "done",
         "transactions_tab": "todo",
         "polish_bug_fixes": "todo"
       }

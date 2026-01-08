@@ -9,7 +9,7 @@ import ChooseFolder from "@/components/create-fund/choose-folder";
 import FundInfo from "@/components/create-fund/fund-info";
 import NonNegotiableInfo from "@/components/create-fund/non-negotiable-info";
 import SpendingInfo from "@/components/create-fund/spending-info";
-import { GlassCloseButton } from "@/components/glass-button-icon";
+import { GlassCloseButton } from "@/components/glass-button";
 import {
   CreateFundProvider,
   type CreateFundScreens,

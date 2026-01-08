@@ -7,7 +7,7 @@ import { Alert, ScrollView } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import CreateFooter from "@/components/create-fund/footer";
 import FadingEdge, { useOverflowFadeEdge } from "@/components/fading-edge";
-import { GlassCloseButton } from "@/components/glass-button-icon";
+import { GlassCloseButton } from "@/components/glass-button";
 import Presence from "@/components/presence";
 import TextInput from "@/components/text-input";
 import { useThemeColor } from "@/components/theme-provider";

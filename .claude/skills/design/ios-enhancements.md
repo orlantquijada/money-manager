@@ -170,3 +170,42 @@ import { Switch } from "@expo/ui/swift-ui";
 - Select from list → Use native `Picker`
 - Toggle states → Use native `Switch`
 - Important buttons → Use `Button` with `glassProminent` variant
+
+### ⚠️ IMPORTANT: SwiftUI Component Limitations
+
+**SwiftUI components with `glassEffect` modifier (`Host`, `HStack`, `VStack`, `Image`) should ONLY be used inside `ContextMenu.Trigger`, NOT for general UI.**
+
+These components can cause rendering issues when used outside of ContextMenu:
+
+```tsx
+// ❌ DON'T: Using SwiftUI components for regular glass buttons
+<Host matchContents>
+  <HStack modifiers={[frame({ height: 40 }), glassEffect({ ... })]}>
+    <Image systemName="plus" />
+  </HStack>
+</Host>
+
+// ✅ DO: Use GlassButton from @/components/glass-button-icon
+import GlassButton, { GlassIconButton } from "@/components/glass-button-icon";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+
+// For icon-only buttons with SF Symbols
+<GlassIconButton icon="arrow.clockwise" onPress={handleRefresh} />
+
+// For buttons with text/mixed content
+<GlassButton variant="default" tintColor={tintColor} onPress={handlePress}>
+  <IconSymbol name="folder" color={iconColor} size={16} />
+  <StyledLeanText>Label</StyledLeanText>
+</GlassButton>
+
+// For icon-only circular buttons
+<GlassButton variant="icon" onPress={handlePress}>
+  <IconSymbol name="arrow.right" color={iconColor} size={20} />
+</GlassButton>
+```
+
+**Glass Button API**:
+- `variant="icon"`: Circular button for icons (uses `size` for diameter: "sm", "md", "lg")
+- `variant="default"`: Pill-shaped button that auto-sizes to content
+- `tintColor`: Glass tint color (use `useThemeColor("muted")`)
+- Use `IconSymbol` from `@/components/ui/icon-symbol` for SF Symbols
