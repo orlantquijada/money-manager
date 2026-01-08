@@ -35,12 +35,19 @@
 - Exports Period type for shared use
 - Files: apps/mobile/src/components/stats/period-chips.tsx
 
+[TXN-013] DONE - chart-colors.ts accent palette
+- 6 monochromatic shades from Radix violet scale
+- Ordered darkest to lightest (index 0 = top fund, 5 = Other)
+- CHART_ACCENT constant for easy theme changes
+- getChartColor helper for safe index access
+- Files: apps/mobile/src/lib/chart-colors.ts
+
 ---
 
 ## Next Steps
-- TXN-013: Create chart-colors.ts with accent palette
 - TXN-004: Pie chart with victory-native
 - TXN-005: Stats header layout (60/40 split)
+- TXN-006: Transaction list with date grouping
 
 ## Blockers
 (none)
