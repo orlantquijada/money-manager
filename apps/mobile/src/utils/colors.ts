@@ -1,5 +1,6 @@
 // Re-export Radix colors directly - these are all hex values
 export {
+  amber,
   amberDark,
   lime,
   limeDark,

@@ -16,6 +16,7 @@ import { GlassCloseButton } from "@/components/glass-button";
 import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanView, StyledSafeAreaView } from "@/config/interop";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
+import { useRecentFundsStore } from "@/stores/recent-funds";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
 
@@ -35,6 +36,7 @@ type Store = {
 export default function AddExpense() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const addRecentFund = useRecentFundsStore((s) => s.addRecentFund);
   const mutedForegroundColor = useThemeColor("foreground-muted");
   const foregroundColor = useThemeColor("foreground");
 
@@ -72,7 +74,8 @@ export default function AddExpense() {
   // Transaction mutation
   const createTransaction = useMutation(
     trpc.transaction.create.mutationOptions({
-      onSuccess: () => {
+      onSuccess: (_data, variables) => {
+        addRecentFund(variables.fundId);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         queryClient.invalidateQueries();
         router.replace({ pathname: "/(app)/(tabs)/(dashboard)" });
@@ -84,7 +87,7 @@ export default function AddExpense() {
 
   // Handlers
   const handleCancel = useCallback(() => {
-    router.replace({ pathname: "/(app)/(tabs)/(dashboard)" });
+    router.navigate("/(app)/(tabs)/(dashboard)");
   }, [router]);
 
   const handleSubmit = useCallback(() => {
