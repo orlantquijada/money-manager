@@ -2,11 +2,10 @@ import {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
   BottomSheetModal,
+  BottomSheetScrollView,
   BottomSheetTextInput,
   useBottomSheet,
-  useBottomSheetScrollableCreator,
 } from "@gorhom/bottom-sheet";
-import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 import { type Ref, useMemo, useState } from "react";
@@ -44,6 +43,9 @@ export function StorePickerSheet({
   const handleIndicatorColor = useThemeColor("foreground-muted");
   const backgroundColor = useThemeColor("background");
 
+  // Pre-fetch stores data before sheet opens
+  const { data: stores } = useQuery(trpc.store.list.queryOptions());
+
   return (
     <BottomSheetModal
       backdropComponent={Backdrop}
@@ -58,7 +60,11 @@ export function StorePickerSheet({
       ref={ref}
       snapPoints={["50%", "80%"]}
     >
-      <Content onSelect={onSelect} selectedStore={selectedStore} />
+      <Content
+        onSelect={onSelect}
+        selectedStore={selectedStore}
+        stores={stores ?? []}
+      />
     </BottomSheetModal>
   );
 }
@@ -74,17 +80,15 @@ function Backdrop(props: BottomSheetBackdropProps) {
   );
 }
 
-function Content({
-  selectedStore,
-  onSelect,
-}: {
+type ContentProps = {
   selectedStore: Store | null;
   onSelect: (store: Store) => void;
-}) {
+  stores: Store[];
+};
+
+function Content({ selectedStore, onSelect, stores }: ContentProps) {
   const { close } = useBottomSheet();
-  const { data: stores } = useQuery(trpc.store.list.queryOptions());
   const [search, setSearch] = useState("");
-  const BottomSheetScrollable = useBottomSheetScrollableCreator();
   const insets = useSafeAreaInsets();
 
   const foregroundColor = useThemeColor("foreground");
@@ -94,7 +98,6 @@ function Content({
   const { fadeProps, handleScroll } = useOverflowFadeEdge();
 
   const filteredStores = useMemo(() => {
-    if (!stores) return [];
     if (!search.trim()) return stores;
     return stores.filter((s) =>
       s.name.toLowerCase().includes(search.toLowerCase())
@@ -102,7 +105,7 @@ function Content({
   }, [stores, search]);
 
   const exactMatch = useMemo(() => {
-    if (!(search.trim() && stores)) return false;
+    if (!search.trim()) return false;
     return stores.some(
       (s) => s.name.toLowerCase() === search.trim().toLowerCase()
     );
@@ -173,21 +176,20 @@ function Content({
       {/* Store List */}
       {filteredStores.length > 0 ? (
         <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
-          <FlashList
+          <BottomSheetScrollView
             contentContainerStyle={{ paddingBottom: insets.bottom }}
-            data={filteredStores}
-            keyExtractor={(item: Store) => `store-${item.id}`}
             onScroll={handleScroll}
-            renderItem={({ item }: { item: Store }) => (
-              <StoreRow
-                isSelected={selectedStore?.id === item.id}
-                onPress={() => handleSelect(item)}
-                store={item}
-              />
-            )}
-            renderScrollComponent={BottomSheetScrollable}
             scrollEventThrottle={16}
-          />
+          >
+            {filteredStores.map((store) => (
+              <StoreRow
+                isSelected={selectedStore?.id === store.id}
+                key={`store-${store.id}`}
+                onPress={() => handleSelect(store)}
+                store={store}
+              />
+            ))}
+          </BottomSheetScrollView>
         </FadingEdge>
       ) : (
         !showAddNew && (

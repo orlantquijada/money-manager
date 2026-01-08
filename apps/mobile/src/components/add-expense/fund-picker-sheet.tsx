@@ -2,16 +2,14 @@ import {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
   BottomSheetModal,
+  BottomSheetScrollView,
   BottomSheetTextInput,
   useBottomSheet,
-  useBottomSheetScrollableCreator,
 } from "@gorhom/bottom-sheet";
-import { FlashList } from "@shopify/flash-list";
 import * as Haptics from "expo-haptics";
 import { type Ref, useMemo, useState } from "react";
 import { useColorScheme } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import FadingEdge, { useOverflowFadeEdge } from "@/components/fading-edge";
 import { ScalePressable } from "@/components/scale-pressable";
 import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
@@ -31,6 +29,7 @@ import {
   redDark,
 } from "@/utils/colors";
 import { toCurrencyShort } from "@/utils/format";
+import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 
 type FundWithFolder = {
   id: number;
@@ -47,6 +46,87 @@ type FundPickerSheetProps = {
   onSelect: (fund: FundWithFolder) => void;
 };
 
+type ListItem =
+  | { type: "recents-header" }
+  | { type: "recent-fund"; fund: FundWithFolder }
+  | { type: "folder-header"; folderName: string; folderId: number }
+  | { type: "fund"; fund: FundWithFolder };
+
+// Helper: Transform folders data into flat fund list with budget info
+function transformFoldersToFunds(
+  foldersWithFunds: ReturnType<typeof useFoldersWithFunds>["data"]
+): FundWithFolder[] {
+  if (!foldersWithFunds) return [];
+  return foldersWithFunds.flatMap((folder) =>
+    folder.funds.map((fund) => {
+      const meta = fundWithMeta(fund);
+      return {
+        id: fund.id,
+        name: fund.name,
+        folderId: folder.id,
+        folderName: folder.name,
+        amountLeft: meta.amountLeft,
+        progress: meta.progress,
+      };
+    })
+  );
+}
+
+// Helper: Group funds by folder
+function groupFundsByFolder(funds: FundWithFolder[]) {
+  const folderMap = new Map<
+    number,
+    { name: string; id: number; funds: FundWithFolder[] }
+  >();
+  for (const fund of funds) {
+    const existing = folderMap.get(fund.folderId);
+    if (existing) {
+      existing.funds.push(fund);
+    } else {
+      folderMap.set(fund.folderId, {
+        name: fund.folderName,
+        id: fund.folderId,
+        funds: [fund],
+      });
+    }
+  }
+  return folderMap;
+}
+
+// Helper: Build list items from funds (with optional recents section)
+function buildListItems(
+  funds: FundWithFolder[],
+  recentFunds?: FundWithFolder[]
+): ListItem[] {
+  const listItems: ListItem[] = [];
+
+  // Add "Recently Used" section if provided
+  if (recentFunds && recentFunds.length > 0) {
+    listItems.push({ type: "recents-header" });
+    listItems.push(
+      ...recentFunds.map((fund) => ({
+        type: "recent-fund" as const,
+        fund,
+      }))
+    );
+  }
+
+  // Group funds by folder and add sections
+  const folderMap = groupFundsByFolder(funds);
+  for (const folder of folderMap.values()) {
+    listItems.push({
+      type: "folder-header",
+      folderName: folder.name,
+      folderId: folder.id,
+    });
+    listItems.push(
+      ...folder.funds.map((fund) => ({ type: "fund" as const, fund }))
+    );
+  }
+
+  return listItems;
+}
+
 export function FundPickerSheet({
   ref,
   selectedFundId,
@@ -54,6 +134,27 @@ export function FundPickerSheet({
 }: FundPickerSheetProps) {
   const handleIndicatorColor = useThemeColor("foreground-muted");
   const backgroundColor = useThemeColor("background");
+  const iconColor = useThemeColor("foreground-muted");
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
+  // Pre-compute data BEFORE sheet opens (this runs in the parent, not during animation)
+  const { data: foldersWithFunds } = useFoldersWithFunds();
+  const recentFundIds = useRecentFundsStore((s) => s.recentFundIds);
+
+  const allFunds = useMemo(
+    () => transformFoldersToFunds(foldersWithFunds),
+    [foldersWithFunds]
+  );
+
+  // Pre-compute initial items (when search is empty) before sheet opens
+  const initialItems = useMemo(() => {
+    const recentFunds = recentFundIds
+      .map((id) => allFunds.find((f) => f.id === id))
+      .filter((f): f is FundWithFolder => f !== undefined);
+
+    return buildListItems(allFunds, recentFunds);
+  }, [allFunds, recentFundIds]);
 
   return (
     <BottomSheetModal
@@ -69,7 +170,14 @@ export function FundPickerSheet({
       ref={ref}
       snapPoints={["50%", "80%"]}
     >
-      <Content onSelect={onSelect} selectedFundId={selectedFundId} />
+      <Content
+        allFunds={allFunds}
+        iconColor={iconColor}
+        initialItems={initialItems}
+        isDark={isDark}
+        onSelect={onSelect}
+        selectedFundId={selectedFundId}
+      />
     </BottomSheetModal>
   );
 }
@@ -85,108 +193,49 @@ function Backdrop(props: BottomSheetBackdropProps) {
   );
 }
 
-type ListItem =
-  | { type: "recents-header" }
-  | { type: "recent-fund"; fund: FundWithFolder }
-  | { type: "folder-header"; folderName: string; folderId: number }
-  | { type: "fund"; fund: FundWithFolder };
+type ContentProps = {
+  selectedFundId: number | null;
+  onSelect: (fund: FundWithFolder) => void;
+  allFunds: FundWithFolder[];
+  initialItems: ListItem[];
+  isDark: boolean;
+  iconColor: string;
+};
 
 function Content({
   selectedFundId,
   onSelect,
-}: {
-  selectedFundId: number | null;
-  onSelect: (fund: FundWithFolder) => void;
-}) {
+  allFunds,
+  initialItems,
+  isDark,
+  iconColor,
+}: ContentProps) {
   const { close } = useBottomSheet();
-  const { data: foldersWithFunds } = useFoldersWithFunds();
-  const recentFundIds = useRecentFundsStore((s) => s.recentFundIds);
   const [search, setSearch] = useState("");
-  const BottomSheetScrollable = useBottomSheetScrollableCreator();
   const insets = useSafeAreaInsets();
 
+  const { fadeProps, handleScroll } = useOverflowFadeEdge();
+  const backgroundColor = useThemeColor("background");
   const foregroundColor = useThemeColor("foreground");
   const mutedColor = useThemeColor("foreground-muted");
-  const backgroundColor = useThemeColor("background");
 
-  const { fadeProps, handleScroll } = useOverflowFadeEdge();
-
-  // Transform folders data into flat fund list with budget info
-  const allFunds = useMemo(() => {
-    if (!foldersWithFunds) return [];
-    return foldersWithFunds.flatMap((folder) =>
-      folder.funds.map((fund) => {
-        const meta = fundWithMeta(fund);
-        return {
-          id: fund.id,
-          name: fund.name,
-          folderId: folder.id,
-          folderName: folder.name,
-          amountLeft: meta.amountLeft,
-          progress: meta.progress,
-        };
-      })
-    );
-  }, [foldersWithFunds]);
-
-  // Build list items with sections
+  // Use pre-computed items when not searching, only compute when filtering
   const items = useMemo(() => {
     const searchLower = search.toLowerCase().trim();
-    const filteredFunds = searchLower
-      ? allFunds.filter((f) => f.name.toLowerCase().includes(searchLower))
-      : allFunds;
 
-    const listItems: ListItem[] = [];
-
-    // Add "Recently Used" section (only when not searching)
+    // When not searching, use pre-computed initial items
     if (!searchLower) {
-      const recentFunds = recentFundIds
-        .map((id) => allFunds.find((f) => f.id === id))
-        .filter((f): f is FundWithFolder => f !== undefined);
-
-      if (recentFunds.length > 0) {
-        listItems.push({ type: "recents-header" });
-        listItems.push(
-          ...recentFunds.map((fund) => ({
-            type: "recent-fund" as const,
-            fund,
-          }))
-        );
-      }
+      return initialItems;
     }
 
-    // Group filtered funds by folder
-    const folderMap = new Map<
-      number,
-      { name: string; id: number; funds: FundWithFolder[] }
-    >();
-    for (const fund of filteredFunds) {
-      const existing = folderMap.get(fund.folderId);
-      if (existing) {
-        existing.funds.push(fund);
-      } else {
-        folderMap.set(fund.folderId, {
-          name: fund.folderName,
-          id: fund.folderId,
-          funds: [fund],
-        });
-      }
-    }
+    // Only compute filtered items when actually searching
+    const filteredFunds = allFunds.filter((f) =>
+      f.name.toLowerCase().includes(searchLower)
+    );
 
-    // Add folder sections
-    for (const folder of folderMap.values()) {
-      listItems.push({
-        type: "folder-header",
-        folderName: folder.name,
-        folderId: folder.id,
-      });
-      listItems.push(
-        ...folder.funds.map((fund) => ({ type: "fund" as const, fund }))
-      );
-    }
-
-    return listItems;
-  }, [allFunds, search, recentFundIds]);
+    // No recents section when searching
+    return buildListItems(filteredFunds);
+  }, [search, initialItems, allFunds]);
 
   const handleSelect = (fund: FundWithFolder) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -229,69 +278,61 @@ function Content({
           </StyledLeanText>
         </StyledLeanView>
       ) : (
-        <FadingEdge
-          fadeColor={backgroundColor}
-          showStart={false}
-          {...fadeProps}
-        >
-          <FlashList
+        <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
+          <BottomSheetScrollView
             contentContainerStyle={{ paddingBottom: insets.bottom }}
-            data={items}
-            drawDistance={500}
-            extraData={selectedFundId}
-            getItemType={(item: ListItem) => item.type}
-            keyExtractor={(item: ListItem) => {
-              switch (item.type) {
-                case "recents-header":
-                  return "recents-header";
-                case "recent-fund":
-                  return `recent-${item.fund.id}`;
-                case "folder-header":
-                  return `folder-${item.folderId}`;
-                case "fund":
-                  return `fund-${item.fund.id}`;
-              }
-            }}
             onScroll={handleScroll}
-            renderItem={({ item }: { item: ListItem }) => {
+            scrollEventThrottle={16}
+          >
+            {items.map((item) => {
               switch (item.type) {
                 case "recents-header":
-                  return <RecentsHeader />;
+                  return (
+                    <RecentsHeader iconColor={iconColor} key="recents-header" />
+                  );
                 case "recent-fund":
                   return (
                     <FundRow
                       fund={item.fund}
+                      isDark={isDark}
                       isSelected={item.fund.id === selectedFundId}
-                      onPress={() => handleSelect(item.fund)}
+                      key={`recent-${item.fund.id}`}
+                      onSelect={handleSelect}
                     />
                   );
                 case "folder-header":
-                  return <FolderHeader name={item.folderName} />;
+                  return (
+                    <FolderHeader
+                      iconColor={iconColor}
+                      key={`folder-${item.folderId}`}
+                      name={item.folderName}
+                    />
+                  );
                 case "fund":
                   return (
                     <FundRow
                       fund={item.fund}
+                      isDark={isDark}
                       isSelected={item.fund.id === selectedFundId}
-                      onPress={() => handleSelect(item.fund)}
+                      key={`fund-${item.fund.id}`}
+                      onSelect={handleSelect}
                     />
                   );
+                default:
+                  return null;
               }
-            }}
-            renderScrollComponent={BottomSheetScrollable}
-            scrollEventThrottle={16}
-          />
+            })}
+          </BottomSheetScrollView>
         </FadingEdge>
       )}
     </StyledLeanView>
   );
 }
 
-function RecentsHeader() {
-  const mutedColor = useThemeColor("foreground-muted");
-
+function RecentsHeader({ iconColor }: { iconColor: string }) {
   return (
     <StyledLeanView className="flex-row items-center gap-2 px-6 py-2">
-      <ClockRewind color={mutedColor} size={16} />
+      <ClockRewind color={iconColor} size={16} />
       <StyledLeanText
         className="font-satoshi-medium text-foreground-muted text-sm"
         ellipsizeMode="tail"
@@ -303,9 +344,13 @@ function RecentsHeader() {
   );
 }
 
-function FolderHeader({ name }: { name: string }) {
-  const iconColor = useThemeColor("foreground-muted");
-
+function FolderHeader({
+  name,
+  iconColor,
+}: {
+  name: string;
+  iconColor: string;
+}) {
   return (
     <StyledLeanView className="mt-3 flex-row items-center gap-2 px-6 py-2">
       <FolderDuo color={iconColor} size={16} />
@@ -332,15 +377,17 @@ function getBudgetStatusColor(progress: number, isDark: boolean) {
 
 type FundRowProps = {
   fund: FundWithFolder;
+  isDark: boolean;
   isSelected: boolean;
-  onPress: () => void;
+  onSelect: (fund: FundWithFolder) => void;
 };
 
-function FundRow({ fund, isSelected, onPress }: FundRowProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-
+function FundRow({ fund, isDark, isSelected, onSelect }: FundRowProps) {
   const statusColor = getBudgetStatusColor(fund.progress, isDark);
+
+  const handlePress = () => {
+    onSelect(fund);
+  };
 
   return (
     <ScalePressable
@@ -348,7 +395,7 @@ function FundRow({ fund, isSelected, onPress }: FundRowProps) {
         "flex-row items-center justify-between px-6 py-3",
         isSelected ? "bg-mauve-4" : "bg-background"
       )}
-      onPress={onPress}
+      onPress={handlePress}
       opacityValue={0.7}
       scaleValue={0.98}
     >

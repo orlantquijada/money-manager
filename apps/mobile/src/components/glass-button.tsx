@@ -14,7 +14,7 @@ import { Cross } from "@/icons";
 import { cn } from "@/utils/cn";
 
 type GlassButtonVariant = "icon" | "default";
-type GlassButtonSize = "sm" | "md" | "lg";
+type GlassButtonSize = "sm" | "md" | "lg" | "xl";
 
 type GlassButtonProps = PressableProps & {
   /**
@@ -38,6 +38,7 @@ const iconSizeClasses: Record<GlassButtonSize, string> = {
   sm: "size-8",
   md: "size-10",
   lg: "size-12",
+  xl: "size-14",
 };
 
 const paddingBySize: Record<
@@ -47,6 +48,7 @@ const paddingBySize: Record<
   sm: { horizontal: 12, vertical: 6 },
   md: { horizontal: 16, vertical: 8 },
   lg: { horizontal: 20, vertical: 10 },
+  xl: { horizontal: 24, vertical: 12 },
 };
 
 export default function GlassButton({

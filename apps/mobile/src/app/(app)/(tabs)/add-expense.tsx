@@ -2,7 +2,7 @@ import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { TextInput } from "react-native";
 import { Amount, useAmount } from "@/components/add-expense/amount";
 import { FundPickerSheet } from "@/components/add-expense/fund-picker-sheet";
@@ -46,7 +46,7 @@ export default function AddExpense() {
 
   // Form state
   const [date, setDate] = useState(new Date());
-  const { amount, handleKeyPress } = useAmount();
+  const { amount, handleKeyPress, reset: resetAmount } = useAmount();
   const [selectedFundId, setSelectedFundId] = useState<number | null>(null);
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [note, setNote] = useState("");
@@ -78,19 +78,26 @@ export default function AddExpense() {
         addRecentFund(variables.fundId);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         queryClient.invalidateQueries();
-        router.replace({ pathname: "/(app)/(tabs)/(dashboard)" });
+
+        // Reset form state before navigating
+        resetAmount();
+        setSelectedFundId(null);
+        setSelectedStore(null);
+        setNote("");
+        setDate(new Date());
+
+        router.navigate({ pathname: "/(app)/(tabs)/(dashboard)" });
       },
     })
   );
 
   const canSubmit = selectedFundId !== null && amount > 0;
 
-  // Handlers
-  const handleCancel = useCallback(() => {
+  const handleCancel = () => {
     router.navigate("/(app)/(tabs)/(dashboard)");
-  }, [router]);
+  };
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = () => {
     if (!canSubmit) return;
 
     createTransaction.mutate({
@@ -100,40 +107,29 @@ export default function AddExpense() {
       note: note.trim() || undefined,
       store: selectedStore?.name ?? "",
     });
-  }, [
-    canSubmit,
-    selectedFundId,
-    selectedStore,
-    amount,
-    date,
-    note,
-    createTransaction,
-  ]);
+  };
 
-  const handleFundSelect = useCallback((fund: FundWithFolder) => {
+  const handleFundSelect = (fund: FundWithFolder) => {
     setSelectedFundId(fund.id);
-  }, []);
+  };
 
-  const handleStoreSelect = useCallback(
-    (store: Store) => {
-      setSelectedStore(store);
-      // Smart default: pre-fill fund if store has one and no fund is selected
-      if (store.lastSelectedFundId && !selectedFundId) {
-        setSelectedFundId(store.lastSelectedFundId);
-      }
-    },
-    [selectedFundId]
-  );
+  const handleStoreSelect = (store: Store) => {
+    setSelectedStore(store);
+    // Smart default: pre-fill fund if store has one and no fund is selected
+    if (store.lastSelectedFundId && !selectedFundId) {
+      setSelectedFundId(store.lastSelectedFundId);
+    }
+  };
 
-  const openFundPicker = useCallback(() => {
+  const openFundPicker = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     fundPickerRef.current?.present();
-  }, []);
+  };
 
-  const openStorePicker = useCallback(() => {
+  const openStorePicker = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     storePickerRef.current?.present();
-  }, []);
+  };
 
   return (
     <AnimatedTabScreen index={0}>

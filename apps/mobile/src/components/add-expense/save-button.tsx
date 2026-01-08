@@ -1,9 +1,8 @@
 import * as Haptics from "expo-haptics";
 import { useCallback } from "react";
-import type { PressableProps } from "react-native";
+import { ActivityIndicator, type PressableProps } from "react-native";
 import GlassButton from "@/components/glass-button";
 import { useThemeColor } from "@/components/theme-provider";
-import { IconSymbol } from "@/components/ui/icon-symbol";
 import { StyledLeanText } from "@/config/interop";
 
 type SaveButtonProps = Omit<PressableProps, "children"> & {
@@ -19,11 +18,10 @@ export function SaveButton({
   const enabledTintColor = useThemeColor("foreground");
   const disabledTintColor = useThemeColor("muted");
   const backgroundColor = useThemeColor("background");
-  const disabledTextColor = useThemeColor("foreground-muted");
+  const disabledTextColor = useThemeColor("muted-foreground");
 
   const tintColor = disabled ? disabledTintColor : enabledTintColor;
-  const textColor = disabled ? disabledTextColor : backgroundColor;
-  const iconColor = disabled ? disabledTextColor : backgroundColor;
+  const foregroundColor = disabled ? disabledTextColor : backgroundColor;
 
   const handlePress = useCallback(
     (e: Parameters<NonNullable<PressableProps["onPress"]>>[0]) => {
@@ -39,23 +37,21 @@ export function SaveButton({
       disabled={disabled || loading}
       glassViewProps={{
         style: {
-          borderRadius: 99,
-          paddingVertical: 16,
           opacity: disabled ? 0.5 : 1,
         },
       }}
       onPress={handlePress}
-      size="lg"
+      size="xl"
       tintColor={tintColor}
       variant="default"
       {...props}
     >
       {loading ? (
-        <IconSymbol color={iconColor} name="hourglass" size={18} />
+        <ActivityIndicator color={foregroundColor} size={24} />
       ) : (
         <StyledLeanText
           className="font-satoshi-medium text-base"
-          style={{ color: textColor }}
+          style={{ color: foregroundColor }}
         >
           Save
         </StyledLeanText>
