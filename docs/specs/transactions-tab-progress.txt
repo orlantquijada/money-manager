@@ -42,12 +42,21 @@
 - getChartColor helper for safe index access
 - Files: apps/mobile/src/lib/chart-colors.ts
 
+[TXN-004] DONE - pie-chart.tsx with victory-native
+- Donut chart (innerRadius 50%) using PolarChart + Pie.Chart
+- Top 5 funds shown individually, rest grouped as "Other"
+- Uses monochromatic colors from chart-colors.ts
+- Center label shows top fund name + amount
+- Empty state placeholder when no data
+- NOTE: Tap-to-select deferred (victory-native lacks onPress for slices)
+- Files: apps/mobile/src/components/stats/pie-chart.tsx
+
 ---
 
 ## Next Steps
-- TXN-004: Pie chart with victory-native
 - TXN-005: Stats header layout (60/40 split)
 - TXN-006: Transaction list with date grouping
+- TXN-007: Load More button for pagination
 
 ## Blockers
 (none)
