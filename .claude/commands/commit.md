@@ -13,4 +13,4 @@ model: claude-haiku-4-5-20251001
 
 ## Your task
 
-Based on the above changes, create a single git commit.
+Based on the above changes, create a single git commit. I prefer if you were concise.
