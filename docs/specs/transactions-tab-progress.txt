@@ -28,12 +28,19 @@
 - nextCursor returned when more pages exist
 - Files: packages/api/src/router/transactions.ts
 
+[TXN-003] DONE - period-chips.tsx component
+- Single-selection chips: Week, Month, 3 mo, All
+- Active: filled bg-foreground, inactive: outline border
+- Haptic feedback on selection change
+- Exports Period type for shared use
+- Files: apps/mobile/src/components/stats/period-chips.tsx
+
 ---
 
 ## Next Steps
-- TXN-003: Create period-chips.tsx component
 - TXN-013: Create chart-colors.ts with accent palette
 - TXN-004: Pie chart with victory-native
+- TXN-005: Stats header layout (60/40 split)
 
 ## Blockers
 (none)
