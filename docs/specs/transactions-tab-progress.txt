@@ -51,10 +51,18 @@
 - NOTE: Tap-to-select deferred (victory-native lacks onPress for slices)
 - Files: apps/mobile/src/components/stats/pie-chart.tsx
 
+[TXN-005] DONE - stats-header.tsx component
+- 60/40 flex layout (flex-[3] / flex-[2])
+- Left: SpendingPieChart (size 140px)
+- Right: "Total Spent" label + large amount, divider, "Top Funds" with numbered list
+- Shows top 3 funds with alphabetical tiebreaker for equal amounts
+- Loading skeleton state for isLoading or missing data
+- Currency formatted as PHP (₱) with no decimals
+- Files: apps/mobile/src/components/stats/stats-header.tsx
+
 ---
 
 ## Next Steps
-- TXN-005: Stats header layout (60/40 split)
 - TXN-006: Transaction list with date grouping
 - TXN-007: Load More button for pagination
 
