@@ -92,10 +92,35 @@
 - Files: apps/mobile/src/components/transactions/empty-state.tsx
 - Files: apps/mobile/src/components/transactions/transaction-list.tsx
 
+[TXN-012] DONE - Tab assembly (wire everything together)
+- Full transactions tab implementation with all components wired
+- Period state management with PeriodChips (default: month)
+- Stats fetching via transaction.stats API
+- List fetching with cursor-based pagination via transaction.list API
+- Accumulates transactions on Load More (doesn't replace)
+- Resets cursor and transactions when period changes
+- Pull-to-refresh with query invalidation
+- Empty state logic: "new-user" when all-time total is 0, else "period-empty"
+- Hides stats header for new user empty state
+- Files: apps/mobile/src/app/(app)/(tabs)/transactions.tsx
+
 ---
 
-## Next Steps
-- TXN-012: Tab assembly (wire everything together)
+## Status: V1 COMPLETE 🎉
+
+All core features for the Transactions Tab V1 are implemented:
+- Period filtering (Week/Month/3mo/All)
+- Stats visualization (pie chart + top funds)
+- Transaction list with date grouping
+- Cursor-based pagination with Load More
+- Empty states for new users and empty periods
+
+## Next Steps (V1.1 - Deferred)
+- Search functionality
+- Store grouping toggle
+- Transaction detail sheet
+- Edit/Delete transactions
+- Spending trends
 
 ## Blockers
 (none)
