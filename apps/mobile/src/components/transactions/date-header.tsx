@@ -10,7 +10,7 @@ type Props = {
 function formatDateLabel(date: Date): string {
   if (isToday(date)) return "Today";
   if (isYesterday(date)) return "Yesterday";
-  return format(date, "MMMM d");
+  return format(date, "EEE, MMM d"); // e.g., "Mon, Jan 6"
 }
 
 export function TransactionDateHeader({ date, total }: Props) {
@@ -20,7 +20,7 @@ export function TransactionDateHeader({ date, total }: Props) {
         {formatDateLabel(date)}
       </StyledLeanText>
 
-      <StyledLeanText className="font-satoshi text-foreground-muted text-sm">
+      <StyledLeanText className="font-nunito-bold text-foreground-muted text-sm">
         ₱{total.toLocaleString()}
       </StyledLeanText>
     </StyledLeanView>

@@ -30,7 +30,7 @@ export function TransactionRow({ transaction, onPress }: Props) {
         {txnLabel}
       </StyledLeanText>
 
-      <StyledLeanText className="font-satoshi text-base text-foreground">
+      <StyledLeanText className="font-nunito-bold text-base text-foreground">
         ₱{amount.toLocaleString()}
       </StyledLeanText>
     </ScalePressable>
