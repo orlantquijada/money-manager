@@ -70,10 +70,20 @@
 - Files: apps/mobile/src/components/transactions/transaction-row.tsx
 - Files: apps/mobile/src/components/transactions/transaction-list.tsx (existing)
 
+[TXN-007] DONE - Load More button for pagination
+- Added hasNextPage, isFetchingNextPage, onLoadMore props to TransactionList
+- ListFooterComponent renders Load More button when hasNextPage is true
+- Button shows ActivityIndicator during loading, disabled while fetching
+- Button hidden when no more pages (nextCursor undefined)
+- Rounded pill button with bg-foreground/10 styling
+- Files: apps/mobile/src/components/transactions/transaction-list.tsx
+
 ---
 
 ## Next Steps
-- TXN-007: Load More button for pagination
+- TXN-008: Empty state for new users
+- TXN-009: Empty state for period with no transactions
+- TXN-012: Tab assembly (wire everything together)
 
 ## Blockers
 (none)
