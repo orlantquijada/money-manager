@@ -38,6 +38,7 @@ export function SaveButton({
       glassViewProps={{
         style: {
           opacity: disabled ? 0.5 : 1,
+          minWidth: 88,
         },
       }}
       onPress={handlePress}
@@ -53,7 +54,7 @@ export function SaveButton({
           className="font-satoshi-medium text-base"
           style={{ color: foregroundColor }}
         >
-          Save
+          Add
         </StyledLeanText>
       )}
     </GlassButton>

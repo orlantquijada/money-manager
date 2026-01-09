@@ -1,9 +1,8 @@
-import type { Ref } from "react";
+import { createElement, type Ref } from "react";
 import type { Text, TextProps } from "react-native";
-import { NativeText } from "react-native/Libraries/Text/TextNativeComponent";
 
 export default function LeanText(props: TextProps & { ref?: Ref<Text> }) {
-  return <NativeText {...props} />;
+  return createElement("RCTText", props);
 }
 
 LeanText.displayName = "RCTText";

@@ -1,9 +1,17 @@
-import type { RouterOutputs } from "api";
-
 import { ScalePressable } from "@/components/scale-pressable";
 import { StyledLeanText } from "@/config/interop";
 
-type Transaction = RouterOutputs["transaction"]["allThisMonth"][number];
+// Flexible type that works with both transaction.list and transaction.allThisMonth
+export type TransactionItem = {
+  id: string;
+  amount: number | string | null;
+  date: Date | null;
+  note: string | null;
+  fund: { name: string };
+  store?: { name: string } | null;
+};
+
+type Transaction = TransactionItem;
 
 type Props = {
   transaction: Transaction;

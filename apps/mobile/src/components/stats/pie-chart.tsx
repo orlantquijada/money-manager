@@ -97,6 +97,7 @@ export default function SpendingPieChart({ data, size = 150 }: Props) {
   return (
     <View style={{ width: size, height: size }}>
       <PolarChart
+        canvasStyle={{ width: size, height: size }}
         colorKey="color"
         data={pieData}
         labelKey="label"

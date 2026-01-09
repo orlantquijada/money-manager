@@ -7,7 +7,14 @@ import superjson from "superjson";
 import { authTokenStore } from "@/lib/auth-token";
 import { getBaseUrl } from "./base-url";
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes - prevents refetch on tab switch
+      gcTime: 30 * 60 * 1000, // 30 minutes - keeps data for offline access
+    },
+  },
+});
 
 export const trpc = createTRPCOptionsProxy<AppRouter>({
   client: createTRPCClient({

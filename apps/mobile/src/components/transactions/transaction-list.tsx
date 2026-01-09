@@ -1,4 +1,3 @@
-import type { RouterOutputs } from "api";
 import { format, startOfDay } from "date-fns";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
@@ -14,9 +13,9 @@ import {
 import { useThemeColor } from "@/components/theme-provider";
 import { TransactionDateHeader } from "./date-header";
 import { TransactionsEmptyState } from "./empty-state";
-import { TransactionRow } from "./transaction-row";
+import { type TransactionItem, TransactionRow } from "./transaction-row";
 
-type Transaction = RouterOutputs["transaction"]["allThisMonth"][number];
+type Transaction = TransactionItem;
 
 type TransactionSection = {
   date: Date;

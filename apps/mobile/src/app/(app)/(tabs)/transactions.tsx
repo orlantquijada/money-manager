@@ -1,12 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { RouterOutputs } from "api";
 import { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import PeriodChips, { type Period } from "@/components/stats/period-chips";
 import StatsHeader from "@/components/stats/stats-header";
 import { TransactionList } from "@/components/transactions";
+import { StyledLeanView, StyledSafeAreaView } from "@/config/interop";
 import { trpc } from "@/utils/api";
 
 type TransactionItem =
@@ -85,8 +84,8 @@ export default function Transactions() {
 
   return (
     <AnimatedTabScreen index={2}>
-      <SafeAreaView className="flex-1" edges={["top"]}>
-        <View className="flex-1 gap-4 px-4 pt-4">
+      <StyledSafeAreaView className="flex-1 bg-background" edges={["top"]}>
+        <StyledLeanView className="flex-1 gap-4 px-4 pt-4">
           {/* Period chips */}
           <PeriodChips onChange={handlePeriodChange} value={period} />
 
@@ -96,7 +95,7 @@ export default function Transactions() {
           )}
 
           {/* Transaction list with pagination */}
-          <View className="flex-1">
+          <StyledLeanView className="flex-1">
             <TransactionList
               emptyStateVariant={emptyStateVariant}
               hasNextPage={!!listData?.nextCursor}
@@ -107,9 +106,9 @@ export default function Transactions() {
               periodLabel={PERIOD_LABELS[period]}
               transactions={transactions}
             />
-          </View>
-        </View>
-      </SafeAreaView>
+          </StyledLeanView>
+        </StyledLeanView>
+      </StyledSafeAreaView>
     </AnimatedTabScreen>
   );
 }
