@@ -93,17 +93,29 @@ Bottom tab navigation, alongside Dashboard and Add Expense.
 - Group remaining funds into "Other" slice
 - If ≤5 funds have spending, show all without "Other"
 
+**Visual Style:**
+- Segmented appearance with gaps between slices (padded angles)
+- Rounded corners on each segment
+- Playful, modern aesthetic vs traditional pie chart
+
 **Interaction:**
-- Tap a slice → Highlight slice + show tooltip
-- Tooltip displays: Fund name + exact amount (e.g., "Food: ₱12,345")
-- Tap elsewhere to dismiss tooltip
+- Tap a slice → Emphasize slice (dims others to 30% opacity)
+- Center label updates dynamically based on selection
+- Haptic feedback on tap (light impact)
+- Tap the same slice again to deselect (return to default state)
+
+**Center Label:**
+- **Default state (no selection):** Shows top fund name (small) + amount (large) in PHP
+- **Selected state:** Shows percentage (large) + fund name (small)
+  - Percentage represents that fund's share of total spending for the period
+  - Example: "42%" with "Food" below
 
 **Animation:** None (instant swap when period changes)
 
 **Color palette:**
-- Monochromatic shades derived from app accent color
-- 6 shades: lightest to darkest for slices 1-5 + "Other"
-- Colors should be configurable via theme constants
+- Monochromatic shades derived from app accent color (violet)
+- 6 shades: darkest to lightest for slices 1-5 + "Other"
+- Colors configurable via `apps/mobile/src/lib/chart-colors.ts`
 
 #### 2.2 Quick Stats Panel
 
@@ -261,8 +273,9 @@ output: {
 | Action | File | Purpose |
 |--------|------|---------|
 | Modify | `apps/mobile/src/app/(app)/(tabs)/transactions.tsx` | Main tab screen |
-| Create | `apps/mobile/src/components/stats/pie-chart.tsx` | Pie chart wrapper |
-| Create | `apps/mobile/src/components/stats/stats-header.tsx` | Stats header layout |
+| Create | `apps/mobile/src/components/stats/pie-chart.tsx` | Pie chart wrapper (default style) |
+| Create | `apps/mobile/src/components/stats/pie-chart-segmented.tsx` | Pie chart wrapper (segmented interactive style) |
+| Modify | `apps/mobile/src/components/stats/stats-header.tsx` | Stats header layout with chart variant support |
 | Create | `apps/mobile/src/components/stats/period-chips.tsx` | Period filter chips |
 | Create | `apps/mobile/src/lib/chart-colors.ts` | Chart color palette |
 | Modify | `apps/mobile/src/components/transactions/transaction-list.tsx` | Add pagination |

@@ -1,7 +1,11 @@
-import { Text, View } from "react-native";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+
 import SpendingPieChart, { type FundData } from "./pie-chart";
+import SpendingPieChartSegmented from "./pie-chart-segmented";
 
 const MAX_TOP_FUNDS = 3;
+
+type ChartVariant = "default" | "segmented";
 
 type Props = {
   data:
@@ -11,6 +15,7 @@ type Props = {
       }
     | undefined;
   isLoading?: boolean;
+  chartVariant?: ChartVariant;
 };
 
 const currencyFormatter = new Intl.NumberFormat("en-PH", {
@@ -34,87 +39,94 @@ function getTopFunds(funds: FundData[], count: number): FundData[] {
     .slice(0, count);
 }
 
-export default function StatsHeader({ data, isLoading }: Props) {
+export default function StatsHeader({
+  data,
+  isLoading,
+  chartVariant = "segmented",
+}: Props) {
   // Loading state
   if (isLoading || !data) {
     return (
-      <View className="flex-row gap-4">
+      <StyledLeanView className="flex-row gap-4">
         {/* Skeleton for pie chart (60%) */}
-        <View className="flex-[3] items-center justify-center">
-          <View className="h-[140] w-[140] rounded-full bg-muted" />
-        </View>
+        <StyledLeanView className="flex-3 items-center justify-center">
+          <StyledLeanView className="h-[140] w-[140] rounded-full bg-muted" />
+        </StyledLeanView>
         {/* Skeleton for stats panel (40%) */}
-        <View className="flex-[2] justify-center gap-3">
-          <View className="gap-1">
-            <View className="h-3 w-20 rounded bg-muted" />
-            <View className="h-7 w-24 rounded bg-muted" />
-          </View>
-          <View className="h-px w-full bg-border" />
-          <View className="gap-2">
-            <View className="h-3 w-16 rounded bg-muted" />
-            <View className="h-4 w-full rounded bg-muted" />
-            <View className="h-4 w-full rounded bg-muted" />
-            <View className="h-4 w-full rounded bg-muted" />
-          </View>
-        </View>
-      </View>
+        <StyledLeanView className="flex-2 justify-center gap-3">
+          <StyledLeanView className="gap-1">
+            <StyledLeanView className="h-3 w-20 rounded bg-muted" />
+            <StyledLeanView className="h-7 w-24 rounded bg-muted" />
+          </StyledLeanView>
+          <StyledLeanView className="h-px w-full bg-border" />
+          <StyledLeanView className="gap-2">
+            <StyledLeanView className="h-3 w-16 rounded bg-muted" />
+            <StyledLeanView className="h-4 w-full rounded bg-muted" />
+            <StyledLeanView className="h-4 w-full rounded bg-muted" />
+            <StyledLeanView className="h-4 w-full rounded bg-muted" />
+          </StyledLeanView>
+        </StyledLeanView>
+      </StyledLeanView>
     );
   }
 
   const topFunds = getTopFunds(data.byFund, MAX_TOP_FUNDS);
 
+  const PieChart =
+    chartVariant === "segmented" ? SpendingPieChartSegmented : SpendingPieChart;
+
   return (
-    <View className="flex-row gap-4">
+    <StyledLeanView className="flex-row gap-4">
       {/* Pie chart - 60% */}
-      <View className="flex-[3] items-center justify-center">
-        <SpendingPieChart data={data.byFund} size={140} />
-      </View>
+      <StyledLeanView className="flex-3 items-center justify-center">
+        <PieChart data={data.byFund} size={140} />
+      </StyledLeanView>
 
       {/* Quick stats panel - 40% */}
-      <View className="flex-[2] justify-center gap-3">
+      <StyledLeanView className="flex-2 justify-center gap-3">
         {/* Total spent */}
-        <View>
-          <Text className="font-satoshi-medium text-muted-foreground text-xs">
+        <StyledLeanView>
+          <StyledLeanText className="font-satoshi-medium text-muted-foreground text-xs">
             Total Spent
-          </Text>
-          <Text className="font-nunito-bold text-2xl text-foreground">
+          </StyledLeanText>
+          <StyledLeanText className="font-nunito-bold text-2xl text-foreground">
             {currencyFormatter.format(data.totalSpent)}
-          </Text>
-        </View>
+          </StyledLeanText>
+        </StyledLeanView>
 
         {/* Divider */}
-        <View className="h-px w-full bg-border" />
+        <StyledLeanView className="h-px w-full bg-border" />
 
         {/* Top funds */}
-        <View className="gap-1">
-          <Text className="font-satoshi-medium text-muted-foreground text-xs">
+        <StyledLeanView className="gap-1">
+          <StyledLeanText className="font-satoshi-medium text-muted-foreground text-xs">
             Top Funds
-          </Text>
+          </StyledLeanText>
           {topFunds.length === 0 ? (
-            <Text className="font-satoshi-medium text-muted-foreground text-sm">
+            <StyledLeanText className="font-satoshi-medium text-muted-foreground text-sm">
               No spending yet
-            </Text>
+            </StyledLeanText>
           ) : (
             topFunds.map((fund, index) => (
-              <View
+              <StyledLeanView
                 className="flex-row items-center justify-between"
                 key={fund.fundId}
               >
-                <Text
+                <StyledLeanText
                   className="flex-1 font-satoshi-medium text-foreground text-sm"
                   ellipsizeMode="tail"
                   numberOfLines={1}
                 >
                   {index + 1}. {fund.fundName}
-                </Text>
-                <Text className="font-nunito-bold text-foreground text-sm">
+                </StyledLeanText>
+                <StyledLeanText className="font-nunito-bold text-foreground text-sm">
                   {currencyFormatter.format(fund.amount)}
-                </Text>
-              </View>
+                </StyledLeanText>
+              </StyledLeanView>
             ))
           )}
-        </View>
-      </View>
-    </View>
+        </StyledLeanView>
+      </StyledLeanView>
+    </StyledLeanView>
   );
 }

@@ -24,6 +24,9 @@ export default function Transactions() {
   // Period selection state
   const [period, setPeriod] = useState<Period>("month");
 
+  // Chart variant - using segmented interactive style
+  const chartVariant = "segmented" as const;
+
   // Pagination state
   const [cursor, setCursor] = useState<string | undefined>();
   const [transactions, setTransactions] = useState<TransactionItem[]>([]);
@@ -91,7 +94,11 @@ export default function Transactions() {
 
           {/* Stats header - hide for new user */}
           {showStatsHeader && (
-            <StatsHeader data={stats} isLoading={statsLoading} />
+            <StatsHeader
+              chartVariant={chartVariant}
+              data={stats}
+              isLoading={statsLoading}
+            />
           )}
 
           {/* Transaction list with pagination */}

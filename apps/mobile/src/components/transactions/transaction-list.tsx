@@ -7,10 +7,11 @@ import {
   RefreshControl,
   SectionList,
   type SectionListData,
-  Text,
-  View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColor } from "@/components/theme-provider";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { TAB_BAR_HEIGHT } from "../tab-bar";
 import { TransactionDateHeader } from "./date-header";
 import { TransactionsEmptyState } from "./empty-state";
 import { type TransactionItem, TransactionRow } from "./transaction-row";
@@ -91,6 +92,7 @@ export function TransactionList({
   emptyStateVariant = "period-empty",
   periodLabel,
 }: Props) {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const tintColor = useThemeColor("foreground");
 
@@ -134,7 +136,7 @@ export function TransactionList({
     if (!hasNextPage) return null;
 
     return (
-      <View className="items-center py-6">
+      <StyledLeanView className="items-center py-6">
         <Pressable
           className="rounded-full bg-foreground/10 px-6 py-3"
           disabled={isFetchingNextPage}
@@ -144,12 +146,12 @@ export function TransactionList({
           {isFetchingNextPage ? (
             <ActivityIndicator color={tintColor} size="small" />
           ) : (
-            <Text className="font-satoshi-medium text-foreground">
+            <StyledLeanText className="font-satoshi-medium text-foreground">
               Load More
-            </Text>
+            </StyledLeanText>
           )}
         </Pressable>
-      </View>
+      </StyledLeanView>
     );
   }, [hasNextPage, isFetchingNextPage, onLoadMore, tintColor]);
 
@@ -164,7 +166,10 @@ export function TransactionList({
 
   return (
     <SectionList
-      contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
+      contentContainerStyle={{
+        paddingHorizontal: 16,
+        paddingBottom: TAB_BAR_HEIGHT + insets.bottom + 16,
+      }}
       keyExtractor={keyExtractor}
       ListFooterComponent={renderFooter}
       refreshControl={
