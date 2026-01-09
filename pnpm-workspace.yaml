@@ -22,3 +22,6 @@ catalog:
   typescript: 5.9.3
   ultracite: 6.5.0
   zod: 4.1.13
+
+onlyBuiltDependencies:
+  - "@shopify/react-native-skia"
