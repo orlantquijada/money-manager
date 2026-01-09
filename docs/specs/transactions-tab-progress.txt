@@ -78,11 +78,23 @@
 - Rounded pill button with bg-foreground/10 styling
 - Files: apps/mobile/src/components/transactions/transaction-list.tsx
 
+[TXN-008] DONE - Empty state for new users
+- "new-user" variant with chart.pie icon (SF Symbol)
+- Title: "No transactions yet"
+- Description: "Start tracking your expenses..."
+- CTA button "Go to Add Expense" navigates to add-expense tab
+- Files: apps/mobile/src/components/transactions/empty-state.tsx
+
+[TXN-009] DONE - Empty state for period with no transactions
+- "period-empty" variant with period-specific message
+- "No spending {periodLabel}" + suggestion to try different period
+- TransactionList accepts emptyStateVariant and periodLabel props
+- Files: apps/mobile/src/components/transactions/empty-state.tsx
+- Files: apps/mobile/src/components/transactions/transaction-list.tsx
+
 ---
 
 ## Next Steps
-- TXN-008: Empty state for new users
-- TXN-009: Empty state for period with no transactions
 - TXN-012: Tab assembly (wire everything together)
 
 ## Blockers
