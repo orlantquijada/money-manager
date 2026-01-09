@@ -3,9 +3,13 @@ import { format, startOfDay } from "date-fns";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
 import {
+  ActivityIndicator,
+  Pressable,
   RefreshControl,
   SectionList,
   type SectionListData,
+  Text,
+  View,
 } from "react-native";
 import { useThemeColor } from "@/components/theme-provider";
 import { TransactionDateHeader } from "./date-header";
@@ -24,6 +28,10 @@ type Props = {
   transactions: Transaction[];
   isRefreshing?: boolean;
   onRefresh?: () => void;
+  // Pagination props
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  onLoadMore?: () => void;
 };
 
 function groupTransactionsByDate(
@@ -75,6 +83,9 @@ export function TransactionList({
   transactions,
   isRefreshing = false,
   onRefresh,
+  hasNextPage = false,
+  isFetchingNextPage = false,
+  onLoadMore,
 }: Props) {
   const router = useRouter();
   const tintColor = useThemeColor("foreground");
@@ -115,6 +126,29 @@ export function TransactionList({
 
   const keyExtractor = useCallback((item: Transaction) => item.id, []);
 
+  const renderFooter = useCallback(() => {
+    if (!hasNextPage) return null;
+
+    return (
+      <View className="items-center py-6">
+        <Pressable
+          className="rounded-full bg-foreground/10 px-6 py-3"
+          disabled={isFetchingNextPage}
+          onPress={onLoadMore}
+          style={{ opacity: isFetchingNextPage ? 0.6 : 1 }}
+        >
+          {isFetchingNextPage ? (
+            <ActivityIndicator color={tintColor} size="small" />
+          ) : (
+            <Text className="font-satoshi-medium text-foreground">
+              Load More
+            </Text>
+          )}
+        </Pressable>
+      </View>
+    );
+  }, [hasNextPage, isFetchingNextPage, onLoadMore, tintColor]);
+
   if (sections.length === 0) {
     return <TransactionsEmptyState />;
   }
@@ -123,6 +157,7 @@ export function TransactionList({
     <SectionList
       contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 24 }}
       keyExtractor={keyExtractor}
+      ListFooterComponent={renderFooter}
       refreshControl={
         onRefresh ? (
           <RefreshControl
