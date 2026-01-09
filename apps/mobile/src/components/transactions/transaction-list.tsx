@@ -32,6 +32,9 @@ type Props = {
   hasNextPage?: boolean;
   isFetchingNextPage?: boolean;
   onLoadMore?: () => void;
+  // Empty state props
+  emptyStateVariant?: "new-user" | "period-empty";
+  periodLabel?: string;
 };
 
 function groupTransactionsByDate(
@@ -86,6 +89,8 @@ export function TransactionList({
   hasNextPage = false,
   isFetchingNextPage = false,
   onLoadMore,
+  emptyStateVariant = "period-empty",
+  periodLabel,
 }: Props) {
   const router = useRouter();
   const tintColor = useThemeColor("foreground");
@@ -150,7 +155,12 @@ export function TransactionList({
   }, [hasNextPage, isFetchingNextPage, onLoadMore, tintColor]);
 
   if (sections.length === 0) {
-    return <TransactionsEmptyState />;
+    return (
+      <TransactionsEmptyState
+        periodLabel={periodLabel}
+        variant={emptyStateVariant}
+      />
+    );
   }
 
   return (
