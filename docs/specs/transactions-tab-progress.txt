@@ -60,10 +60,19 @@
 - Currency formatted as PHP (₱) with no decimals
 - Files: apps/mobile/src/components/stats/stats-header.tsx
 
+[TXN-006] DONE - Transaction list with date grouping
+- SectionList grouped by date (already existed in transaction-list.tsx)
+- Updated date format to "EEE, MMM d" (e.g., "Mon, Jan 6")
+- Section headers: "Today", "Yesterday", or formatted date with daily total
+- Transaction rows: store name fallback to fund name, read-only in V1
+- Updated amounts to use font-nunito-bold per typography spec
+- Files: apps/mobile/src/components/transactions/date-header.tsx
+- Files: apps/mobile/src/components/transactions/transaction-row.tsx
+- Files: apps/mobile/src/components/transactions/transaction-list.tsx (existing)
+
 ---
 
 ## Next Steps
-- TXN-006: Transaction list with date grouping
 - TXN-007: Load More button for pagination
 
 ## Blockers
