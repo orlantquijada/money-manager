@@ -50,16 +50,20 @@
     {
       "id": "TXN-004",
       "category": "UI Component",
-      "description": "Pie chart displays spending distribution by fund with top 5 + Other grouping",
+      "description": "Donut chart displays spending distribution by fund with interactive slice focus",
       "steps_to_verify": [
-        "Pie chart renders with victory-native",
-        "Shows max 5 individual fund slices",
-        "Funds beyond top 5 grouped into 'Other' slice",
-        "If <=5 funds, no 'Other' slice shown",
+        "Donut chart renders using d3-shape + react-native-svg + reanimated",
+        "Slices have heavily rounded (pill-shaped) corners",
+        "Visible gaps between slices (~2-3px angular gap)",
+        "Shows max 5 individual fund slices, rest grouped as 'Other'",
         "Uses monochromatic accent color palette (6 shades)",
-        "Tap slice highlights it and shows tooltip",
-        "Tooltip shows fund name and exact amount",
-        "Tap outside dismisses tooltip"
+        "Tap slice triggers focus effect: radial pop-out + dim others to 30% + soft drop shadow",
+        "Focus transitions use spring animation (damping: 15, stiffness: 150)",
+        "Center label shows percentage + fund name when slice focused",
+        "Center label crossfades (~200ms) between states",
+        "Tap same slice again to unfocus (return to default)",
+        "Haptic feedback (light impact) on tap",
+        "Slices stay in fixed positions (no rotation)"
       ],
       "passes": false
     },

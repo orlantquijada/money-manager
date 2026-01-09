@@ -42,14 +42,18 @@
 - getChartColor helper for safe index access
 - Files: apps/mobile/src/lib/chart-colors.ts
 
-[TXN-004] DONE - pie-chart.tsx with victory-native
-- Donut chart (innerRadius 50%) using PolarChart + Pie.Chart
-- Top 5 funds shown individually, rest grouped as "Other"
-- Uses monochromatic colors from chart-colors.ts
-- Center label shows top fund name + amount
-- Empty state placeholder when no data
-- NOTE: Tap-to-select deferred (victory-native lacks onPress for slices)
-- Files: apps/mobile/src/components/stats/pie-chart.tsx
+[TXN-004] PENDING MIGRATION - donut chart refactor to d3 + reanimated
+- Current: victory-native implementation in pie-chart.tsx
+- Target: d3-shape + react-native-svg + reanimated in pie-chart-segmented.tsx
+- New features:
+  - Heavily rounded (pill-shaped) slice corners
+  - Visible gaps between slices
+  - Focus effect: radial pop-out + dim others + soft drop shadow
+  - Spring animations for slice transitions
+  - Crossfade (~200ms) for center label
+  - Haptic feedback on tap
+- Dependencies: add d3-shape, remove victory-native
+- Files: apps/mobile/src/components/stats/pie-chart-segmented.tsx
 
 [TXN-005] DONE - stats-header.tsx component
 - 60/40 flex layout (flex-[3] / flex-[2])
@@ -106,7 +110,7 @@
 
 ---
 
-## Status: V1 COMPLETE 🎉
+## Status: V1 COMPLETE (with pending chart migration)
 
 All core features for the Transactions Tab V1 are implemented:
 - Period filtering (Week/Month/3mo/All)
@@ -115,7 +119,10 @@ All core features for the Transactions Tab V1 are implemented:
 - Cursor-based pagination with Load More
 - Empty states for new users and empty periods
 
-## Next Steps (V1.1 - Deferred)
+**Pending:** Donut chart migration from victory-native to d3 + reanimated (TXN-004)
+
+## Next Steps (V1.1)
+- **Donut chart refactor** - d3-shape + react-native-svg + reanimated with interactive focus
 - Search functionality
 - Store grouping toggle
 - Transaction detail sheet
@@ -126,7 +133,8 @@ All core features for the Transactions Tab V1 are implemented:
 (none)
 
 ## Key Decisions
-- victory-native for charts (customizable, built on svg)
+- d3-shape + react-native-svg + reanimated for charts (more control, friendlier aesthetic)
+  - Previously: victory-native (migrating away due to limited slice interaction support)
 - monochromatic accent palette (shadcn-style)
 - load more button (not infinite scroll)
 - no search in V1

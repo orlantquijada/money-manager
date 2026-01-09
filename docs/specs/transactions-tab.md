@@ -84,7 +84,9 @@ Bottom tab navigation, alongside Dashboard and Add Expense.
 
 **Scroll behavior:** Stats header scrolls up with content (not sticky)
 
-#### 2.1 Pie Chart
+#### 2.1 Donut Chart
+
+**Technology:** Custom implementation using `d3-shape` + `react-native-svg` + `react-native-reanimated`
 
 **Data:** Spending distribution by fund for selected period
 
@@ -94,28 +96,58 @@ Bottom tab navigation, alongside Dashboard and Add Expense.
 - If ≤5 funds have spending, show all without "Other"
 
 **Visual Style:**
-- Segmented appearance with gaps between slices (padded angles)
-- Rounded corners on each segment
-- Playful, modern aesthetic vs traditional pie chart
-
-**Interaction:**
-- Tap a slice → Emphasize slice (dims others to 30% opacity)
-- Center label updates dynamically based on selection
-- Haptic feedback on tap (light impact)
-- Tap the same slice again to deselect (return to default state)
-
-**Center Label:**
-- **Default state (no selection):** Shows top fund name (small) + amount (large) in PHP
-- **Selected state:** Shows percentage (large) + fund name (small)
-  - Percentage represents that fund's share of total spending for the period
-  - Example: "42%" with "Food" below
-
-**Animation:** None (instant swap when period changes)
+- Donut chart with `innerRadius: 50%`
+- **Heavily rounded corners** on slice ends (pill-shaped/capsule-like, `cornerRadius: 12`)
+- Visible **gaps between slices** (~2-3px angular gap via `padAngle: 0.04`)
+- Friendly, playful aesthetic (not formal/corporate)
 
 **Color palette:**
 - Monochromatic shades derived from app accent color (violet)
 - 6 shades: darkest to lightest for slices 1-5 + "Other"
 - Colors configurable via `apps/mobile/src/lib/chart-colors.ts`
+
+**Interaction:**
+- **Gesture:** Tap only (no swipe/pan)
+- Tap slice to focus
+- Tap same slice again to unfocus (return to default state)
+- Haptic feedback (light impact) on tap
+- **Position:** Fixed - no rotation. Slices stay in their data-order positions.
+
+**Focus/Emphasis Effect (Combination):**
+1. **Radial pop-out**: Focused slice moves outward from center by ~8-10px
+2. **Dim others**: Unfocused slices reduce to 30% opacity
+3. **Soft drop shadow**: Subtle shadow underneath focused slice for depth/lift effect
+
+**Center Label:**
+- **Default state (no selection):** Top fund name (small, `text-xs`) + amount (large, `text-sm`, `font-nunito-bold`)
+- **Focused state:** Percentage (large, `text-2xl`, `font-nunito-bold`) + fund name (small, `text-xs`)
+  - Percentage represents that fund's share of total spending for the period
+  - Example: "51%" with "Food" below
+
+**Animations:**
+- **Engine:** `react-native-reanimated` with spring physics
+- **Slice transitions:** Spring animation (`damping: 15`, `stiffness: 150`) for pop-out/pop-in and opacity changes
+- **Shadow:** Fade in with slice pop-out
+- **Center label:** Crossfade transition (~200ms) - old text fades out while new text fades in
+
+**Technical Implementation:**
+```typescript
+import { arc, pie } from 'd3-shape';
+
+const pieGenerator = pie<PieSlice>()
+  .value(d => d.value)
+  .padAngle(0.04)  // Gap between slices
+  .sort(null);     // Preserve data order
+
+const arcGenerator = arc<PieArcDatum<PieSlice>>()
+  .innerRadius(innerRadius)
+  .outerRadius(outerRadius)
+  .cornerRadius(12);  // Heavily rounded corners
+```
+
+**Dependencies:**
+- Add: `d3-shape`, `@types/d3-shape`
+- Remove: `victory-native`
 
 #### 2.2 Quick Stats Panel
 
@@ -273,12 +305,13 @@ output: {
 | Action | File | Purpose |
 |--------|------|---------|
 | Modify | `apps/mobile/src/app/(app)/(tabs)/transactions.tsx` | Main tab screen |
-| Create | `apps/mobile/src/components/stats/pie-chart.tsx` | Pie chart wrapper (default style) |
-| Create | `apps/mobile/src/components/stats/pie-chart-segmented.tsx` | Pie chart wrapper (segmented interactive style) |
+| Create | `apps/mobile/src/components/stats/pie-chart.tsx` | Donut chart (default style, d3 + SVG) |
+| Create | `apps/mobile/src/components/stats/pie-chart-segmented.tsx` | Donut chart (interactive, d3 + SVG + reanimated) |
 | Modify | `apps/mobile/src/components/stats/stats-header.tsx` | Stats header layout with chart variant support |
 | Create | `apps/mobile/src/components/stats/period-chips.tsx` | Period filter chips |
 | Create | `apps/mobile/src/lib/chart-colors.ts` | Chart color palette |
 | Modify | `apps/mobile/src/components/transactions/transaction-list.tsx` | Add pagination |
+| Modify | `apps/mobile/package.json` | Add d3-shape, remove victory-native |
 
 ### API
 | Action | File | Purpose |
@@ -291,8 +324,8 @@ output: {
 
 1. **API layer** - `transaction.stats` and `transaction.list` endpoints
 2. **Period chips** - Filter component with state management
-3. **Pie chart** - victory-native wrapper with accent color palette
-4. **Stats header** - Layout with pie chart + quick stats
+3. **Donut chart** - d3-shape + react-native-svg + reanimated with accent color palette
+4. **Stats header** - Layout with donut chart + quick stats
 5. **Transaction list** - Pagination with load more button
 6. **Tab assembly** - Wire everything together
 7. **Empty states** - Handle zero transactions scenarios
