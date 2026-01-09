@@ -12,6 +12,7 @@ import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
 import TotalSpent from "@/components/dashboard/total-spent";
 import GlassButton from "@/components/glass-button";
+import Sample from "@/components/sample";
 import { ScalePressable } from "@/components/scale-pressable";
 import { useThemeColor } from "@/components/theme-provider";
 import {
@@ -32,6 +33,7 @@ export default function DashboardLayout() {
       <StyledSafeAreaView className="flex-1 bg-background">
         <View className="my-8 w-full flex-row items-start justify-between px-4">
           <TotalSpent />
+          <Sample />
 
           <AddButton
             onLongPress={() => {

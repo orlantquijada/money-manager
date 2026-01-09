@@ -1,11 +1,17 @@
-import { BottomSheet, DateTimePicker, Host, Image } from "@expo/ui/swift-ui";
+import {
+  BottomSheet,
+  Button,
+  ContextMenu,
+  DateTimePicker,
+  Host,
+  HStack,
+  Image,
+  Text,
+} from "@expo/ui/swift-ui";
+import { frame, padding } from "@expo/ui/swift-ui/modifiers";
 import { isToday, isYesterday, subDays } from "date-fns";
-import type { SFSymbol } from "expo-symbols";
 import { useState } from "react";
 import type { ViewStyle } from "react-native";
-import * as DropdownMenu from "zeego/dropdown-menu";
-import { StyledLeanText } from "@/config/interop";
-import GlassButton from "./glass-button";
 import { useThemeColor } from "./theme-provider";
 
 const monthDateFormat = new Intl.DateTimeFormat("en-US", {
@@ -78,28 +84,51 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
   };
 
   return (
-    <>
-      <Host matchContents>
-        <BottomSheet
-          isOpened={isOpened}
-          onIsOpenedChange={handleIsOpenedChange}
-        >
-          <DateTimePicker
-            color={foregroundColor}
-            initialDate={date.toISOString()}
-            onDateSelected={handleDateSelect}
-            variant="graphical"
-          />
-        </BottomSheet>
-      </Host>
+    <Host matchContents style={style}>
+      <BottomSheet isOpened={isOpened} onIsOpenedChange={handleIsOpenedChange}>
+        <DateTimePicker
+          color={foregroundColor}
+          initialDate={date.toISOString()}
+          onDateSelected={handleDateSelect}
+          variant="graphical"
+        />
+      </BottomSheet>
 
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild>
-          <GlassButton size="xl" tintColor={mutedColor} variant="default">
-            <StyledLeanText className="mr-2 font-satoshi-medium text-base text-foreground">
-              {dateLabel}
-            </StyledLeanText>
-            <Host matchContents>
+      <ContextMenu>
+        <ContextMenu.Items>
+          <Button
+            onPress={() => onDateChange(today)}
+            systemImage={dateType === "today" ? "checkmark" : undefined}
+          >
+            Today
+          </Button>
+          <Button
+            onPress={() => onDateChange(yesterday)}
+            systemImage={dateType === "yesterday" ? "checkmark" : undefined}
+          >
+            Yesterday
+          </Button>
+          <Button
+            onPress={() => setIsOpened(true)}
+            systemImage={dateType === "custom" ? "checkmark" : undefined}
+          >
+            {dateType === "custom" ? dateLabel : "Pick a date"}
+          </Button>
+        </ContextMenu.Items>
+        <ContextMenu.Trigger>
+          <Button
+            color={mutedColor}
+            controlSize="large"
+            modifiers={[
+              padding({ all: BTN_CLIP_PADDING }),
+              frame({ width: 250, alignment: "trailing" }),
+            ]}
+            variant="glassProminent"
+          >
+            <HStack alignment="center" spacing={8}>
+              <Text color={foregroundColor} design="rounded" weight="medium">
+                {dateLabel}
+              </Text>
               <Image
                 // color={PlatformColor("secondaryLabel") as unknown as string}
                 // color={mauveDarkRgb.mauveDark11}
@@ -107,36 +136,10 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
                 size={14}
                 systemName="chevron.up.chevron.down"
               />
-            </Host>
-          </GlassButton>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-          <DropdownMenu.Item key="today" onSelect={() => onDateChange(today)}>
-            {dateType === "today" && (
-              <DropdownMenu.ItemIcon ios={{ name: "checkmark" as SFSymbol }} />
-            )}
-
-            <DropdownMenu.ItemTitle>Today</DropdownMenu.ItemTitle>
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            key="yesterday"
-            onSelect={() => onDateChange(yesterday)}
-          >
-            {dateType === "yesterday" && (
-              <DropdownMenu.ItemIcon ios={{ name: "checkmark" as SFSymbol }} />
-            )}
-            <DropdownMenu.ItemTitle>Yesterday</DropdownMenu.ItemTitle>
-          </DropdownMenu.Item>
-          <DropdownMenu.Item key="custom" onSelect={() => setIsOpened(true)}>
-            {dateType === "custom" && (
-              <DropdownMenu.ItemIcon ios={{ name: "checkmark" as SFSymbol }} />
-            )}
-            <DropdownMenu.ItemTitle>
-              {dateType === "custom" ? dateLabel : "Pick a date"}
-            </DropdownMenu.ItemTitle>
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-    </>
+            </HStack>
+          </Button>
+        </ContextMenu.Trigger>
+      </ContextMenu>
+    </Host>
   );
 }
