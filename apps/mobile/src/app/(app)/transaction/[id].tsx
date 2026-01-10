@@ -1,18 +1,10 @@
-import {
-  Button,
-  ContextMenu,
-  Host,
-  HStack,
-  Image,
-  VStack,
-} from "@expo/ui/swift-ui";
-import { frame, glassEffect, padding } from "@expo/ui/swift-ui/modifiers";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Alert } from "react-native";
-import { useThemeColor } from "@/components/theme-provider";
+import * as DropdownMenu from "zeego/dropdown-menu";
+import { GlassIconButton } from "@/components/glass-button";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
@@ -25,8 +17,6 @@ export default function TransactionDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const menuColor = useThemeColor("muted");
-  const iconColor = useThemeColor("muted-foreground");
 
   const { data: transaction, isLoading } = useQuery(
     trpc.transaction.retrieve.queryOptions(id)
@@ -104,8 +94,6 @@ export default function TransactionDetailScreen() {
   const { fund, store } = transaction;
   const title = store?.name ?? fund.name;
 
-  const menuPadding = 16;
-
   return (
     <StyledLeanView className="flex-1 pt-4">
       {/* Header */}
@@ -117,60 +105,13 @@ export default function TransactionDetailScreen() {
         >
           {title}
         </StyledLeanText>
-        <Host
-          matchContents
-          style={{
-            paddingRight: menuPadding,
-          }}
-        >
-          <ContextMenu>
-            <ContextMenu.Items>
-              <Button onPress={handleEdit} systemImage="pencil">
-                Edit
-              </Button>
-              <Button onPress={handleDuplicate} systemImage="doc.on.doc">
-                Duplicate
-              </Button>
-              <Button onPress={handleViewFund} systemImage="folder">
-                View Fund
-              </Button>
-              <Button
-                onPress={handleDelete}
-                role="destructive"
-                systemImage="trash"
-              >
-                Delete
-              </Button>
-            </ContextMenu.Items>
-            <ContextMenu.Trigger>
-              <VStack
-                alignment="trailing"
-                modifiers={[
-                  padding({
-                    vertical: menuPadding / 2,
-                    horizontal: menuPadding,
-                  }),
-                ]}
-              >
-                <HStack
-                  modifiers={[
-                    frame({ width: 40, height: 40 }),
-                    glassEffect({
-                      glass: {
-                        variant: "regular",
-                        interactive: true,
-                        tint: menuColor,
-                      },
-                      shape: "circle",
-                    }),
-                  ]}
-                >
-                  <Image color={iconColor} size={18} systemName="ellipsis" />
-                </HStack>
-              </VStack>
-            </ContextMenu.Trigger>
-          </ContextMenu>
-        </Host>
+
+        <Menu
+          handleDelete={handleDelete}
+          handleDuplicate={handleDuplicate}
+          handleEdit={handleEdit}
+          handleViewFund={handleViewFund}
+        />
       </StyledLeanView>
 
       {/* Emphasized Amount */}
@@ -200,6 +141,48 @@ export default function TransactionDetailScreen() {
         )}
       </StyledLeanView>
     </StyledLeanView>
+  );
+}
+
+type MenuProps = {
+  handleDelete: () => void;
+  handleDuplicate: () => void;
+  handleEdit: () => void;
+  handleViewFund: () => void;
+};
+
+function Menu({
+  handleDelete,
+  handleDuplicate,
+  handleEdit,
+  handleViewFund,
+}: MenuProps) {
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
+        <StyledLeanView className="px-4 py-2">
+          <GlassIconButton icon="ellipsis" />
+        </StyledLeanView>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content>
+        <DropdownMenu.Item key="edit" onSelect={handleEdit}>
+          <DropdownMenu.ItemTitle>Edit</DropdownMenu.ItemTitle>
+          <DropdownMenu.ItemIcon ios={{ name: "pencil" }} />
+        </DropdownMenu.Item>
+        <DropdownMenu.Item key="duplicate" onSelect={handleDuplicate}>
+          <DropdownMenu.ItemTitle>Duplicate</DropdownMenu.ItemTitle>
+          <DropdownMenu.ItemIcon ios={{ name: "doc.on.doc" }} />
+        </DropdownMenu.Item>
+        <DropdownMenu.Item key="view-fund" onSelect={handleViewFund}>
+          <DropdownMenu.ItemTitle>View Fund</DropdownMenu.ItemTitle>
+          <DropdownMenu.ItemIcon ios={{ name: "folder" }} />
+        </DropdownMenu.Item>
+        <DropdownMenu.Item destructive key="delete" onSelect={handleDelete}>
+          <DropdownMenu.ItemTitle>Delete</DropdownMenu.ItemTitle>
+          <DropdownMenu.ItemIcon ios={{ name: "trash" }} />
+        </DropdownMenu.Item>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   );
 }
 

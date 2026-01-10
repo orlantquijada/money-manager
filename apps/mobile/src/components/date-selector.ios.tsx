@@ -4,7 +4,7 @@ import type { SFSymbol } from "expo-symbols";
 import { useState } from "react";
 import type { ViewStyle } from "react-native";
 import * as DropdownMenu from "zeego/dropdown-menu";
-import { StyledLeanText } from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import GlassButton from "./glass-button";
 import { useThemeColor } from "./theme-provider";
 
@@ -41,8 +41,6 @@ type DateSelectorProps = {
   onDateChange: (date: Date) => void;
   style?: ViewStyle;
 };
-
-const BTN_CLIP_PADDING = 16;
 
 export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
   const [isOpened, setIsOpened] = useState(false);
@@ -95,20 +93,22 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
 
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
-          <GlassButton size="xl" tintColor={mutedColor} variant="default">
-            <StyledLeanText className="mr-2 font-satoshi-medium text-base text-foreground">
-              {dateLabel}
-            </StyledLeanText>
-            <Host matchContents>
-              <Image
-                // color={PlatformColor("secondaryLabel") as unknown as string}
-                // color={mauveDarkRgb.mauveDark11}
-                color={foregroundSecondary}
-                size={14}
-                systemName="chevron.up.chevron.down"
-              />
-            </Host>
-          </GlassButton>
+          <StyledLeanView className="p-8 pr-4">
+            <GlassButton size="xl" tintColor={mutedColor} variant="default">
+              <StyledLeanText className="mr-2 font-satoshi-medium text-base text-foreground">
+                {dateLabel}
+              </StyledLeanText>
+              <Host matchContents>
+                <Image
+                  // color={PlatformColor("secondaryLabel") as unknown as string}
+                  // color={mauveDarkRgb.mauveDark11}
+                  color={foregroundSecondary}
+                  size={14}
+                  systemName="chevron.up.chevron.down"
+                />
+              </Host>
+            </GlassButton>
+          </StyledLeanView>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
           <DropdownMenu.Item key="today" onSelect={() => onDateChange(today)}>

@@ -1,11 +1,21 @@
+import { useEffect } from "react";
+import {
+  useDerivedValue,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+import { AnimatedText } from "@/components/animated-text";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { getChartColor } from "@/lib/chart-colors";
+import { transitions } from "@/utils/motion";
 
-import SpendingPieChart, { type FundData } from "./pie-chart";
-import SpendingPieChartSegmented from "./pie-chart-segmented";
+import SpendingPieChartSegmented, {
+  type FundData,
+} from "./pie-chart-segmented";
+import StatsHeaderSkeleton from "./stats-header-skeleton";
 
+const SPRING_CONFIG = transitions.snappy;
 const MAX_TOP_FUNDS = 3;
-
-type ChartVariant = "default" | "segmented";
 
 type Props = {
   data:
@@ -15,15 +25,19 @@ type Props = {
       }
     | undefined;
   isLoading?: boolean;
-  chartVariant?: ChartVariant;
 };
 
-const currencyFormatter = new Intl.NumberFormat("en-PH", {
+const currencyFormatterOptions = {
   style: "currency",
   currency: "PHP",
   minimumFractionDigits: 0,
   maximumFractionDigits: 0,
-});
+} as const;
+
+const currencyFormatter = new Intl.NumberFormat(
+  "en-PH",
+  currencyFormatterOptions
+);
 
 /**
  * Gets top N funds, using alphabetical order as tiebreaker for equal amounts.
@@ -39,59 +53,44 @@ function getTopFunds(funds: FundData[], count: number): FundData[] {
     .slice(0, count);
 }
 
-export default function StatsHeader({
-  data,
-  isLoading,
-  chartVariant = "segmented",
-}: Props) {
+export default function StatsHeader({ data, isLoading }: Props) {
+  // Animation for total spent value
+  const animatedTotalSpent = useSharedValue(0);
+
+  useEffect(() => {
+    animatedTotalSpent.set(withSpring(data?.totalSpent ?? 0, SPRING_CONFIG));
+  }, [data?.totalSpent, animatedTotalSpent.set]);
+
+  const animatedTotalSpentText = useDerivedValue(() => {
+    const _currencyFormatter = new Intl.NumberFormat(
+      "en-PH",
+      currencyFormatterOptions
+    );
+
+    return _currencyFormatter.format(Math.round(animatedTotalSpent.get()));
+  });
+
   // Loading state
   if (isLoading || !data) {
-    return (
-      <StyledLeanView className="flex-row gap-4">
-        {/* Skeleton for pie chart (60%) */}
-        <StyledLeanView className="flex-3 items-center justify-center">
-          <StyledLeanView className="h-[140] w-[140] rounded-full bg-muted" />
-        </StyledLeanView>
-        {/* Skeleton for stats panel (40%) */}
-        <StyledLeanView className="flex-2 justify-center gap-3">
-          <StyledLeanView className="gap-1">
-            <StyledLeanView className="h-3 w-20 rounded bg-muted" />
-            <StyledLeanView className="h-7 w-24 rounded bg-muted" />
-          </StyledLeanView>
-          <StyledLeanView className="h-px w-full bg-border" />
-          <StyledLeanView className="gap-2">
-            <StyledLeanView className="h-3 w-16 rounded bg-muted" />
-            <StyledLeanView className="h-4 w-full rounded bg-muted" />
-            <StyledLeanView className="h-4 w-full rounded bg-muted" />
-            <StyledLeanView className="h-4 w-full rounded bg-muted" />
-          </StyledLeanView>
-        </StyledLeanView>
-      </StyledLeanView>
-    );
+    return <StatsHeaderSkeleton />;
   }
 
   const topFunds = getTopFunds(data.byFund, MAX_TOP_FUNDS);
 
-  const PieChart =
-    chartVariant === "segmented" ? SpendingPieChartSegmented : SpendingPieChart;
-
   return (
     <StyledLeanView className="flex-row gap-4">
-      {/* Pie chart - 60% */}
-      <StyledLeanView className="flex-3 items-center justify-center">
-        <PieChart data={data.byFund} size={140} />
-      </StyledLeanView>
+      <SpendingPieChartSegmented data={data.byFund} size={180} />
 
-      {/* Quick stats panel - 40% */}
-      <StyledLeanView className="flex-2 justify-center gap-3">
+      <StyledLeanView className="grow justify-center gap-3 pr-2">
         {/* Total spent */}
         <StyledLeanView>
           <StyledLeanText className="font-satoshi-medium text-muted-foreground text-xs">
             Total Spent
           </StyledLeanText>
-          <StyledLeanText className="font-nunito-bold text-2xl text-foreground">
-            {currencyFormatter.format(data.totalSpent)}
-          </StyledLeanText>
+          <AnimatedText
+            className="font-nunito-bold text-2xl text-foreground"
+            text={animatedTotalSpentText}
+          />
         </StyledLeanView>
 
         {/* Divider */}
@@ -109,15 +108,19 @@ export default function StatsHeader({
           ) : (
             topFunds.map((fund, index) => (
               <StyledLeanView
-                className="flex-row items-center justify-between"
+                className="flex-row items-center justify-between gap-2"
                 key={fund.fundId}
               >
+                <StyledLeanView
+                  className="h-2 w-2 shrink-0 rounded-full"
+                  style={{ backgroundColor: getChartColor(index) }}
+                />
                 <StyledLeanText
                   className="flex-1 font-satoshi-medium text-foreground text-sm"
                   ellipsizeMode="tail"
                   numberOfLines={1}
                 >
-                  {index + 1}. {fund.fundName}
+                  {fund.fundName}
                 </StyledLeanText>
                 <StyledLeanText className="font-nunito-bold text-foreground text-sm">
                   {currencyFormatter.format(fund.amount)}

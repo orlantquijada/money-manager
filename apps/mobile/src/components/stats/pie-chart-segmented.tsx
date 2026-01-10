@@ -1,29 +1,31 @@
 import { arc, type PieArcDatum, pie } from "d3-shape";
 import * as Haptics from "expo-haptics";
-import { useCallback, useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Pressable } from "react-native";
 import Animated, {
+  FadeIn,
+  FadeOut,
   useAnimatedProps,
-  useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
-  withTiming,
 } from "react-native-reanimated";
 import { G, Path, Svg } from "react-native-svg";
+import { AnimatedText } from "@/components/animated-text";
+import { StyledLeanView } from "@/config/interop";
 import { CHART_COLORS, getChartColor } from "@/lib/chart-colors";
+import { transitions } from "@/utils/motion";
 
 const MAX_SLICES = 5;
 
-// Animation constants (from spec)
-const SPRING_CONFIG = { damping: 15, stiffness: 150 };
-const FOCUS_OFFSET = 10; // radial pop-out distance in px
+const SPRING_CONFIG = transitions.snappy;
+const FOCUS_OFFSET = 8; // radial pop-out distance in px
 const UNFOCUSED_OPACITY = 0.3;
-const CROSSFADE_DURATION = 200;
 
 // Chart geometry constants
-const PAD_ANGLE = 0.04; // ~2-3px gaps between slices
-const CORNER_RADIUS = 12; // pill-shaped rounded corners
-const INNER_RADIUS_RATIO = 0.5; // 50% inner radius (donut)
+const PAD_ANGLE = 0.05; // ~2-3px gaps between slices
+const CORNER_RADIUS = 6; // pill-shaped rounded corners
+const INNER_RADIUS_RATIO = 0.7; // 50% inner radius (donut)
 
 export type FundData = {
   fundId: number;
@@ -87,13 +89,6 @@ function preparePieData(data: FundData[]): PieSlice[] {
   return slices;
 }
 
-const currencyFormatter = new Intl.NumberFormat("en-PH", {
-  style: "currency",
-  currency: "PHP",
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-});
-
 // Create animated components
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
@@ -116,25 +111,27 @@ function AnimatedSlice({
 }: AnimatedSliceProps) {
   // Calculate middle angle for radial offset direction
   // Subtract PI/2 to convert from d3's coordinate system (0 = 12 o'clock)
-  const midAngle = (arcDatum.startAngle + arcDatum.endAngle) / 2 - Math.PI / 2;
+  const midAngle = useMemo(
+    () => (arcDatum.startAngle + arcDatum.endAngle) / 2 - Math.PI / 2,
+    [arcDatum.startAngle, arcDatum.endAngle]
+  );
 
   // Animation shared values
   const offset = useSharedValue(0);
   const opacity = useSharedValue(1);
-  const shadowOpacity = useSharedValue(0);
 
   const isFocused = selectedIndex === index;
   const anySelected = selectedIndex !== null;
 
-  // Update animations when selection changes
   useEffect(() => {
-    offset.value = withSpring(isFocused ? FOCUS_OFFSET : 0, SPRING_CONFIG);
-    opacity.value = withSpring(
-      anySelected && !isFocused ? UNFOCUSED_OPACITY : 1,
-      SPRING_CONFIG
+    offset.set(withSpring(isFocused ? FOCUS_OFFSET : 0, SPRING_CONFIG));
+    opacity.set(
+      withSpring(
+        anySelected && !isFocused ? UNFOCUSED_OPACITY : 1,
+        SPRING_CONFIG
+      )
     );
-    shadowOpacity.value = withSpring(isFocused ? 0.25 : 0, SPRING_CONFIG);
-  }, [isFocused, anySelected, offset, opacity, shadowOpacity]);
+  }, [anySelected, isFocused, opacity.set, offset.set]);
 
   // Compute translation for radial pop-out
   const translateX = Math.cos(midAngle);
@@ -142,31 +139,15 @@ function AnimatedSlice({
 
   // Animated props for main slice
   const animatedSliceProps = useAnimatedProps(() => ({
-    opacity: opacity.value,
+    opacity: opacity.get(),
     transform: [
-      { translateX: translateX * offset.value },
-      { translateY: translateY * offset.value },
-    ],
-  }));
-
-  // Animated props for shadow
-  const animatedShadowProps = useAnimatedProps(() => ({
-    opacity: shadowOpacity.value,
-    transform: [
-      { translateX: translateX * offset.value + 2 },
-      { translateY: translateY * offset.value + 2 },
+      { translateX: translateX * offset.get() },
+      { translateY: translateY * offset.get() },
     ],
   }));
 
   return (
     <G>
-      {/* Shadow layer - slightly offset */}
-      <AnimatedPath
-        animatedProps={animatedShadowProps}
-        d={pathData}
-        fill="rgba(0,0,0,0.15)"
-      />
-      {/* Main slice */}
       <AnimatedPath
         animatedProps={animatedSliceProps}
         d={pathData}
@@ -180,71 +161,53 @@ function AnimatedSlice({
 type CenterLabelProps = {
   displaySlice: PieSlice | undefined;
   isSelected: boolean;
+  selectedIndex?: number;
 };
 
-function CenterLabel({ displaySlice, isSelected }: CenterLabelProps) {
-  const defaultOpacity = useSharedValue(1);
-  const selectedOpacity = useSharedValue(0);
+function CenterLabel({
+  displaySlice,
+  isSelected,
+  selectedIndex,
+}: CenterLabelProps) {
+  const animatedValue = useSharedValue(displaySlice?.value ?? 0);
 
   useEffect(() => {
-    defaultOpacity.value = withTiming(isSelected ? 0 : 1, {
-      duration: CROSSFADE_DURATION,
-    });
-    selectedOpacity.value = withTiming(isSelected ? 1 : 0, {
-      duration: CROSSFADE_DURATION,
-    });
-  }, [isSelected, defaultOpacity, selectedOpacity]);
+    animatedValue.set(withSpring(displaySlice?.value ?? 0, SPRING_CONFIG));
+  }, [displaySlice?.value, animatedValue.set]);
 
-  const defaultStyle = useAnimatedStyle(() => ({
-    opacity: defaultOpacity.value,
-    position: "absolute" as const,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-  }));
-
-  const selectedStyle = useAnimatedStyle(() => ({
-    opacity: selectedOpacity.value,
-    position: "absolute" as const,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-  }));
+  const animatedText = useDerivedValue(() => {
+    return `${Math.round(animatedValue.get())}%`;
+  });
 
   if (!displaySlice) return null;
 
   return (
-    <View
+    <Animated.View
       className="absolute items-center justify-center"
       pointerEvents="none"
       style={{ top: 0, left: 0, right: 0, bottom: 0 }}
     >
-      {/* Default state: fund name + amount */}
-      <Animated.View style={defaultStyle}>
-        <Text
-          className="max-w-[80%] text-center font-satoshi-medium text-foreground text-xs"
-          ellipsizeMode="tail"
-          numberOfLines={1}
-        >
-          {displaySlice.label}
-        </Text>
-        <Text className="font-nunito-bold text-foreground text-sm">
-          {currencyFormatter.format(displaySlice.amount)}
-        </Text>
-      </Animated.View>
-
-      {/* Selected state: percentage + fund name */}
-      <Animated.View style={selectedStyle}>
-        <Text className="font-nunito-bold text-2xl text-foreground">
-          {Math.round(displaySlice.value)}%
-        </Text>
-        <Text
-          className="max-w-[80%] text-center font-satoshi-medium text-foreground text-xs"
-          ellipsizeMode="tail"
-          numberOfLines={1}
-        >
-          {displaySlice.label}
-        </Text>
-      </Animated.View>
-    </View>
+      <AnimatedText
+        className="font-nunito-bold text-2xl text-foreground"
+        text={animatedText}
+      />
+      <Animated.Text
+        className="max-w-[80%] text-center font-satoshi-medium text-foreground text-xs"
+        ellipsizeMode="tail"
+        entering={FadeIn.springify()
+          .stiffness(SPRING_CONFIG.stiffness)
+          .damping(SPRING_CONFIG.damping)
+          .mass(SPRING_CONFIG.mass)}
+        exiting={FadeOut.springify()
+          .stiffness(SPRING_CONFIG.stiffness)
+          .damping(SPRING_CONFIG.damping)
+          .mass(SPRING_CONFIG.mass)}
+        key={selectedIndex}
+        numberOfLines={1}
+      >
+        {displaySlice.label}
+      </Animated.Text>
+    </Animated.View>
   );
 }
 
@@ -261,20 +224,20 @@ export default function SpendingPieChartSegmented({ data, size = 150 }: Props) {
   // Empty state - show placeholder circle
   if (pieData.length === 0) {
     return (
-      <View
+      <StyledLeanView
         className="items-center justify-center"
         style={{ width: size, height: size }}
       >
-        <View
+        <StyledLeanView
           className="rounded-full bg-muted"
           style={{ width: size * 0.8, height: size * 0.8 }}
         />
-      </View>
+      </StyledLeanView>
     );
   }
 
-  // Calculate chart geometry
-  const outerRadius = size / 2;
+  // Calculate chart geometry (reserve space for focus offset animation)
+  const outerRadius = size / 2 - FOCUS_OFFSET;
   const innerRadius = outerRadius * INNER_RADIUS_RATIO;
   const center = size / 2;
 
@@ -298,9 +261,13 @@ export default function SpendingPieChartSegmented({ data, size = 150 }: Props) {
   const isSelected = selectedIndex !== null;
 
   return (
-    <View style={{ width: size, height: size }}>
-      <Svg height={size} viewBox={`0 0 ${size} ${size}`} width={size}>
-        <G x={center} y={center}>
+    <Pressable
+      className="relative"
+      onPress={() => setSelectedIndex(null)}
+      style={{ width: size, height: size }}
+    >
+      <Svg viewBox={`0 0 ${size} ${size}`}>
+        <G transform={[{ translateX: center }, { translateY: center }]}>
           {arcs.map((arcDatum, index) => {
             const pathData = arcGenerator(arcDatum) || "";
             return (
@@ -318,7 +285,11 @@ export default function SpendingPieChartSegmented({ data, size = 150 }: Props) {
         </G>
       </Svg>
 
-      <CenterLabel displaySlice={displaySlice} isSelected={isSelected} />
-    </View>
+      <CenterLabel
+        displaySlice={displaySlice}
+        isSelected={isSelected}
+        selectedIndex={selectedIndex}
+      />
+    </Pressable>
   );
 }

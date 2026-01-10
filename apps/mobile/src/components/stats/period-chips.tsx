@@ -1,6 +1,8 @@
 import * as Haptics from "expo-haptics";
-import { Pressable, Text, View } from "react-native";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { cn } from "@/utils/cn";
+import GlassButton from "../glass-button";
+import { useThemeColor } from "../theme-provider";
 
 export type Period = "week" | "month" | "3mo" | "all";
 
@@ -17,16 +19,16 @@ type Props = {
 };
 
 export default function PeriodChips({ value, onChange }: Props) {
+  const backgroundColor = useThemeColor("background");
+  const foregroundColor = useThemeColor("foreground");
+
   return (
-    <View className="flex-row gap-2">
+    <StyledLeanView className="flex-row gap-2">
       {PERIODS.map((period) => {
         const isActive = value === period.value;
+
         return (
-          <Pressable
-            className={cn(
-              "rounded-full px-4 py-2",
-              isActive ? "bg-foreground" : "border border-border bg-transparent"
-            )}
+          <GlassButton
             key={period.value}
             onPress={() => {
               if (value !== period.value) {
@@ -34,19 +36,20 @@ export default function PeriodChips({ value, onChange }: Props) {
                 onChange(period.value);
               }
             }}
-            style={{ borderCurve: "continuous" }}
+            tintColor={isActive ? foregroundColor : backgroundColor}
+            variant="default"
           >
-            <Text
+            <StyledLeanText
               className={cn(
                 "font-satoshi-medium text-sm",
                 isActive ? "text-background" : "text-foreground"
               )}
             >
               {period.label}
-            </Text>
-          </Pressable>
+            </StyledLeanText>
+          </GlassButton>
         );
       })}
-    </View>
+    </StyledLeanView>
   );
 }

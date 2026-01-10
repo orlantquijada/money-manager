@@ -74,12 +74,7 @@ export default function AddExpense() {
   return (
     <AnimatedTabScreen index={0}>
       <StyledSafeAreaView className="flex-1 bg-background">
-        <Header
-          className="mt-4 w-full"
-          date={date}
-          onCancel={handleCancel}
-          onDateChange={setDate}
-        />
+        <Header date={date} onCancel={handleCancel} onDateChange={setDate} />
 
         <StyledLeanView className="flex-1 px-4">
           {/* Amount Display */}
@@ -148,7 +143,7 @@ function Header({ className, date, onDateChange, onCancel }: HeaderProps) {
   return (
     <StyledLeanView
       className={cn(
-        "h-12 w-full flex-row items-center justify-between pl-4",
+        "-mt-8 w-full flex-row items-center justify-between pl-4",
         className
       )}
     >

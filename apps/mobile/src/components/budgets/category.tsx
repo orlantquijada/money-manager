@@ -1,7 +1,7 @@
 import { Link } from "expo-router";
 import { useMemo } from "react";
-import { useWindowDimensions } from "react-native";
 import { ScalePressable } from "@/components/scale-pressable";
+import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import type { FundWithMeta } from "@/lib/fund";
 import { getTimeModeMultiplier } from "@/lib/fund";
@@ -45,11 +45,10 @@ function useFundProgress(fund: FundWithMeta) {
 }
 
 export default function Category({ fund }: CategoryProps) {
-  const { width: deviceWidth } = useWindowDimensions();
+  const destructiveColor = useThemeColor("destructive");
 
   const barCount = getTimeModeMultiplier(fund.timeMode);
-  const barWidth = deviceWidth / barCount;
-  const { progressBars } = useFundProgress(fund);
+  const { progressBars, overspentRatio } = useFundProgress(fund);
 
   return (
     <Link asChild href={{ pathname: "/fund/[id]", params: { id: fund.id } }}>
@@ -72,12 +71,18 @@ export default function Category({ fund }: CategoryProps) {
         </StyledLeanView>
 
         <StyledLeanView className="flex-row gap-2">
+          {overspentRatio > 0 && (
+            <ProgressBar
+              color={destructiveColor}
+              flex={overspentRatio}
+              progress={1}
+            />
+          )}
           {progressBars.map((progress, index) => {
             const isCurrentPeriod = index === barCount - 1;
 
             return (
               <ProgressBar
-                barWidth={barWidth}
                 highlight={barCount > 1 ? isCurrentPeriod : false}
                 key={index}
                 progress={progress}
