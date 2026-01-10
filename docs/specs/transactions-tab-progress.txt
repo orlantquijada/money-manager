@@ -42,17 +42,17 @@
 - getChartColor helper for safe index access
 - Files: apps/mobile/src/lib/chart-colors.ts
 
-[TXN-004] PENDING MIGRATION - donut chart refactor to d3 + reanimated
-- Current: victory-native implementation in pie-chart.tsx
-- Target: d3-shape + react-native-svg + reanimated in pie-chart-segmented.tsx
-- New features:
-  - Heavily rounded (pill-shaped) slice corners
-  - Visible gaps between slices
-  - Focus effect: radial pop-out + dim others + soft drop shadow
-  - Spring animations for slice transitions
-  - Crossfade (~200ms) for center label
-  - Haptic feedback on tap
-- Dependencies: add d3-shape, remove victory-native
+[TXN-004] DONE - donut chart refactor to d3 + reanimated
+- Migrated from victory-native to d3-shape + react-native-svg + reanimated
+- Implemented features:
+  - Heavily rounded (pill-shaped) slice corners (cornerRadius: 12)
+  - Visible gaps between slices (padAngle: 0.04)
+  - Focus effect: radial pop-out (10px) + dim others (30% opacity) + soft drop shadow
+  - Spring animations (damping: 15, stiffness: 150) for slice transitions
+  - Crossfade (200ms) for center label between default/selected states
+  - Haptic feedback (light impact) on tap
+  - Tap same slice to unfocus (toggle behavior)
+- Dependencies: added d3-shape, @types/d3-shape
 - Files: apps/mobile/src/components/stats/pie-chart-segmented.tsx
 
 [TXN-005] DONE - stats-header.tsx component
@@ -110,7 +110,7 @@
 
 ---
 
-## Status: V1 COMPLETE (with pending chart migration)
+## Status: V1 COMPLETE
 
 All core features for the Transactions Tab V1 are implemented:
 - Period filtering (Week/Month/3mo/All)
@@ -118,11 +118,9 @@ All core features for the Transactions Tab V1 are implemented:
 - Transaction list with date grouping
 - Cursor-based pagination with Load More
 - Empty states for new users and empty periods
-
-**Pending:** Donut chart migration from victory-native to d3 + reanimated (TXN-004)
+- Interactive donut chart with d3-shape + reanimated (tap-to-focus, animations)
 
 ## Next Steps (V1.1)
-- **Donut chart refactor** - d3-shape + react-native-svg + reanimated with interactive focus
 - Search functionality
 - Store grouping toggle
 - Transaction detail sheet
