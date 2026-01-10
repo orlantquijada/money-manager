@@ -45,6 +45,51 @@ Progress is tracked using two files:
 - `.claude/status.json` - Current task status (changes frequently)
 - `PROGRESS.md` - Progress notes and context (changes frequently)
 
+## Feature Specs (Ralph Loop)
+
+For complex features, create detailed specs in `docs/specs/` optimized for [Ralph Loop](https://ghuntley.com/ralph/) iteration.
+
+**When to create a spec:**
+- Complexity: Multiple screens, >3 files, or multi-day work
+- Uncertainty: Design/UX decisions need documenting before coding
+
+**File structure per feature:**
+
+1. **`{feature}.json`** - PRD with spec and acceptance criteria
+   ```json
+   {
+     "feature": "Feature Name",
+     "goal": "One sentence success criteria",
+     "spec": {
+       "overview": "What and why",
+       "design": "Layouts, interactions (markdown)",
+       "api": "Endpoints, contracts",
+       "files": [{ "action": "create|modify", "path": "...", "purpose": "..." }]
+     },
+     "items": [{
+       "id": "FEAT-001",
+       "category": "API | UI Component | Integration",
+       "description": "What this accomplishes",
+       "steps_to_verify": ["Testable criterion 1"],
+       "passes": false
+     }]
+   }
+   ```
+
+2. **`{feature}-progress.txt`** - Context and notes
+   - Quick reference links to key files
+   - Dated progress entries with `[FEAT-001]` IDs
+   - Blockers and key decisions
+
+**Ralph workflow:**
+1. Read JSON, find items with `passes: false`
+2. Implement highest priority incomplete item
+3. Set `passes: true`, add entry to progress.txt
+4. Commit (must pass types/tests)
+5. Repeat until all items pass
+
+**Lifecycle:** Delete spec files after feature merges (git preserves history).
+
 ## Tech Stack
 
 - **Monorepo Management**: Turborepo with pnpm workspaces

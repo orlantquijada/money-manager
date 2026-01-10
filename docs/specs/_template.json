@@ -1,0 +1,37 @@
+{
+  "feature": "FEATURE_NAME",
+  "version": "1.0",
+  "created": "YYYY-MM-DD",
+  "goal": "One sentence describing what success looks like",
+  "spec": {
+    "overview": "Brief description of what this feature does and why",
+    "design": "Detailed design notes, layouts, interactions (markdown supported)",
+    "api": "API contracts, endpoints, input/output shapes",
+    "files": [
+      { "action": "create", "path": "path/to/file.ts", "purpose": "What this file does" },
+      { "action": "modify", "path": "path/to/existing.ts", "purpose": "What changes" }
+    ]
+  },
+  "items": [
+    {
+      "id": "FEAT-001",
+      "category": "API",
+      "description": "Description of what this item accomplishes",
+      "steps_to_verify": [
+        "Specific testable criterion 1",
+        "Specific testable criterion 2"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FEAT-002",
+      "category": "UI Component",
+      "description": "Description of what this item accomplishes",
+      "steps_to_verify": [
+        "Specific testable criterion 1",
+        "Specific testable criterion 2"
+      ],
+      "passes": false
+    }
+  ]
+}

@@ -2,6 +2,85 @@
   "feature": "Transactions Tab with Stats",
   "version": "1.0",
   "created": "2026-01-09",
+  "goal": "Users can visualize spending distribution and browse transaction history by period",
+  "spec": {
+    "overview": "The Transactions tab provides a visual spending breakdown and chronological transaction history. It combines statistics visualization with a browsable transaction list to help users understand their spending patterns.\n\nPrimary use cases:\n- Visualize spending distribution across funds\n- Browse recent spending history by period\n- Identify top spending categories at a glance",
+    "layout": "```\n+------------------------------------------+\n|  Transactions                             |  <- Standard header\n+------------------------------------------+\n|  [Week] [Month*] [3 mo] [All]            |  <- Period chips\n+------------------------------------------+\n|                                          |\n|  [  Pie Chart  ]  Total Spent            |  <- Stats header\n|  [   (60%)     ]  ₱XX,XXX                |     (scrolls away)\n|                   ─────────              |\n|                   Top Funds              |\n|                   1. Food      ₱X,XXX    |\n|                   2. Bills     ₱X,XXX    |\n|                   3. Transport ₱X,XXX    |\n|                                          |\n+------------------------------------------+\n|  Today                          ₱X,XXX   |  <- Date header\n|  ├─ Store Name               ₱XXX.XX    |\n|  ├─ Store Name               ₱XXX.XX    |\n|  └─ Fund Name                ₱XXX.XX    |\n|                                          |\n|  Yesterday                      ₱X,XXX   |\n|  ├─ ...                                  |\n|                                          |\n|  [ Load More ]                           |  <- Pagination\n+------------------------------------------+\n```",
+    "design": {
+      "periodChips": {
+        "layout": "Fixed horizontal row, 4 chips",
+        "options": ["Week (last 7 days)", "Month (current calendar, default)", "3 mo (last 3 months)", "All (no filter)"],
+        "behavior": "Single selection, changing period resets list. Active: filled bg, inactive: outline only."
+      },
+      "donutChart": {
+        "tech": "d3-shape + react-native-svg + react-native-reanimated",
+        "style": {
+          "innerRadius": "50%",
+          "cornerRadius": 12,
+          "padAngle": 0.04,
+          "colors": "Monochromatic violet (6 shades, darkest to lightest)"
+        },
+        "slices": "Top 5 funds individually, rest grouped as 'Other'",
+        "interaction": {
+          "gesture": "Tap only",
+          "focusEffect": "Radial pop-out 8-10px + dim others to 30% + soft drop shadow",
+          "animation": "Spring (damping: 15, stiffness: 150)",
+          "haptics": "Light impact on tap"
+        },
+        "centerLabel": {
+          "default": "Top fund name (text-xs) + amount (text-sm, font-nunito-bold)",
+          "focused": "Percentage (text-2xl, font-nunito-bold) + fund name (text-xs)",
+          "transition": "Crossfade ~200ms"
+        }
+      },
+      "statsPanel": {
+        "layout": "60/40 split (chart/stats)",
+        "content": "Total spent (large) + top 3 funds with amounts",
+        "tiebreaker": "Alphabetical by fund name"
+      },
+      "transactionList": {
+        "component": "SectionList grouped by date",
+        "sectionHeader": "'Today', 'Yesterday', or 'Mon, Jan 6' + daily total",
+        "row": "Store name (fallback: fund name) + amount. Read-only in V1.",
+        "pagination": "50 per page, Load More button at bottom"
+      },
+      "emptyStates": {
+        "newUser": "Hide stats header, show educational message + CTA to Add Expense",
+        "periodEmpty": "Show zeroed chart, period-specific message in list area"
+      },
+      "loading": "Skeleton for stats header, spinner for list. Stale-while-revalidate caching."
+    },
+    "api": {
+      "stats": {
+        "input": "{ period: 'week' | 'month' | '3mo' | 'all' }",
+        "output": "{ totalSpent: number, byFund: Array<{ fundId, fundName, amount, percentage }> }"
+      },
+      "list": {
+        "input": "{ period, cursor?, limit? }",
+        "output": "{ transactions: Array<{ id, amount, date, note?, fund: { name }, store?: { name } }>, nextCursor? }"
+      }
+    },
+    "files": [
+      { "action": "modify", "path": "apps/mobile/src/app/(app)/(tabs)/transactions.tsx", "purpose": "Main tab screen" },
+      { "action": "create", "path": "apps/mobile/src/components/stats/pie-chart-segmented.tsx", "purpose": "Interactive donut chart" },
+      { "action": "create", "path": "apps/mobile/src/components/stats/stats-header.tsx", "purpose": "Stats header layout" },
+      { "action": "create", "path": "apps/mobile/src/components/stats/period-chips.tsx", "purpose": "Period filter chips" },
+      { "action": "create", "path": "apps/mobile/src/lib/chart-colors.ts", "purpose": "Chart color palette" },
+      { "action": "modify", "path": "apps/mobile/src/components/transactions/transaction-list.tsx", "purpose": "Add pagination" },
+      { "action": "modify", "path": "packages/api/src/router/transactions.ts", "purpose": "Add stats + list endpoints" }
+    ],
+    "implementationOrder": [
+      "API layer (transaction.stats and transaction.list endpoints)",
+      "Period chips (filter component with state)",
+      "Donut chart (d3-shape + react-native-svg + reanimated)",
+      "Stats header (layout with chart + quick stats)",
+      "Transaction list (pagination with load more)",
+      "Tab assembly (wire everything together)",
+      "Empty states (handle zero transactions)",
+      "Polish (loading states, caching, edge cases)"
+    ],
+    "deferred": ["Search", "Store grouping toggle", "Transaction detail sheet", "Edit/Delete transactions", "Spending trends", "Privacy toggle"]
+  },
   "items": [
     {
       "id": "TXN-001",

@@ -1,0 +1,24 @@
+# FEATURE_NAME Progress
+
+## Quick Reference
+- PRD: docs/specs/FEATURE_NAME.json
+- Main files: [list key files here]
+
+---
+
+## Progress Log
+
+### YYYY-MM-DD - Session summary
+
+[FEAT-001] STATUS - short description
+- What was done
+- Files modified
+- Notes/decisions
+
+---
+
+## Blockers
+(none)
+
+## Key Decisions
+- Decision and rationale
