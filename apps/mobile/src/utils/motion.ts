@@ -1,5 +1,7 @@
 import {
   Easing,
+  FadeIn,
+  FadeOut,
   LinearTransition,
   Reanimated3DefaultSpringConfig,
   type WithTimingConfig,
@@ -83,6 +85,19 @@ export function layoutSpringify(config: SpringConfigKeys) {
     .stiffness(transitions[config].stiffness)
     .damping(transitions[config].damping)
     .mass(Reanimated3DefaultSpringConfig.mass);
+}
+
+export function fadeInOutSpringify(config: SpringConfigKeys) {
+  return {
+    entering: FadeIn.springify()
+      .stiffness(transitions[config].stiffness)
+      .damping(transitions[config].damping)
+      .mass(transitions[config].mass),
+    exiting: FadeOut.springify()
+      .stiffness(transitions[config].stiffness)
+      .damping(transitions[config].damping)
+      .mass(transitions[config].mass),
+  };
 }
 
 export const totalSpentSlideOutUpConfig = {

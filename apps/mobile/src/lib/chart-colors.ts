@@ -5,31 +5,33 @@
  * Ordered from darkest to lightest - index 0 is most prominent (for top fund),
  * index 5 is lightest (for "Other" grouping).
  *
- * To change the color scheme, replace these hex values with another
- * Radix color scale (e.g., blue, cyan, pink).
+ * References Tailwind/CSS variable color keys that resolve via useThemeColor.
  */
 
-// Base accent color (Radix violet-9)
-export const CHART_ACCENT = "#6e56cf";
+import { useThemeColor } from "@/components/theme-provider";
 
-// 6 shades from darkest to lightest
+// 6 shades from darkest to lightest using color keys
 // Slice 0: Top fund (most prominent)
 // Slice 5: "Other" grouping (least prominent)
-export const CHART_COLORS = [
-  "#6e56cf", // violet-9 - darkest, most prominent
-  "#aa99ec", // violet-8
-  "#c2b5f5", // violet-7
-  "#d4cafe", // violet-6
-  "#e1d9ff", // violet-5
-  "#ebe4ff", // violet-4 - lightest, for "Other"
-] as const;
+export function useChartColors(): [
+  string,
+  string,
+  string,
+  string,
+  string,
+  string,
+] {
+  const c0 = useThemeColor("violet-9");
+  const c1 = useThemeColor("violet-8");
+  const c2 = useThemeColor("violet-7");
+  const c3 = useThemeColor("violet-6");
+  const c4 = useThemeColor("violet-5");
+  const c5 = useThemeColor("violet-4");
 
-export type ChartColor = (typeof CHART_COLORS)[number];
+  return [c0, c1, c2, c3, c4, c5];
+}
 
-/**
- * Get a chart color by index, wrapping if needed.
- * Safe for any number of data points.
- */
-export function getChartColor(index: number): ChartColor {
-  return CHART_COLORS[index % CHART_COLORS.length];
+export function useChartColor(index: number): string {
+  const colors = useChartColors();
+  return colors[index % colors.length];
 }

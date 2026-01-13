@@ -3,15 +3,15 @@ import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
 import {
   ActivityIndicator,
-  Pressable,
   RefreshControl,
   SectionList,
   type SectionListData,
+  type SectionListRenderItem,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
-import { TAB_BAR_HEIGHT } from "../tab-bar";
+import { sum } from "@/utils/math";
+import GlassButton from "../glass-button";
 import { TransactionDateHeader } from "./date-header";
 import { TransactionsEmptyState } from "./empty-state";
 import { type TransactionItem, TransactionRow } from "./transaction-row";
@@ -48,15 +48,15 @@ function groupTransactionsByDate(
   for (const transaction of transactions) {
     if (!transaction.date) continue;
 
-    const date = new Date(transaction.date);
-    const dayKey = format(startOfDay(date), "yyyy-MM-dd");
+    const dateDayStart = startOfDay(transaction.date);
+    const dayKey = format(dateDayStart, "yyyy-MM-dd");
 
     const existing = grouped.get(dayKey);
     if (existing) {
       existing.transactions.push(transaction);
     } else {
       grouped.set(dayKey, {
-        date: startOfDay(date),
+        date: dateDayStart,
         transactions: [transaction],
       });
     }
@@ -65,10 +65,7 @@ function groupTransactionsByDate(
   // Convert to sections with totals
   const sections: TransactionSection[] = [];
   for (const [, group] of grouped) {
-    const total = group.transactions.reduce(
-      (sum, t) => sum + Number(t.amount),
-      0
-    );
+    const total = sum(group.transactions.map(({ amount }) => Number(amount)));
     sections.push({
       date: group.date,
       total,
@@ -92,9 +89,9 @@ export function TransactionList({
   emptyStateVariant = "period-empty",
   periodLabel,
 }: Props) {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const tintColor = useThemeColor("foreground");
+  const mutedColor = useThemeColor("muted");
 
   const sections = useMemo(
     () => groupTransactionsByDate(transactions),
@@ -120,15 +117,16 @@ export function TransactionList({
     []
   );
 
-  const renderItem = useCallback(
-    ({ item }: { item: Transaction }) => (
-      <TransactionRow
-        onPress={() => handleTransactionPress(item.id)}
-        transaction={item}
-      />
-    ),
-    [handleTransactionPress]
-  );
+  const renderItem: SectionListRenderItem<TransactionItem, TransactionSection> =
+    useCallback(
+      ({ item }) => (
+        <TransactionRow
+          onPress={() => handleTransactionPress(item.id)}
+          transaction={item}
+        />
+      ),
+      [handleTransactionPress]
+    );
 
   const keyExtractor = useCallback((item: Transaction) => item.id, []);
 
@@ -137,11 +135,12 @@ export function TransactionList({
 
     return (
       <StyledLeanView className="items-center py-6">
-        <Pressable
-          className="rounded-full bg-foreground/10 px-6 py-3"
+        <GlassButton
           disabled={isFetchingNextPage}
           onPress={onLoadMore}
           style={{ opacity: isFetchingNextPage ? 0.6 : 1 }}
+          tintColor={mutedColor}
+          variant="default"
         >
           {isFetchingNextPage ? (
             <ActivityIndicator color={tintColor} size="small" />
@@ -150,10 +149,10 @@ export function TransactionList({
               Load More
             </StyledLeanText>
           )}
-        </Pressable>
+        </GlassButton>
       </StyledLeanView>
     );
-  }, [hasNextPage, isFetchingNextPage, onLoadMore, tintColor]);
+  }, [hasNextPage, isFetchingNextPage, onLoadMore, tintColor, mutedColor]);
 
   if (sections.length === 0) {
     return (
@@ -166,10 +165,7 @@ export function TransactionList({
 
   return (
     <SectionList
-      contentContainerStyle={{
-        paddingHorizontal: 16,
-        paddingBottom: TAB_BAR_HEIGHT + insets.bottom + 16,
-      }}
+      contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
       keyExtractor={keyExtractor}
       ListFooterComponent={renderFooter}
       refreshControl={

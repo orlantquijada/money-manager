@@ -25,7 +25,7 @@ export function TransactionRow({ transaction, onPress }: Props) {
 
   return (
     <ScalePressable
-      className="flex-row items-center justify-between py-3"
+      className="flex-row items-center justify-between py-1.5"
       onPress={onPress}
       opacityValue={0.7}
       scaleValue={0.98}

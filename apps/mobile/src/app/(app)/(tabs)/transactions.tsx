@@ -93,7 +93,7 @@ export default function Transactions() {
         <StyledLeanView className="flex-1 gap-4 px-4 pt-4">
           {/* Period chips */}
           <PeriodChips
-            className="mb-4"
+            className="mb-2"
             onChange={handlePeriodChange}
             value={period}
           />

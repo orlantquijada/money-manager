@@ -30,6 +30,29 @@ export function getMonthlyBudget(fund: FundWithMeta) {
 export function fundWithMeta(fund: FundWithMeta) {
   const monthlyBudget = getMonthlyBudget(fund);
   const amountLeft = Math.max(monthlyBudget - fund.totalSpent, 0);
+
+  // NON_NEGOTIABLE funds: show savings accumulation (0→100%)
+  // Progress bar fills up as user allocates money toward the bill
+  if (fund.fundType === "NON_NEGOTIABLE") {
+    const amountSaved = fund.totalSpent; // Money allocated toward this bill
+    const savingsProgress =
+      monthlyBudget > 0 ? Math.min(amountSaved / monthlyBudget, 1) : 0;
+    const isFunded = amountSaved >= monthlyBudget;
+
+    return {
+      ...fund,
+      monthlyBudget,
+      amountLeft,
+      progress: savingsProgress, // Reuse progress for UI compatibility
+      amountSaved,
+      savingsProgress,
+      isFunded,
+      isCompleted: isFunded,
+    };
+  }
+
+  // SPENDING funds: show spending depletion (100%→0%)
+  // Progress bar empties as user spends money
   const progress =
     monthlyBudget > 0 ? Math.min(fund.totalSpent / monthlyBudget, 1) : 0;
 

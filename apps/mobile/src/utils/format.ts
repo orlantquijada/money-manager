@@ -16,3 +16,19 @@ export function toCurrencyNarrow(amount: number) {
   });
   return formatter.format(amount);
 }
+
+// no decimal
+export const wholeCurrencyFormatterOptions = {
+  style: "currency",
+  currency: "PHP",
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+} as const;
+const wholeFormatter = new Intl.NumberFormat(
+  "en-PH",
+  wholeCurrencyFormatterOptions
+);
+
+export function toWholeCurrency(amount: number) {
+  return wholeFormatter.format(amount);
+}

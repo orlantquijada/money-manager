@@ -16,14 +16,17 @@ const PERIODS: { value: Period; label: string }[] = [
 type Props = {
   value: Period;
   onChange: (period: Period) => void;
+  className?: string;
 };
 
-export default function PeriodChips({ value, onChange }: Props) {
+export default function PeriodChips({ value, onChange, className }: Props) {
   const backgroundColor = useThemeColor("background");
   const foregroundColor = useThemeColor("foreground");
 
   return (
-    <StyledLeanView className="flex-row gap-2">
+    <StyledLeanView
+      className={cn("flex-row items-center justify-center gap-2", className)}
+    >
       {PERIODS.map((period) => {
         const isActive = value === period.value;
 
@@ -36,6 +39,7 @@ export default function PeriodChips({ value, onChange }: Props) {
                 onChange(period.value);
               }
             }}
+            size="sm"
             tintColor={isActive ? foregroundColor : backgroundColor}
             variant="default"
           >

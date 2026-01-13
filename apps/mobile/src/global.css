@@ -406,5 +406,6 @@
   --font-inter-bold: "Inter_700Bold";
   --font-inter-bold-italic: "Inter_700Bold_Italic";
 
+  --height-hairline: hairlineWidth();
   --border-width-hairline: hairlineWidth();
 }

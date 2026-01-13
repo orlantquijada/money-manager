@@ -15,7 +15,7 @@ function formatDateLabel(date: Date): string {
 
 export function TransactionDateHeader({ date, total }: Props) {
   return (
-    <StyledLeanView className="flex-row items-center justify-between pt-4 pb-2">
+    <StyledLeanView className="flex-row items-center justify-between pt-6 pb-3">
       <StyledLeanText className="font-satoshi text-foreground-muted text-sm">
         {formatDateLabel(date)}
       </StyledLeanText>

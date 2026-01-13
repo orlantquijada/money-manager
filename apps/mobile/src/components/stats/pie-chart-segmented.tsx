@@ -1,10 +1,8 @@
 import { arc, type PieArcDatum, pie } from "d3-shape";
 import * as Haptics from "expo-haptics";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { Pressable } from "react-native";
 import Animated, {
-  FadeIn,
-  FadeOut,
   useAnimatedProps,
   useDerivedValue,
   useSharedValue,
@@ -13,12 +11,12 @@ import Animated, {
 import { G, Path, Svg } from "react-native-svg";
 import { AnimatedText } from "@/components/animated-text";
 import { StyledLeanView } from "@/config/interop";
-import { CHART_COLORS, getChartColor } from "@/lib/chart-colors";
-import { transitions } from "@/utils/motion";
+import { useChartColors } from "@/lib/chart-colors";
+import { sum } from "@/utils/math";
+import { fadeInOutSpringify, transitions } from "@/utils/motion";
 
 const MAX_SLICES = 5;
 
-const SPRING_CONFIG = transitions.snappy;
 const FOCUS_OFFSET = 8; // radial pop-out distance in px
 const UNFOCUSED_OPACITY = 0.3;
 
@@ -34,7 +32,11 @@ export type FundData = {
   percentage: number;
 };
 
+/** Represents a slice identifier: number for specific fundId, null for "Other" aggregated slice */
+export type SliceId = number | null;
+
 type PieSlice = {
+  fundId: SliceId;
   label: string;
   value: number;
   color: string;
@@ -44,13 +46,17 @@ type PieSlice = {
 type Props = {
   data: FundData[];
   size?: number;
+  /** undefined = nothing selected, null = "Other" selected, number = specific fund */
+  selectedFundId: SliceId | undefined;
+  /** Callback when selection changes */
+  onSelectFundId: (fundId: SliceId | undefined) => void;
 };
 
 /**
  * Prepares data for pie chart display.
  * Shows top 5 funds individually, groups remainder into "Other".
  */
-function preparePieData(data: FundData[]): PieSlice[] {
+function preparePieData(data: FundData[], chartColors: string[]): PieSlice[] {
   if (data.length === 0) return [];
 
   // Sort by amount descending (should already be sorted from API)
@@ -58,9 +64,10 @@ function preparePieData(data: FundData[]): PieSlice[] {
 
   if (sorted.length <= MAX_SLICES) {
     return sorted.map((fund, index) => ({
+      fundId: fund.fundId,
       label: fund.fundName,
       value: fund.percentage,
-      color: getChartColor(index),
+      color: chartColors[index % chartColors.length],
       amount: fund.amount,
     }));
   }
@@ -69,20 +76,22 @@ function preparePieData(data: FundData[]): PieSlice[] {
   const top5 = sorted.slice(0, MAX_SLICES);
   const others = sorted.slice(MAX_SLICES);
 
-  const otherAmount = others.reduce((sum, f) => sum + f.amount, 0);
-  const otherPercentage = others.reduce((sum, f) => sum + f.percentage, 0);
+  const otherAmount = sum(others.map(({ amount }) => amount));
+  const otherPercentage = sum(others.map(({ percentage }) => percentage));
 
   const slices: PieSlice[] = top5.map((fund, index) => ({
+    fundId: fund.fundId,
     label: fund.fundName,
     value: fund.percentage,
-    color: getChartColor(index),
+    color: chartColors[index % chartColors.length],
     amount: fund.amount,
   }));
 
   slices.push({
+    fundId: null, // "Other" has no specific fundId
     label: "Other",
     value: otherPercentage,
-    color: CHART_COLORS[5], // Lightest shade for "Other"
+    color: chartColors[5], // Lightest shade for "Other"
     amount: otherAmount,
   });
 
@@ -96,17 +105,17 @@ type AnimatedSliceProps = {
   arcDatum: PieArcDatum<PieSlice>;
   pathData: string;
   color: string;
-  index: number;
-  selectedIndex: number | null;
-  onPress: (index: number) => void;
+  fundId: SliceId;
+  selectedFundId: SliceId | undefined;
+  onPress: (fundId: SliceId) => void;
 };
 
 function AnimatedSlice({
   arcDatum,
   pathData,
   color,
-  index,
-  selectedIndex,
+  fundId,
+  selectedFundId,
   onPress,
 }: AnimatedSliceProps) {
   // Calculate middle angle for radial offset direction
@@ -120,15 +129,17 @@ function AnimatedSlice({
   const offset = useSharedValue(0);
   const opacity = useSharedValue(1);
 
-  const isFocused = selectedIndex === index;
-  const anySelected = selectedIndex !== null;
+  // A slice is focused only if explicitly selected
+  // fundId=null means "Other" slice, selectedFundId=undefined means nothing selected
+  const isFocused = selectedFundId !== undefined && selectedFundId === fundId;
+  const anySelected = selectedFundId !== undefined;
 
   useEffect(() => {
-    offset.set(withSpring(isFocused ? FOCUS_OFFSET : 0, SPRING_CONFIG));
+    offset.set(withSpring(isFocused ? FOCUS_OFFSET : 0, transitions.snappy));
     opacity.set(
       withSpring(
         anySelected && !isFocused ? UNFOCUSED_OPACITY : 1,
-        SPRING_CONFIG
+        transitions.snappy
       )
     );
   }, [anySelected, isFocused, opacity.set, offset.set]);
@@ -152,7 +163,7 @@ function AnimatedSlice({
         animatedProps={animatedSliceProps}
         d={pathData}
         fill={color}
-        onPress={() => onPress(index)}
+        onPressIn={() => onPress(fundId)}
       />
     </G>
   );
@@ -160,19 +171,14 @@ function AnimatedSlice({
 
 type CenterLabelProps = {
   displaySlice: PieSlice | undefined;
-  isSelected: boolean;
-  selectedIndex?: number;
+  selectedFundId: SliceId | undefined;
 };
 
-function CenterLabel({
-  displaySlice,
-  isSelected,
-  selectedIndex,
-}: CenterLabelProps) {
+function CenterLabel({ displaySlice, selectedFundId }: CenterLabelProps) {
   const animatedValue = useSharedValue(displaySlice?.value ?? 0);
 
   useEffect(() => {
-    animatedValue.set(withSpring(displaySlice?.value ?? 0, SPRING_CONFIG));
+    animatedValue.set(withSpring(displaySlice?.value ?? 0, transitions.snappy));
   }, [displaySlice?.value, animatedValue.set]);
 
   const animatedText = useDerivedValue(() => {
@@ -194,15 +200,8 @@ function CenterLabel({
       <Animated.Text
         className="max-w-[80%] text-center font-satoshi-medium text-foreground text-xs"
         ellipsizeMode="tail"
-        entering={FadeIn.springify()
-          .stiffness(SPRING_CONFIG.stiffness)
-          .damping(SPRING_CONFIG.damping)
-          .mass(SPRING_CONFIG.mass)}
-        exiting={FadeOut.springify()
-          .stiffness(SPRING_CONFIG.stiffness)
-          .damping(SPRING_CONFIG.damping)
-          .mass(SPRING_CONFIG.mass)}
-        key={selectedIndex}
+        {...fadeInOutSpringify("snappy")}
+        key={selectedFundId}
         numberOfLines={1}
       >
         {displaySlice.label}
@@ -211,15 +210,26 @@ function CenterLabel({
   );
 }
 
-export default function SpendingPieChartSegmented({ data, size = 150 }: Props) {
-  const pieData = preparePieData(data);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+export default function SpendingPieChartSegmented({
+  data,
+  size = 150,
+  selectedFundId,
+  onSelectFundId,
+}: Props) {
+  const chartColors = useChartColors();
+  const pieData = useMemo(
+    () => preparePieData(data, chartColors),
+    [data, chartColors]
+  );
 
-  const handleSlicePress = useCallback((index: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    // Toggle selection - tapping same slice deselects it
-    setSelectedIndex((prev) => (prev === index ? null : index));
-  }, []);
+  const handleSlicePress = useCallback(
+    (fundId: SliceId) => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      // Toggle selection - tapping same slice deselects it (sets to undefined)
+      onSelectFundId(selectedFundId === fundId ? undefined : fundId);
+    },
+    [selectedFundId, onSelectFundId]
+  );
 
   // Empty state - show placeholder circle
   if (pieData.length === 0) {
@@ -255,30 +265,31 @@ export default function SpendingPieChartSegmented({ data, size = 150 }: Props) {
   // Compute arc data
   const arcs = pieGenerator(pieData);
 
-  // Determine what to show in center
+  // Determine what to show in center - find slice by fundId (undefined = show first)
   const displaySlice =
-    selectedIndex !== null ? pieData[selectedIndex] : pieData[0];
-  const isSelected = selectedIndex !== null;
+    selectedFundId !== undefined
+      ? (pieData.find((s) => s.fundId === selectedFundId) ?? pieData[0])
+      : pieData[0];
 
   return (
     <Pressable
       className="relative"
-      onPress={() => setSelectedIndex(null)}
+      onPress={() => onSelectFundId(undefined)}
       style={{ width: size, height: size }}
     >
       <Svg viewBox={`0 0 ${size} ${size}`}>
         <G transform={[{ translateX: center }, { translateY: center }]}>
-          {arcs.map((arcDatum, index) => {
+          {arcs.map((arcDatum) => {
             const pathData = arcGenerator(arcDatum) || "";
             return (
               <AnimatedSlice
                 arcDatum={arcDatum}
                 color={arcDatum.data.color}
-                index={index}
+                fundId={arcDatum.data.fundId}
                 key={arcDatum.data.label}
                 onPress={handleSlicePress}
                 pathData={pathData}
-                selectedIndex={selectedIndex}
+                selectedFundId={selectedFundId}
               />
             );
           })}
@@ -287,8 +298,7 @@ export default function SpendingPieChartSegmented({ data, size = 150 }: Props) {
 
       <CenterLabel
         displaySlice={displaySlice}
-        isSelected={isSelected}
-        selectedIndex={selectedIndex}
+        selectedFundId={selectedFundId}
       />
     </Pressable>
   );
