@@ -7,30 +7,31 @@ import {
   type TabTriggerSlotProps,
 } from "expo-router/ui";
 import { useRef } from "react";
-import { type PressableProps, View } from "react-native";
+import type { PressableProps } from "react-native";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
 import TotalSpent from "@/components/dashboard/total-spent";
 import GlassButton from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
+import { useTabBarHeight } from "@/components/tab-bar";
 import { useThemeColor } from "@/components/theme-provider";
-import {
-  StyledLeanText,
-  StyledLeanView,
-  StyledSafeAreaView,
-} from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { Plus } from "@/icons";
 import { cn } from "@/utils/cn";
 
 export default function DashboardLayout() {
   const ref = useRef<BottomSheetModal>(null);
+  const tabBarHeight = useTabBarHeight();
 
   return (
     <AnimatedTabScreen index={1}>
       <DashboardCreateBottomSheet ref={ref} />
 
-      <StyledSafeAreaView className="flex-1 bg-background">
-        <View className="my-8 w-full flex-row items-start justify-between px-4">
+      <StyledLeanView
+        className="flex-1 bg-background pt-safe"
+        style={{ paddingBottom: tabBarHeight }}
+      >
+        <StyledLeanView className="mb-4 w-full flex-row items-start justify-between px-4 py-2">
           <TotalSpent />
 
           <AddButton
@@ -41,7 +42,7 @@ export default function DashboardLayout() {
               ref.current?.present();
             }}
           />
-        </View>
+        </StyledLeanView>
 
         <Tabs>
           <TabList
@@ -58,7 +59,7 @@ export default function DashboardLayout() {
 
           <TabSlot />
         </Tabs>
-      </StyledSafeAreaView>
+      </StyledLeanView>
     </AnimatedTabScreen>
   );
 }

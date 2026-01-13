@@ -1,7 +1,6 @@
 import { ScrollView, Text } from "react-native";
 import Budget from "@/components/budgets/budget";
 import FadingEdge, { useOverflowFadeEdge } from "@/components/fading-edge";
-import { TAB_BAR_HEIGHT } from "@/components/tab-bar";
 import { useThemeColor } from "@/components/theme-provider";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
 
@@ -13,15 +12,12 @@ export default function BudgetsScreen() {
   });
 
   return (
-    <FadingEdge
-      fadeColor={backgroundColor}
-      {...fadeProps}
-      style={{ marginBottom: TAB_BAR_HEIGHT }}
-    >
+    <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
       <ScrollView
-        className="flex-1 bg-violet1/0 px-4"
-        contentContainerClassName="gap-3 py-4"
+        className="flex-1 px-4"
+        contentContainerClassName="gap-3 py-4 min-h-full"
         onScroll={handleScroll}
+        scrollEventThrottle={300}
       >
         {/* {isLoading && ( */}
         {/*   <Text className="text-center text-mauveDark3">Loading...</Text> */}

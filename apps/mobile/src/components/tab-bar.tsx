@@ -12,7 +12,8 @@ import type { TabBarIconProps } from "@/utils/types";
 import { ScalePressable } from "./scale-pressable";
 import { useThemeColor } from "./theme-provider";
 
-export const TAB_BAR_HEIGHT = 72;
+// export const TAB_BAR_HEIGHT = 72;
+export const TAB_BAR_HEIGHT = 64;
 
 type RouteConfig = {
   name: string;
@@ -35,6 +36,7 @@ export default function TabBar({
   const insets = useSafeAreaInsets();
   useSyncTabPosition(position, state.routes);
   useTabChangeHaptics(state.index);
+  const height = useTabBarHeight();
 
   const inputRange = useMemo(
     () => state.routes.map((_, i) => i),
@@ -52,30 +54,23 @@ export default function TabBar({
     [position, inputRange, insets.bottom]
   );
 
-  const tintColor = useThemeColor("tabBar");
-
   return (
     <Animated.View
-      className="absolute inset-x-0 mx-4"
+      className="absolute inset-x-0 bottom-0"
       style={{
-        bottom: insets.bottom,
-        height: TAB_BAR_HEIGHT,
+        height,
         transform: [{ translateY }],
       }}
     >
       <GlassView
         glassEffectStyle="regular"
         isInteractive
-        style={[
-          StyleSheet.absoluteFill,
-          {
-            borderRadius: 20,
-            borderCurve: "continuous",
-          },
-        ]}
-        tintColor={tintColor}
+        style={StyleSheet.absoluteFill}
       >
-        <StyledLeanView className="absolute inset-0 flex-row items-center justify-center gap-10">
+        <StyledLeanView
+          className="absolute inset-0 flex-row items-center justify-center gap-10"
+          style={{ height: TAB_BAR_HEIGHT }}
+        >
           {state.routes.map((route, index) => (
             <TabItem
               index={index}
@@ -113,6 +108,11 @@ function useTabBarAnimations(
       outlineOpacity: createInterpolation(0, 1),
     };
   }, [position, inputRange, index]);
+}
+
+export function useTabBarHeight() {
+  const insets = useSafeAreaInsets();
+  return TAB_BAR_HEIGHT + insets.bottom;
 }
 
 type TabItemProps = {
