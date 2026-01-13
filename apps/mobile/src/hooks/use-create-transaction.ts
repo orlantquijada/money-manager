@@ -25,8 +25,8 @@ export function useCreateTransactionMutation() {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
         // Invalidate only transaction and fund queries (funds track spent amounts)
-        queryClient.invalidateQueries({ queryKey: [["transaction"]] });
-        queryClient.invalidateQueries({ queryKey: [["fund"]] });
+        queryClient.invalidateQueries({ queryKey: ["transaction"] });
+        queryClient.invalidateQueries({ queryKey: ["fund"] });
 
         // Reset form state
         useAddExpenseStore.getState().reset();

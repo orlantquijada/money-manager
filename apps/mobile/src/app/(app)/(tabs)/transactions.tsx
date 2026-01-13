@@ -4,8 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import PeriodChips, { type Period } from "@/components/stats/period-chips";
 import StatsHeader from "@/components/stats/stats-header";
+import { useTabBarHeight } from "@/components/tab-bar";
 import { TransactionList } from "@/components/transactions";
-import { StyledLeanView, StyledSafeAreaView } from "@/config/interop";
+import { StyledLeanView } from "@/config/interop";
 import { trpc } from "@/utils/api";
 
 type TransactionItem =
@@ -20,12 +21,10 @@ const PERIOD_LABELS: Record<Period, string> = {
 
 export default function Transactions() {
   const queryClient = useQueryClient();
+  const tabBarHeight = useTabBarHeight();
 
   // Period selection state
   const [period, setPeriod] = useState<Period>("month");
-
-  // Chart variant - using segmented interactive style
-  const chartVariant = "segmented" as const;
 
   // Pagination state
   const [cursor, setCursor] = useState<string | undefined>();
@@ -71,7 +70,7 @@ export default function Transactions() {
     setCursor(undefined);
     setTransactions([]);
     await queryClient.invalidateQueries({
-      queryKey: [["transaction"]],
+      queryKey: ["transaction"],
     });
     setIsRefreshing(false);
   }, [queryClient]);
@@ -87,22 +86,24 @@ export default function Transactions() {
 
   return (
     <AnimatedTabScreen index={2}>
-      <StyledSafeAreaView className="flex-1 bg-background" edges={["top"]}>
+      <StyledLeanView
+        className="flex-1 bg-background pt-safe"
+        style={{ paddingBottom: tabBarHeight }}
+      >
         <StyledLeanView className="flex-1 gap-4 px-4 pt-4">
           {/* Period chips */}
-          <PeriodChips onChange={handlePeriodChange} value={period} />
+          <PeriodChips
+            className="mb-4"
+            onChange={handlePeriodChange}
+            value={period}
+          />
 
           {/* Stats header - hide for new user */}
           {showStatsHeader && (
-            <StatsHeader
-              chartVariant={chartVariant}
-              data={stats}
-              isLoading={statsLoading}
-            />
+            <StatsHeader data={stats} isLoading={statsLoading} />
           )}
 
-          {/* Transaction list with pagination */}
-          <StyledLeanView className="flex-1">
+          <StyledLeanView className="flex-1" style={{ marginHorizontal: -16 }}>
             <TransactionList
               emptyStateVariant={emptyStateVariant}
               hasNextPage={!!listData?.nextCursor}
@@ -115,7 +116,7 @@ export default function Transactions() {
             />
           </StyledLeanView>
         </StyledLeanView>
-      </StyledSafeAreaView>
+      </StyledLeanView>
     </AnimatedTabScreen>
   );
 }

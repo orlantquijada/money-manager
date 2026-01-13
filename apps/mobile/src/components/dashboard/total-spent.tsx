@@ -1,12 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { Text, View } from "react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { AnimatedArrowDown } from "@/icons";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
-import { lime, red } from "@/utils/colors";
-import { toCurrencyShort } from "@/utils/format";
+import { toWholeCurrency } from "@/utils/format";
 import {
   layoutSpringify,
   TotalSpentSlideOutUp,
@@ -14,6 +13,7 @@ import {
   transitions,
 } from "@/utils/motion";
 import Skeleton from "../skeleton";
+import { useThemeColor } from "../theme-provider";
 
 export default function TotalSpent() {
   const { data: thisMonthTotal = 0, isLoading: isLoadingThisMonth } = useQuery(
@@ -42,8 +42,8 @@ export default function TotalSpent() {
   }, [thisMonthTotal, lastMonthTotal]);
 
   return (
-    <View>
-      <View className="w-full flex-row items-center">
+    <StyledLeanView>
+      <StyledLeanView className="w-full flex-row items-center">
         {isLoading ? (
           <Skeleton height={40} width={120} />
         ) : (
@@ -54,7 +54,7 @@ export default function TotalSpent() {
             key={thisMonthTotal}
             layout={layoutSpringify("snappy")}
           >
-            {toCurrencyShort(thisMonthTotal)}
+            {toWholeCurrency(Math.round(thisMonthTotal))}
           </Animated.Text>
         )}
 
@@ -64,12 +64,12 @@ export default function TotalSpent() {
             percentage={comparison.percentage}
           />
         )}
-      </View>
+      </StyledLeanView>
 
-      <Text className="mr-1 font-satoshi-medium text-base text-foreground-muted">
+      <StyledLeanText className="mr-1 font-satoshi-medium text-base text-foreground-muted">
         Total spent this month
-      </Text>
-    </View>
+      </StyledLeanText>
+    </StyledLeanView>
   );
 }
 
@@ -79,37 +79,40 @@ type ProgressIndicatorProps = {
 };
 
 function ProgressIndicator({ isIncrease, percentage }: ProgressIndicatorProps) {
+  const increaseColor = useThemeColor("red-11");
+  const decreaseColor = useThemeColor("lime-11");
+
   return (
     <Animated.View
-      className="flex-row gap-1"
+      className="flex-row justify-center gap-1"
       entering={FadeInDown.withInitialValues({
         transform: [{ translateY: 12 }],
       }).springify()}
       layout={layoutSpringify("snappy").delay(totalSpentSlideOutUpConfig.delay)}
     >
-      <View
+      <StyledLeanView
         className={cn(
-          "aspect-square h-5 items-center justify-center rounded-full transition-all",
+          "size-5 items-center justify-center rounded-full",
           isIncrease ? "bg-red-4" : "bg-lime-4"
         )}
       >
         <AnimatedArrowDown
           animate={{
-            color: isIncrease ? red.red11 : lime.lime11,
+            color: isIncrease ? increaseColor : decreaseColor,
             rotate: isIncrease ? "180deg" : "0deg",
           }}
           size={16}
           transition={transitions.snappy}
         />
-      </View>
-      <Text
+      </StyledLeanView>
+      <StyledLeanText
         className={cn(
-          "font-satoshi-medium text-sm transition-all",
+          "font-nunito-medium text-sm",
           isIncrease ? "text-red-11" : "text-lime-11"
         )}
       >
         {percentage}%
-      </Text>
+      </StyledLeanText>
     </Animated.View>
   );
 }

@@ -110,6 +110,23 @@ export const transactionsRouter = router({
       ctx.db.delete(transactions).where(eq(transactions.id, input))
     ),
 
+  // Mark a non-negotiable fund as paid by deleting all its transactions for the current month
+  // This resets the fund's savings progress for the next billing cycle
+  markAsPaid: protectedProcedure
+    .input(z.object({ fundId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const now = new Date();
+      await ctx.db
+        .delete(transactions)
+        .where(
+          and(
+            eq(transactions.fundId, input.fundId),
+            gte(transactions.date, startOfMonth(now)),
+            lt(transactions.date, endOfMonth(now))
+          )
+        );
+    }),
+
   create: protectedProcedure
     .input(
       z.object({

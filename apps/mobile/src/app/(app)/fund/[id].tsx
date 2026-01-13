@@ -1,78 +1,227 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { useLocalSearchParams } from "expo-router";
-import { ScrollView, Text, View } from "react-native";
+import * as Haptics from "expo-haptics";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Alert, ScrollView, useColorScheme } from "react-native";
+import ProgressBar from "@/components/budgets/progress-bar";
 import { GlassCloseButton } from "@/components/glass-button";
+import { ScalePressable } from "@/components/scale-pressable";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { getTimeModeMultiplier, TIME_MODE_LABELS } from "@/lib/fund";
 import { trpc } from "@/utils/api";
+import {
+  green,
+  greenDark,
+  lime,
+  limeDark,
+  mauve,
+  mauveDark,
+} from "@/utils/colors";
+import { toCurrencyNarrow } from "@/utils/format";
 
 export default function FundDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const fundId = Number(id);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
-  const { data: transactions, isLoading } = useQuery(
+  const { data: fund, isLoading: fundLoading } = useQuery(
+    trpc.fund.retrieve.queryOptions(fundId)
+  );
+
+  const { data: transactions, isLoading: txLoading } = useQuery(
     trpc.transaction.recentByFund.queryOptions(fundId)
   );
 
-  return (
-    <View className="flex-1 bg-violet1 pt-4">
-      <View className="flex-row items-center justify-between px-4 pb-4">
-        <GlassCloseButton />
+  const markAsPaid = useMutation(
+    trpc.transaction.markAsPaid.mutationOptions({
+      onSuccess: () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        queryClient.invalidateQueries();
+        router.back();
+      },
+    })
+  );
 
-        <Text className="font-satoshi-medium text-lg text-violet12">
-          Transactions
-        </Text>
-        <View className="w-8" />
-      </View>
+  const handleMarkAsPaid = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Alert.alert(
+      "Mark as Paid",
+      "This will reset your savings progress for this fund. Continue?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Mark as Paid",
+          style: "destructive",
+          onPress: () => markAsPaid.mutate({ fundId }),
+        },
+      ]
+    );
+  };
+
+  const isLoading = fundLoading || txLoading;
+
+  if (isLoading) {
+    return (
+      <StyledLeanView className="flex-1 items-center justify-center bg-background">
+        <StyledLeanText className="text-foreground-muted">
+          Loading...
+        </StyledLeanText>
+      </StyledLeanView>
+    );
+  }
+
+  if (!fund) {
+    return (
+      <StyledLeanView className="flex-1 items-center justify-center bg-background">
+        <StyledLeanText className="text-foreground-muted">
+          Fund not found
+        </StyledLeanText>
+      </StyledLeanView>
+    );
+  }
+
+  const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
+  const monthlyBudget =
+    fund.budgetedAmount * getTimeModeMultiplier(fund.timeMode);
+  const amountSaved = fund.totalSpent;
+  const progress =
+    monthlyBudget > 0 ? Math.min(amountSaved / monthlyBudget, 1) : 0;
+  const isFunded = amountSaved >= monthlyBudget;
+
+  // Color based on savings progress
+  const getProgressColor = () => {
+    if (!isNonNegotiable) return undefined;
+    if (isFunded) return isDark ? greenDark.green9 : green.green9;
+    if (progress >= 0.5) return isDark ? limeDark.lime9 : lime.lime9;
+    return isDark ? mauveDark.mauve9 : mauve.mauve9;
+  };
+
+  return (
+    <StyledLeanView className="flex-1 bg-background pt-4">
+      {/* Header */}
+      <StyledLeanView className="flex-row items-center justify-between px-4 pb-4">
+        <GlassCloseButton />
+        <StyledLeanText
+          className="flex-1 text-center font-satoshi-medium text-foreground text-lg"
+          ellipsizeMode="tail"
+          numberOfLines={1}
+        >
+          {fund.name}
+        </StyledLeanText>
+        <StyledLeanView className="w-12" />
+      </StyledLeanView>
 
       <ScrollView
         className="flex-1 px-4"
-        contentContainerClassName="gap-2 pb-8"
+        contentContainerClassName="gap-6 pb-8"
       >
-        {isLoading && (
-          <Text className="text-center text-mauve9">Loading...</Text>
-        )}
-
-        {!isLoading && (!transactions || transactions.length === 0) && (
-          <Text className="text-center text-mauve9">No transactions yet</Text>
-        )}
-
-        {transactions?.map((transaction) => (
-          <View
-            className="rounded-xl bg-mauve3 p-4"
-            key={transaction.id}
+        {/* Progress Section (NON_NEGOTIABLE only) */}
+        {isNonNegotiable && (
+          <StyledLeanView
+            className="gap-3 rounded-2xl bg-card p-4"
             style={{ borderCurve: "continuous" }}
           >
-            <View className="flex-row items-center justify-between">
-              <View className="flex-1">
-                <Text
-                  className="font-satoshi-medium text-base text-violet12"
-                  numberOfLines={1}
+            <StyledLeanView className="flex-row items-center justify-between">
+              <StyledLeanText className="font-satoshi-medium text-foreground-muted">
+                Savings Progress
+              </StyledLeanText>
+              <StyledLeanText
+                className="font-nunito-bold text-base"
+                style={{ color: getProgressColor() }}
+              >
+                {Math.round(progress * 100)}%
+              </StyledLeanText>
+            </StyledLeanView>
+
+            <ProgressBar color={getProgressColor()} progress={progress} />
+
+            <StyledLeanView className="flex-row items-center justify-between">
+              <StyledLeanText className="font-nunito-semibold text-foreground">
+                {toCurrencyNarrow(amountSaved)}
+              </StyledLeanText>
+              <StyledLeanText className="font-satoshi text-foreground-muted">
+                of {toCurrencyNarrow(monthlyBudget)}{" "}
+                {TIME_MODE_LABELS[fund.timeMode]}
+              </StyledLeanText>
+            </StyledLeanView>
+
+            {isFunded && (
+              <ScalePressable
+                className="mt-2 items-center rounded-xl bg-green-3 py-3"
+                onPress={handleMarkAsPaid}
+                style={{
+                  borderCurve: "continuous",
+                  backgroundColor: green.green3,
+                }}
+              >
+                <StyledLeanText
+                  className="font-satoshi-medium text-green-11"
+                  style={{
+                    color: green.green11,
+                  }}
                 >
-                  {transaction.store?.name || "No store"}
-                </Text>
-                {transaction.note && (
-                  <Text
-                    className="mt-0.5 font-satoshi text-mauve9 text-sm"
+                  ✓ Fully Funded — Tap to Mark as Paid
+                </StyledLeanText>
+              </ScalePressable>
+            )}
+          </StyledLeanView>
+        )}
+
+        {/* Transactions */}
+        <StyledLeanView className="gap-3">
+          <StyledLeanText className="font-satoshi-medium text-foreground-muted">
+            Recent Transactions
+          </StyledLeanText>
+
+          {(!transactions || transactions.length === 0) && (
+            <StyledLeanText className="text-center text-foreground-muted">
+              No transactions yet
+            </StyledLeanText>
+          )}
+
+          {transactions?.map((transaction) => (
+            <StyledLeanView
+              className="rounded-xl bg-card p-4"
+              key={transaction.id}
+              style={{ borderCurve: "continuous" }}
+            >
+              <StyledLeanView className="flex-row items-center justify-between">
+                <StyledLeanView className="flex-1">
+                  <StyledLeanText
+                    className="font-satoshi-medium text-base text-foreground"
+                    ellipsizeMode="tail"
                     numberOfLines={1}
                   >
-                    {transaction.note}
-                  </Text>
-                )}
-              </View>
-              <View className="items-end">
-                <Text className="font-satoshi-medium text-base text-violet12">
-                  ₱{Number(transaction.amount).toLocaleString()}
-                </Text>
-                <Text className="font-satoshi text-mauve9 text-xs">
-                  {transaction.date
-                    ? format(new Date(transaction.date), "MMM d")
-                    : ""}
-                </Text>
-              </View>
-            </View>
-          </View>
-        ))}
+                    {transaction.store?.name || "No store"}
+                  </StyledLeanText>
+                  {transaction.note && (
+                    <StyledLeanText
+                      className="mt-0.5 font-satoshi text-foreground-muted text-sm"
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                    >
+                      {transaction.note}
+                    </StyledLeanText>
+                  )}
+                </StyledLeanView>
+                <StyledLeanView className="items-end">
+                  <StyledLeanText className="font-nunito-semibold text-base text-foreground">
+                    {toCurrencyNarrow(Number(transaction.amount))}
+                  </StyledLeanText>
+                  <StyledLeanText className="font-satoshi text-foreground-muted text-xs">
+                    {transaction.date
+                      ? format(new Date(transaction.date), "MMM d")
+                      : ""}
+                  </StyledLeanText>
+                </StyledLeanView>
+              </StyledLeanView>
+            </StyledLeanView>
+          ))}
+        </StyledLeanView>
       </ScrollView>
-    </View>
+    </StyledLeanView>
   );
 }

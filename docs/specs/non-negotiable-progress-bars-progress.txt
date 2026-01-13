@@ -1,0 +1,28 @@
+# Non-Negotiable Progress Bars Progress
+
+## Quick Reference
+- PRD: docs/specs/non-negotiable-progress-bars.json
+- Main files: 
+  - apps/mobile/src/lib/fund.ts
+  - apps/mobile/src/components/add-expense/fund-picker-sheet.tsx
+  - apps/mobile/src/components/dashboard/fund-row.tsx
+
+---
+
+## Progress Log
+
+### 2026-01-10 - Spec creation
+
+[NNP-001] NOT STARTED - Data layer for savings progress
+- Spec created with fundWithMeta extension design
+- Need to confirm amountSaved vs amountLeft semantics
+
+---
+
+## Blockers
+(none)
+
+## Key Decisions
+- Progress bars invert for NON_NEGOTIABLE: 0→100% (savings) vs 100%→0% (spending)
+- Color logic shifts from "danger as you spend" to "success as you save"
+- Overfunding caps visual at 100% but shows actual amount in text

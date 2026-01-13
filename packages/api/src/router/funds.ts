@@ -93,9 +93,23 @@ export const fundsRouter = router({
         return null;
       }
 
+      // Calculate total spent for this fund this month
+      const now = new Date();
+      const [spent] = await ctx.db
+        .select({ amount: sum(transactions.amount).mapWith(Number) })
+        .from(transactions)
+        .where(
+          and(
+            eq(transactions.fundId, input),
+            gte(transactions.date, startOfMonth(now)),
+            lt(transactions.date, endOfMonth(now))
+          )
+        );
+
       return {
         ...fund,
         budgetedAmount: Number(fund.budgetedAmount),
+        totalSpent: spent?.amount ?? 0,
       };
     }),
 });

@@ -44,4 +44,9 @@ export type FundWithFolder = {
 export type FundWithFolderAndBudget = FundWithFolder & {
   amountLeft: number;
   progress: number;
+  fundType: FundType;
+  monthlyBudget: number;
+  // NON_NEGOTIABLE funds only
+  amountSaved?: number;
+  isFunded?: boolean;
 };

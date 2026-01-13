@@ -24,9 +24,13 @@ import { cn } from "@/utils/cn";
 import {
   amber,
   amberDark,
+  green,
+  greenDark,
   lime,
   limeDark,
+  mauve,
   mauveA,
+  mauveDark,
   red,
   redDark,
 } from "@/utils/colors";
@@ -59,6 +63,11 @@ function transformFoldersToFunds(
         folderName: folder.name,
         amountLeft: meta.amountLeft,
         progress: meta.progress,
+        fundType: fund.fundType,
+        monthlyBudget: meta.monthlyBudget,
+        // NON_NEGOTIABLE only
+        amountSaved: "amountSaved" in meta ? meta.amountSaved : undefined,
+        isFunded: "isFunded" in meta ? meta.isFunded : undefined,
       };
     })
   );
@@ -345,6 +354,7 @@ function FolderHeader({
   );
 }
 
+// SPENDING funds: color based on spending depletion (green → amber → red)
 function getBudgetStatusColor(progress: number, isDark: boolean) {
   if (progress < 0.7) {
     return isDark ? limeDark.lime9 : lime.lime9;
@@ -355,6 +365,17 @@ function getBudgetStatusColor(progress: number, isDark: boolean) {
   return isDark ? redDark.red9 : red.red9;
 }
 
+// NON_NEGOTIABLE funds: color based on savings accumulation (muted → lime → green)
+function getSavingsStatusColor(progress: number, isDark: boolean) {
+  if (progress >= 1) {
+    return isDark ? greenDark.green9 : green.green9; // Fully funded
+  }
+  if (progress >= 0.5) {
+    return isDark ? limeDark.lime9 : lime.lime9; // Good progress
+  }
+  return isDark ? mauveDark.mauve9 : mauve.mauve9; // Muted (starting out)
+}
+
 type FundRowProps = {
   fund: FundWithFolderAndBudget;
   isDark: boolean;
@@ -363,11 +384,20 @@ type FundRowProps = {
 };
 
 function FundRow({ fund, isDark, isSelected, onSelect }: FundRowProps) {
-  const statusColor = getBudgetStatusColor(fund.progress, isDark);
+  const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
+  const statusColor = isNonNegotiable
+    ? getSavingsStatusColor(fund.progress, isDark)
+    : getBudgetStatusColor(fund.progress, isDark);
 
   const handlePress = () => {
     onSelect(fund);
   };
+
+  // NON_NEGOTIABLE: "X / Y" format (savings toward target)
+  // SPENDING: "X" format (amount left to spend)
+  const amountText = isNonNegotiable
+    ? `${toCurrencyShort(fund.amountSaved ?? 0)} / ${toCurrencyShort(fund.monthlyBudget)}`
+    : toCurrencyShort(fund.amountLeft);
 
   return (
     <ScalePressable
@@ -407,7 +437,7 @@ function FundRow({ fund, isDark, isSelected, onSelect }: FundRowProps) {
           numberOfLines={1}
           style={{ color: statusColor }}
         >
-          {toCurrencyShort(fund.amountLeft)}
+          {amountText}
         </StyledLeanText>
       </StyledLeanView>
     </ScalePressable>

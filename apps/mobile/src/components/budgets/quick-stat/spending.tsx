@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text } from "react-native";
+import { Text, useColorScheme } from "react-native";
 import { ScalePressable } from "@/components/scale-pressable";
 import {
   type FundWithMeta,
@@ -7,9 +7,15 @@ import {
   TIME_MODE_LABELS,
 } from "@/lib/fund";
 import { cn } from "@/utils/cn";
+import { green, greenDark, lime, limeDark } from "@/utils/colors";
 import { toCurrencyNarrow } from "@/utils/format";
 
-const QUICK_STAT_MODES = ["remaining", "percentage", "spent"] as const;
+const QUICK_STAT_MODES_SPENDING = ["remaining", "percentage", "spent"] as const;
+const QUICK_STAT_MODES_NON_NEGOTIABLE = [
+  "saved",
+  "percentage",
+  "target",
+] as const;
 
 type Props = {
   fund: FundWithMeta;
@@ -17,16 +23,93 @@ type Props = {
 
 export default function QuickStatSpending({ fund }: Props) {
   const [modeIndex, setModeIndex] = useState(0);
-  const mode = QUICK_STAT_MODES[modeIndex];
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
+
+  const modes = isNonNegotiable
+    ? QUICK_STAT_MODES_NON_NEGOTIABLE
+    : QUICK_STAT_MODES_SPENDING;
+  const mode = modes[modeIndex % modes.length];
 
   const monthlyBudget = getMonthlyBudget(fund);
+
+  const cycleMode = () => {
+    setModeIndex((prev) => (prev + 1) % modes.length);
+  };
+
+  // NON_NEGOTIABLE funds: savings accumulation
+  if (isNonNegotiable) {
+    const amountSaved = fund.totalSpent;
+    const percentSaved =
+      monthlyBudget > 0 ? (amountSaved / monthlyBudget) * 100 : 0;
+    const isFunded = amountSaved >= monthlyBudget;
+
+    // Color based on savings progress
+    const getSuccessColor = () => {
+      if (isFunded) return isDark ? greenDark.green9 : green.green9;
+      if (percentSaved >= 50) return isDark ? limeDark.lime9 : lime.lime9;
+      return undefined; // Use default muted color
+    };
+    const successColor = getSuccessColor();
+
+    const getStat = (): { value: string; label: string } => {
+      switch (mode) {
+        case "saved":
+          if (isFunded) {
+            return {
+              value: toCurrencyNarrow(amountSaved),
+              label: "funded",
+            };
+          }
+          return {
+            value: toCurrencyNarrow(amountSaved),
+            label: "saved",
+          };
+        case "percentage":
+          return {
+            value: `${Math.min(Math.round(percentSaved), 100)}%`,
+            label: isFunded ? "funded" : "saved",
+          };
+        case "target":
+          return {
+            value: toCurrencyNarrow(monthlyBudget),
+            label: "target",
+          };
+        default:
+          return { value: "", label: "" };
+      }
+    };
+
+    const { value, label } = getStat();
+
+    return (
+      <ScalePressable
+        hitSlop={10}
+        onPress={cycleMode}
+        opacityValue={0.7}
+        scaleValue={0.95}
+      >
+        <Text
+          className="font-satoshi text-foreground-muted text-xs"
+          style={successColor ? { color: successColor } : undefined}
+        >
+          <Text
+            className="font-nunito-bold text-xs"
+            style={successColor ? { color: successColor } : undefined}
+          >
+            {value}
+          </Text>{" "}
+          {label}
+        </Text>
+      </ScalePressable>
+    );
+  }
+
+  // SPENDING funds: spending depletion (original behavior)
   const remaining = monthlyBudget - fund.totalSpent;
   const isOverspent = remaining < 0;
   const percentLeft = monthlyBudget > 0 ? (remaining / monthlyBudget) * 100 : 0;
-
-  const cycleMode = () => {
-    setModeIndex((prev) => (prev + 1) % QUICK_STAT_MODES.length);
-  };
 
   const textColor =
     isOverspent && mode !== "spent"
