@@ -1,6 +1,5 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
-import { type SharedValue, useSharedValue } from "react-native-reanimated";
 
 const DEFAULT_END_OFFSET = 50;
 const DEFAULT_START_OFFSET = 10;
@@ -20,20 +19,6 @@ type UseScrollEdgeListenersOpts = {
   initialStartReached: boolean;
 };
 
-function handleEdgeToggle(
-  reached: boolean,
-  state: SharedValue<boolean>,
-  callbacks: ToggleCallback
-) {
-  if (reached && !state.get()) {
-    state.set(true);
-    callbacks.on?.();
-  } else if (!reached && state.get()) {
-    state.set(false);
-    callbacks.off?.();
-  }
-}
-
 export function useScrollReachedEdge({
   onEndReached,
   endOffset = DEFAULT_END_OFFSET,
@@ -43,8 +28,21 @@ export function useScrollReachedEdge({
   initialEndReached = false,
   initialStartReached = true,
 }: Partial<UseScrollEdgeListenersOpts> = {}) {
-  const isEndReached = useSharedValue(initialEndReached);
-  const isStartReached = useSharedValue(initialStartReached);
+  // Track edge state without Reanimated (avoids .get()/.set() during scroll)
+  const isEndReachedRef = useRef(initialEndReached);
+  const isStartReachedRef = useRef(initialStartReached);
+
+  // Keep latest callbacks without changing the scroll handler identity
+  const onEndReachedRef = useRef<ToggleCallback | undefined>(onEndReached);
+  const onStartReachedRef = useRef<ToggleCallback | undefined>(onStartReached);
+
+  useEffect(() => {
+    onEndReachedRef.current = onEndReached;
+  }, [onEndReached]);
+
+  useEffect(() => {
+    onStartReachedRef.current = onStartReached;
+  }, [onStartReached]);
 
   const axis = orientation === "vertical" ? "y" : "x";
   const dimension = orientation === "vertical" ? "height" : "width";
@@ -54,31 +52,36 @@ export function useScrollReachedEdge({
       const { layoutMeasurement, contentOffset, contentSize } =
         event.nativeEvent;
 
-      const scrollPosition = contentOffset[axis];
-      const viewportLength = layoutMeasurement[dimension];
-      const contentLength = contentSize[dimension];
+      const scrollPosition = contentOffset?.[axis] ?? 0;
+      const viewportLength = layoutMeasurement?.[dimension] ?? 0;
+      const contentLength = contentSize?.[dimension] ?? 0;
 
-      if (onEndReached) {
-        const reachedEnd =
-          viewportLength + scrollPosition >= contentLength - endOffset;
-        handleEdgeToggle(reachedEnd, isEndReached, onEndReached);
+      // START edge
+      const startCb = onStartReachedRef.current;
+      if (startCb) {
+        const reachedStart = scrollPosition <= startOffset;
+
+        if (reachedStart !== isStartReachedRef.current) {
+          isStartReachedRef.current = reachedStart;
+          (reachedStart ? startCb.on : startCb.off)?.();
+        }
       }
 
-      if (onStartReached) {
-        const reachedStart = scrollPosition <= startOffset;
-        handleEdgeToggle(reachedStart, isStartReached, onStartReached);
+      // END edge
+      const endCb = onEndReachedRef.current;
+      if (endCb) {
+        // If content fits in viewport, consider "end reached" (hides fade)
+        const reachedEnd =
+          contentLength <= viewportLength ||
+          viewportLength + scrollPosition >= contentLength - endOffset;
+
+        if (reachedEnd !== isEndReachedRef.current) {
+          isEndReachedRef.current = reachedEnd;
+          (reachedEnd ? endCb.on : endCb.off)?.();
+        }
       }
     },
-    [
-      onEndReached,
-      onStartReached,
-      startOffset,
-      endOffset,
-      axis,
-      dimension,
-      isEndReached,
-      isStartReached,
-    ]
+    [axis, dimension, startOffset, endOffset]
   );
 
   return handleScroll;

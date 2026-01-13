@@ -69,7 +69,7 @@ export default function Choice({
           </Text>
         </View>
 
-        {selected && <CheckboxCircle />}
+        {selected && <CheckboxCircle className="text-background" />}
       </View>
     </AnimatedPressable>
   );
