@@ -45,7 +45,6 @@ export default function ProgressBar({
         />
       )}
 
-      {/* Thumb */}
       <StyledLeanView
         className="absolute inset-0 overflow-hidden rounded-full"
         style={{ borderCurve: "continuous" }}

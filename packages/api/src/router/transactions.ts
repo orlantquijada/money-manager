@@ -110,14 +110,36 @@ export const transactionsRouter = router({
       ctx.db.delete(transactions).where(eq(transactions.id, input))
     ),
 
-  // Mark a non-negotiable fund as paid by deleting all its transactions for the current month
-  // This resets the fund's savings progress for the next billing cycle
+  // Mark a non-negotiable fund as fully paid by creating a transaction for the remaining amount
   markAsPaid: protectedProcedure
     .input(z.object({ fundId: z.number() }))
     .mutation(async ({ ctx, input }) => {
+      // 1. Fetch fund to get budgetedAmount and timeMode
+      const fund = await ctx.db.query.funds.findFirst({
+        where: eq(funds.id, input.fundId),
+      });
+      if (!fund) {
+        throw new Error("Fund not found");
+      }
+
+      // 2. Calculate monthlyBudget using time mode multiplier
       const now = new Date();
-      await ctx.db
-        .delete(transactions)
+      const weeksInMonth = Math.ceil(
+        (endOfMonth(now).getDate() - startOfMonth(now).getDate() + 1) / 7
+      );
+      const timeModeMultipliers: Record<string, number> = {
+        WEEKLY: weeksInMonth,
+        BIMONTHLY: 2,
+        MONTHLY: 1,
+        EVENTUALLY: 1,
+      };
+      const multiplier = timeModeMultipliers[fund.timeMode] ?? 1;
+      const monthlyBudget = Number(fund.budgetedAmount) * multiplier;
+
+      // 3. Get current month's total spent
+      const [spent] = await ctx.db
+        .select({ amount: sum(transactions.amount).mapWith(Number) })
+        .from(transactions)
         .where(
           and(
             eq(transactions.fundId, input.fundId),
@@ -125,6 +147,18 @@ export const transactionsRouter = router({
             lt(transactions.date, endOfMonth(now))
           )
         );
+      const totalSpent = spent?.amount ?? 0;
+
+      // 4. Create transaction for remaining amount if not already fully paid
+      const remainingAmount = monthlyBudget - totalSpent;
+      if (remainingAmount > 0) {
+        await ctx.db.insert(transactions).values({
+          fundId: input.fundId,
+          amount: remainingAmount.toString(),
+          date: now,
+          note: "Marked as paid",
+        });
+      }
     }),
 
   create: protectedProcedure

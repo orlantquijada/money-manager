@@ -2,21 +2,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Alert, ScrollView, useColorScheme } from "react-native";
+import { Alert, ScrollView } from "react-native";
+import { getSavingsColor } from "@/components/budgets/category-utils";
 import ProgressBar from "@/components/budgets/progress-bar";
 import { GlassCloseButton } from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
+import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { getTimeModeMultiplier, TIME_MODE_LABELS } from "@/lib/fund";
 import { trpc } from "@/utils/api";
-import {
-  green,
-  greenDark,
-  lime,
-  limeDark,
-  mauve,
-  mauveDark,
-} from "@/utils/colors";
+import { green } from "@/utils/colors";
 import { toCurrencyNarrow } from "@/utils/format";
 
 export default function FundDetailScreen() {
@@ -24,8 +19,6 @@ export default function FundDetailScreen() {
   const fundId = Number(id);
   const router = useRouter();
   const queryClient = useQueryClient();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
 
   const { data: fund, isLoading: fundLoading } = useQuery(
     trpc.fund.retrieve.queryOptions(fundId)
@@ -49,12 +42,11 @@ export default function FundDetailScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Alert.alert(
       "Mark as Paid",
-      "This will reset your savings progress for this fund. Continue?",
+      "This will create a transaction for the remaining amount.",
       [
         { text: "Cancel", style: "cancel" },
         {
           text: "Mark as Paid",
-          style: "destructive",
           onPress: () => markAsPaid.mutate({ fundId }),
         },
       ]
@@ -63,41 +55,21 @@ export default function FundDetailScreen() {
 
   const isLoading = fundLoading || txLoading;
 
-  if (isLoading) {
-    return (
-      <StyledLeanView className="flex-1 items-center justify-center bg-background">
-        <StyledLeanText className="text-foreground-muted">
-          Loading...
-        </StyledLeanText>
-      </StyledLeanView>
-    );
-  }
-
-  if (!fund) {
-    return (
-      <StyledLeanView className="flex-1 items-center justify-center bg-background">
-        <StyledLeanText className="text-foreground-muted">
-          Fund not found
-        </StyledLeanText>
-      </StyledLeanView>
-    );
-  }
-
-  const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
-  const monthlyBudget =
-    fund.budgetedAmount * getTimeModeMultiplier(fund.timeMode);
-  const amountSaved = fund.totalSpent;
+  // Calculate progress for color (needs fund data)
+  const isNonNegotiable = fund?.fundType === "NON_NEGOTIABLE";
+  const monthlyBudget = fund
+    ? fund.budgetedAmount * getTimeModeMultiplier(fund.timeMode)
+    : 0;
+  const amountSaved = fund?.totalSpent ?? 0;
   const progress =
     monthlyBudget > 0 ? Math.min(amountSaved / monthlyBudget, 1) : 0;
   const isFunded = amountSaved >= monthlyBudget;
 
   // Color based on savings progress
-  const getProgressColor = () => {
-    if (!isNonNegotiable) return undefined;
-    if (isFunded) return isDark ? greenDark.green9 : green.green9;
-    if (progress >= 0.5) return isDark ? limeDark.lime9 : lime.lime9;
-    return isDark ? mauveDark.mauve9 : mauve.mauve9;
-  };
+  const progressColorKey = isNonNegotiable
+    ? getSavingsColor(progress)
+    : "violet-6";
+  const progressColor = useThemeColor(progressColorKey);
 
   return (
     <StyledLeanView className="flex-1 bg-background pt-4">

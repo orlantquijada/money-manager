@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { Text, useColorScheme } from "react-native";
+import { Text } from "react-native";
 import { ScalePressable } from "@/components/scale-pressable";
+import { useThemeColor } from "@/components/theme-provider";
 import {
   type FundWithMeta,
   getMonthlyBudget,
   TIME_MODE_LABELS,
 } from "@/lib/fund";
 import { cn } from "@/utils/cn";
-import { green, greenDark, lime, limeDark } from "@/utils/colors";
 import { toCurrencyNarrow } from "@/utils/format";
+import { getSavingsColor } from "../category-utils";
 
 const QUICK_STAT_MODES_SPENDING = ["remaining", "percentage", "spent"] as const;
 const QUICK_STAT_MODES_NON_NEGOTIABLE = [
@@ -23,8 +24,6 @@ type Props = {
 
 export default function QuickStatSpending({ fund }: Props) {
   const [modeIndex, setModeIndex] = useState(0);
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
   const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
 
   const modes = isNonNegotiable
@@ -46,12 +45,9 @@ export default function QuickStatSpending({ fund }: Props) {
     const isFunded = amountSaved >= monthlyBudget;
 
     // Color based on savings progress
-    const getSuccessColor = () => {
-      if (isFunded) return isDark ? greenDark.green9 : green.green9;
-      if (percentSaved >= 50) return isDark ? limeDark.lime9 : lime.lime9;
-      return undefined; // Use default muted color
-    };
-    const successColor = getSuccessColor();
+    const progress = monthlyBudget > 0 ? amountSaved / monthlyBudget : 0;
+    const successColorKey = getSavingsColor(progress);
+    const successColor = useThemeColor(successColorKey);
 
     const getStat = (): { value: string; label: string } => {
       switch (mode) {

@@ -1,62 +1,128 @@
 {
   "feature": "Non-Negotiable Progress Bars",
-  "version": "1.0",
+  "version": "2.0",
   "created": "2026-01-10",
-  "goal": "Non-negotiable funds show savings progress (0→100%) instead of spending depletion (100%→0%)",
+  "updated": "2026-01-13",
+  "goal": "Non-negotiable funds represent fixed recurring expenses with progress bars showing payment accumulation (0→100%)",
+  "nonGoals": [
+    "Auto-scheduling recurring transactions — users manually log or use Mark as Paid",
+    "Bank integration or automatic payment detection",
+    "Rollover logic for underpaid periods — each period resets cleanly",
+    "Partial payment reminders or notifications",
+    "Treating NON_NEGOTIABLE funds differently in analytics/stats — they're just funds with inverted progress"
+  ],
+  "premortem": {
+    "description": "Imagining this feature failed 3 months after launch — what went wrong?",
+    "risks": [
+      {
+        "failure": "Users confused about when funds reset",
+        "likelihood": "Medium",
+        "mitigation": "Show clear 'Resets in X days' indicator on fund detail page"
+      },
+      {
+        "failure": "Mark as Paid creates duplicate transactions if tapped multiple times",
+        "likelihood": "Low",
+        "mitigation": "Disable button immediately on tap, add optimistic UI update"
+      },
+      {
+        "failure": "Users overpay (add transactions exceeding 100%) and get confused",
+        "likelihood": "Medium",
+        "mitigation": "Cap progress bar at 100% visually, show actual amount in tooltip/detail"
+      },
+      {
+        "failure": "EVENTUALLY time mode never resets, breaks mental model",
+        "likelihood": "High",
+        "mitigation": "Document that EVENTUALLY funds don't reset — they're one-time savings goals"
+      },
+      {
+        "failure": "Users want to undo Mark as Paid but can't easily find the transaction",
+        "likelihood": "Medium",
+        "mitigation": "Show recent 'Mark as Paid' transaction prominently on fund detail"
+      }
+    ]
+  },
   "spec": {
-    "overview": "Non-negotiable funds (rent, utilities, subscriptions) have a different mental model than spending funds. Users save toward a target amount that's due on a specific date. Progress should reflect 'How much have I saved toward this bill?' not 'How much can I still spend?'\n\n**Key Difference:**\n- Spending: Budget depletes as you spend → bar goes from full to empty\n- Non-negotiable: Savings accumulate toward target → bar goes from empty to full",
-    "design": "### Visual Behavior\n\n```\nSpending Fund (current behavior):\n[████████░░] 80% remaining → [░░░░░░░░░░] 0% (overspent)\n\nNon-Negotiable Fund (new behavior):\n[██░░░░░░░░] 20% saved → [██████████] 100% (fully funded)\n```\n\n### Progress Calculation\n\n| Fund Type | Formula | Display |\n|-----------|---------|----------|\n| SPENDING | `amountLeft / budget` | 'X left' |\n| NON_NEGOTIABLE | `saved / budgetedAmount` | 'X / Y saved' |\n\n### Color Logic\n\n**Spending (current):**\n- Green: >30% remaining\n- Amber: 10-30% remaining  \n- Red: <10% remaining\n\n**Non-Negotiable (proposed):**\n- Muted: <50% saved\n- Lime/success: 50-99% saved\n- Green + checkmark: 100% funded\n\n### States\n\n1. **Empty** (0%): Just created, no savings yet\n2. **In Progress** (1-99%): Partially funded\n3. **Funded** (100%): Ready to pay\n4. **Overfunded** (>100%): Extra buffer (cap visual at 100%, show actual amount)\n\n### Interaction\n\n- Tapping fund row navigates to fund detail\n- Fund detail shows: due date, amount saved, amount remaining\n- When funded, show 'Mark as Paid' action to reset for next period",
-    "api": "### fundWithMeta Extension\n\n```typescript\ntype FundMeta = {\n  // Existing\n  amountLeft: number;\n  progress: number; // 0-1, spending depletion\n  \n  // New for NON_NEGOTIABLE\n  amountSaved?: number;\n  savingsProgress?: number; // 0-1, savings accumulation\n  isFunded?: boolean; // savingsProgress >= 1\n};\n```\n\n### Progress Calculation\n\n```typescript\nfunction getFundProgress(fund: Fund) {\n  if (fund.type === 'NON_NEGOTIABLE') {\n    // Savings accumulation: empty → full\n    const saved = fund.budgetedAmount - fund.amountLeft;\n    return {\n      progress: saved / fund.budgetedAmount,\n      amountSaved: saved,\n      isFunded: saved >= fund.budgetedAmount\n    };\n  }\n  \n  // Spending depletion: full → empty (unchanged)\n  return {\n    progress: fund.amountLeft / fund.budgetedAmount\n  };\n}\n```",
+    "overview": "Non-negotiable funds track fixed recurring expenses like rent, loans, utilities, and subscriptions. Unlike spending funds that deplete, these funds accumulate toward a target amount.\n\n**Mental Model:**\n- These are bills that WILL happen — hence 'non-negotiable'\n- Users can log partial or full payments via transactions\n- 'Mark as Paid' provides a quick way to create the full remaining transaction\n- Progress bar fills from 0→100% as payments are logged\n\n**Key Use Cases:**\n1. Fixed bills (rent, loan payments) — typically one full transaction\n2. Variable bills (utilities) — may have partial payments\n3. Fixed savings goals — treated the same way",
+    "design": "### Visual Behavior\n\n```\nSpending Fund:\n[████████░░] 80% remaining → [░░░░░░░░░░] 0% (depleted)\n\nNon-Negotiable Fund:\n[██░░░░░░░░] 20% paid → [██████████] 100% (fully paid)\n```\n\n### Progress Calculation\n\n| Fund Type | Formula | Display |\n|-----------|---------|----------|\n| SPENDING | `amountLeft / budget` | 'X left' |\n| NON_NEGOTIABLE | `totalSpent / budgetedAmount` | 'X saved' or 'X / Y' |\n\n### Color Logic\n\n**Non-Negotiable:**\n- Muted gray: <50% paid\n- Lime: 50-99% paid\n- Green + checkmark: 100% paid\n\n### Fund Row Behavior\n\n- Progress bar fills left-to-right as transactions are added\n- Right side shows amount paid (e.g., '₱1,450.50 saved')\n- When fully paid, shows checkmark next to fund name\n\n### Mark as Paid Flow\n\n1. User taps 'Mark as Paid' button on fund detail page\n2. System creates a transaction for the **remaining amount** to reach 100%\n3. Fund shows as fully paid with checkmark\n4. Resets at the start of the next period (based on timeMode)",
+    "api": "### fundWithMeta (existing)\n\n```typescript\nif (fund.fundType === 'NON_NEGOTIABLE') {\n  const amountSaved = fund.totalSpent;\n  const savingsProgress = amountSaved / monthlyBudget; // 0→1\n  const isFunded = amountSaved >= monthlyBudget;\n  \n  return {\n    progress: savingsProgress,\n    amountSaved,\n    savingsProgress,\n    isFunded,\n    isCompleted: isFunded,\n  };\n}\n```\n\n### markAsPaid Mutation (to implement)\n\n```typescript\n// Creates a transaction for the remaining amount\nmutate: async ({ fundId }) => {\n  const fund = await getFundWithMeta(fundId);\n  const remainingAmount = fund.monthlyBudget - fund.amountSaved;\n  \n  if (remainingAmount > 0) {\n    await createTransaction({\n      fundId,\n      amount: remainingAmount,\n      note: 'Marked as paid',\n      date: new Date(),\n    });\n  }\n}\n```",
     "files": [
-      { "action": "modify", "path": "apps/mobile/src/lib/fund.ts", "purpose": "Add savingsProgress calculation for NON_NEGOTIABLE funds" },
-      { "action": "modify", "path": "apps/mobile/src/components/add-expense/fund-picker-sheet.tsx", "purpose": "Render progress bar based on fund type (invert for non-negotiable)" },
-      { "action": "modify", "path": "apps/mobile/src/components/dashboard/fund-row.tsx", "purpose": "Show savings progress for non-negotiable funds" }
+      {
+        "action": "modify",
+        "path": "apps/mobile/src/lib/fund.ts",
+        "purpose": "Progress calculation for NON_NEGOTIABLE (already implemented)"
+      },
+      {
+        "action": "modify",
+        "path": "apps/mobile/src/components/budgets/category.tsx",
+        "purpose": "Inverted progress bar and color logic (already implemented)"
+      },
+      {
+        "action": "modify",
+        "path": "apps/mobile/src/app/(app)/fund/[id].tsx",
+        "purpose": "Update Mark as Paid to create transaction instead of deleting"
+      },
+      {
+        "action": "modify",
+        "path": "packages/api/src/routers/transaction.ts",
+        "purpose": "Update markAsPaid mutation to create transaction"
+      }
     ]
   },
   "items": [
     {
       "id": "NNP-001",
       "category": "Data",
-      "description": "Extend fundWithMeta to calculate savingsProgress for NON_NEGOTIABLE funds",
+      "description": "fundWithMeta calculates savingsProgress for NON_NEGOTIABLE funds (0→1)",
       "steps_to_verify": [
         "fundWithMeta returns savingsProgress (0-1) for NON_NEGOTIABLE funds",
-        "savingsProgress = (budgetedAmount - amountLeft) / budgetedAmount",
+        "Progress increases as transactions are added",
         "isFunded flag is true when savingsProgress >= 1"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NNP-002",
       "category": "UI Component",
-      "description": "Fund picker sheet shows inverted progress bar for non-negotiable funds",
+      "description": "Progress bar fills 0→100% as payments are logged",
       "steps_to_verify": [
-        "Progress bar fills from left (0%) to right (100%) as user saves",
-        "Color reflects savings status (muted → lime → green)",
-        "Amount display shows 'X / Y' format instead of 'X left'"
+        "Progress bar starts empty (0%)",
+        "Bar fills from left-to-right as transactions are added",
+        "Color changes: muted → lime → green based on progress"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NNP-003",
       "category": "UI Component",
-      "description": "Dashboard fund row shows savings progress for non-negotiable funds",
+      "description": "Fund row shows checkmark when fully paid",
       "steps_to_verify": [
-        "Non-negotiable funds show progress bar filling up toward target",
-        "100% funded state shows visual success indicator",
-        "Overfunded (>100%) caps bar at full, shows actual amount"
+        "Checkmark icon appears next to fund name when 100% paid",
+        "Checkmark uses green color matching progress bar"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NNP-004",
-      "category": "UX Polish",
-      "description": "Funded state celebration and reset flow",
+      "category": "API",
+      "description": "Mark as Paid creates transaction for remaining amount",
       "steps_to_verify": [
-        "When fund reaches 100%, show subtle success animation",
-        "Fund detail shows 'Mark as Paid' action when funded",
-        "Marking as paid resets progress for next period"
+        "markAsPaid mutation creates a transaction (not deletes)",
+        "Transaction amount = remaining amount to reach 100%",
+        "Transaction note indicates it was marked as paid",
+        "Fund shows as fully paid after mutation"
       ],
-      "passes": false
+      "passes": true
+    },
+    {
+      "id": "NNP-005",
+      "category": "UX",
+      "description": "Fund detail page shows Mark as Paid button",
+      "steps_to_verify": [
+        "Button visible on fund detail for NON_NEGOTIABLE funds",
+        "Button disabled or hidden when already 100% paid",
+        "Tapping creates transaction and shows success feedback"
+      ],
+      "passes": true
     }
   ]
 }
