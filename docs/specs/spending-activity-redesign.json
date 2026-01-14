@@ -197,7 +197,7 @@
         "Returns factors array with description and points",
         "Factors include both deductions and bonuses"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-017",

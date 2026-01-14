@@ -89,6 +89,13 @@
          apps/mobile/src/components/transactions/transaction-list.tsx,
          apps/mobile/src/app/(app)/(tabs)/(dashboard)/transactions.tsx
 
+[SAR-016] COMPLETE - budget.score endpoint returns score with factors
+- Added score procedure to budgetRouter
+- Returns: score (0-100), status (on_track|needs_attention|over_budget), factors[]
+- Calculation: Base 100, -20 per fund >100%, -5 per fund >90%, +10 if >80% under
+- Empty state (no budgeted funds) returns score=100, status=on_track
+- File: packages/api/src/router/budget.ts
+
 ---
 
 ## Blockers
