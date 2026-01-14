@@ -1,0 +1,31 @@
+# Fund Detail View Progress
+
+## Quick Reference
+- PRD: docs/specs/fund-detail-view.json
+- Main files: apps/mobile/src/app/(app)/fund/[id].tsx
+
+---
+
+## Progress Log
+
+### 2026-01-15 - FDV-001 API endpoint
+
+[FDV-001] DONE - transaction.listByFund endpoint
+- Added to packages/api/src/router/transactions.ts
+- Cursor pagination using base64-encoded {date, id}
+- Leverages existing idx_transactions_fund_date index
+- Returns {transactions, nextCursor}
+
+### 2026-01-14 - Initial setup
+
+- PRD created with initial structure
+- Ready for design decisions
+
+---
+
+## Blockers
+(none)
+
+## Key Decisions
+- (pending) What sections to show for SPENDING vs NON_NEGOTIABLE funds
+- (pending) Whether to include spending trends/charts

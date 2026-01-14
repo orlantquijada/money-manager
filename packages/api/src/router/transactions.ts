@@ -86,6 +86,67 @@ export const transactionsRouter = router({
     })
   ),
 
+  listByFund: protectedProcedure
+    .input(
+      z.object({
+        fundId: z.number(),
+        cursor: z.string().optional(),
+        limit: z.number().min(1).max(100).default(50),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { fundId, limit } = input;
+
+      // Parse cursor for pagination (cursor encodes date + id for deterministic ordering)
+      let cursorCondition: ReturnType<typeof or> | undefined;
+      if (input.cursor) {
+        const decoded = JSON.parse(
+          Buffer.from(input.cursor, "base64").toString()
+        );
+        const cursorDate = new Date(decoded.date);
+        cursorCondition = or(
+          lt(transactions.date, cursorDate),
+          and(
+            eq(transactions.date, cursorDate),
+            lt(transactions.id, decoded.id)
+          )
+        );
+      }
+
+      const results = await ctx.db.query.transactions.findMany({
+        where: and(eq(transactions.fundId, fundId), cursorCondition),
+        orderBy: [desc(transactions.date), desc(transactions.id)],
+        limit: limit + 1,
+        with: {
+          store: {
+            columns: { name: true },
+          },
+        },
+      });
+
+      const hasMore = results.length > limit;
+      const items = hasMore ? results.slice(0, limit) : results;
+
+      let nextCursor: string | undefined;
+      const lastItem = items.at(-1);
+      if (hasMore && lastItem) {
+        nextCursor = Buffer.from(
+          JSON.stringify({ date: lastItem.date, id: lastItem.id })
+        ).toString("base64");
+      }
+
+      return {
+        transactions: items.map((t) => ({
+          id: t.id,
+          amount: Number(t.amount),
+          date: t.date,
+          note: t.note,
+          store: t.store ? { name: t.store.name } : undefined,
+        })),
+        nextCursor,
+      };
+    }),
+
   allThisMonth: protectedProcedure
     .input(
       z
