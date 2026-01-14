@@ -69,20 +69,22 @@ export default function TabBar({
         style={StyleSheet.absoluteFill}
       >
         <StyledLeanView
-          className="absolute inset-0 flex-row items-center justify-center gap-10"
+          className="absolute inset-0 flex-row items-center justify-center px-4"
           style={{ height: TAB_BAR_HEIGHT }}
         >
-          {state.routes.map((route, index) => (
-            <TabItem
-              index={index}
-              inputRange={inputRange}
-              isFocused={state.index === index}
-              key={route.key}
-              navigation={navigation}
-              position={position}
-              route={route}
-            />
-          ))}
+          <StyledLeanView className="w-full flex-row">
+            {state.routes.map((route, index) => (
+              <TabItem
+                index={index}
+                inputRange={inputRange}
+                isFocused={state.index === index}
+                key={route.key}
+                navigation={navigation}
+                position={position}
+                route={route}
+              />
+            ))}
+          </StyledLeanView>
         </StyledLeanView>
       </GlassView>
     </Animated.View>
@@ -168,6 +170,7 @@ function TabItem({
 
   return (
     <ScalePressable
+      className="w-1/3"
       disableOpacity
       hitSlop={10}
       onLongPress={handleLongPress}
