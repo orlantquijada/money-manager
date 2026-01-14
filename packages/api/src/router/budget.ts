@@ -26,29 +26,31 @@ function getMonthlyBudget(
       return amount * 2;
     case "EVENTUALLY":
       return null;
+    default:
+      return null;
   }
 }
 
-type BudgetAlert = {
+export interface BudgetAlert {
   type: AlertType;
   fundId: number;
   fundName: string;
   message: string;
   severity: AlertSeverity;
-};
+}
 
 type ScoreStatus = "on_track" | "needs_attention" | "over_budget";
 
-type ScoreFactor = {
+interface ScoreFactor {
   description: string;
   points: number;
-};
+}
 
-type BudgetScore = {
+export interface BudgetScore {
   score: number;
   status: ScoreStatus;
   factors: ScoreFactor[];
-};
+}
 
 export const budgetRouter = router({
   /**
@@ -111,7 +113,10 @@ export const budgetRouter = router({
         Number(fund.budgetedAmount),
         fund.timeMode as TimeMode,
         now
-      )!;
+      );
+      if (monthlyBudget === null) {
+        continue;
+      }
       const spent = spendingMap.get(fund.id) ?? 0;
       const utilization = (spent / monthlyBudget) * 100;
 
@@ -138,8 +143,12 @@ export const budgetRouter = router({
 
     // Sort: warnings first, then info
     alerts.sort((a, b) => {
-      if (a.severity === "warning" && b.severity === "info") return -1;
-      if (a.severity === "info" && b.severity === "warning") return 1;
+      if (a.severity === "warning" && b.severity === "info") {
+        return -1;
+      }
+      if (a.severity === "info" && b.severity === "warning") {
+        return 1;
+      }
       return 0;
     });
 
@@ -213,7 +222,10 @@ export const budgetRouter = router({
         Number(fund.budgetedAmount),
         fund.timeMode as TimeMode,
         now
-      )!;
+      );
+      if (monthlyBudget === null) {
+        continue;
+      }
       const spent = spendingMap.get(fund.id) ?? 0;
       const utilization = (spent / monthlyBudget) * 100;
 

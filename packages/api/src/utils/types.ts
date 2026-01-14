@@ -22,22 +22,22 @@ export type TimeMode = InferEnum<typeof timeModeEnum>;
  * Lightweight store type for add-expense flow.
  * Matches the shape returned by store.list endpoint.
  */
-export type StorePick = {
+export interface StorePick {
   id: number;
   name: string;
   lastSelectedFundId: number | null;
   lastSelectedFundName: string | null;
-};
+}
 
 /**
  * Fund with folder context, used in fund picker components.
  */
-export type FundWithFolder = {
+export interface FundWithFolder {
   id: number;
   name: string;
   folderId: number;
   folderName: string;
-};
+}
 
 /**
  * Extended fund with folder context including budget visualization data.

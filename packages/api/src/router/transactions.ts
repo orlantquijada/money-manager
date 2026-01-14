@@ -22,6 +22,8 @@ function getDateRangeForPeriod(period: Period): {
       return { start: subMonths(startOfMonth(now), 2), end: endOfMonth(now) };
     case "all":
       return { start: null, end: null };
+    default:
+      return { start: null, end: null };
   }
 }
 
@@ -52,6 +54,8 @@ function getPreviousPeriodDateRange(period: Period): {
     }
     case "all":
       return null; // No comparison for "all"
+    default:
+      return null;
   }
 }
 
@@ -345,9 +349,13 @@ export const transactionsRouter = router({
       const { start, end } = getDateRangeForPeriod(input.period);
       const previousRange = getPreviousPeriodDateRange(input.period);
 
-      const dateConditions = [];
-      if (start) dateConditions.push(gte(transactions.date, start));
-      if (end) dateConditions.push(lt(transactions.date, end));
+      const dateConditions: ReturnType<typeof gte>[] = [];
+      if (start) {
+        dateConditions.push(gte(transactions.date, start));
+      }
+      if (end) {
+        dateConditions.push(lt(transactions.date, end));
+      }
 
       // Get total spent
       const [totalResult] = await ctx.db
@@ -366,11 +374,13 @@ export const transactionsRouter = router({
         | undefined;
 
       if (previousRange) {
-        const prevConditions = [];
-        if (previousRange.start)
+        const prevConditions: ReturnType<typeof gte>[] = [];
+        if (previousRange.start) {
           prevConditions.push(gte(transactions.date, previousRange.start));
-        if (previousRange.end)
+        }
+        if (previousRange.end) {
           prevConditions.push(lt(transactions.date, previousRange.end));
+        }
 
         const [prevResult] = await ctx.db
           .select({ amount: sum(transactions.amount).mapWith(Number) })
@@ -435,12 +445,16 @@ export const transactionsRouter = router({
       const { start, end } = getDateRangeForPeriod(input.period);
       const limit = input.limit;
 
-      const dateConditions = [];
-      if (start) dateConditions.push(gte(transactions.date, start));
-      if (end) dateConditions.push(lt(transactions.date, end));
+      const dateConditions: ReturnType<typeof gte>[] = [];
+      if (start) {
+        dateConditions.push(gte(transactions.date, start));
+      }
+      if (end) {
+        dateConditions.push(lt(transactions.date, end));
+      }
 
       // Parse cursor for pagination (cursor encodes date + id for deterministic ordering)
-      let cursorCondition;
+      let cursorCondition: ReturnType<typeof or> | undefined;
       if (input.cursor) {
         const decoded = JSON.parse(
           Buffer.from(input.cursor, "base64").toString()

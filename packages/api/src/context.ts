@@ -1,9 +1,9 @@
 import { verifyToken } from "@clerk/backend";
 import { db } from "db/client";
 
-type CreateContextOptions = {
+interface CreateContextOptions {
   authToken?: string | null;
-};
+}
 
 export const createTRPCContext = async (opts: CreateContextOptions = {}) => {
   let userId: string | null = null;

@@ -140,3 +140,19 @@
 
 ## Key Decisions
 - Route href/name kept as "transactions" to avoid breaking navigation
+
+---
+
+### 2026-01-15 - Code quality cleanup
+
+[LINT FIX] Resolve all lint errors in packages/api
+- context.ts: type → interface for CreateContextOptions
+- budget.ts: type → interface for BudgetAlert, ScoreFactor, BudgetScore; exported types for tRPC
+- budget.ts: Added default clause to switch; replaced non-null assertions with null guards
+- budget.ts: Added braces to single-line if statements in sort callback
+- transactions.ts: Added default clauses to switch statements in getDateRangeForPeriod, getPreviousPeriodDateRange
+- transactions.ts: Added explicit type annotations to dateConditions and prevConditions arrays
+- transactions.ts: Added explicit type to cursorCondition variable
+- utils/types.ts: type → interface for StorePick, FundWithFolder
+- Files: packages/api/src/context.ts, packages/api/src/router/budget.ts,
+         packages/api/src/router/transactions.ts, packages/api/src/utils/types.ts
