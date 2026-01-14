@@ -1,11 +1,33 @@
-import { endOfMonth, startOfMonth } from "date-fns";
+import { endOfMonth, getDaysInMonth, startOfMonth } from "date-fns";
 import { folders, funds, transactions } from "db/schema";
 import { and, asc, eq, gt, gte, inArray, lt, sum } from "drizzle-orm";
 
 import { protectedProcedure, router } from "../trpc";
 
+type TimeMode = "WEEKLY" | "MONTHLY" | "BIMONTHLY" | "EVENTUALLY";
 type AlertType = "over_budget" | "almost_over";
 type AlertSeverity = "warning" | "info";
+
+/**
+ * Converts a fund's budgeted amount to its monthly equivalent based on timeMode.
+ * Returns null for EVENTUALLY funds (no recurring budget).
+ */
+function getMonthlyBudget(
+  amount: number,
+  timeMode: TimeMode,
+  referenceDate: Date
+): number | null {
+  switch (timeMode) {
+    case "WEEKLY":
+      return amount * (getDaysInMonth(referenceDate) / 7);
+    case "MONTHLY":
+      return amount;
+    case "BIMONTHLY":
+      return amount * 2;
+    case "EVENTUALLY":
+      return null;
+  }
+}
 
 type BudgetAlert = {
   type: AlertType;
@@ -38,19 +60,25 @@ export const budgetRouter = router({
     const monthStart = startOfMonth(now);
     const monthEnd = endOfMonth(now);
 
-    // Get all funds with budgets (budgetedAmount > 0)
+    // Get all funds with budgets (budgetedAmount > 0), excluding EVENTUALLY
     const budgetedFunds = await ctx.db
       .select({
         id: funds.id,
         name: funds.name,
         budgetedAmount: funds.budgetedAmount,
+        timeMode: funds.timeMode,
       })
       .from(funds)
       .innerJoin(folders, eq(funds.folderId, folders.id))
       .where(and(eq(folders.userId, ctx.userId), gt(funds.budgetedAmount, "0")))
       .orderBy(asc(funds.name));
 
-    if (budgetedFunds.length === 0) {
+    // Filter out EVENTUALLY funds (no recurring budget)
+    const recurringFunds = budgetedFunds.filter(
+      (f) => f.timeMode !== "EVENTUALLY"
+    );
+
+    if (recurringFunds.length === 0) {
       return [];
     }
 
@@ -65,7 +93,7 @@ export const budgetRouter = router({
         and(
           inArray(
             transactions.fundId,
-            budgetedFunds.map((f) => f.id)
+            recurringFunds.map((f) => f.id)
           ),
           gte(transactions.date, monthStart),
           lt(transactions.date, monthEnd)
@@ -78,13 +106,17 @@ export const budgetRouter = router({
     // Generate alerts
     const alerts: BudgetAlert[] = [];
 
-    for (const fund of budgetedFunds) {
-      const budget = Number(fund.budgetedAmount);
+    for (const fund of recurringFunds) {
+      const monthlyBudget = getMonthlyBudget(
+        Number(fund.budgetedAmount),
+        fund.timeMode as TimeMode,
+        now
+      )!;
       const spent = spendingMap.get(fund.id) ?? 0;
-      const utilization = (spent / budget) * 100;
+      const utilization = (spent / monthlyBudget) * 100;
 
       if (utilization > 100) {
-        const overAmount = spent - budget;
+        const overAmount = spent - monthlyBudget;
         alerts.push({
           type: "over_budget",
           fundId: fund.id,
@@ -93,7 +125,7 @@ export const budgetRouter = router({
           severity: "warning",
         });
       } else if (utilization > 90) {
-        const remaining = budget - spent;
+        const remaining = monthlyBudget - spent;
         alerts.push({
           type: "almost_over",
           fundId: fund.id,
@@ -133,14 +165,20 @@ export const budgetRouter = router({
         id: funds.id,
         name: funds.name,
         budgetedAmount: funds.budgetedAmount,
+        timeMode: funds.timeMode,
       })
       .from(funds)
       .innerJoin(folders, eq(funds.folderId, folders.id))
       .where(and(eq(folders.userId, ctx.userId), gt(funds.budgetedAmount, "0")))
       .orderBy(asc(funds.name));
 
-    // No budgeted funds = perfect score
-    if (budgetedFunds.length === 0) {
+    // Filter out EVENTUALLY funds (no recurring budget)
+    const recurringFunds = budgetedFunds.filter(
+      (f) => f.timeMode !== "EVENTUALLY"
+    );
+
+    // No recurring budgeted funds = perfect score
+    if (recurringFunds.length === 0) {
       return { score: 100, status: "on_track", factors: [] };
     }
 
@@ -155,7 +193,7 @@ export const budgetRouter = router({
         and(
           inArray(
             transactions.fundId,
-            budgetedFunds.map((f) => f.id)
+            recurringFunds.map((f) => f.id)
           ),
           gte(transactions.date, monthStart),
           lt(transactions.date, monthEnd)
@@ -170,10 +208,14 @@ export const budgetRouter = router({
     const factors: ScoreFactor[] = [];
     let fundsUnderBudget = 0;
 
-    for (const fund of budgetedFunds) {
-      const budget = Number(fund.budgetedAmount);
+    for (const fund of recurringFunds) {
+      const monthlyBudget = getMonthlyBudget(
+        Number(fund.budgetedAmount),
+        fund.timeMode as TimeMode,
+        now
+      )!;
       const spent = spendingMap.get(fund.id) ?? 0;
-      const utilization = (spent / budget) * 100;
+      const utilization = (spent / monthlyBudget) * 100;
 
       if (utilization > 100) {
         score -= 20;
@@ -193,11 +235,11 @@ export const budgetRouter = router({
     }
 
     // Bonus: >80% of funds under budget
-    const underBudgetRatio = fundsUnderBudget / budgetedFunds.length;
+    const underBudgetRatio = fundsUnderBudget / recurringFunds.length;
     if (underBudgetRatio > 0.8) {
       score += 10;
       factors.push({
-        description: `${fundsUnderBudget}/${budgetedFunds.length} funds under budget`,
+        description: `${fundsUnderBudget}/${recurringFunds.length} funds under budget`,
         points: 10,
       });
     }

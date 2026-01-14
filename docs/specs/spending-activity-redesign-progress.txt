@@ -107,6 +107,14 @@
          apps/mobile/src/components/dashboard/budget-score-sheet.tsx,
          apps/mobile/src/app/(app)/(tabs)/(dashboard)/_layout.tsx
 
+[BUG FIX] budget.score and budget.alerts now handle timeMode correctly
+- Added getMonthlyBudget() helper to scale budgets based on timeMode
+- WEEKLY: budgetedAmount × (daysInMonth / 7)
+- MONTHLY: budgetedAmount (unchanged)
+- BIMONTHLY: budgetedAmount × 2
+- EVENTUALLY: excluded from score calculation (no recurring budget)
+- File: packages/api/src/router/budget.ts
+
 ---
 
 ## Blockers
