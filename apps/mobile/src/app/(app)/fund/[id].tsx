@@ -249,9 +249,20 @@ export default function FundDetailScreen() {
 
         {/* Transactions */}
         <StyledLeanView className="gap-3">
-          <StyledLeanText className="font-satoshi-medium text-foreground-muted">
-            Recent Transactions
-          </StyledLeanText>
+          <StyledLeanView className="flex-row items-center justify-between">
+            <StyledLeanText className="font-satoshi-medium text-foreground-muted">
+              Recent Transactions
+            </StyledLeanText>
+            {transactions && transactions.length > 0 && (
+              <ScalePressable
+                onPress={() => router.push(`/fund/${fundId}/transactions`)}
+              >
+                <StyledLeanText className="font-satoshi-medium text-primary">
+                  See all
+                </StyledLeanText>
+              </ScalePressable>
+            )}
+          </StyledLeanView>
 
           {(!transactions || transactions.length === 0) && (
             <StyledLeanText className="text-center text-foreground-muted">
@@ -259,7 +270,7 @@ export default function FundDetailScreen() {
             </StyledLeanText>
           )}
 
-          {transactions?.map((transaction) => (
+          {transactions?.slice(0, 5).map((transaction) => (
             <StyledLeanView
               className="rounded-xl bg-card p-4"
               key={transaction.id}

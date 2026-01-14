@@ -8,6 +8,14 @@
 
 ## Progress Log
 
+### 2026-01-15 - FDV-006 Recent transactions
+
+[FDV-006] DONE - Recent transactions section
+- Limited display to 5 transactions (.slice(0, 5))
+- Added "See all" link → /fund/[id]/transactions
+- Empty state: "No transactions yet"
+- "See all" only shows when transactions exist
+
 ### 2026-01-15 - FDV-003 SPENDING stats
 
 [FDV-003] DONE - Stats overview for SPENDING funds
