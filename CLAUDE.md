@@ -92,3 +92,8 @@ Expo Router (file-based):
 - **Platform-specific**: Use `*.ios.tsx` extension
 - **Schema changes**: Run `pnpm generate` then `pnpm push` (dev) or `pnpm migrate` (prod)
 - **Currency formatting**: Use `Intl.NumberFormat` API
+
+## Plan Mode
+
+- Make the plan extremely concise. Sacrifice grammar for the sake of concision.
+- At the end of each plan, give me a list of unresolved questions to answer, if any.

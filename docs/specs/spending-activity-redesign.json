@@ -1,0 +1,253 @@
+{
+  "feature": "Spending & Activity Redesign",
+  "version": "2.0",
+  "created": "2026-01-14",
+  "consolidates": [
+    "ai-insights.md",
+    "spending-dashboard-redesign.md",
+    "transactions-tab.json"
+  ],
+  "items": [
+    {
+      "id": "SAR-001",
+      "category": "Navigation",
+      "description": "Bottom nav 'Transactions' tab renamed to 'Spending'",
+      "steps_to_verify": [
+        "Bottom navigation shows 'Spending' label",
+        "Tab icon unchanged",
+        "Navigation to tab works correctly"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-002",
+      "category": "Navigation",
+      "description": "Dashboard 'Transactions' tab renamed to 'Activity'",
+      "steps_to_verify": [
+        "Dashboard tab bar shows 'Activity' label",
+        "Tab selection works correctly",
+        "Content renders under Activity tab"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-003",
+      "category": "Spending Tab",
+      "description": "Comparative context shows spending vs previous period",
+      "steps_to_verify": [
+        "Week period shows comparison to last week",
+        "Month period shows comparison to last month",
+        "3mo period shows comparison to previous 3 months",
+        "All period hides comparison entirely",
+        "Arrow up (↑) shown when spent more (warning color)",
+        "Arrow down (↓) shown when spent less (success color)",
+        "'Similar to last [period]' shown when within ±5%",
+        "Comparison hidden when no previous data exists"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-004",
+      "category": "Spending Tab",
+      "description": "Pie chart center label shows budget context on slice tap",
+      "steps_to_verify": [
+        "Tapping slice shows percentage + fund name + budget line",
+        "Budgeted fund shows 'spent / budget' format",
+        "Non-budgeted fund shows 'X spent' format",
+        "Center label updates smoothly on slice change"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-006",
+      "category": "Activity Tab",
+      "description": "Budget alerts section shows prioritized alerts",
+      "steps_to_verify": [
+        "Over-budget alerts shown first (⚠️ icon)",
+        "Almost-over alerts shown second (🔶 icon, >90%)",
+        "Maximum 3 items displayed",
+        "Tapping alert navigates to fund detail view",
+        "AI whispers shown after rule-based alerts (if enabled)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-007",
+      "category": "Activity Tab",
+      "description": "Recent transactions show last 7 days",
+      "steps_to_verify": [
+        "Transactions from last 7 days displayed",
+        "Grouped by date with daily totals",
+        "No artificial cap on transaction count",
+        "'See all spending →' link visible at bottom",
+        "Link navigates to Spending tab"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-008",
+      "category": "Budget Score",
+      "description": "Budget Score displays in dashboard header",
+      "steps_to_verify": [
+        "Score (0-100) shown next to total spent",
+        "🟢 emoji for 70-100 (On Track)",
+        "🟡 emoji for 40-69 (Needs Attention)",
+        "🔴 emoji for 0-39 (Over Budget)",
+        "Score always visible (not behind AI toggle)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-009",
+      "category": "Budget Score",
+      "description": "Budget Score calculation follows formula",
+      "steps_to_verify": [
+        "Base score starts at 100",
+        "-20 points for each fund over 100% budget",
+        "-5 points for each fund over 90% budget",
+        "+10 points if >80% of funds under budget",
+        "Score clamped between 0 and 100"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-010",
+      "category": "Budget Score",
+      "description": "Budget Score expandable to show breakdown",
+      "steps_to_verify": [
+        "Tapping score expands to show factors",
+        "Each factor shows description and point value",
+        "Final score calculation visible",
+        "Can collapse back to compact view"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-011",
+      "category": "AI Features",
+      "description": "AI toggle in settings controls whispers only",
+      "steps_to_verify": [
+        "Settings shows 'Enable AI Insights' toggle",
+        "Toggle defaults to OFF",
+        "When OFF, whispers hidden from Activity tab",
+        "When OFF, Budget Score still visible",
+        "When ON, whispers appear in alerts section"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-012",
+      "category": "Add Expense",
+      "description": "Store picker shows lastUsedFund inline and auto-fills fund",
+      "steps_to_verify": [
+        "Store picker rows show fund name in parentheses: 'Jollibee (Dining Out)'",
+        "Stores without lastUsedFund show name only",
+        "Selecting store auto-fills fund field (if fund not yet set)",
+        "Fund not overwritten if already selected",
+        "No separate suggestion card UI"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-013",
+      "category": "API",
+      "description": "transaction.stats returns comparison data",
+      "steps_to_verify": [
+        "Response includes comparison object",
+        "comparison.previousTotal is number",
+        "comparison.difference is number (positive = spent more)",
+        "comparison.percentageChange is number",
+        "comparison null/undefined for 'all' period",
+        "comparison null/undefined when no previous data"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-014",
+      "category": "API",
+      "description": "transaction.stats returns budget data per fund",
+      "steps_to_verify": [
+        "byFund items include budgetedAmount (if exists)",
+        "byFund items include budgetUtilization (0-100+)",
+        "budgetedAmount undefined for non-budgeted funds",
+        "budgetUtilization undefined for non-budgeted funds"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-015",
+      "category": "API",
+      "description": "budget.alerts endpoint returns prioritized alerts",
+      "steps_to_verify": [
+        "Returns alerts array",
+        "Each alert has type, fundId, fundName, message, severity",
+        "Over-budget alerts have type 'over_budget'",
+        "Almost-over alerts have type 'almost_over'",
+        "Alerts sorted by severity (warning before info)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-016",
+      "category": "API",
+      "description": "budget.score endpoint returns score with factors",
+      "steps_to_verify": [
+        "Returns score (0-100)",
+        "Returns status ('on_track' | 'needs_attention' | 'over_budget')",
+        "Returns factors array with description and points",
+        "Factors include both deductions and bonuses"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-017",
+      "category": "UI Component",
+      "description": "Period filter chips (carried from TXN-003)",
+      "steps_to_verify": [
+        "4 chips: Week, Month, 3 mo, All",
+        "Month selected by default",
+        "Single selection only",
+        "Active chip has filled background",
+        "Chip change triggers data refresh"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-018",
+      "category": "UI Component",
+      "description": "Donut chart with interactive slices (carried from TXN-004)",
+      "steps_to_verify": [
+        "Renders using d3-shape + react-native-svg + reanimated",
+        "Rounded corners, gaps between slices",
+        "Max 5 individual slices, rest grouped as 'Other'",
+        "Tap triggers focus effect (pop-out + dim others)",
+        "Spring animation on focus",
+        "Haptic feedback on tap"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-019",
+      "category": "UI Component",
+      "description": "Stats header layout (carried from TXN-005)",
+      "steps_to_verify": [
+        "60/40 split (chart/stats)",
+        "Right side shows total spent",
+        "Right side shows top funds with amounts",
+        "Header scrolls away with content"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SAR-020",
+      "category": "UI State",
+      "description": "Empty states handled (carried from TXN-008, TXN-009)",
+      "steps_to_verify": [
+        "New user: stats header hidden, educational message + CTA",
+        "Period empty: zeroed chart, period-specific message",
+        "Comparison hidden when no previous data"
+      ],
+      "passes": false
+    }
+  ]
+}
