@@ -26,6 +26,7 @@ export type StorePick = {
   id: number;
   name: string;
   lastSelectedFundId: number | null;
+  lastSelectedFundName: string | null;
 };
 
 /**

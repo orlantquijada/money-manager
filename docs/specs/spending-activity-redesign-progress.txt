@@ -19,6 +19,14 @@
 - Period chips, donut chart, stats header, empty states already implemented
 - Marked as passes:true in spec JSON
 
+[SAR-012] COMPLETE - Store picker shows lastUsedFund inline + auto-fills fund
+- API: store.list now joins lastSelectedFund relation to get fund name
+- Type: StorePick extended with lastSelectedFundName field
+- UI: StoreRow displays "StoreName (FundName)" when fund exists
+- Auto-fill logic already existed in selectStoreWithFundDefault()
+- Files: packages/api/src/router/stores.ts, packages/api/src/utils/types.ts,
+         apps/mobile/src/components/add-expense/store-picker-sheet.tsx
+
 ---
 
 ## Blockers

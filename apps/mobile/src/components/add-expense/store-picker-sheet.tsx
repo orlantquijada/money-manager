@@ -114,6 +114,7 @@ function Content({ stores }: ContentProps) {
       id: 0,
       name: search.trim(),
       lastSelectedFundId: null,
+      lastSelectedFundName: null,
     };
     handleSelect(newStore);
   };
@@ -203,6 +204,10 @@ type StoreRowProps = {
 };
 
 function StoreRow({ store, isSelected, onPress }: StoreRowProps) {
+  const displayText = store.lastSelectedFundName
+    ? `${store.name} (${store.lastSelectedFundName})`
+    : store.name;
+
   return (
     <ScalePressable
       className={cn("px-6 py-3", isSelected ? "bg-mauve-4" : "bg-background")}
@@ -215,7 +220,7 @@ function StoreRow({ store, isSelected, onPress }: StoreRowProps) {
         ellipsizeMode="tail"
         numberOfLines={1}
       >
-        {store.name}
+        {displayText}
       </StyledLeanText>
     </ScalePressable>
   );

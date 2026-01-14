@@ -146,7 +146,7 @@
         "Fund not overwritten if already selected",
         "No separate suggestion card UI"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-013",
