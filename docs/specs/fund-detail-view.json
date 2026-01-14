@@ -66,7 +66,7 @@
         "Over-budget shows red bar + 'overspent' quick-stat",
         "Shows period label and reset countdown"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FDV-004",

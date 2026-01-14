@@ -1,16 +1,91 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
+import type { TimeMode } from "api";
+import { differenceInDays, endOfMonth, endOfWeek, format } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Alert, ScrollView } from "react-native";
+import CategoryProgressBars from "@/components/budgets/category-progress-bars";
 import ProgressBar from "@/components/budgets/progress-bar";
 import { GlassCloseButton } from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
-import { getTimeModeMultiplier, TIME_MODE_LABELS } from "@/lib/fund";
+import {
+  type FundWithMeta,
+  getTimeModeMultiplier,
+  TIME_MODE_LABELS,
+} from "@/lib/fund";
 import { trpc } from "@/utils/api";
 import { green } from "@/utils/colors";
 import { toCurrencyNarrow } from "@/utils/format";
+
+function getDaysUntilReset(timeMode: TimeMode): number {
+  const now = new Date();
+  if (timeMode === "WEEKLY") {
+    return differenceInDays(endOfWeek(now, { weekStartsOn: 0 }), now);
+  }
+  if (timeMode === "BIMONTHLY") {
+    const day = now.getDate();
+    return day <= 15 ? 15 - day : differenceInDays(endOfMonth(now), now);
+  }
+  return differenceInDays(endOfMonth(now), now);
+}
+
+type SpendingStatsProps = {
+  fund: FundWithMeta;
+  spent: number;
+  remaining: number;
+  overspent: number;
+  isOverBudget: boolean;
+  monthlyBudget: number;
+  daysUntilReset: number;
+};
+
+function SpendingStats({
+  fund,
+  spent,
+  remaining,
+  overspent,
+  isOverBudget,
+  monthlyBudget,
+  daysUntilReset,
+}: SpendingStatsProps) {
+  return (
+    <StyledLeanView
+      className="gap-3 rounded-2xl bg-card p-4"
+      style={{ borderCurve: "continuous" }}
+    >
+      <StyledLeanView className="flex-row items-center justify-between">
+        <StyledLeanText className="font-satoshi-medium text-foreground-muted">
+          {TIME_MODE_LABELS[fund.timeMode]} Budget
+        </StyledLeanText>
+        <StyledLeanText
+          className={`font-nunito-bold text-base ${isOverBudget ? "text-destructive" : "text-quick-stat-spending"}`}
+        >
+          {isOverBudget
+            ? `${toCurrencyNarrow(overspent)} overspent`
+            : `${toCurrencyNarrow(remaining)} left`}
+        </StyledLeanText>
+      </StyledLeanView>
+
+      <CategoryProgressBars fund={fund} />
+
+      <StyledLeanView className="flex-row items-center justify-between">
+        <StyledLeanText className="font-nunito-semibold text-foreground">
+          {toCurrencyNarrow(spent)} spent
+        </StyledLeanText>
+        <StyledLeanText className="font-satoshi text-foreground-muted">
+          of {toCurrencyNarrow(monthlyBudget)} {TIME_MODE_LABELS[fund.timeMode]}
+        </StyledLeanText>
+      </StyledLeanView>
+
+      {fund.timeMode !== "EVENTUALLY" && (
+        <StyledLeanText className="font-satoshi text-foreground-muted text-sm">
+          Resets in {daysUntilReset} days
+        </StyledLeanText>
+      )}
+    </StyledLeanView>
+  );
+}
 
 export default function FundDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -55,6 +130,7 @@ export default function FundDetailScreen() {
 
   // Calculate progress for color (needs fund data)
   const isNonNegotiable = fund?.fundType === "NON_NEGOTIABLE";
+  const isSpending = fund?.fundType === "SPENDING";
   const monthlyBudget = fund
     ? fund.budgetedAmount * getTimeModeMultiplier(fund.timeMode)
     : 0;
@@ -62,6 +138,13 @@ export default function FundDetailScreen() {
   const progress =
     monthlyBudget > 0 ? Math.min(amountSaved / monthlyBudget, 1) : 0;
   const isFunded = amountSaved >= monthlyBudget;
+
+  // SPENDING fund calculations
+  const spent = fund?.totalSpent ?? 0;
+  const remaining = Math.max(monthlyBudget - spent, 0);
+  const overspent = Math.max(spent - monthlyBudget, 0);
+  const isOverBudget = spent > monthlyBudget;
+  const daysUntilReset = fund ? getDaysUntilReset(fund.timeMode) : 0;
 
   if (isLoading) {
     return (
@@ -149,6 +232,19 @@ export default function FundDetailScreen() {
               </ScalePressable>
             )}
           </StyledLeanView>
+        )}
+
+        {/* Progress Section (SPENDING funds) */}
+        {isSpending && (
+          <SpendingStats
+            daysUntilReset={daysUntilReset}
+            fund={fund as FundWithMeta}
+            isOverBudget={isOverBudget}
+            monthlyBudget={monthlyBudget}
+            overspent={overspent}
+            remaining={remaining}
+            spent={spent}
+          />
         )}
 
         {/* Transactions */}

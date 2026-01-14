@@ -8,6 +8,15 @@
 
 ## Progress Log
 
+### 2026-01-15 - FDV-003 SPENDING stats
+
+[FDV-003] DONE - Stats overview for SPENDING funds
+- Added SpendingStats component to fund/[id].tsx
+- Uses CategoryProgressBars for multi-bar display (WEEKLY/BIMONTHLY/MONTHLY)
+- Shows spent/remaining with overspent state (red bar + label)
+- Reset countdown for non-EVENTUALLY funds
+- Extracted to separate component to reduce cognitive complexity
+
 ### 2026-01-15 - FDV-001 API endpoint
 
 [FDV-001] DONE - transaction.listByFund endpoint
@@ -27,5 +36,5 @@
 (none)
 
 ## Key Decisions
-- (pending) What sections to show for SPENDING vs NON_NEGOTIABLE funds
+- (decided) SPENDING funds: multi-bar progress (like dashboard), spent/remaining, reset countdown
 - (pending) Whether to include spending trends/charts
