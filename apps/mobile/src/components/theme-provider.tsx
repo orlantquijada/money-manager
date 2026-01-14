@@ -65,6 +65,12 @@ type PinkColor = `pink-${ColorGrade}`;
 
 type RawColorKey = MauveColor | VioletColor | LimeColor | RedColor | PinkColor;
 
+// Progress bar semantic tokens (CSS-based, with light/dark values)
+type ProgressColorKey =
+  | "progress-spending"
+  | "progress-non-negotiable"
+  | "quick-stat-non-negotiable";
+
 // Semantic tokens - derived from theme object structure
 // For each key in theme: if value is object with DEFAULT, produce "key" + "key-variant" for each non-DEFAULT key
 type SemanticColorKey = {
@@ -73,7 +79,7 @@ type SemanticColorKey = {
     : never;
 }[keyof ThemeTokens];
 
-export type ColorKey = RawColorKey | SemanticColorKey;
+export type ColorKey = RawColorKey | ProgressColorKey | SemanticColorKey;
 
 // Color scale mapping
 const colorScales = {
@@ -97,6 +103,10 @@ type ColorScaleName = keyof typeof colorScales;
 export function useThemeColor(key: ColorKey): string {
   const { isDark } = useTheme();
 
+  // Handle progress color tokens (CSS-based with light/dark values)
+  const progressColor = getProgressColor(key, isDark);
+  if (progressColor) return progressColor;
+
   // Handle semantic tokens (e.g., "background", "primary-foreground")
   const semanticValue = getSemanticColor(key, isDark);
   if (semanticValue) return semanticValue;
@@ -110,6 +120,31 @@ export function useThemeColor(key: ColorKey): string {
   const colorKey = `${scaleName}${grade}` as keyof typeof targetScale;
 
   return targetScale[colorKey] ?? key;
+}
+
+// Progress color tokens with hardcoded light/dark values
+// These match the CSS variables in global.css
+const progressColors = {
+  "progress-spending": {
+    light: violet.violet6,
+    dark: "rgba(110, 86, 207, 0.8)", // violet-9 at 80%
+  },
+  "progress-non-negotiable": {
+    light: lime.lime4,
+    dark: "rgba(189, 238, 99, 0.8)", // lime-9 at 80%
+  },
+  "quick-stat-non-negotiable": {
+    light: "rgba(92, 124, 47, 0.5)", // lime-11 at 50%
+    dark: limeDark.lime9,
+  },
+} as const;
+
+function getProgressColor(key: string, isDark: boolean): string | null {
+  if (key in progressColors) {
+    const colors = progressColors[key as keyof typeof progressColors];
+    return isDark ? colors.dark : colors.light;
+  }
+  return null;
 }
 
 function getSemanticColor(key: string, isDark: boolean): string | null {

@@ -1,7 +1,6 @@
 import type { TimeMode } from "api";
 import { getWeekOfMonth } from "date-fns";
 import { useMemo } from "react";
-import type { ColorKey } from "@/components/theme-provider";
 import type { FundWithMeta } from "@/lib/fund";
 import { getTimeModeMultiplier } from "@/lib/fund";
 
@@ -95,11 +94,4 @@ function calculateSpendingProgress(
     overspentRatio: remaining / fund.budgetedAmount,
     overfundedRatio: 0,
   };
-}
-
-/** NON_NEGOTIABLE funds: color based on savings accumulation */
-export function getSavingsColor(progress: number): ColorKey {
-  if (progress >= 1) return "lime-4"; // Fully funded
-  if (progress >= 0.5) return "lime-4"; // Good progress
-  return "mauve-9"; // Muted (starting out)
 }

@@ -3,11 +3,9 @@ import { format } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Alert, ScrollView } from "react-native";
-import { getSavingsColor } from "@/components/budgets/category-utils";
 import ProgressBar from "@/components/budgets/progress-bar";
 import { GlassCloseButton } from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { getTimeModeMultiplier, TIME_MODE_LABELS } from "@/lib/fund";
 import { trpc } from "@/utils/api";
@@ -65,12 +63,6 @@ export default function FundDetailScreen() {
     monthlyBudget > 0 ? Math.min(amountSaved / monthlyBudget, 1) : 0;
   const isFunded = amountSaved >= monthlyBudget;
 
-  // Color based on savings progress
-  const progressColorKey = isNonNegotiable
-    ? getSavingsColor(progress)
-    : "violet-6";
-  const progressColor = useThemeColor(progressColorKey);
-
   if (isLoading) {
     return (
       <StyledLeanView className="flex-1 items-center justify-center bg-background">
@@ -120,15 +112,12 @@ export default function FundDetailScreen() {
               <StyledLeanText className="font-satoshi-medium text-foreground-muted">
                 Savings Progress
               </StyledLeanText>
-              <StyledLeanText
-                className="font-nunito-bold text-base"
-                style={{ color: progressColor }}
-              >
+              <StyledLeanText className="font-nunito-bold text-base text-quick-stat-non-negotiable">
                 {Math.round(progress * 100)}%
               </StyledLeanText>
             </StyledLeanView>
 
-            <ProgressBar color={progressColor} progress={progress} />
+            <ProgressBar colorVariant="non-negotiable" progress={progress} />
 
             <StyledLeanView className="flex-row items-center justify-between">
               <StyledLeanText className="font-nunito-semibold text-foreground">

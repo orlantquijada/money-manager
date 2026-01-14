@@ -133,6 +133,16 @@
 
       --color-tab-bar: var(--mauve-1);
       --color-tab-bar-foreground: var(--mauve-12);
+
+      /* Progress bar colors */
+      --color-progress-spending: var(--violet-6);
+      --color-progress-non-negotiable: var(--lime-4);
+      --color-quick-stat-non-negotiable: rgba(
+        92,
+        124,
+        47,
+        0.5
+      ); /* lime-11 at 50% */
     }
 
     /* ===== DARK THEME ===== */
@@ -256,6 +266,16 @@
 
       --color-tab-bar: var(--mauve-1);
       --color-tab-bar-foreground: var(--mauve-12);
+
+      /* Progress bar colors */
+      --color-progress-spending: rgba(110, 86, 207, 0.8); /* violet-9 at 80% */
+      --color-progress-non-negotiable: rgba(
+        189,
+        238,
+        99,
+        0.8
+      ); /* lime-9 at 80% */
+      --color-quick-stat-non-negotiable: var(--lime-9);
     }
   }
 }
@@ -381,6 +401,11 @@
 
   --color-tab-bar: var(--color-tab-bar);
   --color-tab-bar-foreground: var(--color-tab-bar-foreground);
+
+  /* Progress bar colors */
+  --color-progress-spending: var(--color-progress-spending);
+  --color-progress-non-negotiable: var(--color-progress-non-negotiable);
+  --color-quick-stat-non-negotiable: var(--color-quick-stat-non-negotiable);
 
   /* Fonts - single font per variant, no fallbacks */
   --font-satoshi: "Satoshi-Regular";

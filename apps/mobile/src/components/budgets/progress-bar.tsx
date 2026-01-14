@@ -1,7 +1,24 @@
 import { StyleSheet } from "react-native";
 import { StyledLeanView } from "@/config/interop";
 import { clamp } from "@/utils/math";
-import { useThemeColor } from "../theme-provider";
+
+type ColorVariant = "spending" | "non-negotiable" | "destructive";
+
+/** Maps color variant to { bg, border } Tailwind classes */
+const colorSlots: Record<ColorVariant, { bg: string; border: string }> = {
+  spending: {
+    bg: "bg-progress-spending",
+    border: "border-progress-spending",
+  },
+  "non-negotiable": {
+    bg: "bg-progress-non-negotiable",
+    border: "border-progress-non-negotiable",
+  },
+  destructive: {
+    bg: "bg-destructive",
+    border: "border-destructive",
+  },
+};
 
 type Props = {
   /** Flex value for proportional width (default: 1) */
@@ -9,26 +26,24 @@ type Props = {
   highlight?: boolean;
   /** Progress value from 0 to 1 */
   progress?: number;
-  color?: string;
+  colorVariant?: ColorVariant;
 };
 
 export default function ProgressBar({
   flex = 1,
   highlight,
   progress = 1,
-  color,
+  colorVariant = "spending",
 }: Props) {
   const clampedProgress = clamp(progress, 0, 1);
-  const primaryColor = useThemeColor("violet-6");
-  const finalColor = color ?? primaryColor;
+  const { bg, border } = colorSlots[colorVariant];
 
   return (
     <StyledLeanView
-      className="h-2 shrink-0 rounded-full border-lime-9"
+      className={`h-2 shrink-0 rounded-full ${border}`}
       style={{
         flex,
         borderCurve: "continuous",
-        borderColor: finalColor,
         borderWidth: highlight ? 1 : StyleSheet.hairlineWidth,
       }}
     >
@@ -39,8 +54,7 @@ export default function ProgressBar({
 
       {highlight && (
         <StyledLeanView
-          className="absolute -bottom-2 h-1 w-1 self-center rounded-full"
-          style={{ backgroundColor: finalColor }}
+          className={`absolute -bottom-2 h-1 w-1 self-center rounded-full ${bg}`}
         />
       )}
 
@@ -49,10 +63,9 @@ export default function ProgressBar({
         style={{ borderCurve: "continuous" }}
       >
         <StyledLeanView
-          className="h-full rounded-full"
+          className={`h-full rounded-full ${bg}`}
           style={{
             borderCurve: "continuous",
-            backgroundColor: finalColor,
             width: `${clampedProgress * 100}%`,
           }}
         />

@@ -1,13 +1,11 @@
 import { Link } from "expo-router";
 import { ScalePressable } from "@/components/scale-pressable";
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
-import Check from "@/icons/check";
+import { Check } from "@/icons";
 import type { FundWithMeta } from "@/lib/fund";
 import { getTimeModeMultiplier } from "@/lib/fund";
 import CategoryProgressBars from "./category-progress-bars";
-import { getSavingsColor } from "./category-utils";
-import QuickStatSpending from "./quick-stat/spending";
+import BudgetQuickStats from "./quick-stat";
 
 export const CATEGORY_HEIGHT = 56;
 
@@ -19,11 +17,6 @@ export default function Category({ fund }: CategoryProps) {
   const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
   const barCount = getTimeModeMultiplier(fund.timeMode);
   const overallProgress = fund.totalSpent / (fund.budgetedAmount * barCount);
-
-  const savingsColorKey = isNonNegotiable
-    ? getSavingsColor(overallProgress)
-    : "lime-9";
-  const checkColor = useThemeColor(savingsColorKey);
   const isFunded = isNonNegotiable && overallProgress >= 1;
 
   return (
@@ -34,11 +27,7 @@ export default function Category({ fund }: CategoryProps) {
         scaleValue={0.98}
         style={{ height: CATEGORY_HEIGHT }}
       >
-        <CategoryHeader
-          checkColor={checkColor}
-          fund={fund}
-          isFunded={isFunded}
-        />
+        <CategoryHeader fund={fund} isFunded={isFunded} />
         <CategoryProgressBars fund={fund} />
       </ScalePressable>
     </Link>
@@ -48,14 +37,12 @@ export default function Category({ fund }: CategoryProps) {
 type CategoryHeaderProps = {
   fund: FundWithMeta;
   isFunded: boolean;
-  checkColor: string | undefined;
 };
 
-function CategoryHeader({ fund, isFunded, checkColor }: CategoryHeaderProps) {
+function CategoryHeader({ fund, isFunded }: CategoryHeaderProps) {
   return (
     <StyledLeanView className="flex-row items-center justify-between gap-3">
       <StyledLeanView className="shrink flex-row items-center gap-1.5">
-        {isFunded && <Check color={checkColor} size={16} />}
         <StyledLeanText
           className="shrink font-satoshi-medium text-base text-foreground"
           ellipsizeMode="tail"
@@ -63,9 +50,12 @@ function CategoryHeader({ fund, isFunded, checkColor }: CategoryHeaderProps) {
         >
           {fund.name}
         </StyledLeanText>
+        {isFunded && (
+          <Check className="text-quick-stat-non-negotiable" size={16} />
+        )}
       </StyledLeanView>
 
-      <QuickStatSpending fund={fund} />
+      <BudgetQuickStats fund={fund} />
     </StyledLeanView>
   );
 }

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Text } from "react-native";
 import { ScalePressable } from "@/components/scale-pressable";
-import { useThemeColor } from "@/components/theme-provider";
 import {
   type FundWithMeta,
   getMonthlyBudget,
@@ -9,7 +8,6 @@ import {
 } from "@/lib/fund";
 import { cn } from "@/utils/cn";
 import { toCurrencyNarrow } from "@/utils/format";
-import { getSavingsColor } from "../category-utils";
 
 const QUICK_STAT_MODES_SPENDING = ["remaining", "percentage", "spent"] as const;
 const QUICK_STAT_MODES_NON_NEGOTIABLE = [
@@ -24,7 +22,7 @@ type Props = {
   fund: FundWithMeta;
 };
 
-export default function QuickStatSpending({ fund }: Props) {
+export default function BudgetQuickStats({ fund }: Props) {
   const [modeIndex, setModeIndex] = useState(0);
   const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
   const monthlyBudget = getMonthlyBudget(fund);
@@ -33,11 +31,6 @@ export default function QuickStatSpending({ fund }: Props) {
     ? QUICK_STAT_MODES_NON_NEGOTIABLE
     : QUICK_STAT_MODES_SPENDING;
   const mode = modes[modeIndex % modes.length];
-
-  // Compute savings color for NON_NEGOTIABLE funds (hook called unconditionally)
-  const progress = monthlyBudget > 0 ? fund.totalSpent / monthlyBudget : 0;
-  const savingsColorKey = getSavingsColor(progress);
-  const savingsColor = useThemeColor(savingsColorKey);
 
   function cycleMode() {
     setModeIndex((prev) => (prev + 1) % modes.length);
@@ -49,21 +42,30 @@ export default function QuickStatSpending({ fund }: Props) {
       monthlyBudget > 0 ? (amountSaved / monthlyBudget) * 100 : 0;
     const isFunded = amountSaved >= monthlyBudget;
 
+    // Show lime color when past halfway (>50%), otherwise muted
+    const textColor =
+      percentSaved >= 50
+        ? "text-quick-stat-non-negotiable"
+        : "text-foreground-muted";
+
     switch (mode) {
       case "saved":
         return {
           value: toCurrencyNarrow(amountSaved),
           label: isFunded ? "funded" : "saved",
+          textColor,
         };
       case "percentage":
         return {
           value: `${Math.min(Math.round(percentSaved), 100)}%`,
           label: isFunded ? "funded" : "saved",
+          textColor,
         };
       case "target":
         return {
           value: toCurrencyNarrow(monthlyBudget),
           label: "target",
+          textColor,
         };
       default:
         return { value: "", label: "" };
@@ -109,11 +111,6 @@ export default function QuickStatSpending({ fund }: Props) {
     ? getNonNegotiableStat()
     : getSpendingStat();
 
-  // For NON_NEGOTIABLE, use computed savings color; for SPENDING, use textColor class
-  const colorStyle =
-    isNonNegotiable && savingsColor ? { color: savingsColor } : undefined;
-  const colorClass = isNonNegotiable ? "text-foreground-muted" : textColor;
-
   return (
     <ScalePressable
       hitSlop={10}
@@ -121,17 +118,8 @@ export default function QuickStatSpending({ fund }: Props) {
       opacityValue={0.7}
       scaleValue={0.95}
     >
-      <Text
-        className={cn("font-satoshi text-xs", colorClass)}
-        style={colorStyle}
-      >
-        <Text
-          className={cn("font-nunito-bold text-xs", colorClass)}
-          style={colorStyle}
-        >
-          {value}
-        </Text>{" "}
-        {label}
+      <Text className={cn("font-satoshi text-xs", textColor)}>
+        <Text className={cn("font-nunito-bold text-xs")}>{value}</Text> {label}
       </Text>
     </ScalePressable>
   );
