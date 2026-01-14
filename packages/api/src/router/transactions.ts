@@ -363,25 +363,39 @@ export const transactionsRouter = router({
         }
       }
 
-      // Get breakdown by fund with fund names
+      // Get breakdown by fund with fund names and budget data
       const byFundResult = await ctx.db
         .select({
           fundId: transactions.fundId,
           fundName: funds.name,
+          budgetedAmount: funds.budgetedAmount,
           amount: sum(transactions.amount).mapWith(Number),
         })
         .from(transactions)
         .innerJoin(funds, eq(transactions.fundId, funds.id))
         .where(and(...dateConditions))
-        .groupBy(transactions.fundId, funds.name)
+        .groupBy(transactions.fundId, funds.name, funds.budgetedAmount)
         .orderBy(desc(sum(transactions.amount)));
 
-      const byFund = byFundResult.map((row) => ({
-        fundId: row.fundId,
-        fundName: row.fundName,
-        amount: row.amount ?? 0,
-        percentage: totalSpent > 0 ? ((row.amount ?? 0) / totalSpent) * 100 : 0,
-      }));
+      const byFund = byFundResult.map((row) => {
+        const amount = row.amount ?? 0;
+        const budgetedAmount = row.budgetedAmount
+          ? Number(row.budgetedAmount)
+          : undefined;
+        const budgetUtilization =
+          budgetedAmount && budgetedAmount > 0
+            ? (amount / budgetedAmount) * 100
+            : undefined;
+
+        return {
+          fundId: row.fundId,
+          fundName: row.fundName,
+          amount,
+          percentage: totalSpent > 0 ? (amount / totalSpent) * 100 : 0,
+          budgetedAmount,
+          budgetUtilization,
+        };
+      });
 
       return { totalSpent, byFund, comparison };
     }),

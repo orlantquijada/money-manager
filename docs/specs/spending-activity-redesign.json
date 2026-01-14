@@ -172,7 +172,7 @@
         "budgetedAmount undefined for non-budgeted funds",
         "budgetUtilization undefined for non-budgeted funds"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-015",

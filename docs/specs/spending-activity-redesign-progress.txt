@@ -49,6 +49,13 @@
 - Files: apps/mobile/src/components/stats/stats-header.tsx,
          apps/mobile/src/app/(app)/(tabs)/transactions.tsx
 
+[SAR-014] COMPLETE - transaction.stats returns budget data per fund
+- byFund now includes budgetedAmount and budgetUtilization fields
+- budgetedAmount from funds.budgetedAmount (converted to number)
+- budgetUtilization = (spent / budget) * 100
+- Both undefined for funds with no budget
+- File: packages/api/src/router/transactions.ts
+
 ---
 
 ## Blockers
