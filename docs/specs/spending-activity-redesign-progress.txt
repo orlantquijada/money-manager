@@ -64,6 +64,14 @@
 - Budget line hidden when no slice selected
 - File: apps/mobile/src/components/stats/pie-chart-segmented.tsx
 
+[SAR-015] COMPLETE - budget.alerts endpoint returns prioritized alerts
+- Created new budgetRouter with alerts endpoint
+- Returns array of BudgetAlert with type, fundId, fundName, message, severity
+- Over-budget (>100%): type='over_budget', severity='warning'
+- Almost-over (>90%): type='almost_over', severity='info'
+- Sorted by severity (warnings first)
+- Files: packages/api/src/router/budget.ts, packages/api/src/router/index.ts
+
 ---
 
 ## Blockers

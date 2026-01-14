@@ -185,7 +185,7 @@
         "Almost-over alerts have type 'almost_over'",
         "Alerts sorted by severity (warning before info)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-016",
