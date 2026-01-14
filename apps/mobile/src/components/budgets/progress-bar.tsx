@@ -24,10 +24,9 @@ export default function ProgressBar({
 
   return (
     <StyledLeanView
-      className="h-2 rounded-full"
+      className="h-2 shrink-0 rounded-full border-lime-9"
       style={{
         flex,
-        flexShrink: 0,
         borderCurve: "continuous",
         borderColor: finalColor,
         borderWidth: highlight ? 1 : StyleSheet.hairlineWidth,

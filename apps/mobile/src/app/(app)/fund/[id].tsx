@@ -71,6 +71,26 @@ export default function FundDetailScreen() {
     : "violet-6";
   const progressColor = useThemeColor(progressColorKey);
 
+  if (isLoading) {
+    return (
+      <StyledLeanView className="flex-1 items-center justify-center bg-background">
+        <StyledLeanText className="text-foreground-muted">
+          Loading...
+        </StyledLeanText>
+      </StyledLeanView>
+    );
+  }
+
+  if (!fund) {
+    return (
+      <StyledLeanView className="flex-1 items-center justify-center bg-background">
+        <StyledLeanText className="text-foreground-muted">
+          Fund not found
+        </StyledLeanText>
+      </StyledLeanView>
+    );
+  }
+
   return (
     <StyledLeanView className="flex-1 bg-background pt-4">
       {/* Header */}
@@ -102,13 +122,13 @@ export default function FundDetailScreen() {
               </StyledLeanText>
               <StyledLeanText
                 className="font-nunito-bold text-base"
-                style={{ color: getProgressColor() }}
+                style={{ color: progressColor }}
               >
                 {Math.round(progress * 100)}%
               </StyledLeanText>
             </StyledLeanView>
 
-            <ProgressBar color={getProgressColor()} progress={progress} />
+            <ProgressBar color={progressColor} progress={progress} />
 
             <StyledLeanView className="flex-row items-center justify-between">
               <StyledLeanText className="font-nunito-semibold text-foreground">
