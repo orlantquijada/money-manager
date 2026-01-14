@@ -27,6 +27,12 @@
 - Files: packages/api/src/router/stores.ts, packages/api/src/utils/types.ts,
          apps/mobile/src/components/add-expense/store-picker-sheet.tsx
 
+[SAR-001] COMPLETE - Bottom nav tabs now show text labels
+- Added label field to RouteConfig type
+- Labels: "Home", "Add", "Spending"
+- TabItem renders label below icon with animated opacity
+- File: apps/mobile/src/components/tab-bar.tsx
+
 ---
 
 ## Blockers

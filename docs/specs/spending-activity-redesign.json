@@ -17,7 +17,7 @@
         "Tab icon unchanged",
         "Navigation to tab works correctly"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-002",

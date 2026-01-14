@@ -4,7 +4,7 @@ import type { ComponentType } from "react";
 import { useCallback, useMemo } from "react";
 import { Animated, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { StyledLeanView } from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { useSyncTabPosition } from "@/hooks/use-sync-tab-position";
 import { useTabChangeHaptics } from "@/hooks/use-tab-change-haptics";
 import { ActivityRecDuoDark, HomeDuoDark, PlusRecDuoDark } from "@/icons";
@@ -17,13 +17,14 @@ export const TAB_BAR_HEIGHT = 64;
 
 type RouteConfig = {
   name: string;
+  label: string;
   icon: ComponentType<TabBarIconProps>;
 };
 
 const ROUTE_CONFIG: RouteConfig[] = [
-  { name: "(dashboard)", icon: HomeDuoDark },
-  { name: "add-expense", icon: PlusRecDuoDark },
-  { name: "transactions", icon: ActivityRecDuoDark },
+  { name: "(dashboard)", label: "Home", icon: HomeDuoDark },
+  { name: "add-expense", label: "Add", icon: PlusRecDuoDark },
+  { name: "transactions", label: "Spending", icon: ActivityRecDuoDark },
 ];
 
 const ROUTE_MAP = new Map(ROUTE_CONFIG.map((config) => [config.name, config]));
@@ -173,12 +174,18 @@ function TabItem({
       onPress={handlePress}
       scaleValue={1.25}
     >
-      <Animated.View style={{ opacity }}>
+      <Animated.View className="items-center gap-1" style={{ opacity }}>
         <Icon
           color={tabBarColor}
           fillOpacity={fillOpacity}
           outlineOpacity={outlineOpacity}
         />
+        <StyledLeanText
+          className="font-satoshi-medium text-xs"
+          style={{ color: tabBarColor }}
+        >
+          {config.label}
+        </StyledLeanText>
       </Animated.View>
     </ScalePressable>
   );
