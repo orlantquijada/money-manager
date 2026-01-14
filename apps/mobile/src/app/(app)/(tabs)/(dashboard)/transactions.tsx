@@ -13,11 +13,11 @@ export default function TransactionsScreen() {
     data: transactions = [],
     isLoading,
     isFetching,
-  } = useQuery(trpc.transaction.allThisMonth.queryOptions());
+  } = useQuery(trpc.transaction.allLast7Days.queryOptions());
 
   const handleRefresh = useCallback(() => {
     queryClient.invalidateQueries({
-      queryKey: trpc.transaction.allThisMonth.queryKey(),
+      queryKey: trpc.transaction.allLast7Days.queryKey(),
     });
   }, [queryClient]);
 
@@ -35,6 +35,7 @@ export default function TransactionsScreen() {
       <TransactionList
         isRefreshing={isFetching && !isLoading}
         onRefresh={handleRefresh}
+        showSeeAllLink
         transactions={transactions}
       />
     </StyledLeanView>

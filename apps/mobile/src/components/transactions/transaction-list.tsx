@@ -35,6 +35,8 @@ type Props = {
   // Empty state props
   emptyStateVariant?: "new-user" | "period-empty";
   periodLabel?: string;
+  // Activity tab footer
+  showSeeAllLink?: boolean;
 };
 
 function groupTransactionsByDate(
@@ -88,6 +90,7 @@ export function TransactionList({
   onLoadMore,
   emptyStateVariant = "period-empty",
   periodLabel,
+  showSeeAllLink = false,
 }: Props) {
   const router = useRouter();
   const tintColor = useThemeColor("foreground");
@@ -130,7 +133,25 @@ export function TransactionList({
 
   const keyExtractor = useCallback((item: Transaction) => item.id, []);
 
+  const handleSeeAllPress = useCallback(() => {
+    router.push("/(app)/(tabs)/transactions");
+  }, [router]);
+
   const renderFooter = useCallback(() => {
+    // "See all spending" link for Activity tab
+    if (showSeeAllLink) {
+      return (
+        <StyledLeanView className="items-center py-6">
+          <GlassButton onPress={handleSeeAllPress} tintColor={mutedColor}>
+            <StyledLeanText className="font-satoshi-medium text-foreground">
+              See all spending →
+            </StyledLeanText>
+          </GlassButton>
+        </StyledLeanView>
+      );
+    }
+
+    // Pagination footer
     if (!hasNextPage) return null;
 
     return (
@@ -152,7 +173,15 @@ export function TransactionList({
         </GlassButton>
       </StyledLeanView>
     );
-  }, [hasNextPage, isFetchingNextPage, onLoadMore, tintColor, mutedColor]);
+  }, [
+    showSeeAllLink,
+    handleSeeAllPress,
+    hasNextPage,
+    isFetchingNextPage,
+    onLoadMore,
+    tintColor,
+    mutedColor,
+  ]);
 
   if (sections.length === 0) {
     return (

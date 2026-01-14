@@ -82,7 +82,7 @@
         "'See all spending →' link visible at bottom",
         "Link navigates to Spending tab"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-008",

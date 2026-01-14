@@ -116,6 +116,29 @@ export const transactionsRouter = router({
       });
     }),
 
+  allLast7Days: protectedProcedure.query(({ ctx }) => {
+    const now = new Date();
+    return ctx.db.query.transactions.findMany({
+      where: and(
+        gte(transactions.date, subDays(now, 7)),
+        lt(transactions.date, now)
+      ),
+      with: {
+        fund: {
+          columns: {
+            name: true,
+          },
+        },
+        store: {
+          columns: {
+            name: true,
+          },
+        },
+      },
+      orderBy: desc(transactions.date),
+    });
+  }),
+
   retrieve: protectedProcedure.input(z.string()).query(({ ctx, input }) =>
     ctx.db.query.transactions.findFirst({
       where: and(

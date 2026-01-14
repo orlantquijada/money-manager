@@ -80,6 +80,15 @@
 - Files: apps/mobile/src/components/dashboard/budget-alerts.tsx,
          apps/mobile/src/app/(app)/(tabs)/(dashboard)/transactions.tsx
 
+[SAR-007] COMPLETE - Recent transactions show last 7 days
+- API: Added allLast7Days query returning transactions from past 7 days
+- TransactionList: Added showSeeAllLink prop for "See all spending →" footer
+- Activity tab: Switched from allThisMonth to allLast7Days query
+- Activity tab: Enabled showSeeAllLink to navigate to Spending tab
+- Files: packages/api/src/router/transactions.ts,
+         apps/mobile/src/components/transactions/transaction-list.tsx,
+         apps/mobile/src/app/(app)/(tabs)/(dashboard)/transactions.tsx
+
 ---
 
 ## Blockers
