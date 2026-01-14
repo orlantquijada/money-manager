@@ -11,24 +11,27 @@ import type { PressableProps } from "react-native";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
 import BudgetScoreSheet from "@/components/dashboard/budget-score-sheet";
+import SettingsSheet from "@/components/dashboard/settings-sheet";
 import TotalSpent from "@/components/dashboard/total-spent";
 import GlassButton from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
 import { useTabBarHeight } from "@/components/tab-bar";
 import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
-import { Plus } from "@/icons";
+import { Plus, SettingsGear } from "@/icons";
 import { cn } from "@/utils/cn";
 
 export default function DashboardLayout() {
   const createSheetRef = useRef<BottomSheetModal>(null);
   const scoreSheetRef = useRef<BottomSheetModal>(null);
+  const settingsSheetRef = useRef<BottomSheetModal>(null);
   const tabBarHeight = useTabBarHeight();
 
   return (
     <AnimatedTabScreen index={1}>
       <DashboardCreateBottomSheet ref={createSheetRef} />
       <BudgetScoreSheet ref={scoreSheetRef} />
+      <SettingsSheet ref={settingsSheetRef} />
 
       <StyledLeanView
         className="flex-1 bg-background pt-safe"
@@ -37,14 +40,21 @@ export default function DashboardLayout() {
         <StyledLeanView className="mb-4 w-full flex-row items-start justify-between px-4 py-2">
           <TotalSpent scoreSheetRef={scoreSheetRef} />
 
-          <AddButton
-            onLongPress={() => {
-              createSheetRef.current?.present();
-            }}
-            onPress={() => {
-              createSheetRef.current?.present();
-            }}
-          />
+          <StyledLeanView className="flex-row items-center gap-3">
+            <SettingsButton
+              onPress={() => {
+                settingsSheetRef.current?.present();
+              }}
+            />
+            <AddButton
+              onLongPress={() => {
+                createSheetRef.current?.present();
+              }}
+              onPress={() => {
+                createSheetRef.current?.present();
+              }}
+            />
+          </StyledLeanView>
         </StyledLeanView>
 
         <Tabs>
@@ -64,6 +74,16 @@ export default function DashboardLayout() {
         </Tabs>
       </StyledLeanView>
     </AnimatedTabScreen>
+  );
+}
+
+function SettingsButton({ onPress }: { onPress: () => void }) {
+  const iconColor = useThemeColor("foreground-muted");
+
+  return (
+    <ScalePressable hitSlop={10} onPress={onPress} scaleValue={0.9}>
+      <SettingsGear color={iconColor} size={22} />
+    </ScalePressable>
   );
 }
 

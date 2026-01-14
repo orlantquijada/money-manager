@@ -115,6 +115,17 @@
 - EVENTUALLY: excluded from score calculation (no recurring budget)
 - File: packages/api/src/router/budget.ts
 
+[SAR-011] COMPLETE - AI toggle in settings controls whispers only
+- Created preferences store with MMKV persistence (aiInsightsEnabled defaults to false)
+- Created SettingsSheet bottom sheet with "Enable AI Insights" toggle
+- Created SettingsGear icon and added to icons/index.ts
+- Added settings button to dashboard header next to add button
+- Budget Score remains visible regardless of toggle (not gated by AI setting)
+- Files: apps/mobile/src/stores/preferences.ts,
+         apps/mobile/src/components/dashboard/settings-sheet.tsx,
+         apps/mobile/src/icons/settings-gear.tsx,
+         apps/mobile/src/app/(app)/(tabs)/(dashboard)/_layout.tsx
+
 ---
 
 ## Blockers

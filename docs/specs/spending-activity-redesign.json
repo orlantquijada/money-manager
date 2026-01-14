@@ -133,7 +133,7 @@
         "When OFF, Budget Score still visible",
         "When ON, whispers appear in alerts section"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-012",
