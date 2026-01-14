@@ -56,6 +56,14 @@
 - Both undefined for funds with no budget
 - File: packages/api/src/router/transactions.ts
 
+[SAR-004] COMPLETE - Pie chart center label shows budget context on slice tap
+- Updated FundData and PieSlice types to include budgetedAmount
+- CenterLabel shows third line when slice selected:
+  - Budgeted: "₱12,000 / ₱15,000" format
+  - Non-budgeted: "₱2,500 spent" format
+- Budget line hidden when no slice selected
+- File: apps/mobile/src/components/stats/pie-chart-segmented.tsx
+
 ---
 
 ## Blockers

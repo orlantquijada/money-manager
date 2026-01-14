@@ -56,7 +56,7 @@
         "Non-budgeted fund shows 'X spent' format",
         "Center label updates smoothly on slice change"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-006",

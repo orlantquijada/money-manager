@@ -10,8 +10,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { G, Path, Svg } from "react-native-svg";
 import { AnimatedText } from "@/components/animated-text";
-import { StyledLeanView } from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { useChartColors } from "@/lib/chart-colors";
+import { wholeCurrencyFormatterOptions } from "@/utils/format";
 import { sum } from "@/utils/math";
 import { fadeInOutSpringify, transitions } from "@/utils/motion";
 
@@ -30,6 +31,8 @@ export type FundData = {
   fundName: string;
   amount: number;
   percentage: number;
+  budgetedAmount?: number;
+  budgetUtilization?: number;
 };
 
 /** Represents a slice identifier: number for specific fundId, null for "Other" aggregated slice */
@@ -41,6 +44,7 @@ type PieSlice = {
   value: number;
   color: string;
   amount: number;
+  budgetedAmount?: number;
 };
 
 type Props = {
@@ -69,6 +73,7 @@ function preparePieData(data: FundData[], chartColors: string[]): PieSlice[] {
       value: fund.percentage,
       color: chartColors[index % chartColors.length],
       amount: fund.amount,
+      budgetedAmount: fund.budgetedAmount,
     }));
   }
 
@@ -85,6 +90,7 @@ function preparePieData(data: FundData[], chartColors: string[]): PieSlice[] {
     value: fund.percentage,
     color: chartColors[index % chartColors.length],
     amount: fund.amount,
+    budgetedAmount: fund.budgetedAmount,
   }));
 
   slices.push({
@@ -93,6 +99,7 @@ function preparePieData(data: FundData[], chartColors: string[]): PieSlice[] {
     value: otherPercentage,
     color: chartColors[5], // Lightest shade for "Other"
     amount: otherAmount,
+    // "Other" has no budget
   });
 
   return slices;
@@ -174,6 +181,11 @@ type CenterLabelProps = {
   selectedFundId: SliceId | undefined;
 };
 
+const currencyFormatter = new Intl.NumberFormat(
+  "en-PH",
+  wholeCurrencyFormatterOptions
+);
+
 function CenterLabel({ displaySlice, selectedFundId }: CenterLabelProps) {
   const animatedValue = useSharedValue(displaySlice?.value ?? 0);
 
@@ -186,6 +198,19 @@ function CenterLabel({ displaySlice, selectedFundId }: CenterLabelProps) {
   });
 
   if (!displaySlice) return null;
+
+  // Budget context line: only shown when a slice is selected
+  const isSelected = selectedFundId !== undefined;
+  const budgetLine = (() => {
+    if (!isSelected) return null;
+    const { amount, budgetedAmount } = displaySlice;
+    if (budgetedAmount) {
+      // Budgeted fund: "₱12,000 / ₱15,000"
+      return `${currencyFormatter.format(amount)} / ${currencyFormatter.format(budgetedAmount)}`;
+    }
+    // Non-budgeted fund: "₱2,500 spent"
+    return `${currencyFormatter.format(amount)} spent`;
+  })();
 
   return (
     <Animated.View
@@ -206,6 +231,15 @@ function CenterLabel({ displaySlice, selectedFundId }: CenterLabelProps) {
       >
         {displaySlice.label}
       </Animated.Text>
+      {budgetLine && (
+        <StyledLeanText
+          className="mt-0.5 max-w-[90%] text-center font-satoshi-medium text-foreground-muted text-xs"
+          ellipsizeMode="tail"
+          numberOfLines={1}
+        >
+          {budgetLine}
+        </StyledLeanText>
+      )}
     </Animated.View>
   );
 }
