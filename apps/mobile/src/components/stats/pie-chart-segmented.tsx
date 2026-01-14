@@ -14,7 +14,11 @@ import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { useChartColors } from "@/lib/chart-colors";
 import { wholeCurrencyFormatterOptions } from "@/utils/format";
 import { sum } from "@/utils/math";
-import { fadeInOutSpringify, transitions } from "@/utils/motion";
+import {
+  fadeInOutSpringify,
+  layoutSpringify,
+  transitions,
+} from "@/utils/motion";
 
 const MAX_SLICES = 5;
 
@@ -213,34 +217,38 @@ function CenterLabel({ displaySlice, selectedFundId }: CenterLabelProps) {
   })();
 
   return (
-    <Animated.View
-      className="absolute items-center justify-center"
+    <StyledLeanView
+      className="absolute inset-0 items-center justify-center"
       pointerEvents="none"
-      style={{ top: 0, left: 0, right: 0, bottom: 0 }}
     >
       <AnimatedText
         className="font-nunito-bold text-2xl text-foreground"
+        layout={layoutSpringify("snappy")}
         text={animatedText}
       />
-      <Animated.Text
-        className="max-w-[80%] text-center font-satoshi-medium text-foreground text-xs"
-        ellipsizeMode="tail"
-        {...fadeInOutSpringify("snappy")}
+      <Animated.View
         key={selectedFundId}
-        numberOfLines={1}
+        layout={layoutSpringify("snappy")}
+        {...fadeInOutSpringify("snappy")}
       >
-        {displaySlice.label}
-      </Animated.Text>
-      {budgetLine && (
         <StyledLeanText
-          className="mt-0.5 max-w-[90%] text-center font-satoshi-medium text-foreground-muted text-xs"
+          className="max-w-[80%] text-center font-satoshi-medium text-foreground text-xs"
           ellipsizeMode="tail"
           numberOfLines={1}
         >
-          {budgetLine}
+          {displaySlice.label}
         </StyledLeanText>
-      )}
-    </Animated.View>
+        {budgetLine && (
+          <StyledLeanText
+            className="mt-0.5 max-w-[90%] text-center font-satoshi-medium text-foreground-muted text-xs"
+            ellipsizeMode="tail"
+            numberOfLines={1}
+          >
+            {budgetLine}
+          </StyledLeanText>
+        )}
+      </Animated.View>
+    </StyledLeanView>
   );
 }
 
