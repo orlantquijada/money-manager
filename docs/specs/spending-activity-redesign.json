@@ -44,7 +44,7 @@
         "'Similar to last [period]' shown when within ±5%",
         "Comparison hidden when no previous data exists"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-004",

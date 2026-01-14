@@ -8,6 +8,7 @@ import { AnimatedText } from "@/components/animated-text";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { wholeCurrencyFormatterOptions } from "@/utils/format";
 import { transitions } from "@/utils/motion";
+import type { Period } from "./period-chips";
 import SpendingPieChartSegmented, {
   type FundData,
   type SliceId,
@@ -18,13 +19,26 @@ import TopFunds from "./top-funds";
 const SPRING_CONFIG = transitions.snappy;
 const MAX_TOP_FUNDS = 3;
 
+const PREVIOUS_PERIOD_LABELS: Record<Period, string> = {
+  week: "last week",
+  month: "last month",
+  "3mo": "previous 3 months",
+  all: "",
+};
+
 type Props = {
   data:
     | {
         totalSpent: number;
         byFund: FundData[];
+        comparison?: {
+          previousTotal: number;
+          difference: number;
+          percentageChange: number;
+        };
       }
     | undefined;
+  period: Period;
   isLoading?: boolean;
 };
 
@@ -42,7 +56,7 @@ function getTopFunds(funds: FundData[], count: number): FundData[] {
     .slice(0, count);
 }
 
-export default function StatsHeader({ data, isLoading }: Props) {
+export default function StatsHeader({ data, period, isLoading }: Props) {
   // Animation for total spent value
   const animatedTotalSpent = useSharedValue(0);
 
@@ -93,6 +107,7 @@ export default function StatsHeader({ data, isLoading }: Props) {
             className="font-nunito-bold text-2xl text-foreground"
             text={animatedTotalSpentText}
           />
+          <ComparisonText comparison={data.comparison} period={period} />
         </StyledLeanView>
 
         {/* Divider */}
@@ -106,5 +121,44 @@ export default function StatsHeader({ data, isLoading }: Props) {
         />
       </StyledLeanView>
     </StyledLeanView>
+  );
+}
+
+type ComparisonTextProps = {
+  comparison: Props["data"] extends { comparison: infer C } ? C : never;
+  period: Period;
+};
+
+function ComparisonText({ comparison, period }: ComparisonTextProps) {
+  if (!comparison || period === "all") return null;
+
+  const currencyFormatter = new Intl.NumberFormat(
+    "en-PH",
+    wholeCurrencyFormatterOptions
+  );
+
+  const { difference, percentageChange } = comparison;
+  const absDifference = Math.abs(difference);
+  const periodLabel = PREVIOUS_PERIOD_LABELS[period];
+
+  // Within ±5% is considered "similar"
+  if (Math.abs(percentageChange) <= 5) {
+    return (
+      <StyledLeanText className="mt-0.5 font-satoshi-medium text-foreground-muted text-xs">
+        Similar to {periodLabel}
+      </StyledLeanText>
+    );
+  }
+
+  const isMore = difference > 0;
+  const arrow = isMore ? "↑" : "↓";
+  const colorClass = isMore ? "text-red-9" : "text-grass-9";
+
+  return (
+    <StyledLeanText
+      className={`mt-0.5 font-satoshi-medium text-xs ${colorClass}`}
+    >
+      {arrow} {currencyFormatter.format(absDifference)} vs {periodLabel}
+    </StyledLeanText>
   );
 }

@@ -40,6 +40,15 @@
 - comparison undefined for "all" period or when no previous data
 - File: packages/api/src/router/transactions.ts
 
+[SAR-003] COMPLETE - Comparative context shows spending vs previous period
+- Added ComparisonText component to stats-header.tsx
+- Displays "↑ ₱X vs last [period]" (red) when spent more
+- Displays "↓ ₱X vs last [period]" (green) when spent less
+- Displays "Similar to [period]" (muted) when within ±5%
+- Hidden for "all" period or when no previous data
+- Files: apps/mobile/src/components/stats/stats-header.tsx,
+         apps/mobile/src/app/(app)/(tabs)/transactions.tsx
+
 ---
 
 ## Blockers

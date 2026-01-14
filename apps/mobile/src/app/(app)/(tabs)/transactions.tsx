@@ -100,7 +100,11 @@ export default function Transactions() {
 
           {/* Stats header - hide for new user */}
           {showStatsHeader && (
-            <StatsHeader data={stats} isLoading={statsLoading} />
+            <StatsHeader
+              data={stats}
+              isLoading={statsLoading}
+              period={period}
+            />
           )}
 
           <StyledLeanView className="flex-1" style={{ marginHorizontal: -16 }}>
