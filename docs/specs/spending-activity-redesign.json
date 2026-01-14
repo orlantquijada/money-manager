@@ -28,7 +28,7 @@
         "Tab selection works correctly",
         "Content renders under Activity tab"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-003",
@@ -210,7 +210,7 @@
         "Active chip has filled background",
         "Chip change triggers data refresh"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-018",
@@ -224,7 +224,7 @@
         "Spring animation on focus",
         "Haptic feedback on tap"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-019",
@@ -236,7 +236,7 @@
         "Right side shows top funds with amounts",
         "Header scrolls away with content"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-020",
@@ -247,7 +247,7 @@
         "Period empty: zeroed chart, period-specific message",
         "Comparison hidden when no previous data"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

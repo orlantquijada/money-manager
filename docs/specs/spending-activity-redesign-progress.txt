@@ -1,0 +1,28 @@
+# Spending & Activity Redesign Progress
+
+## Quick Reference
+- PRD: docs/specs/spending-activity-redesign.json
+- Main files: apps/mobile/src/app/(app)/(tabs)/(dashboard)/_layout.tsx
+
+---
+
+## Progress Log
+
+### 2026-01-14 - Initial implementation session
+
+[SAR-002] COMPLETE - Dashboard tab renamed to "Activity"
+- Changed TabButton text from "Transactions" to "Activity"
+- Route name unchanged for backward compat
+- File: apps/mobile/src/app/(app)/(tabs)/(dashboard)/_layout.tsx:56
+
+[SAR-017, SAR-018, SAR-019, SAR-020] COMPLETE - UI components (carried from prior work)
+- Period chips, donut chart, stats header, empty states already implemented
+- Marked as passes:true in spec JSON
+
+---
+
+## Blockers
+(none)
+
+## Key Decisions
+- Route href/name kept as "transactions" to avoid breaking navigation
