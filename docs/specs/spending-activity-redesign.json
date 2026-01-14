@@ -160,7 +160,7 @@
         "comparison null/undefined for 'all' period",
         "comparison null/undefined when no previous data"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-014",

@@ -33,6 +33,13 @@
 - TabItem renders label below icon with animated opacity
 - File: apps/mobile/src/components/tab-bar.tsx
 
+[SAR-013] COMPLETE - transaction.stats returns comparison data
+- Added getPreviousPeriodDateRange() helper for previous period calculation
+- stats endpoint now queries previous period total
+- Returns comparison: { previousTotal, difference, percentageChange }
+- comparison undefined for "all" period or when no previous data
+- File: packages/api/src/router/transactions.ts
+
 ---
 
 ## Blockers

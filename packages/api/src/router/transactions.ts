@@ -25,6 +25,36 @@ function getDateRangeForPeriod(period: Period): {
   }
 }
 
+/**
+ * Returns the date range for the period immediately before the given period.
+ * Returns null for "all" since there's no meaningful previous period.
+ */
+function getPreviousPeriodDateRange(period: Period): {
+  start: Date | null;
+  end: Date | null;
+} | null {
+  const now = new Date();
+  switch (period) {
+    case "week": {
+      // Previous 7 days before current 7 days
+      const currentStart = subDays(now, 7);
+      return { start: subDays(currentStart, 7), end: currentStart };
+    }
+    case "month": {
+      // Previous calendar month
+      const prevMonth = subMonths(now, 1);
+      return { start: startOfMonth(prevMonth), end: endOfMonth(prevMonth) };
+    }
+    case "3mo": {
+      // Previous 3-month window (months 6-4 ago)
+      const prevEnd = subMonths(startOfMonth(now), 3);
+      return { start: subMonths(prevEnd, 2), end: endOfMonth(prevEnd) };
+    }
+    case "all":
+      return null; // No comparison for "all"
+  }
+}
+
 export const transactionsRouter = router({
   all: protectedProcedure.query(({ ctx }) =>
     ctx.db.query.transactions.findMany({
@@ -290,6 +320,7 @@ export const transactionsRouter = router({
     .input(z.object({ period: periodSchema }))
     .query(async ({ ctx, input }) => {
       const { start, end } = getDateRangeForPeriod(input.period);
+      const previousRange = getPreviousPeriodDateRange(input.period);
 
       const dateConditions = [];
       if (start) dateConditions.push(gte(transactions.date, start));
@@ -301,6 +332,36 @@ export const transactionsRouter = router({
         .from(transactions)
         .where(and(...dateConditions));
       const totalSpent = totalResult?.amount ?? 0;
+
+      // Get previous period total for comparison (if applicable)
+      let comparison:
+        | {
+            previousTotal: number;
+            difference: number;
+            percentageChange: number;
+          }
+        | undefined;
+
+      if (previousRange) {
+        const prevConditions = [];
+        if (previousRange.start)
+          prevConditions.push(gte(transactions.date, previousRange.start));
+        if (previousRange.end)
+          prevConditions.push(lt(transactions.date, previousRange.end));
+
+        const [prevResult] = await ctx.db
+          .select({ amount: sum(transactions.amount).mapWith(Number) })
+          .from(transactions)
+          .where(and(...prevConditions));
+        const previousTotal = prevResult?.amount ?? 0;
+
+        // Only include comparison if there's previous data
+        if (previousTotal > 0) {
+          const difference = totalSpent - previousTotal;
+          const percentageChange = (difference / previousTotal) * 100;
+          comparison = { previousTotal, difference, percentageChange };
+        }
+      }
 
       // Get breakdown by fund with fund names
       const byFundResult = await ctx.db
@@ -322,7 +383,7 @@ export const transactionsRouter = router({
         percentage: totalSpent > 0 ? ((row.amount ?? 0) / totalSpent) * 100 : 0,
       }));
 
-      return { totalSpent, byFund };
+      return { totalSpent, byFund, comparison };
     }),
 
   list: protectedProcedure
