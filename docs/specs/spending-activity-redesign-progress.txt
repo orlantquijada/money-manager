@@ -128,6 +128,13 @@
 
 ---
 
+[SAR-007] BUG FIX - "See all spending" navigation in nested tabs
+- Original: expo-router router.navigate() didn't work inside nested MaterialTopTabs
+- Fix: Use React Navigation getParent().navigate() to target parent navigator
+- File: apps/mobile/src/components/transactions/transaction-list.tsx
+
+---
+
 ## Blockers
 (none)
 

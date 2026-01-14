@@ -1,3 +1,5 @@
+import type { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
+import { useNavigation } from "@react-navigation/native";
 import { format, startOfDay } from "date-fns";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
@@ -94,6 +96,8 @@ export function TransactionList({
   showSeeAllLink = false,
 }: Props) {
   const router = useRouter();
+  const navigation =
+    useNavigation<MaterialTopTabNavigationProp<Record<string, object>>>();
   const foregroundColor = useThemeColor("foreground");
   const mutedColor = useThemeColor("muted");
 
@@ -135,8 +139,12 @@ export function TransactionList({
   const keyExtractor = useCallback((item: Transaction) => item.id, []);
 
   const handleSeeAllPress = useCallback(() => {
-    router.navigate("/(app)/(tabs)/transactions");
-  }, [router]);
+    // Get parent navigator (MaterialTopTabs) since we're inside nested tabs
+    const parentNav = navigation.getParent();
+    if (parentNav) {
+      parentNav.navigate("transactions");
+    }
+  }, [navigation]);
 
   const renderFooter = useCallback(() => {
     // "See all spending" link for Activity tab
