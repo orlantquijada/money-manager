@@ -22,10 +22,8 @@ import { cn } from "@/utils/cn";
 import { transitions } from "@/utils/motion";
 import { choice } from "@/utils/random";
 import type { IconComponent } from "@/utils/types";
-import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 import Presence from "../presence";
 import TextInput from "../text-input";
-import { useThemeColor } from "../theme-provider";
 import CreateFooter from "./footer";
 
 const DELAY = 40;
@@ -59,13 +57,13 @@ type Props = {
 };
 
 export default function FundInfo({ setScreen }: Props) {
-  const backgroundColor = useThemeColor("background");
   const name = useCreateFundStore((s) => s.name);
   const setName = useCreateFundStore((s) => s.setName);
-  const fundType = useCreateFundStore((s) => s.fundType);
   const setFundType = useCreateFundStore((s) => s.setFundType);
 
-  const selectedType = useSharedValue(fundType);
+  // Use shared value as source of truth during selection to avoid re-renders
+  // Store is synced only on navigation to prevent animation interruption
+  const selectedType = useSharedValue<FundType>("SPENDING");
   const placeholder = useMemo(() => choice(FUND_NAME_PLACEHOLDERS), []);
 
   const {
@@ -75,95 +73,91 @@ export default function FundInfo({ setScreen }: Props) {
     // handleTargetOnLayout,
   } = useAnimations(selectedType);
 
-  const { fadeProps, handleScroll } = useOverflowFadeEdge();
-
   return (
     <>
-      <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
-        <ScrollView
-          className="px-4 pt-20"
-          contentContainerClassName="pb-safe-offset-4 flex gap-y-8 flex-1"
-          onScroll={handleScroll}
-        >
-          <Presence delay={DELAY} delayMultiplier={5} exitDelayMultiplier={1}>
-            <StyledLeanView className="gap-2.5">
-              <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
-                What&apos;s the name of your fund?
-              </StyledLeanText>
-              <TextInput
-                onChangeText={setName}
-                placeholder={placeholder}
-                value={name}
-              />
-            </StyledLeanView>
+      <ScrollView
+        className="px-4 pt-20"
+        contentContainerClassName="pb-safe-offset-4 flex gap-y-8 flex-1"
+      >
+        <Presence delay={DELAY} delayMultiplier={5} exitDelayMultiplier={1}>
+          <StyledLeanView className="gap-2.5">
+            <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
+              What&apos;s the name of your fund?
+            </StyledLeanText>
+            <TextInput
+              onChangeText={setName}
+              placeholder={placeholder}
+              value={name}
+            />
+          </StyledLeanView>
+        </Presence>
+
+        <StyledLeanView className="gap-y-2.5">
+          <Presence delay={DELAY} delayMultiplier={6} exitDelayMultiplier={2}>
+            <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
+              Choose a fund type
+            </StyledLeanText>
           </Presence>
 
-          <StyledLeanView className="gap-y-2.5">
-            <Presence delay={DELAY} delayMultiplier={6} exitDelayMultiplier={2}>
-              <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
-                Choose a fund type
-              </StyledLeanText>
+          <StyledLeanView className="relative">
+            <Presence {...presenceProps[selectedType.get()]}>
+              <Animated.View
+                className="absolute right-0 left-0 rounded-xl bg-muted"
+                style={[{ borderCurve: "continuous" }, style]}
+              />
             </Presence>
 
-            <StyledLeanView className="relative">
-              <Presence {...presenceProps[selectedType.get()]}>
-                <Animated.View
-                  className="absolute right-0 left-0 rounded-xl bg-muted"
-                  style={[{ borderCurve: "continuous" }, style]}
+            <StyledLeanView style={{ gap: FUND_CARDS_GAP }}>
+              <Presence {...presenceProps.SPENDING}>
+                <FundCard
+                  description="Usually for groceries, transportation"
+                  Icon={ShoppingBag}
+                  label="For Spending"
+                  onLayout={handleSpendingOnLayout}
+                  onPress={() => {
+                    selectedType.set("SPENDING");
+                  }}
+                  pillLabel="Variable"
                 />
               </Presence>
 
-              <StyledLeanView style={{ gap: FUND_CARDS_GAP }}>
-                <Presence {...presenceProps.SPENDING}>
-                  <FundCard
-                    description="Usually for groceries, transportation"
-                    Icon={ShoppingBag}
-                    label="For Spending"
-                    onLayout={handleSpendingOnLayout}
-                    onPress={() => {
-                      selectedType.set("SPENDING");
-                      setFundType("SPENDING");
-                    }}
-                    pillLabel="Variable"
-                  />
-                </Presence>
+              <Presence {...presenceProps.NON_NEGOTIABLE}>
+                <FundCard
+                  description="Automatically set aside money for this budget. Usually for rent, electricity"
+                  Icon={Lock}
+                  label="Non-negotiables"
+                  onLayout={handleNonNegotiableOnLayout}
+                  onPress={() => {
+                    selectedType.set("NON_NEGOTIABLE");
+                  }}
+                  pillLabel="Fixed"
+                />
+              </Presence>
 
-                <Presence {...presenceProps.NON_NEGOTIABLE}>
-                  <FundCard
-                    description="Automatically set aside money for this budget. Usually for rent, electricity"
-                    Icon={Lock}
-                    label="Non-negotiables"
-                    onLayout={handleNonNegotiableOnLayout}
-                    onPress={() => {
-                      selectedType.set("NON_NEGOTIABLE");
-                      setFundType("NON_NEGOTIABLE");
-                    }}
-                    pillLabel="Fixed"
-                  />
-                </Presence>
-
-                {/* <Presence {...presenceProps.TARGET}> */}
-                {/*   <FundCard */}
-                {/*     description="Set a target amount to build up over time. Usually for savings, big purchases" */}
-                {/*     icon={<Gps />} */}
-                {/*     label="Targets" */}
-                {/*     onLayout={handleTargetOnLayout} */}
-                {/*     onPress={() => { */}
-                {/*       selectedType.set("TARGET"); */}
-                {/*     }} */}
-                {/*   /> */}
-                {/* </Presence> */}
-              </StyledLeanView>
+              {/* <Presence {...presenceProps.TARGET}> */}
+              {/*   <FundCard */}
+              {/*     description="Set a target amount to build up over time. Usually for savings, big purchases" */}
+              {/*     icon={<Gps />} */}
+              {/*     label="Targets" */}
+              {/*     onLayout={handleTargetOnLayout} */}
+              {/*     onPress={() => { */}
+              {/*       selectedType.set("TARGET"); */}
+              {/*     }} */}
+              {/*   /> */}
+              {/* </Presence> */}
             </StyledLeanView>
           </StyledLeanView>
-        </ScrollView>
-      </FadingEdge>
+        </StyledLeanView>
+      </ScrollView>
 
       <CreateFooter
         disabled={!name.trim()}
         hideBackButton
         onContinuePress={() => {
-          navigateToNextScreen(selectedType.get(), setScreen);
+          // Sync to store before navigating
+          const type = selectedType.get();
+          setFundType(type);
+          navigateToNextScreen(type, setScreen);
         }}
       >
         Continue
@@ -256,35 +250,25 @@ function useAnimations(selectedType: SharedValue<FundType>) {
   const handleTargetOnLayout = initHeightValue(targetHeight);
 
   const style = useAnimatedStyle(() => {
-    const height =
-      selectedType.get() === "NON_NEGOTIABLE"
-        ? nonNegotiableHeight.get()
-        : spendingHeight.get();
+    "worklet";
+    // Cache shared values at the start to avoid multiple bridge crossings
+    const type = selectedType.get();
+    const spendingH = spendingHeight.get();
+    const nonNegH = nonNegotiableHeight.get();
 
-    // let height = spendingHeight.value;
-    // if (selectedType.value === "NON_NEGOTIABLE") {
-    //   height = nonNegotiableHeight.value;
-    // }
-    // } else if (selectedType.value === "TARGET") {
-    //   height = targetHeight.value;
-    // }
-
-    const translateY = {
-      SPENDING: 0,
-      NON_NEGOTIABLE: FUND_CARDS_GAP + spendingHeight.get(),
-      TARGET:
-        FUND_CARDS_GAP * 2 + nonNegotiableHeight.get() + spendingHeight.get(),
+    // Use function to calculate translateY, avoiding nested ternary
+    const getTranslateY = () => {
+      if (type === "SPENDING") return 0;
+      if (type === "NON_NEGOTIABLE") return FUND_CARDS_GAP + spendingH;
+      return FUND_CARDS_GAP * 2 + nonNegH + spendingH; // TARGET
     };
+    const translateY = getTranslateY();
+    const height = type === "SPENDING" ? spendingH : nonNegH;
 
     return {
       height: withSpring(height, transitions.snappy),
       transform: [
-        {
-          translateY: withSpring(
-            translateY[selectedType.get()],
-            transitions.lessBounce
-          ),
-        },
+        { translateY: withSpring(translateY, transitions.lessBounce) },
       ],
     };
   });
