@@ -72,6 +72,14 @@
 - Sorted by severity (warnings first)
 - Files: packages/api/src/router/budget.ts, packages/api/src/router/index.ts
 
+[SAR-006] COMPLETE - Budget alerts section shows prioritized alerts in Activity tab
+- Created BudgetAlerts component in apps/mobile/src/components/dashboard/budget-alerts.tsx
+- Max 3 alerts displayed with emoji icons (⚠️ over-budget, 🔶 almost-over)
+- Tapping alert navigates to /fund/[id] detail view
+- Integrated into Activity tab above TransactionList
+- Files: apps/mobile/src/components/dashboard/budget-alerts.tsx,
+         apps/mobile/src/app/(app)/(tabs)/(dashboard)/transactions.tsx
+
 ---
 
 ## Blockers

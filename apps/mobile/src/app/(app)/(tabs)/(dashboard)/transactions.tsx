@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 
+import { BudgetAlerts } from "@/components/dashboard/budget-alerts";
 import { TransactionList } from "@/components/transactions";
 import { StyledLeanView } from "@/config/interop";
 import { trpc } from "@/utils/api";
@@ -29,10 +30,13 @@ export default function TransactionsScreen() {
   }
 
   return (
-    <TransactionList
-      isRefreshing={isFetching && !isLoading}
-      onRefresh={handleRefresh}
-      transactions={transactions}
-    />
+    <StyledLeanView className="flex-1">
+      <BudgetAlerts />
+      <TransactionList
+        isRefreshing={isFetching && !isLoading}
+        onRefresh={handleRefresh}
+        transactions={transactions}
+      />
+    </StyledLeanView>
   );
 }

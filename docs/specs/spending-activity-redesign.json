@@ -69,7 +69,7 @@
         "Tapping alert navigates to fund detail view",
         "AI whispers shown after rule-based alerts (if enabled)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-007",
