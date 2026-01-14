@@ -12,10 +12,8 @@ import {
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
 
-import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 import Presence from "../presence";
 import { ScalePressable } from "../scale-pressable";
-import { useThemeColor } from "../theme-provider";
 import CreateFooter from "./footer";
 
 const DELAY = 60;
@@ -25,9 +23,6 @@ type Props = {
 };
 
 export default function ChooseFolder({ setScreen }: Props) {
-  const backgroundColor = useThemeColor("background");
-  const { fadeProps, handleScroll } = useOverflowFadeEdge();
-
   const folderId = useCreateFundStore((s) => s.folderId);
   const setFolderId = useCreateFundStore((s) => s.setFolderId);
   const fundType = useCreateFundStore((s) => s.fundType);
@@ -37,46 +32,43 @@ export default function ChooseFolder({ setScreen }: Props) {
 
   return (
     <>
-      <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
-        <ScrollView
-          className="px-4 pt-20"
-          contentContainerClassName="pb-safe-offset-4 flex"
-          onScroll={handleScroll}
-        >
-          <Presence delay={DELAY} delayMultiplier={3}>
-            <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
-              Select a folder.
-            </StyledLeanText>
-          </Presence>
+      <ScrollView
+        className="px-4 pt-20"
+        contentContainerClassName="pb-safe-offset-4 flex"
+      >
+        <Presence delay={DELAY} delayMultiplier={3}>
+          <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
+            Select a folder.
+          </StyledLeanText>
+        </Presence>
 
-          <StyledLeanView className="mt-3 h-full">
-            <FlashList
-              contentContainerStyle={{ paddingBottom: 8 }}
-              data={data}
-              extraData={folderId}
-              ItemSeparatorComponent={() => <StyledLeanView className="h-2" />}
-              keyExtractor={(item) => item.id.toString()}
-              numColumns={2}
-              renderItem={({ item, index }) => {
-                // delay multipler 3 takes into account api loading
-                return (
-                  <Presence
-                    className={cn("flex-1", index % 2 ? "ml-1" : "mr-1")}
-                    delay={DELAY}
-                    delayMultiplier={3 + index}
-                  >
-                    <FolderCard
-                      folder={item}
-                      onPress={() => setFolderId(item.id)}
-                      selected={item.id === folderId}
-                    />
-                  </Presence>
-                );
-              }}
-            />
-          </StyledLeanView>
-        </ScrollView>
-      </FadingEdge>
+        <StyledLeanView className="mt-3 h-full">
+          <FlashList
+            contentContainerStyle={{ paddingBottom: 8 }}
+            data={data}
+            extraData={folderId}
+            ItemSeparatorComponent={() => <StyledLeanView className="h-2" />}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={2}
+            renderItem={({ item, index }) => {
+              // delay multipler 3 takes into account api loading
+              return (
+                <Presence
+                  className={cn("flex-1", index % 2 ? "ml-1" : "mr-1")}
+                  delay={DELAY}
+                  delayMultiplier={3 + index}
+                >
+                  <FolderCard
+                    folder={item}
+                    onPress={() => setFolderId(item.id)}
+                    selected={item.id === folderId}
+                  />
+                </Presence>
+              );
+            }}
+          />
+        </StyledLeanView>
+      </ScrollView>
       <CreateFooter
         disabled={!folderId || isPending}
         loading={isPending}

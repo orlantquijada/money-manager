@@ -12,6 +12,7 @@ import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { sum } from "@/utils/math";
 import GlassButton from "../glass-button";
+import { IconSymbol } from "../ui/icon-symbol.ios";
 import { TransactionDateHeader } from "./date-header";
 import { TransactionsEmptyState } from "./empty-state";
 import { type TransactionItem, TransactionRow } from "./transaction-row";
@@ -93,7 +94,7 @@ export function TransactionList({
   showSeeAllLink = false,
 }: Props) {
   const router = useRouter();
-  const tintColor = useThemeColor("foreground");
+  const foregroundColor = useThemeColor("foreground");
   const mutedColor = useThemeColor("muted");
 
   const sections = useMemo(
@@ -134,7 +135,7 @@ export function TransactionList({
   const keyExtractor = useCallback((item: Transaction) => item.id, []);
 
   const handleSeeAllPress = useCallback(() => {
-    router.push("/(app)/(tabs)/transactions");
+    router.navigate("/(app)/(tabs)/transactions");
   }, [router]);
 
   const renderFooter = useCallback(() => {
@@ -142,10 +143,21 @@ export function TransactionList({
     if (showSeeAllLink) {
       return (
         <StyledLeanView className="items-center py-6">
-          <GlassButton onPress={handleSeeAllPress} tintColor={mutedColor}>
-            <StyledLeanText className="font-satoshi-medium text-foreground">
-              See all spending →
-            </StyledLeanText>
+          <GlassButton
+            onPress={handleSeeAllPress}
+            tintColor={mutedColor}
+            variant="default"
+          >
+            <StyledLeanView className="flex-row items-center justify-center gap-1">
+              <StyledLeanText className="font-satoshi-medium text-foreground">
+                See all spending
+              </StyledLeanText>
+              <IconSymbol
+                color={foregroundColor}
+                name="arrow.right"
+                size={12}
+              />
+            </StyledLeanView>
           </GlassButton>
         </StyledLeanView>
       );
@@ -164,7 +176,7 @@ export function TransactionList({
           variant="default"
         >
           {isFetchingNextPage ? (
-            <ActivityIndicator color={tintColor} size="small" />
+            <ActivityIndicator color={foregroundColor} size="small" />
           ) : (
             <StyledLeanText className="font-satoshi-medium text-foreground">
               Load More
@@ -179,7 +191,7 @@ export function TransactionList({
     hasNextPage,
     isFetchingNextPage,
     onLoadMore,
-    tintColor,
+    foregroundColor,
     mutedColor,
   ]);
 
@@ -202,7 +214,7 @@ export function TransactionList({
           <RefreshControl
             onRefresh={onRefresh}
             refreshing={isRefreshing}
-            tintColor={tintColor}
+            tintColor={foregroundColor}
           />
         ) : undefined
       }

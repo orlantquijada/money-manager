@@ -36,7 +36,6 @@ import {
 } from "@/utils/colors";
 import { exists } from "@/utils/fn";
 import { toCurrencyShort } from "@/utils/format";
-import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 
 type FundPickerSheetProps = {
   ref: React.Ref<BottomSheetModal>;
@@ -203,8 +202,6 @@ function Content({ allFunds, initialItems, isDark, iconColor }: ContentProps) {
   const selectedFundId = useAddExpenseStore((s) => s.selectedFundId);
   const setSelectedFundId = useAddExpenseStore((s) => s.setSelectedFundId);
 
-  const { fadeProps, handleScroll } = useOverflowFadeEdge();
-  const backgroundColor = useThemeColor("background");
   const foregroundColor = useThemeColor("foreground");
   const mutedColor = useThemeColor("foreground-muted");
 
@@ -267,52 +264,49 @@ function Content({ allFunds, initialItems, isDark, iconColor }: ContentProps) {
           </StyledLeanText>
         </StyledLeanView>
       ) : (
-        <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
-          <BottomSheetScrollView
-            contentContainerStyle={{ paddingBottom: insets.bottom }}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-          >
-            {items.map((item) => {
-              switch (item.type) {
-                case "recents-header":
-                  return (
-                    <RecentsHeader iconColor={iconColor} key="recents-header" />
-                  );
-                case "recent-fund":
-                  return (
-                    <FundRow
-                      fund={item.fund}
-                      isDark={isDark}
-                      isSelected={item.fund.id === selectedFundId}
-                      key={`recent-${item.fund.id}`}
-                      onSelect={handleSelect}
-                    />
-                  );
-                case "folder-header":
-                  return (
-                    <FolderHeader
-                      iconColor={iconColor}
-                      key={`folder-${item.folderId}`}
-                      name={item.folderName}
-                    />
-                  );
-                case "fund":
-                  return (
-                    <FundRow
-                      fund={item.fund}
-                      isDark={isDark}
-                      isSelected={item.fund.id === selectedFundId}
-                      key={`fund-${item.fund.id}`}
-                      onSelect={handleSelect}
-                    />
-                  );
-                default:
-                  return null;
-              }
-            })}
-          </BottomSheetScrollView>
-        </FadingEdge>
+        <BottomSheetScrollView
+          contentContainerStyle={{ paddingBottom: insets.bottom }}
+          scrollEventThrottle={16}
+        >
+          {items.map((item) => {
+            switch (item.type) {
+              case "recents-header":
+                return (
+                  <RecentsHeader iconColor={iconColor} key="recents-header" />
+                );
+              case "recent-fund":
+                return (
+                  <FundRow
+                    fund={item.fund}
+                    isDark={isDark}
+                    isSelected={item.fund.id === selectedFundId}
+                    key={`recent-${item.fund.id}`}
+                    onSelect={handleSelect}
+                  />
+                );
+              case "folder-header":
+                return (
+                  <FolderHeader
+                    iconColor={iconColor}
+                    key={`folder-${item.folderId}`}
+                    name={item.folderName}
+                  />
+                );
+              case "fund":
+                return (
+                  <FundRow
+                    fund={item.fund}
+                    isDark={isDark}
+                    isSelected={item.fund.id === selectedFundId}
+                    key={`fund-${item.fund.id}`}
+                    onSelect={handleSelect}
+                  />
+                );
+              default:
+                return null;
+            }
+          })}
+        </BottomSheetScrollView>
       )}
     </StyledLeanView>
   );

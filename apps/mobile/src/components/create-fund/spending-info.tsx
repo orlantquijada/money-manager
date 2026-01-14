@@ -12,10 +12,9 @@ import {
   useSubmitFund,
 } from "@/lib/create-fund";
 import { transitions } from "@/utils/motion";
-import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
+
 import Presence from "../presence";
 import { CurrencyInput } from "../text-input";
-import { useThemeColor } from "../theme-provider";
 import Choice from "./choice";
 import CreateFooter from "./footer";
 
@@ -33,79 +32,74 @@ export default function SpendingInfo({ setScreen, presetFolderId }: Props) {
   const setBudgetedAmount = useCreateFundStore((s) => s.setBudgetedAmount);
 
   const { submit, isPending } = useSubmitFund();
-  const backgroundColor = useThemeColor("background");
-  const { fadeProps, handleScroll } = useOverflowFadeEdge();
 
   return (
     <>
-      <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
-        <ScrollView
-          className="px-4 pt-20"
-          contentContainerClassName="pb-safe-offset-4 flex gap-y-8"
-          onScroll={handleScroll}
-        >
-          <StyledLeanView className="mb-8">
-            <Presence delay={DELAY} delayMultiplier={1}>
-              <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
-                How frequent do you use this fund?
-              </StyledLeanText>
+      <ScrollView
+        className="px-4 pt-20"
+        contentContainerClassName="pb-safe-offset-4 flex gap-y-8"
+      >
+        <StyledLeanView className="mb-8">
+          <Presence delay={DELAY} delayMultiplier={1}>
+            <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
+              How frequent do you use this fund?
+            </StyledLeanText>
+          </Presence>
+
+          <StyledLeanView className="mt-2.5 flex w-3/5 gap-2">
+            <Presence delay={DELAY} delayMultiplier={2}>
+              <Choice
+                choiceLabel="A"
+                onPress={() => setTimeMode("WEEKLY")}
+                selected={timeMode === "WEEKLY"}
+              >
+                Weekly
+              </Choice>
+            </Presence>
+            <Presence delay={DELAY} delayMultiplier={3}>
+              <Choice
+                choiceLabel="B"
+                onPress={() => setTimeMode("MONTHLY")}
+                selected={timeMode === "MONTHLY"}
+              >
+                Monthly
+              </Choice>
             </Presence>
 
-            <StyledLeanView className="mt-2.5 flex w-3/5 gap-2">
-              <Presence delay={DELAY} delayMultiplier={2}>
-                <Choice
-                  choiceLabel="A"
-                  onPress={() => setTimeMode("WEEKLY")}
-                  selected={timeMode === "WEEKLY"}
-                >
-                  Weekly
-                </Choice>
-              </Presence>
-              <Presence delay={DELAY} delayMultiplier={3}>
-                <Choice
-                  choiceLabel="B"
-                  onPress={() => setTimeMode("MONTHLY")}
-                  selected={timeMode === "MONTHLY"}
-                >
-                  Monthly
-                </Choice>
-              </Presence>
-
-              <Presence delay={DELAY} delayMultiplier={4}>
-                <Choice
-                  choiceLabel="C"
-                  onPress={() => setTimeMode("BIMONTHLY")}
-                  selected={timeMode === "BIMONTHLY"}
-                >
-                  Twice a Month
-                </Choice>
-              </Presence>
-            </StyledLeanView>
+            <Presence delay={DELAY} delayMultiplier={4}>
+              <Choice
+                choiceLabel="C"
+                onPress={() => setTimeMode("BIMONTHLY")}
+                selected={timeMode === "BIMONTHLY"}
+              >
+                Twice a Month
+              </Choice>
+            </Presence>
           </StyledLeanView>
+        </StyledLeanView>
 
-          {timeMode && (
-            <Presence delay={DELAY} delayMultiplier={5}>
-              <StyledLeanView className="gap-2.5">
-                <StyledLeanView className="flex-row">
-                  <StyledLeanText
-                    className="font-satoshi-medium text-foreground text-lg"
-                    style={{ lineHeight: undefined }}
-                  >
-                    How much will you allocate{" "}
-                  </StyledLeanText>
-                  <StyledLeanView className="relative">
-                    <TimeModeText key={timeMode} timeMode={timeMode} />
-                  </StyledLeanView>
+        {timeMode && (
+          <Presence delay={DELAY} delayMultiplier={5}>
+            <StyledLeanView className="gap-2.5">
+              <StyledLeanView className="flex-row">
+                <StyledLeanText
+                  className="font-satoshi-medium text-foreground text-lg"
+                  style={{ lineHeight: undefined }}
+                >
+                  How much will you allocate{" "}
+                </StyledLeanText>
+                <StyledLeanView className="relative">
+                  <TimeModeText key={timeMode} timeMode={timeMode} />
                 </StyledLeanView>
-                <CurrencyInput
-                  onChangeText={(text) => setBudgetedAmount(Number(text) || 0)}
-                  value={budgetedAmount.toString()}
-                />
               </StyledLeanView>
-            </Presence>
-          )}
-        </ScrollView>
-      </FadingEdge>
+              <CurrencyInput
+                onChangeText={(text) => setBudgetedAmount(Number(text) || 0)}
+                value={budgetedAmount.toString()}
+              />
+            </StyledLeanView>
+          </Presence>
+        )}
+      </ScrollView>
 
       <CreateFooter
         disabled={!timeMode || budgetedAmount <= 0 || isPending}

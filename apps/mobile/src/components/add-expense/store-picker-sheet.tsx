@@ -11,7 +11,7 @@ import type { StorePick } from "api";
 import * as Haptics from "expo-haptics";
 import { useMemo, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import FadingEdge, { useOverflowFadeEdge } from "@/components/fading-edge";
+
 import { ScalePressable } from "@/components/scale-pressable";
 import { useThemeColor } from "@/components/theme-provider";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -82,9 +82,6 @@ function Content({ stores }: ContentProps) {
 
   const foregroundColor = useThemeColor("foreground");
   const mutedColor = useThemeColor("foreground-muted");
-  const backgroundColor = useThemeColor("background");
-
-  const { fadeProps, handleScroll } = useOverflowFadeEdge();
 
   const filteredStores = useMemo(() => {
     if (!search.trim()) return stores;
@@ -162,22 +159,19 @@ function Content({ stores }: ContentProps) {
 
       {/* Store List */}
       {filteredStores.length > 0 ? (
-        <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
-          <BottomSheetScrollView
-            contentContainerStyle={{ paddingBottom: insets.bottom }}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-          >
-            {filteredStores.map((store) => (
-              <StoreRow
-                isSelected={selectedStore?.id === store.id}
-                key={`store-${store.id}`}
-                onPress={() => handleSelect(store)}
-                store={store}
-              />
-            ))}
-          </BottomSheetScrollView>
-        </FadingEdge>
+        <BottomSheetScrollView
+          contentContainerStyle={{ paddingBottom: insets.bottom }}
+          scrollEventThrottle={16}
+        >
+          {filteredStores.map((store) => (
+            <StoreRow
+              isSelected={selectedStore?.id === store.id}
+              key={`store-${store.id}`}
+              onPress={() => handleSelect(store)}
+              store={store}
+            />
+          ))}
+        </BottomSheetScrollView>
       ) : (
         !showAddNew && (
           <StyledBottomSheetView className="flex-1 items-center justify-center px-6">

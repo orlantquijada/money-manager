@@ -1,6 +1,8 @@
 import { type ReactNode, useEffect } from "react";
 import { Uniwind, useUniwind } from "uniwind";
 import {
+  amber,
+  amberDark,
   lime,
   limeDark,
   mauve,
@@ -57,13 +59,20 @@ export function useTheme() {
 type ColorGrade = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
 // Raw color scales
+type AmberColor = `amber-${ColorGrade}`;
 type MauveColor = `mauve-${ColorGrade}`;
 type VioletColor = `violet-${ColorGrade}`;
 type LimeColor = `lime-${ColorGrade}`;
 type RedColor = `red-${ColorGrade}`;
 type PinkColor = `pink-${ColorGrade}`;
 
-type RawColorKey = MauveColor | VioletColor | LimeColor | RedColor | PinkColor;
+type RawColorKey =
+  | AmberColor
+  | MauveColor
+  | VioletColor
+  | LimeColor
+  | RedColor
+  | PinkColor;
 
 // Progress bar semantic tokens (CSS-based, with light/dark values)
 type ProgressColorKey =
@@ -83,6 +92,7 @@ export type ColorKey = RawColorKey | ProgressColorKey | SemanticColorKey;
 
 // Color scale mapping
 const colorScales = {
+  amber: { light: amber, dark: amberDark },
   mauve: { light: mauve, dark: mauveDark },
   violet: { light: violet, dark: violetDark },
   lime: { light: lime, dark: limeDark },

@@ -12,10 +12,8 @@ import {
 } from "@/lib/create-fund";
 
 import { layoutSpringify, transitions } from "@/utils/motion";
-import FadingEdge, { useOverflowFadeEdge } from "../fading-edge";
 import Presence from "../presence";
 import { CurrencyInput } from "../text-input";
-import { useThemeColor } from "../theme-provider";
 import Choice from "./choice";
 import CreateFooter from "./footer";
 
@@ -36,84 +34,79 @@ export default function NonNegotiableInfo({
   const setBudgetedAmount = useCreateFundStore((s) => s.setBudgetedAmount);
 
   const { submit, isPending } = useSubmitFund();
-  const backgroundColor = useThemeColor("background");
-  const { fadeProps, handleScroll } = useOverflowFadeEdge();
 
   return (
     <>
-      <FadingEdge fadeColor={backgroundColor} {...fadeProps}>
-        <ScrollView
-          className="px-4 pt-20"
-          contentContainerClassName="pb-safe-offset-4 flex gap-y-8"
-          onScroll={handleScroll}
-        >
-          <View>
-            <Presence delay={DELAY} delayMultiplier={1}>
-              <Text className="font-satoshi-medium text-foreground text-lg">
-                When is this due?
-              </Text>
-            </Presence>
+      <ScrollView
+        className="px-4 pt-20"
+        contentContainerClassName="pb-safe-offset-4 flex gap-y-8"
+      >
+        <View>
+          <Presence delay={DELAY} delayMultiplier={1}>
+            <Text className="font-satoshi-medium text-foreground text-lg">
+              When is this due?
+            </Text>
+          </Presence>
 
-            <View className="mt-2.5 flex w-3/5 gap-2">
-              <Presence delay={DELAY} delayMultiplier={2}>
-                <Choice
-                  choiceLabel="A"
-                  onPress={() => {
-                    setTimeMode("WEEKLY");
-                  }}
-                  selected={timeMode === "WEEKLY"}
-                >
-                  Weekly
-                </Choice>
-              </Presence>
-              <Presence delay={DELAY} delayMultiplier={3}>
-                <Choice
-                  choiceLabel="B"
-                  onPress={() => setTimeMode("MONTHLY")}
-                  selected={timeMode === "MONTHLY"}
-                >
-                  Monthly
-                </Choice>
-              </Presence>
-              <Presence delay={DELAY} delayMultiplier={4}>
-                <Choice
-                  choiceLabel="C"
-                  onPress={() => setTimeMode("BIMONTHLY")}
-                  selected={timeMode === "BIMONTHLY"}
-                >
-                  Bimonthly
-                </Choice>
-              </Presence>
-            </View>
+          <View className="mt-2.5 flex w-3/5 gap-2">
+            <Presence delay={DELAY} delayMultiplier={2}>
+              <Choice
+                choiceLabel="A"
+                onPress={() => {
+                  setTimeMode("WEEKLY");
+                }}
+                selected={timeMode === "WEEKLY"}
+              >
+                Weekly
+              </Choice>
+            </Presence>
+            <Presence delay={DELAY} delayMultiplier={3}>
+              <Choice
+                choiceLabel="B"
+                onPress={() => setTimeMode("MONTHLY")}
+                selected={timeMode === "MONTHLY"}
+              >
+                Monthly
+              </Choice>
+            </Presence>
+            <Presence delay={DELAY} delayMultiplier={4}>
+              <Choice
+                choiceLabel="C"
+                onPress={() => setTimeMode("BIMONTHLY")}
+                selected={timeMode === "BIMONTHLY"}
+              >
+                Bimonthly
+              </Choice>
+            </Presence>
           </View>
+        </View>
 
-          {timeMode && (
-            <Presence
-              delay={DELAY}
-              delayMultiplier={5}
-              layout={layoutSpringify("snappy")}
-            >
-              <View className="gap-2.5">
-                <View className="flex-row">
-                  <Text
-                    className="font-satoshi-medium text-foreground text-lg"
-                    style={{ lineHeight: undefined }}
-                  >
-                    How much is due{" "}
-                  </Text>
-                  <View className="relative">
-                    <TimeModeText key={timeMode} timeMode={timeMode} />
-                  </View>
+        {timeMode && (
+          <Presence
+            delay={DELAY}
+            delayMultiplier={5}
+            layout={layoutSpringify("snappy")}
+          >
+            <View className="gap-2.5">
+              <View className="flex-row">
+                <Text
+                  className="font-satoshi-medium text-foreground text-lg"
+                  style={{ lineHeight: undefined }}
+                >
+                  How much is due{" "}
+                </Text>
+                <View className="relative">
+                  <TimeModeText key={timeMode} timeMode={timeMode} />
                 </View>
-                <CurrencyInput
-                  onChangeText={(text) => setBudgetedAmount(Number(text) || 0)}
-                  value={budgetedAmount.toString()}
-                />
               </View>
-            </Presence>
-          )}
-        </ScrollView>
-      </FadingEdge>
+              <CurrencyInput
+                onChangeText={(text) => setBudgetedAmount(Number(text) || 0)}
+                value={budgetedAmount.toString()}
+              />
+            </View>
+          </Presence>
+        )}
+      </ScrollView>
 
       <CreateFooter
         disabled={!timeMode || budgetedAmount <= 0 || isPending}
