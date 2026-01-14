@@ -1,50 +1,34 @@
+import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import type { RefObject } from "react";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
-import { AnimatedArrowDown } from "@/icons";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { toWholeCurrency } from "@/utils/format";
-import {
-  layoutSpringify,
-  TotalSpentSlideOutUp,
-  totalSpentSlideOutUpConfig,
-  transitions,
-} from "@/utils/motion";
+import { layoutSpringify, TotalSpentSlideOutUp } from "@/utils/motion";
+import { ScalePressable } from "../scale-pressable";
 import Skeleton from "../skeleton";
-import { useThemeColor } from "../theme-provider";
 
-export default function TotalSpent() {
-  const { data: thisMonthTotal = 0, isLoading: isLoadingThisMonth } = useQuery(
+type TotalSpentProps = {
+  scoreSheetRef?: RefObject<BottomSheetModal | null>;
+};
+
+export default function TotalSpent({ scoreSheetRef }: TotalSpentProps) {
+  const { data: thisMonthTotal = 0, isLoading: isLoadingTotal } = useQuery(
     trpc.transaction.totalThisMonth.queryOptions()
   );
 
-  const { data: lastMonthTotal = 0, isLoading: isLoadingLastMonth } = useQuery(
-    trpc.transaction.totalLastMonth.queryOptions()
+  const { data: scoreData, isLoading: isLoadingScore } = useQuery(
+    trpc.budget.score.queryOptions()
   );
 
-  const isLoading = isLoadingThisMonth || isLoadingLastMonth;
-
-  const comparison = useMemo(() => {
-    if (lastMonthTotal === 0) {
-      return { percentage: 0, isIncrease: false, hasData: false };
-    }
-
-    const difference = thisMonthTotal - lastMonthTotal;
-    const percentage = Math.abs((difference / lastMonthTotal) * 100);
-
-    return {
-      percentage: Math.round(percentage),
-      isIncrease: difference > 0,
-      hasData: true,
-    };
-  }, [thisMonthTotal, lastMonthTotal]);
+  const isLoading = isLoadingTotal || isLoadingScore;
 
   return (
     <StyledLeanView>
       <StyledLeanView className="w-full flex-row items-center">
-        {isLoading ? (
+        {isLoadingTotal ? (
           <Skeleton height={40} width={120} />
         ) : (
           <Animated.Text
@@ -58,10 +42,11 @@ export default function TotalSpent() {
           </Animated.Text>
         )}
 
-        {!isLoading && comparison.hasData && (
-          <ProgressIndicator
-            isIncrease={comparison.isIncrease}
-            percentage={comparison.percentage}
+        {!isLoading && scoreData && (
+          <BudgetScoreIndicator
+            onPress={() => scoreSheetRef?.current?.present()}
+            score={scoreData.score}
+            status={scoreData.status}
           />
         )}
       </StyledLeanView>
@@ -73,46 +58,67 @@ export default function TotalSpent() {
   );
 }
 
-type ProgressIndicatorProps = {
-  isIncrease: boolean;
-  percentage: number;
+type BudgetScoreIndicatorProps = {
+  score: number;
+  status: "on_track" | "needs_attention" | "over_budget";
+  onPress?: () => void;
 };
 
-function ProgressIndicator({ isIncrease, percentage }: ProgressIndicatorProps) {
-  const increaseColor = useThemeColor("red-11");
-  const decreaseColor = useThemeColor("lime-11");
+function BudgetScoreIndicator({
+  score,
+  status,
+  onPress,
+}: BudgetScoreIndicatorProps) {
+  const emoji = getStatusEmoji(status);
+  const bgColor = getStatusBgColor(status);
 
   return (
     <Animated.View
-      className="flex-row justify-center gap-1"
       entering={FadeInDown.withInitialValues({
         transform: [{ translateY: 12 }],
       }).springify()}
-      layout={layoutSpringify("snappy").delay(totalSpentSlideOutUpConfig.delay)}
+      layout={layoutSpringify("snappy")}
     >
-      <StyledLeanView
+      <ScalePressable
         className={cn(
-          "size-5 items-center justify-center rounded-full",
-          isIncrease ? "bg-red-4" : "bg-lime-4"
+          "flex-row items-center gap-1 rounded-full px-2 py-1",
+          bgColor
         )}
+        onPress={onPress}
+        opacityValue={0.8}
+        scaleValue={0.95}
       >
-        <AnimatedArrowDown
-          animate={{
-            color: isIncrease ? increaseColor : decreaseColor,
-            rotate: isIncrease ? "180deg" : "0deg",
-          }}
-          size={16}
-          transition={transitions.snappy}
-        />
-      </StyledLeanView>
-      <StyledLeanText
-        className={cn(
-          "font-nunito-medium text-sm",
-          isIncrease ? "text-red-11" : "text-lime-11"
-        )}
-      >
-        {percentage}%
-      </StyledLeanText>
+        <StyledLeanText className="text-sm">{emoji}</StyledLeanText>
+        <StyledLeanText className="font-nunito-bold text-foreground text-sm">
+          {score}
+        </StyledLeanText>
+      </ScalePressable>
     </Animated.View>
   );
+}
+
+function getStatusEmoji(
+  status: "on_track" | "needs_attention" | "over_budget"
+): string {
+  switch (status) {
+    case "on_track":
+      return "\u{1F7E2}"; // Green circle
+    case "needs_attention":
+      return "\u{1F7E1}"; // Yellow circle
+    case "over_budget":
+      return "\u{1F534}"; // Red circle
+  }
+}
+
+function getStatusBgColor(
+  status: "on_track" | "needs_attention" | "over_budget"
+): string {
+  switch (status) {
+    case "on_track":
+      return "bg-lime-4";
+    case "needs_attention":
+      return "bg-amber-4";
+    case "over_budget":
+      return "bg-red-4";
+  }
 }

@@ -10,6 +10,7 @@ import { useRef } from "react";
 import type { PressableProps } from "react-native";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
+import BudgetScoreSheet from "@/components/dashboard/budget-score-sheet";
 import TotalSpent from "@/components/dashboard/total-spent";
 import GlassButton from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
@@ -20,26 +21,28 @@ import { Plus } from "@/icons";
 import { cn } from "@/utils/cn";
 
 export default function DashboardLayout() {
-  const ref = useRef<BottomSheetModal>(null);
+  const createSheetRef = useRef<BottomSheetModal>(null);
+  const scoreSheetRef = useRef<BottomSheetModal>(null);
   const tabBarHeight = useTabBarHeight();
 
   return (
     <AnimatedTabScreen index={1}>
-      <DashboardCreateBottomSheet ref={ref} />
+      <DashboardCreateBottomSheet ref={createSheetRef} />
+      <BudgetScoreSheet ref={scoreSheetRef} />
 
       <StyledLeanView
         className="flex-1 bg-background pt-safe"
         style={{ paddingBottom: tabBarHeight }}
       >
         <StyledLeanView className="mb-4 w-full flex-row items-start justify-between px-4 py-2">
-          <TotalSpent />
+          <TotalSpent scoreSheetRef={scoreSheetRef} />
 
           <AddButton
             onLongPress={() => {
-              ref.current?.present();
+              createSheetRef.current?.present();
             }}
             onPress={() => {
-              ref.current?.present();
+              createSheetRef.current?.present();
             }}
           />
         </StyledLeanView>

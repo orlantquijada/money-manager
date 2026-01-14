@@ -96,6 +96,17 @@
 - Empty state (no budgeted funds) returns score=100, status=on_track
 - File: packages/api/src/router/budget.ts
 
+[SAR-008, SAR-009, SAR-010] COMPLETE - Budget Score UI in dashboard header
+- Replaced ProgressIndicator with BudgetScoreIndicator in TotalSpent
+- Score displays as tappable pill with emoji + number (e.g., 🟢 78)
+- Emoji: 🟢 70-100 (on_track), 🟡 40-69 (needs_attention), 🔴 0-39 (over_budget)
+- Created BudgetScoreSheet bottom sheet for expandable breakdown
+- Breakdown shows factors with +/- points and status label
+- SAR-009 (calculation) already done in API via SAR-016
+- Files: apps/mobile/src/components/dashboard/total-spent.tsx,
+         apps/mobile/src/components/dashboard/budget-score-sheet.tsx,
+         apps/mobile/src/app/(app)/(tabs)/(dashboard)/_layout.tsx
+
 ---
 
 ## Blockers

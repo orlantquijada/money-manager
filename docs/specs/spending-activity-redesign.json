@@ -95,7 +95,7 @@
         "🔴 emoji for 0-39 (Over Budget)",
         "Score always visible (not behind AI toggle)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-009",
@@ -108,7 +108,7 @@
         "+10 points if >80% of funds under budget",
         "Score clamped between 0 and 100"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-010",
@@ -120,7 +120,7 @@
         "Final score calculation visible",
         "Can collapse back to compact view"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SAR-011",

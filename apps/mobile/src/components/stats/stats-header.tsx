@@ -125,7 +125,7 @@ export default function StatsHeader({ data, period, isLoading }: Props) {
 }
 
 type ComparisonTextProps = {
-  comparison: Props["data"] extends { comparison: infer C } ? C : never;
+  comparison: NonNullable<Props["data"]>["comparison"];
   period: Period;
 };
 
