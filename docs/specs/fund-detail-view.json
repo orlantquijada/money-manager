@@ -78,7 +78,7 @@
         "Post-paid state shows 'Paid on [date]' confirmation",
         "Shows period label and reset countdown"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FDV-005",

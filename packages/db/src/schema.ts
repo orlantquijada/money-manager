@@ -66,6 +66,7 @@ export const funds = pgTable("funds", {
   enabled: boolean().default(true).notNull(),
   timeMode: timeModeEnum().notNull(),
   dueDay: integer(), // Day of month (1-31), only for NON_NEGOTIABLE funds
+  paidAt: timestamp(), // When NON_NEGOTIABLE fund was marked as paid (current period)
   folderId: integer()
     .notNull()
     .references(() => folders.id, { onDelete: "cascade" }),

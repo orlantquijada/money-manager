@@ -5,7 +5,6 @@ import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Alert, ScrollView } from "react-native";
 import CategoryProgressBars from "@/components/budgets/category-progress-bars";
-import ProgressBar from "@/components/budgets/progress-bar";
 import { GlassCloseButton } from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
@@ -28,6 +27,37 @@ function getDaysUntilReset(timeMode: TimeMode): number {
     return day <= 15 ? 15 - day : differenceInDays(endOfMonth(now), now);
   }
   return differenceInDays(endOfMonth(now), now);
+}
+
+function getPeriodStart(timeMode: TimeMode): Date {
+  const now = new Date();
+  if (timeMode === "WEEKLY") {
+    const startOfWeekDate = new Date(now);
+    startOfWeekDate.setDate(now.getDate() - now.getDay());
+    startOfWeekDate.setHours(0, 0, 0, 0);
+    return startOfWeekDate;
+  }
+  if (timeMode === "BIMONTHLY") {
+    const day = now.getDate();
+    const start = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      day <= 15 ? 1 : 16
+    );
+    start.setHours(0, 0, 0, 0);
+    return start;
+  }
+  // MONTHLY or EVENTUALLY
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+}
+
+function isPaidInCurrentPeriod(
+  paidAt: Date | null | undefined,
+  timeMode: TimeMode
+): boolean {
+  if (!paidAt) return false;
+  const periodStart = getPeriodStart(timeMode);
+  return new Date(paidAt) >= periodStart;
 }
 
 type SpendingStatsProps = {
@@ -87,6 +117,98 @@ function SpendingStats({
   );
 }
 
+type NonNegotiableStatsProps = {
+  fund: FundWithMeta;
+  amountSaved: number;
+  monthlyBudget: number;
+  daysUntilReset: number;
+  isFunded: boolean;
+  paidAt: Date | null;
+  onMarkAsPaid: () => void;
+};
+
+function NonNegotiableStats({
+  fund,
+  amountSaved,
+  monthlyBudget,
+  daysUntilReset,
+  isFunded,
+  paidAt,
+  onMarkAsPaid,
+}: NonNegotiableStatsProps) {
+  const isPaid = isPaidInCurrentPeriod(paidAt, fund.timeMode);
+
+  return (
+    <StyledLeanView
+      className="gap-3 rounded-2xl bg-card p-4"
+      style={{ borderCurve: "continuous" }}
+    >
+      <StyledLeanView className="flex-row items-center justify-between">
+        <StyledLeanText className="font-satoshi-medium text-foreground-muted">
+          {TIME_MODE_LABELS[fund.timeMode]} Bill
+        </StyledLeanText>
+        <StyledLeanText className="font-nunito-bold text-base text-quick-stat-non-negotiable">
+          {toCurrencyNarrow(amountSaved)} saved
+        </StyledLeanText>
+      </StyledLeanView>
+
+      <CategoryProgressBars fund={fund} />
+
+      <StyledLeanView className="flex-row items-center justify-between">
+        <StyledLeanText className="font-nunito-semibold text-foreground">
+          {Math.round((amountSaved / monthlyBudget) * 100)}%
+        </StyledLeanText>
+        <StyledLeanText className="font-satoshi text-foreground-muted">
+          of {toCurrencyNarrow(monthlyBudget)} {TIME_MODE_LABELS[fund.timeMode]}
+        </StyledLeanText>
+      </StyledLeanView>
+
+      {isPaid && paidAt ? (
+        <StyledLeanView
+          className="mt-1 items-center rounded-xl py-2"
+          style={{
+            borderCurve: "continuous",
+            backgroundColor: green.green3,
+          }}
+        >
+          <StyledLeanText
+            className="font-satoshi-medium"
+            style={{ color: green.green11 }}
+          >
+            ✓ Paid on {format(new Date(paidAt), "MMM d")}
+          </StyledLeanText>
+        </StyledLeanView>
+      ) : (
+        <>
+          {fund.timeMode !== "EVENTUALLY" && (
+            <StyledLeanText className="font-satoshi text-foreground-muted text-sm">
+              Resets in {daysUntilReset} days
+            </StyledLeanText>
+          )}
+
+          {isFunded && (
+            <ScalePressable
+              className="mt-2 items-center rounded-xl py-3"
+              onPress={onMarkAsPaid}
+              style={{
+                borderCurve: "continuous",
+                backgroundColor: green.green3,
+              }}
+            >
+              <StyledLeanText
+                className="font-satoshi-medium"
+                style={{ color: green.green11 }}
+              >
+                ✓ Fully Funded — Tap to Mark as Paid
+              </StyledLeanText>
+            </ScalePressable>
+          )}
+        </>
+      )}
+    </StyledLeanView>
+  );
+}
+
 export default function FundDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const fundId = Number(id);
@@ -128,15 +250,13 @@ export default function FundDetailScreen() {
 
   const isLoading = fundLoading || txLoading;
 
-  // Calculate progress for color (needs fund data)
+  // Calculate fund stats
   const isNonNegotiable = fund?.fundType === "NON_NEGOTIABLE";
   const isSpending = fund?.fundType === "SPENDING";
   const monthlyBudget = fund
     ? fund.budgetedAmount * getTimeModeMultiplier(fund.timeMode)
     : 0;
   const amountSaved = fund?.totalSpent ?? 0;
-  const progress =
-    monthlyBudget > 0 ? Math.min(amountSaved / monthlyBudget, 1) : 0;
   const isFunded = amountSaved >= monthlyBudget;
 
   // SPENDING fund calculations
@@ -187,51 +307,15 @@ export default function FundDetailScreen() {
       >
         {/* Progress Section (NON_NEGOTIABLE only) */}
         {isNonNegotiable && (
-          <StyledLeanView
-            className="gap-3 rounded-2xl bg-card p-4"
-            style={{ borderCurve: "continuous" }}
-          >
-            <StyledLeanView className="flex-row items-center justify-between">
-              <StyledLeanText className="font-satoshi-medium text-foreground-muted">
-                Savings Progress
-              </StyledLeanText>
-              <StyledLeanText className="font-nunito-bold text-base text-quick-stat-non-negotiable">
-                {Math.round(progress * 100)}%
-              </StyledLeanText>
-            </StyledLeanView>
-
-            <ProgressBar colorVariant="non-negotiable" progress={progress} />
-
-            <StyledLeanView className="flex-row items-center justify-between">
-              <StyledLeanText className="font-nunito-semibold text-foreground">
-                {toCurrencyNarrow(amountSaved)}
-              </StyledLeanText>
-              <StyledLeanText className="font-satoshi text-foreground-muted">
-                of {toCurrencyNarrow(monthlyBudget)}{" "}
-                {TIME_MODE_LABELS[fund.timeMode]}
-              </StyledLeanText>
-            </StyledLeanView>
-
-            {isFunded && (
-              <ScalePressable
-                className="mt-2 items-center rounded-xl bg-green-3 py-3"
-                onPress={handleMarkAsPaid}
-                style={{
-                  borderCurve: "continuous",
-                  backgroundColor: green.green3,
-                }}
-              >
-                <StyledLeanText
-                  className="font-satoshi-medium text-green-11"
-                  style={{
-                    color: green.green11,
-                  }}
-                >
-                  ✓ Fully Funded — Tap to Mark as Paid
-                </StyledLeanText>
-              </ScalePressable>
-            )}
-          </StyledLeanView>
+          <NonNegotiableStats
+            amountSaved={amountSaved}
+            daysUntilReset={daysUntilReset}
+            fund={fund as FundWithMeta}
+            isFunded={isFunded}
+            monthlyBudget={monthlyBudget}
+            onMarkAsPaid={handleMarkAsPaid}
+            paidAt={fund.paidAt}
+          />
         )}
 
         {/* Progress Section (SPENDING funds) */}

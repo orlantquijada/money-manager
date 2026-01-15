@@ -1,5 +1,5 @@
 {
-  "id": "cf64f668-8334-4854-a2ba-9140ad85dc80",
+  "id": "fd6ca92a-3615-41be-aeb1-bd58de64f687",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -129,6 +129,18 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
+        },
+        "due_day": {
+          "name": "due_day",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "paid_at": {
+          "name": "paid_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         },
         "folder_id": {
           "name": "folder_id",
@@ -306,7 +318,29 @@
           "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "idx_transactions_fund_date": {
+          "name": "idx_transactions_fund_date",
+          "columns": [
+            {
+              "expression": "fund_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "date",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "transactions_fund_id_funds_id_fk": {
           "name": "transactions_fund_id_funds_id_fk",
@@ -386,8 +420,7 @@
       "schema": "public",
       "values": [
         "SPENDING",
-        "NON_NEGOTIABLE",
-        "TARGET"
+        "NON_NEGOTIABLE"
       ]
     },
     "public.TimeMode": {

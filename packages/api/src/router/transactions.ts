@@ -277,6 +277,12 @@ export const transactionsRouter = router({
           note: "Marked as paid",
         });
       }
+
+      // 5. Set paidAt timestamp on the fund
+      await ctx.db
+        .update(funds)
+        .set({ paidAt: now })
+        .where(eq(funds.id, input.fundId));
     }),
 
   create: protectedProcedure

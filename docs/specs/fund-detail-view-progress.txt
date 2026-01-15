@@ -8,6 +8,20 @@
 
 ## Progress Log
 
+### 2026-01-15 - FDV-004 NON_NEGOTIABLE stats
+
+[FDV-004] DONE - Stats overview for NON_NEGOTIABLE funds
+- Added paidAt field to funds schema for tracking payment status
+- Updated markAsPaid mutation to set paidAt timestamp
+- Created NonNegotiableStats component with:
+  - Period label (e.g., "this month Bill")
+  - Amount saved + CategoryProgressBars
+  - Goal amount + percentage
+  - "Paid on [date]" badge when paid in current period
+  - Reset countdown when not yet paid
+  - Mark as Paid button when fully funded
+- Staleness check: paidAt only valid if >= current period start (query-side)
+
 ### 2026-01-15 - FDV-006 Recent transactions
 
 [FDV-006] DONE - Recent transactions section
