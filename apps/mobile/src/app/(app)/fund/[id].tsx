@@ -209,6 +209,57 @@ function NonNegotiableStats({
   );
 }
 
+type EventuallyStatsProps = {
+  fund: FundWithMeta;
+  amountSaved: number;
+  monthlyBudget: number;
+  isGoalMet: boolean;
+};
+
+function EventuallyStats({
+  fund,
+  amountSaved,
+  monthlyBudget,
+  isGoalMet,
+}: EventuallyStatsProps) {
+  const remaining = Math.max(monthlyBudget - amountSaved, 0);
+  const percentSaved =
+    monthlyBudget > 0 ? (amountSaved / monthlyBudget) * 100 : 0;
+  const textColor =
+    percentSaved >= 50 || isGoalMet
+      ? "text-quick-stat-non-negotiable"
+      : "text-foreground-muted";
+
+  return (
+    <StyledLeanView
+      className="gap-3 rounded-2xl bg-card p-4"
+      style={{ borderCurve: "continuous" }}
+    >
+      <StyledLeanView className="flex-row items-center justify-between">
+        <StyledLeanText className="font-satoshi-medium text-foreground-muted">
+          Goal
+        </StyledLeanText>
+        <StyledLeanText className={`font-nunito-bold text-base ${textColor}`}>
+          {isGoalMet
+            ? "Goal met"
+            : `${toCurrencyNarrow(remaining)} away from goal`}
+        </StyledLeanText>
+      </StyledLeanView>
+
+      <CategoryProgressBars fund={fund} />
+
+      <StyledLeanView className="flex-row items-center justify-between">
+        <StyledLeanText className="font-nunito-semibold text-foreground">
+          {toCurrencyNarrow(amountSaved)} saved
+        </StyledLeanText>
+        <StyledLeanText className="font-satoshi text-foreground-muted">
+          of {toCurrencyNarrow(monthlyBudget)} goal
+        </StyledLeanText>
+      </StyledLeanView>
+    </StyledLeanView>
+  );
+}
+
 export default function FundDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const fundId = Number(id);
@@ -305,30 +356,42 @@ export default function FundDetailScreen() {
         className="flex-1 px-4"
         contentContainerClassName="gap-6 pb-8"
       >
-        {/* Progress Section (NON_NEGOTIABLE only) */}
-        {isNonNegotiable && (
-          <NonNegotiableStats
+        {/* Progress Section */}
+        {fund.timeMode === "EVENTUALLY" ? (
+          <EventuallyStats
             amountSaved={amountSaved}
-            daysUntilReset={daysUntilReset}
             fund={fund as FundWithMeta}
-            isFunded={isFunded}
+            isGoalMet={isFunded}
             monthlyBudget={monthlyBudget}
-            onMarkAsPaid={handleMarkAsPaid}
-            paidAt={fund.paidAt}
           />
-        )}
+        ) : (
+          <>
+            {/* Progress Section (NON_NEGOTIABLE only) */}
+            {isNonNegotiable && (
+              <NonNegotiableStats
+                amountSaved={amountSaved}
+                daysUntilReset={daysUntilReset}
+                fund={fund as FundWithMeta}
+                isFunded={isFunded}
+                monthlyBudget={monthlyBudget}
+                onMarkAsPaid={handleMarkAsPaid}
+                paidAt={fund.paidAt}
+              />
+            )}
 
-        {/* Progress Section (SPENDING funds) */}
-        {isSpending && (
-          <SpendingStats
-            daysUntilReset={daysUntilReset}
-            fund={fund as FundWithMeta}
-            isOverBudget={isOverBudget}
-            monthlyBudget={monthlyBudget}
-            overspent={overspent}
-            remaining={remaining}
-            spent={spent}
-          />
+            {/* Progress Section (SPENDING funds) */}
+            {isSpending && (
+              <SpendingStats
+                daysUntilReset={daysUntilReset}
+                fund={fund as FundWithMeta}
+                isOverBudget={isOverBudget}
+                monthlyBudget={monthlyBudget}
+                overspent={overspent}
+                remaining={remaining}
+                spent={spent}
+              />
+            )}
+          </>
         )}
 
         {/* Transactions */}

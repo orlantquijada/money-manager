@@ -67,6 +67,22 @@
 - Exported TransactionItem type from transactions barrel export
 - Verified type checking passes
 
+### 2026-01-15 - FDV-005 EVENTUALLY stats
+
+[FDV-005] DONE - Stats overview for EVENTUALLY funds
+- Created EventuallyStats component for goal-focused display
+- Shows "Goal" header with "$X away from goal" quick-stat
+- Displays "Goal met" in green when fully funded
+- Uses CategoryProgressBars (same as other fund types)
+- Shows "$X saved" + "of $Y goal" stats
+- No reset countdown (handled by timeMode check)
+- Updated TIME_MODE_LABELS.EVENTUALLY from "left" to "away from goal"
+- Updated BudgetQuickStats to use NON_NEGOTIABLE modes for EVENTUALLY funds
+- EVENTUALLY funds use goal-focused stat cycling: saved/percentage/target
+- Works for both SPENDING and NON_NEGOTIABLE EVENTUALLY funds
+- Type check passes
+
 ## Key Decisions
 - (decided) SPENDING funds: multi-bar progress (like dashboard), spent/remaining, reset countdown
+- (decided) EVENTUALLY funds: goal-focused (separate component), show "away from goal" messaging
 - (pending) Whether to include spending trends/charts

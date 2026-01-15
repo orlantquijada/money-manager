@@ -12,7 +12,7 @@ export const TIME_MODE_LABELS: Record<TimeMode, string> = {
   WEEKLY: "this week",
   BIMONTHLY: "this 2 weeks",
   MONTHLY: "this month",
-  EVENTUALLY: "left",
+  EVENTUALLY: "away from goal",
 };
 
 export type FolderWithMeta = RouterOutputs["folder"]["listWithFunds"][number];

@@ -27,9 +27,11 @@ export default function BudgetQuickStats({ fund }: Props) {
   const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
   const monthlyBudget = getMonthlyBudget(fund);
 
-  const modes = isNonNegotiable
-    ? QUICK_STAT_MODES_NON_NEGOTIABLE
-    : QUICK_STAT_MODES_SPENDING;
+  const isEventually = fund.timeMode === "EVENTUALLY";
+  const modes =
+    isNonNegotiable || isEventually
+      ? QUICK_STAT_MODES_NON_NEGOTIABLE
+      : QUICK_STAT_MODES_SPENDING;
   const mode = modes[modeIndex % modes.length];
 
   function cycleMode() {
@@ -41,6 +43,7 @@ export default function BudgetQuickStats({ fund }: Props) {
     const percentSaved =
       monthlyBudget > 0 ? (amountSaved / monthlyBudget) * 100 : 0;
     const isFunded = amountSaved >= monthlyBudget;
+    const isGoalMet = isEventually && isFunded;
 
     // Show lime color when past halfway (>50%), otherwise muted
     const textColor =
@@ -52,19 +55,27 @@ export default function BudgetQuickStats({ fund }: Props) {
       case "saved":
         return {
           value: toCurrencyNarrow(amountSaved),
-          label: isFunded ? "funded" : "saved",
+          label: isGoalMet
+            ? "goal met"
+            : isFunded && !isEventually
+              ? "funded"
+              : "saved",
           textColor,
         };
       case "percentage":
         return {
           value: `${Math.min(Math.round(percentSaved), 100)}%`,
-          label: isFunded ? "funded" : "saved",
+          label: isGoalMet
+            ? "goal met"
+            : isFunded && !isEventually
+              ? "funded"
+              : "saved",
           textColor,
         };
       case "target":
         return {
           value: toCurrencyNarrow(monthlyBudget),
-          label: "target",
+          label: isEventually ? "goal" : "target",
           textColor,
         };
       default:
@@ -107,9 +118,10 @@ export default function BudgetQuickStats({ fund }: Props) {
     }
   }
 
-  const { value, label, textColor } = isNonNegotiable
-    ? getNonNegotiableStat()
-    : getSpendingStat();
+  const { value, label, textColor } =
+    isNonNegotiable || isEventually
+      ? getNonNegotiableStat()
+      : getSpendingStat();
 
   return (
     <ScalePressable
