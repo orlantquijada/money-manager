@@ -54,7 +54,7 @@
         "Insight is generated based on largest point deduction opportunity",
         "EVENTUALLY funds are excluded from the list"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "BSM-002",

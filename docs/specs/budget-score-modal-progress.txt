@@ -1,0 +1,28 @@
+# Budget Score Modal Progress
+
+## Quick Reference
+- PRD: docs/specs/budget-score-modal.json
+- Main files: packages/api/src/router/budget.ts, apps/mobile/src/app/(app)/budget-score.tsx
+
+---
+
+## Progress Log
+
+### 2026-01-15 - BSM-001 API endpoint
+
+[BSM-001] DONE - budget.scoreDetails endpoint
+- Added BudgetScoreDetails type with FundDetail and Insight interfaces
+- Endpoint returns: score, status, factors[], funds[], insight
+- Funds sorted by status: over_budget → at_risk → on_track
+- EVENTUALLY funds excluded from list
+- Insight generated from largest point recovery opportunity (over_budget first, then at_risk)
+- Type check passes
+
+---
+
+## Blockers
+(none)
+
+## Key Decisions
+- (decided) Insight prioritizes over_budget funds (+20 pts) over at_risk (+5 pts)
+- (decided) Utilization rounded to 1 decimal place for display
