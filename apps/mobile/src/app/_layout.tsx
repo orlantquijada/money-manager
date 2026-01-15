@@ -47,7 +47,7 @@ function AppContent() {
   useAuthTokenSync();
 
   // Ensure user exists in database on sign-in
-  useUserProvisioning();
+  const { isProvisioned } = useUserProvisioning();
 
   // Check if we're on a protected route
   const inAuthGroup = segments[0] === "(app)";
@@ -55,6 +55,12 @@ function AppContent() {
   // Redirect based on auth state
   if (!isSignedIn && inAuthGroup) {
     return <Redirect href={"/sign-in" as Href} />;
+  }
+
+  // Block rendering protected routes until user is provisioned in the database
+  // This prevents race conditions where queries fire before the user row exists
+  if (isSignedIn && inAuthGroup && !isProvisioned) {
+    return null;
   }
 
   if (isSignedIn && (segments[0] as string) === "sign-in") {

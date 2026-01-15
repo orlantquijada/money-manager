@@ -1,4 +1,5 @@
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useRouter } from "expo-router";
 import {
   TabList,
   TabSlot,
@@ -10,8 +11,6 @@ import { useRef } from "react";
 import type { PressableProps } from "react-native";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
-import BudgetScoreSheet from "@/components/dashboard/budget-score-sheet";
-import SettingsSheet from "@/components/dashboard/settings-sheet";
 import TotalSpent from "@/components/dashboard/total-spent";
 import GlassButton from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
@@ -23,27 +22,24 @@ import { cn } from "@/utils/cn";
 
 export default function DashboardLayout() {
   const createSheetRef = useRef<BottomSheetModal>(null);
-  const scoreSheetRef = useRef<BottomSheetModal>(null);
-  const settingsSheetRef = useRef<BottomSheetModal>(null);
+  const router = useRouter();
   const tabBarHeight = useTabBarHeight();
 
   return (
     <AnimatedTabScreen index={1}>
       <DashboardCreateBottomSheet ref={createSheetRef} />
-      <BudgetScoreSheet ref={scoreSheetRef} />
-      <SettingsSheet ref={settingsSheetRef} />
 
       <StyledLeanView
         className="flex-1 bg-background pt-safe"
         style={{ paddingBottom: tabBarHeight }}
       >
         <StyledLeanView className="mb-4 w-full flex-row items-start justify-between px-4 py-2">
-          <TotalSpent scoreSheetRef={scoreSheetRef} />
+          <TotalSpent />
 
           <StyledLeanView className="flex-row items-center gap-3">
             <SettingsButton
               onPress={() => {
-                settingsSheetRef.current?.present();
+                router.push("/settings");
               }}
             />
             <AddButton

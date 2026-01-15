@@ -1,0 +1,128 @@
+{
+  "feature": "Budget Score Modal",
+  "version": "1.0",
+  "created": "2026-01-15",
+  "goal": "Provide users with a detailed, actionable view of their budget health with score breakdown, grouped fund statuses, and subtle insights",
+  "spec": {
+    "overview": "A dedicated modal route (`/budget-score`) that expands on the dashboard's budget score card. Shows the overall score with a subtle explanation, groups all recurring funds by status (Over Budget → At Risk → On Track), displays each fund's utilization, and includes a light insights section with one actionable tip.",
+    "design": "## Layout (Top to Bottom)\n\n### 1. Score Header\n- Large score number (e.g., \"70\") with status indicator (green/amber/red dot)\n- Status label below: \"On Track\", \"Needs Attention\", or \"Over Budget\"\n- Subtle expandable/collapsible explanation (\"How is this calculated?\") - NOT prominent\n\n### 2. Fund List (Grouped by Status)\n- Section headers: \"Over Budget\", \"At Risk\", \"On Track\"\n- Each fund row shows:\n  - Fund name\n  - Progress bar (colored by status)\n  - Utilization percentage\n  - Spent vs budget amounts\n- Tapping a fund navigates to `/fund/[id]`\n- Empty sections are hidden\n\n### 3. Insights Section (Subtle, Optional)\n- Single card with one actionable tip\n- Example: \"Bring Electric back on track to gain +20 points\"\n- Light styling, not overwhelming\n- v1: Show top opportunity based on largest point deduction\n- Future: More sophisticated AI-powered insights\n\n## Interactions\n- Swipe down or X button to dismiss\n- Score explanation toggle (collapsed by default)\n- Fund rows are tappable → navigate to fund detail\n\n## Visual Style\n- Modal presentation (sheet style)\n- Native iOS feel with rounded sections\n- Status colors: Red (over), Amber (at risk), Green (on track)",
+
+    "api": "## Existing Endpoints\n- `budget.score` - Returns score, status, factors[]\n- `budget.alerts` - Returns over/almost-over funds\n\n## New Endpoint: `budget.scoreDetails`\nReturns comprehensive data for the modal:\n```ts\n{\n  score: number;           // 0-100\n  status: 'on_track' | 'needs_attention' | 'over_budget';\n  factors: { description: string; points: number }[];\n  funds: {\n    id: number;\n    name: string;\n    status: 'over_budget' | 'at_risk' | 'on_track';\n    utilization: number;   // percentage (e.g., 93.5)\n    spent: number;\n    budget: number;\n    pointImpact: number;   // -20, -5, or 0\n  }[];\n  insight: {\n    message: string;       // e.g., \"Bring Electric back on track to gain +20 points\"\n    fundId: number | null; // null if no actionable insight\n  } | null;\n}\n```",
+
+    "files": [
+      {
+        "action": "create",
+        "path": "apps/mobile/src/app/(app)/budget-score.tsx",
+        "purpose": "Modal route for budget score detail view"
+      },
+      {
+        "action": "create",
+        "path": "apps/mobile/src/components/budget-score/score-header.tsx",
+        "purpose": "Score display with status indicator and collapsible explanation"
+      },
+      {
+        "action": "create",
+        "path": "apps/mobile/src/components/budget-score/fund-list.tsx",
+        "purpose": "Grouped fund list by status with progress bars"
+      },
+      {
+        "action": "create",
+        "path": "apps/mobile/src/components/budget-score/insight-card.tsx",
+        "purpose": "Single actionable insight card"
+      },
+      {
+        "action": "modify",
+        "path": "packages/api/src/router/budget.ts",
+        "purpose": "Add scoreDetails endpoint"
+      },
+      {
+        "action": "modify",
+        "path": "apps/mobile/src/components/dashboard/budget-alerts.tsx",
+        "purpose": "Add tap handler to navigate to /budget-score modal"
+      }
+    ]
+  },
+  "items": [
+    {
+      "id": "BSM-001",
+      "category": "API",
+      "description": "Create budget.scoreDetails endpoint that returns score, status, all funds with utilization/status, and top insight",
+      "steps_to_verify": [
+        "Endpoint returns score 0-100 and correct status based on thresholds",
+        "Funds are returned with calculated utilization percentages",
+        "Funds include pointImpact (-20 for over, -5 for at-risk, 0 for on-track)",
+        "Insight is generated based on largest point deduction opportunity",
+        "EVENTUALLY funds are excluded from the list"
+      ],
+      "passes": false
+    },
+    {
+      "id": "BSM-002",
+      "category": "UI Component",
+      "description": "Create ScoreHeader component with large score, status indicator, and collapsible explanation",
+      "steps_to_verify": [
+        "Score displays as large number with colored dot indicator",
+        "Status label shows correctly based on score threshold",
+        "Explanation section is collapsed by default",
+        "Tapping 'How is this calculated?' expands explanation",
+        "Explanation shows score calculation rules clearly"
+      ],
+      "passes": false
+    },
+    {
+      "id": "BSM-003",
+      "category": "UI Component",
+      "description": "Create FundList component with grouped sections by status",
+      "steps_to_verify": [
+        "Funds are grouped into Over Budget, At Risk, On Track sections",
+        "Empty sections are hidden",
+        "Each fund shows name, progress bar, utilization %, spent/budget",
+        "Progress bars use correct status colors",
+        "Tapping a fund row navigates to /fund/[id]"
+      ],
+      "passes": false
+    },
+    {
+      "id": "BSM-004",
+      "category": "UI Component",
+      "description": "Create InsightCard component with single actionable tip",
+      "steps_to_verify": [
+        "Card displays insight message when available",
+        "Card is hidden when no insight available",
+        "Styling is subtle/light, not overwhelming",
+        "Tapping card navigates to relevant fund if fundId is set"
+      ],
+      "passes": false
+    },
+    {
+      "id": "BSM-005",
+      "category": "Route",
+      "description": "Create /budget-score modal route that composes all components",
+      "steps_to_verify": [
+        "Route presents as modal sheet",
+        "Has proper header with close button or swipe-to-dismiss",
+        "Fetches data from budget.scoreDetails",
+        "Shows loading state while fetching",
+        "Handles error states gracefully"
+      ],
+      "passes": false
+    },
+    {
+      "id": "BSM-006",
+      "category": "Integration",
+      "description": "Add navigation from dashboard budget score card to modal",
+      "steps_to_verify": [
+        "Tapping budget score card on dashboard opens /budget-score modal",
+        "Modal can be dismissed to return to dashboard",
+        "Navigation is smooth with proper transition"
+      ],
+      "passes": false
+    }
+  ],
+  "future_considerations": [
+    "Time context: show score for current period with trend indicator",
+    "Historical chart: mini sparkline showing score over last few periods",
+    "AI-powered insights: more sophisticated suggestions based on spending patterns",
+    "Score breakdown visualization: animated ring/gauge chart"
+  ]
+}
