@@ -94,6 +94,18 @@
 - Mark as Paid was already implemented in FDV-004
 - Type check passes
 
+### 2026-01-15 - FDV-002 Editable fund name
+
+[FDV-002] DONE - Editable fund name header with auto-save
+- Created useDebounce hook at apps/mobile/src/hooks/use-debounce.ts
+- Replaced StyledLeanText with RNTextInput in header
+- Local state (useState) initialized from fund.name
+- Debounced auto-save (500ms) using useDebounce hook
+- Immediate save on blur via handleNameBlur
+- Skips mutation if value unchanged (lastSavedName ref)
+- Success haptics on save
+- Type check passes
+
 ## Key Decisions
 - (decided) SPENDING funds: multi-bar progress (like dashboard), spent/remaining, reset countdown
 - (decided) EVENTUALLY funds: goal-focused (separate component), show "away from goal" messaging

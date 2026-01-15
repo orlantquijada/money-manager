@@ -3,11 +3,19 @@ import type { TimeMode } from "api";
 import { differenceInDays, endOfMonth, endOfWeek, format } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ActionSheetIOS, Alert, ScrollView } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+  ActionSheetIOS,
+  Alert,
+  TextInput as RNTextInput,
+  ScrollView,
+} from "react-native";
 import CategoryProgressBars from "@/components/budgets/category-progress-bars";
 import { GlassCloseButton } from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
+import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { useDebounce } from "@/hooks/use-debounce";
 import { useAddExpenseStore } from "@/lib/add-expense";
 import {
   type FundWithMeta,
@@ -266,6 +274,7 @@ export default function FundDetailScreen() {
   const fundId = Number(id);
   const router = useRouter();
   const queryClient = useQueryClient();
+  const cursorColor = useThemeColor("foreground");
 
   const { data: fund, isLoading: fundLoading } = useQuery(
     trpc.fund.retrieve.queryOptions(fundId)
@@ -274,6 +283,52 @@ export default function FundDetailScreen() {
   const { data: transactions, isLoading: txLoading } = useQuery(
     trpc.transaction.recentByFund.queryOptions(fundId)
   );
+
+  // Editable fund name state
+  const [localName, setLocalName] = useState("");
+  const debouncedName = useDebounce(localName, 500);
+  const lastSavedName = useRef("");
+
+  // Initialize local name when fund loads
+  useEffect(() => {
+    if (fund?.name && localName === "") {
+      setLocalName(fund.name);
+      lastSavedName.current = fund.name;
+    }
+  }, [fund?.name, localName]);
+
+  const updateNameMutation = useMutation(
+    trpc.fund.update.mutationOptions({
+      onSuccess: () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        queryClient.invalidateQueries({ queryKey: ["fund"] });
+        lastSavedName.current = debouncedName;
+      },
+    })
+  );
+
+  // Debounced auto-save
+  useEffect(() => {
+    if (
+      debouncedName &&
+      debouncedName !== lastSavedName.current &&
+      debouncedName.trim() !== ""
+    ) {
+      updateNameMutation.mutate({ id: fundId, name: debouncedName });
+    }
+  }, [debouncedName, fundId]);
+
+  // Save on blur (immediate)
+  const handleNameBlur = () => {
+    if (
+      localName &&
+      localName !== lastSavedName.current &&
+      localName.trim() !== ""
+    ) {
+      updateNameMutation.mutate({ id: fundId, name: localName });
+      lastSavedName.current = localName;
+    }
+  };
 
   const markAsPaid = useMutation(
     trpc.transaction.markAsPaid.mutationOptions({
@@ -402,13 +457,15 @@ export default function FundDetailScreen() {
       {/* Header */}
       <StyledLeanView className="flex-row items-center justify-between px-4 pb-4">
         <GlassCloseButton />
-        <StyledLeanText
+        <RNTextInput
           className="flex-1 text-center font-satoshi-medium text-foreground text-lg"
-          ellipsizeMode="tail"
-          numberOfLines={1}
-        >
-          {fund.name}
-        </StyledLeanText>
+          cursorColor={cursorColor}
+          onBlur={handleNameBlur}
+          onChangeText={setLocalName}
+          returnKeyType="done"
+          selectionColor={cursorColor}
+          value={localName}
+        />
         <StyledLeanView className="w-12" />
       </StyledLeanView>
 

@@ -54,7 +54,7 @@
         "Also saves on blur/keyboard dismiss",
         "Shows loading/success feedback"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FDV-003",
