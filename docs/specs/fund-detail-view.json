@@ -89,7 +89,7 @@
         "Progress bar shows total progress",
         "No reset countdown displayed"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FDV-006",
@@ -113,7 +113,7 @@
         "Delete shows iOS action sheet with confirmation",
         "Archive shows iOS action sheet with confirmation"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FDV-008",

@@ -82,6 +82,18 @@
 - Works for both SPENDING and NON_NEGOTIABLE EVENTUALLY funds
 - Type check passes
 
+### 2026-01-15 - FDV-007 Quick actions
+
+[FDV-007] DONE - Implement quick actions section
+- Added fund.update endpoint (partial update: name, enabled)
+- Added fund.delete endpoint (hard delete)
+- Add Expense button: pre-selects fund via useAddExpenseStore, navigates to add-expense tab
+- Archive Fund: iOS ActionSheetIOS with confirmation, sets enabled: false
+- Delete Fund: iOS ActionSheetIOS with confirmation, hard deletes fund
+- All actions use haptic feedback + query invalidation
+- Mark as Paid was already implemented in FDV-004
+- Type check passes
+
 ## Key Decisions
 - (decided) SPENDING funds: multi-bar progress (like dashboard), spent/remaining, reset countdown
 - (decided) EVENTUALLY funds: goal-focused (separate component), show "away from goal" messaging

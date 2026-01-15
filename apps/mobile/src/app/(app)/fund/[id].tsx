@@ -3,18 +3,19 @@ import type { TimeMode } from "api";
 import { differenceInDays, endOfMonth, endOfWeek, format } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Alert, ScrollView } from "react-native";
+import { ActionSheetIOS, Alert, ScrollView } from "react-native";
 import CategoryProgressBars from "@/components/budgets/category-progress-bars";
 import { GlassCloseButton } from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { useAddExpenseStore } from "@/lib/add-expense";
 import {
   type FundWithMeta,
   getTimeModeMultiplier,
   TIME_MODE_LABELS,
 } from "@/lib/fund";
 import { trpc } from "@/utils/api";
-import { green } from "@/utils/colors";
+import { green, red } from "@/utils/colors";
 import { toCurrencyNarrow } from "@/utils/format";
 
 function getDaysUntilReset(timeMode: TimeMode): number {
@@ -299,6 +300,65 @@ export default function FundDetailScreen() {
     );
   };
 
+  // Quick actions mutations
+  const archiveMutation = useMutation(
+    trpc.fund.update.mutationOptions({
+      onSuccess: () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        queryClient.invalidateQueries();
+        router.back();
+      },
+    })
+  );
+
+  const deleteMutation = useMutation(
+    trpc.fund.delete.mutationOptions({
+      onSuccess: () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        queryClient.invalidateQueries();
+        router.back();
+      },
+    })
+  );
+
+  const handleAddExpense = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    useAddExpenseStore.getState().setSelectedFundId(fundId);
+    router.push("/(app)/(tabs)/add-expense");
+  };
+
+  const handleArchive = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ["Cancel", "Archive Fund"],
+        destructiveButtonIndex: 1,
+        cancelButtonIndex: 0,
+      },
+      (index) => {
+        if (index === 1) {
+          archiveMutation.mutate({ id: fundId, enabled: false });
+        }
+      }
+    );
+  };
+
+  const handleDelete = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ["Cancel", "Delete Fund"],
+        destructiveButtonIndex: 1,
+        cancelButtonIndex: 0,
+      },
+      (index) => {
+        if (index === 1) {
+          deleteMutation.mutate(fundId);
+        }
+      }
+    );
+  };
+
   const isLoading = fundLoading || txLoading;
 
   // Calculate fund stats
@@ -455,6 +515,49 @@ export default function FundDetailScreen() {
               </StyledLeanView>
             </StyledLeanView>
           ))}
+        </StyledLeanView>
+
+        {/* Quick Actions */}
+        <StyledLeanView className="gap-3">
+          <StyledLeanText className="font-satoshi-medium text-foreground-muted">
+            Actions
+          </StyledLeanText>
+
+          <ScalePressable
+            className="items-center rounded-xl bg-card py-3"
+            onPress={handleAddExpense}
+            style={{ borderCurve: "continuous" }}
+          >
+            <StyledLeanText className="font-satoshi-medium text-primary">
+              Add Expense
+            </StyledLeanText>
+          </ScalePressable>
+
+          <ScalePressable
+            className="items-center rounded-xl bg-card py-3"
+            onPress={handleArchive}
+            style={{ borderCurve: "continuous" }}
+          >
+            <StyledLeanText className="font-satoshi-medium text-foreground">
+              Archive Fund
+            </StyledLeanText>
+          </ScalePressable>
+
+          <ScalePressable
+            className="items-center rounded-xl py-3"
+            onPress={handleDelete}
+            style={{
+              borderCurve: "continuous",
+              backgroundColor: red.red3,
+            }}
+          >
+            <StyledLeanText
+              className="font-satoshi-medium"
+              style={{ color: red.red11 }}
+            >
+              Delete Fund
+            </StyledLeanText>
+          </ScalePressable>
         </StyledLeanView>
       </ScrollView>
     </StyledLeanView>

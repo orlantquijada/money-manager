@@ -15,6 +15,12 @@ import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 import { fundTypeSchema, timeModeSchema } from "../utils/enums";
 
+const updateFundSchema = z.object({
+  id: z.number(),
+  name: z.string().optional(),
+  enabled: z.boolean().optional(),
+});
+
 export const fundsRouter = router({
   hello: publicProcedure.query(() => "hello"),
 
@@ -111,5 +117,18 @@ export const fundsRouter = router({
         budgetedAmount: Number(fund.budgetedAmount),
         totalSpent: spent?.amount ?? 0,
       };
+    }),
+
+  update: protectedProcedure
+    .input(updateFundSchema)
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input;
+      await ctx.db.update(funds).set(data).where(eq(funds.id, id));
+    }),
+
+  delete: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.delete(funds).where(eq(funds.id, input));
     }),
 });
