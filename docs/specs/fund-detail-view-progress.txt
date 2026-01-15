@@ -57,6 +57,16 @@
 ## Blockers
 (none)
 
+### 2026-01-15 - FDV-008 Transactions route
+
+[FDV-008] DONE - Create /fund/[id]/transactions route
+- Created new route at `/apps/mobile/src/app/(app)/fund/[id]/transactions.tsx`
+- Reuses TransactionList component for date grouping and pagination
+- Manual cursor pagination pattern (same as main transactions tab)
+- Updated `transaction.listByFund` API endpoint to include fund relation for consistency
+- Exported TransactionItem type from transactions barrel export
+- Verified type checking passes
+
 ## Key Decisions
 - (decided) SPENDING funds: multi-bar progress (like dashboard), spent/remaining, reset countdown
 - (pending) Whether to include spending trends/charts

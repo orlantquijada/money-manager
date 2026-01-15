@@ -125,7 +125,7 @@
         "Grouped by date",
         "Uses existing TransactionList patterns"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

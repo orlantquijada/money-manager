@@ -118,6 +118,9 @@ export const transactionsRouter = router({
         orderBy: [desc(transactions.date), desc(transactions.id)],
         limit: limit + 1,
         with: {
+          fund: {
+            columns: { name: true },
+          },
           store: {
             columns: { name: true },
           },
@@ -141,6 +144,7 @@ export const transactionsRouter = router({
           amount: Number(t.amount),
           date: t.date,
           note: t.note,
+          fund: { name: t.fund.name },
           store: t.store ? { name: t.store.name } : undefined,
         })),
         nextCursor,
