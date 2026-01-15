@@ -48,7 +48,7 @@ function AlertRow({
 }) {
   return (
     <ScalePressable
-      className="flex-row items-center gap-3 py-2.5"
+      className="flex-row items-center gap-3 py-3.5"
       onPress={onPress}
       scaleValue={0.98}
     >
@@ -100,7 +100,7 @@ export function BudgetAlerts() {
 
   return (
     <StyledLeanView
-      className="mx-4 mb-2 rounded-2xl border-border border-hairline bg-card px-4 py-1"
+      className="rounded-2xl border-border border-hairline bg-card px-4"
       style={{ borderCurve: "continuous" }}
     >
       {displayAlerts.map((alert, index) => (

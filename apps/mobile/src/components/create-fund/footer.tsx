@@ -72,7 +72,9 @@ export default function CreateFooter({
 
   const renderButtonContent = () => {
     if (loading) {
-      return <ActivityIndicator color={backgroundColor} size="small" />;
+      return (
+        <ActivityIndicator colorClassName="accent-foreground" size="small" />
+      );
     }
 
     switch (variant) {

@@ -8,6 +8,7 @@ import {
 } from "@/lib/fund";
 import { cn } from "@/utils/cn";
 import { toCurrencyNarrow } from "@/utils/format";
+import { getCurrentPeriodIndex } from "./category-utils";
 
 const QUICK_STAT_MODES_SPENDING = ["remaining", "percentage", "spent"] as const;
 const QUICK_STAT_MODES_NON_NEGOTIABLE = [
@@ -27,23 +28,23 @@ export default function BudgetQuickStats({ fund }: Props) {
   const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
   const monthlyBudget = getMonthlyBudget(fund);
 
-  const isEventually = fund.timeMode === "EVENTUALLY";
-  const modes =
-    isNonNegotiable || isEventually
-      ? QUICK_STAT_MODES_NON_NEGOTIABLE
-      : QUICK_STAT_MODES_SPENDING;
+  const modes = isNonNegotiable
+    ? QUICK_STAT_MODES_NON_NEGOTIABLE
+    : QUICK_STAT_MODES_SPENDING;
   const mode = modes[modeIndex % modes.length];
 
   function cycleMode() {
     setModeIndex((prev) => (prev + 1) % modes.length);
   }
 
+  // EVENTUALLY funds use non-negotiable stats but with different labels
+  const isEventually = fund.timeMode === "EVENTUALLY";
+
   function getNonNegotiableStat(): Stat {
     const amountSaved = fund.totalSpent;
     const percentSaved =
       monthlyBudget > 0 ? (amountSaved / monthlyBudget) * 100 : 0;
     const isFunded = amountSaved >= monthlyBudget;
-    const isGoalMet = isEventually && isFunded;
 
     // Show lime color when past halfway (>50%), otherwise muted
     const textColor =
@@ -51,25 +52,27 @@ export default function BudgetQuickStats({ fund }: Props) {
         ? "text-quick-stat-non-negotiable"
         : "text-foreground-muted";
 
+    // Compute labels upfront to reduce switch complexity
+    let statusLabel: string;
+    if (!isFunded) {
+      statusLabel = "saved";
+    } else if (isEventually) {
+      statusLabel = "goal met";
+    } else {
+      statusLabel = "funded";
+    }
+
     switch (mode) {
       case "saved":
         return {
           value: toCurrencyNarrow(amountSaved),
-          label: isGoalMet
-            ? "goal met"
-            : isFunded && !isEventually
-              ? "funded"
-              : "saved",
+          label: statusLabel,
           textColor,
         };
       case "percentage":
         return {
           value: `${Math.min(Math.round(percentSaved), 100)}%`,
-          label: isGoalMet
-            ? "goal met"
-            : isFunded && !isEventually
-              ? "funded"
-              : "saved",
+          label: statusLabel,
           textColor,
         };
       case "target":
@@ -84,10 +87,14 @@ export default function BudgetQuickStats({ fund }: Props) {
   }
 
   function getSpendingStat(): Stat {
-    const remaining = monthlyBudget - fund.totalSpent;
+    // Calculate budget available through current period (time-aware)
+    const currentPeriodIndex = getCurrentPeriodIndex(fund.timeMode);
+    const budgetThroughNow = fund.budgetedAmount * (currentPeriodIndex + 1);
+
+    const remaining = budgetThroughNow - fund.totalSpent;
     const isOverspent = remaining < 0;
     const percentLeft =
-      monthlyBudget > 0 ? (remaining / monthlyBudget) * 100 : 0;
+      budgetThroughNow > 0 ? (remaining / budgetThroughNow) * 100 : 0;
 
     const textColor =
       isOverspent && mode !== "spent"
@@ -98,7 +105,9 @@ export default function BudgetQuickStats({ fund }: Props) {
       case "remaining":
         return {
           value: toCurrencyNarrow(Math.abs(remaining)),
-          label: isOverspent ? "overspent" : TIME_MODE_LABELS[fund.timeMode],
+          label: isOverspent
+            ? `over ${TIME_MODE_LABELS[fund.timeMode]}`
+            : TIME_MODE_LABELS[fund.timeMode],
           textColor,
         };
       case "percentage":

@@ -1,6 +1,5 @@
-import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useQuery } from "@tanstack/react-query";
-import type { RefObject } from "react";
+import { useRouter } from "expo-router";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { trpc } from "@/utils/api";
@@ -10,11 +9,8 @@ import { layoutSpringify, TotalSpentSlideOutUp } from "@/utils/motion";
 import { ScalePressable } from "../scale-pressable";
 import Skeleton from "../skeleton";
 
-type TotalSpentProps = {
-  scoreSheetRef?: RefObject<BottomSheetModal | null>;
-};
-
-export default function TotalSpent({ scoreSheetRef }: TotalSpentProps) {
+export default function TotalSpent() {
+  const router = useRouter();
   const { data: thisMonthTotal = 0, isLoading: isLoadingTotal } = useQuery(
     trpc.transaction.totalThisMonth.queryOptions()
   );
@@ -44,7 +40,7 @@ export default function TotalSpent({ scoreSheetRef }: TotalSpentProps) {
 
         {!isLoading && scoreData && (
           <BudgetScoreIndicator
-            onPress={() => scoreSheetRef?.current?.present()}
+            onPress={() => router.push("/budget-score")}
             score={scoreData.score}
             status={scoreData.status}
           />
@@ -107,6 +103,8 @@ function getStatusEmoji(
       return "\u{1F7E1}"; // Yellow circle
     case "over_budget":
       return "\u{1F534}"; // Red circle
+    default:
+      return "\u{1F534}";
   }
 }
 
@@ -119,6 +117,8 @@ function getStatusBgColor(
     case "needs_attention":
       return "bg-amber-4";
     case "over_budget":
+      return "bg-red-4";
+    default:
       return "bg-red-4";
   }
 }

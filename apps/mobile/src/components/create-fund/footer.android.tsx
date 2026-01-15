@@ -88,6 +88,8 @@ export default function CreateFooter({
         ) : (
           <ChevronRight color={currentIconColor} size={20} />
         );
+      default:
+        return null;
     }
   };
 

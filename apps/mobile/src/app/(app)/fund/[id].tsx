@@ -316,7 +316,7 @@ export default function FundDetailScreen() {
     ) {
       updateNameMutation.mutate({ id: fundId, name: debouncedName });
     }
-  }, [debouncedName, fundId]);
+  }, [debouncedName, fundId, updateNameMutation.mutate]);
 
   // Save on blur (immediate)
   const handleNameBlur = () => {
