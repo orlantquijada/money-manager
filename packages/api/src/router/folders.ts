@@ -21,7 +21,9 @@ export const foldersRouter = router({
   remove: protectedProcedure
     .input(z.number())
     .mutation(({ input, ctx }) =>
-      ctx.db.delete(folders).where(eq(folders.id, input))
+      ctx.db
+        .delete(folders)
+        .where(and(eq(folders.id, input), eq(folders.userId, ctx.userId)))
     ),
 
   listWithFunds: protectedProcedure

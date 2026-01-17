@@ -1,5 +1,5 @@
 import { endOfMonth, startOfMonth, subDays, subMonths } from "date-fns";
-import { funds, transactions } from "db/schema";
+import { funds, transactions as txns } from "db/schema";
 import { and, count, desc, eq, gte, lt, or, sum } from "drizzle-orm";
 import { z } from "zod";
 
@@ -27,10 +27,6 @@ function getDateRangeForPeriod(period: Period): {
   }
 }
 
-/**
- * Returns the date range for the period immediately before the given period.
- * Returns null for "all" since there's no meaningful previous period.
- */
 function getPreviousPeriodDateRange(period: Period): {
   start: Date | null;
   end: Date | null;
@@ -38,22 +34,19 @@ function getPreviousPeriodDateRange(period: Period): {
   const now = new Date();
   switch (period) {
     case "week": {
-      // Previous 7 days before current 7 days
       const currentStart = subDays(now, 7);
       return { start: subDays(currentStart, 7), end: currentStart };
     }
     case "month": {
-      // Previous calendar month
       const prevMonth = subMonths(now, 1);
       return { start: startOfMonth(prevMonth), end: endOfMonth(prevMonth) };
     }
     case "3mo": {
-      // Previous 3-month window (months 6-4 ago)
       const prevEnd = subMonths(startOfMonth(now), 3);
       return { start: subMonths(prevEnd, 2), end: endOfMonth(prevEnd) };
     }
     case "all":
-      return null; // No comparison for "all"
+      return null;
     default:
       return null;
   }
@@ -62,19 +55,14 @@ function getPreviousPeriodDateRange(period: Period): {
 export const transactionsRouter = router({
   all: protectedProcedure.query(({ ctx }) =>
     ctx.db.query.transactions.findMany({
-      // TODO: implement auth
-      // where: eq(Transaction.userId, ctx.auth.userId || ""),
+      where: eq(txns.userId, ctx.userId),
     })
   ),
 
   recentByFund: protectedProcedure.input(z.number()).query(({ ctx, input }) =>
     ctx.db.query.transactions.findMany({
-      where: and(
-        // TODO: implement auth
-        // eq(Transaction.userId, ctx.auth.userId || ""),
-        eq(transactions.fundId, input)
-      ),
-      orderBy: desc(transactions.date),
+      where: and(eq(txns.userId, ctx.userId), eq(txns.fundId, input)),
+      orderBy: desc(txns.date),
       limit: 10,
       with: {
         store: {
@@ -97,7 +85,6 @@ export const transactionsRouter = router({
     .query(async ({ ctx, input }) => {
       const { fundId, limit } = input;
 
-      // Parse cursor for pagination (cursor encodes date + id for deterministic ordering)
       let cursorCondition: ReturnType<typeof or> | undefined;
       if (input.cursor) {
         const decoded = JSON.parse(
@@ -105,17 +92,18 @@ export const transactionsRouter = router({
         );
         const cursorDate = new Date(decoded.date);
         cursorCondition = or(
-          lt(transactions.date, cursorDate),
-          and(
-            eq(transactions.date, cursorDate),
-            lt(transactions.id, decoded.id)
-          )
+          lt(txns.date, cursorDate),
+          and(eq(txns.date, cursorDate), lt(txns.id, decoded.id))
         );
       }
 
       const results = await ctx.db.query.transactions.findMany({
-        where: and(eq(transactions.fundId, fundId), cursorCondition),
-        orderBy: [desc(transactions.date), desc(transactions.id)],
+        where: and(
+          eq(txns.userId, ctx.userId),
+          eq(txns.fundId, fundId),
+          cursorCondition
+        ),
+        orderBy: [desc(txns.date), desc(txns.id)],
         limit: limit + 1,
         with: {
           fund: {
@@ -163,11 +151,10 @@ export const transactionsRouter = router({
       const now = new Date();
       return ctx.db.query.transactions.findMany({
         where: and(
-          // TODO: implement auth
-          // eq(Transaction.userId, ctx.auth.userId || ""),
-          gte(transactions.date, startOfMonth(now)),
-          lt(transactions.date, endOfMonth(now)),
-          input?.fundId ? eq(transactions.fundId, input.fundId) : undefined
+          eq(txns.userId, ctx.userId),
+          gte(txns.date, startOfMonth(now)),
+          lt(txns.date, endOfMonth(now)),
+          input?.fundId ? eq(txns.fundId, input.fundId) : undefined
         ),
         with: {
           fund: {
@@ -181,7 +168,7 @@ export const transactionsRouter = router({
             },
           },
         },
-        orderBy: desc(transactions.date),
+        orderBy: desc(txns.date),
       });
     }),
 
@@ -189,8 +176,9 @@ export const transactionsRouter = router({
     const now = new Date();
     return ctx.db.query.transactions.findMany({
       where: and(
-        gte(transactions.date, subDays(now, 7)),
-        lt(transactions.date, now)
+        eq(txns.userId, ctx.userId),
+        gte(txns.date, subDays(now, 7)),
+        lt(txns.date, now)
       ),
       with: {
         fund: {
@@ -204,17 +192,13 @@ export const transactionsRouter = router({
           },
         },
       },
-      orderBy: desc(transactions.date),
+      orderBy: desc(txns.date),
     });
   }),
 
   retrieve: protectedProcedure.input(z.string()).query(({ ctx, input }) =>
     ctx.db.query.transactions.findFirst({
-      where: and(
-        eq(transactions.id, input)
-        // TODO: implement auth
-        // eq(Transaction.userId, ctx.auth.userId || "")
-      ),
+      where: and(eq(txns.userId, ctx.userId), eq(txns.id, input)),
       with: {
         fund: {
           columns: { name: true },
@@ -229,14 +213,14 @@ export const transactionsRouter = router({
   delete: protectedProcedure
     .input(z.string())
     .mutation(({ ctx, input }) =>
-      ctx.db.delete(transactions).where(eq(transactions.id, input))
+      ctx.db
+        .delete(txns)
+        .where(and(eq(txns.id, input), eq(txns.userId, ctx.userId)))
     ),
 
-  // Mark a non-negotiable fund as fully paid by creating a transaction for the remaining amount
   markAsPaid: protectedProcedure
     .input(z.object({ fundId: z.number() }))
     .mutation(async ({ ctx, input }) => {
-      // 1. Fetch fund to get budgetedAmount and timeMode
       const fund = await ctx.db.query.funds.findFirst({
         where: eq(funds.id, input.fundId),
       });
@@ -244,7 +228,6 @@ export const transactionsRouter = router({
         throw new Error("Fund not found");
       }
 
-      // 2. Calculate monthlyBudget using time mode multiplier
       const now = new Date();
       const weeksInMonth = Math.ceil(
         (endOfMonth(now).getDate() - startOfMonth(now).getDate() + 1) / 7
@@ -258,31 +241,30 @@ export const transactionsRouter = router({
       const multiplier = timeModeMultipliers[fund.timeMode] ?? 1;
       const monthlyBudget = Number(fund.budgetedAmount) * multiplier;
 
-      // 3. Get current month's total spent
       const [spent] = await ctx.db
-        .select({ amount: sum(transactions.amount).mapWith(Number) })
-        .from(transactions)
+        .select({ amount: sum(txns.amount).mapWith(Number) })
+        .from(txns)
         .where(
           and(
-            eq(transactions.fundId, input.fundId),
-            gte(transactions.date, startOfMonth(now)),
-            lt(transactions.date, endOfMonth(now))
+            eq(txns.userId, ctx.userId),
+            eq(txns.fundId, input.fundId),
+            gte(txns.date, startOfMonth(now)),
+            lt(txns.date, endOfMonth(now))
           )
         );
       const totalSpent = spent?.amount ?? 0;
 
-      // 4. Create transaction for remaining amount if not already fully paid
       const remainingAmount = monthlyBudget - totalSpent;
       if (remainingAmount > 0) {
-        await ctx.db.insert(transactions).values({
+        await ctx.db.insert(txns).values({
           fundId: input.fundId,
           amount: remainingAmount.toString(),
           date: now,
           note: "Marked as paid",
+          userId: ctx.userId,
         });
       }
 
-      // 5. Set paidAt timestamp on the fund
       await ctx.db
         .update(funds)
         .set({ paidAt: now })
@@ -307,38 +289,28 @@ export const transactionsRouter = router({
         ...input,
         amount: input.amount.toString(),
         date: new Date(input.date),
-        // TODO: implement auth
-        // userId: ctx.auth.userId || "",
+        userId: ctx.userId,
       };
 
       if (store) {
-        // TODO: implement auth
-        // const [createdStore] = await ctx.db
-        //   .insert(Store)
-        //   .values(...)
-        //   .onConflictDoUpdate(...)
-        //   .returning({ id: Store.id });
-
-        return ctx.db.insert(transactions).values({
+        return ctx.db.insert(txns).values({
           ..._input,
-          // storeId: createdStore.id,
         });
       }
 
-      return ctx.db.insert(transactions).values(_input);
+      return ctx.db.insert(txns).values(_input);
     }),
 
   totalThisMonth: protectedProcedure.query(async ({ ctx }) => {
     const now = new Date();
     const result = await ctx.db
-      .select({ amount: sum(transactions.amount).mapWith(Number) })
-      .from(transactions)
+      .select({ amount: sum(txns.amount).mapWith(Number) })
+      .from(txns)
       .where(
         and(
-          // TODO: implement auth
-          // eq(Transaction.userId, ctx.auth.userId || ""),
-          gte(transactions.date, startOfMonth(now)),
-          lt(transactions.date, endOfMonth(now))
+          eq(txns.userId, ctx.userId),
+          gte(txns.date, startOfMonth(now)),
+          lt(txns.date, endOfMonth(now))
         )
       );
 
@@ -349,14 +321,13 @@ export const transactionsRouter = router({
     const now = new Date();
     const lastMonth = subMonths(now, 1);
     const result = await ctx.db
-      .select({ amount: sum(transactions.amount).mapWith(Number) })
-      .from(transactions)
+      .select({ amount: sum(txns.amount).mapWith(Number) })
+      .from(txns)
       .where(
         and(
-          // TODO: implement auth
-          // eq(Transaction.userId, ctx.auth.userId || ""),
-          gte(transactions.date, startOfMonth(lastMonth)),
-          lt(transactions.date, endOfMonth(lastMonth))
+          eq(txns.userId, ctx.userId),
+          gte(txns.date, startOfMonth(lastMonth)),
+          lt(txns.date, endOfMonth(lastMonth))
         )
       );
 
@@ -366,25 +337,24 @@ export const transactionsRouter = router({
   byFund: protectedProcedure
     .input(z.number().optional())
     .query(async ({ ctx, input }) => {
-      const txns = await ctx.db
+      const txnsResult = await ctx.db
         .select({
-          fundId: transactions.fundId,
-          amount: sum(transactions.amount).mapWith(Number),
+          fundId: txns.fundId,
+          amount: sum(txns.amount).mapWith(Number),
         })
-        .from(transactions)
+        .from(txns)
         .where(
           and(
-            // TODO: implement auth
-            // eq(transactions.userId, ctx.auth.userId || ""),
-            gte(transactions.date, startOfMonth(new Date())),
-            lt(transactions.date, endOfMonth(new Date()))
+            eq(txns.userId, ctx.userId),
+            gte(txns.date, startOfMonth(new Date())),
+            lt(txns.date, endOfMonth(new Date()))
           )
         )
-        .groupBy(transactions.fundId)
-        .orderBy(desc(sum(transactions.amount)))
+        .groupBy(txns.fundId)
+        .orderBy(desc(sum(txns.amount)))
         .limit(input || 100);
 
-      return txns.map((t) => ({
+      return txnsResult.map((t) => ({
         ...t,
         _sum: { amount: t.amount },
       }));
@@ -394,19 +364,18 @@ export const transactionsRouter = router({
     const now = new Date();
     const counts = await ctx.db
       .select({
-        fundId: transactions.fundId,
-        count: count(transactions.id),
+        fundId: txns.fundId,
+        count: count(txns.id),
       })
-      .from(transactions)
+      .from(txns)
       .where(
         and(
-          // TODO: implement auth
-          // eq(transactions.userId, ctx.auth.userId || ""),
-          gte(transactions.date, startOfMonth(now)),
-          lt(transactions.date, endOfMonth(now))
+          eq(txns.userId, ctx.userId),
+          gte(txns.date, startOfMonth(now)),
+          lt(txns.date, endOfMonth(now))
         )
       )
-      .groupBy(transactions.fundId);
+      .groupBy(txns.fundId);
 
     return counts.map((c) => ({
       ...c,
@@ -420,22 +389,20 @@ export const transactionsRouter = router({
       const { start, end } = getDateRangeForPeriod(input.period);
       const previousRange = getPreviousPeriodDateRange(input.period);
 
-      const dateConditions: ReturnType<typeof gte>[] = [];
+      const dateConditions = [eq(txns.userId, ctx.userId)];
       if (start) {
-        dateConditions.push(gte(transactions.date, start));
+        dateConditions.push(gte(txns.date, start));
       }
       if (end) {
-        dateConditions.push(lt(transactions.date, end));
+        dateConditions.push(lt(txns.date, end));
       }
 
-      // Get total spent
       const [totalResult] = await ctx.db
-        .select({ amount: sum(transactions.amount).mapWith(Number) })
-        .from(transactions)
+        .select({ amount: sum(txns.amount).mapWith(Number) })
+        .from(txns)
         .where(and(...dateConditions));
       const totalSpent = totalResult?.amount ?? 0;
 
-      // Get previous period total for comparison (if applicable)
       let comparison:
         | {
             previousTotal: number;
@@ -445,21 +412,20 @@ export const transactionsRouter = router({
         | undefined;
 
       if (previousRange) {
-        const prevConditions: ReturnType<typeof gte>[] = [];
+        const prevConditions = [eq(txns.userId, ctx.userId)];
         if (previousRange.start) {
-          prevConditions.push(gte(transactions.date, previousRange.start));
+          prevConditions.push(gte(txns.date, previousRange.start));
         }
         if (previousRange.end) {
-          prevConditions.push(lt(transactions.date, previousRange.end));
+          prevConditions.push(lt(txns.date, previousRange.end));
         }
 
         const [prevResult] = await ctx.db
-          .select({ amount: sum(transactions.amount).mapWith(Number) })
-          .from(transactions)
+          .select({ amount: sum(txns.amount).mapWith(Number) })
+          .from(txns)
           .where(and(...prevConditions));
         const previousTotal = prevResult?.amount ?? 0;
 
-        // Only include comparison if there's previous data
         if (previousTotal > 0) {
           const difference = totalSpent - previousTotal;
           const percentageChange = (difference / previousTotal) * 100;
@@ -467,19 +433,18 @@ export const transactionsRouter = router({
         }
       }
 
-      // Get breakdown by fund with fund names and budget data
       const byFundResult = await ctx.db
         .select({
-          fundId: transactions.fundId,
+          fundId: txns.fundId,
           fundName: funds.name,
           budgetedAmount: funds.budgetedAmount,
-          amount: sum(transactions.amount).mapWith(Number),
+          amount: sum(txns.amount).mapWith(Number),
         })
-        .from(transactions)
-        .innerJoin(funds, eq(transactions.fundId, funds.id))
+        .from(txns)
+        .innerJoin(funds, eq(txns.fundId, funds.id))
         .where(and(...dateConditions))
-        .groupBy(transactions.fundId, funds.name, funds.budgetedAmount)
-        .orderBy(desc(sum(transactions.amount)));
+        .groupBy(txns.fundId, funds.name, funds.budgetedAmount)
+        .orderBy(desc(sum(txns.amount)));
 
       const byFund = byFundResult.map((row) => {
         const amount = row.amount ?? 0;
@@ -516,35 +481,30 @@ export const transactionsRouter = router({
       const { start, end } = getDateRangeForPeriod(input.period);
       const limit = input.limit;
 
-      const dateConditions: ReturnType<typeof gte>[] = [];
+      const dateConditions = [eq(txns.userId, ctx.userId)];
       if (start) {
-        dateConditions.push(gte(transactions.date, start));
+        dateConditions.push(gte(txns.date, start));
       }
       if (end) {
-        dateConditions.push(lt(transactions.date, end));
+        dateConditions.push(lt(txns.date, end));
       }
 
-      // Parse cursor for pagination (cursor encodes date + id for deterministic ordering)
       let cursorCondition: ReturnType<typeof or> | undefined;
       if (input.cursor) {
         const decoded = JSON.parse(
           Buffer.from(input.cursor, "base64").toString()
         );
         const cursorDate = new Date(decoded.date);
-        // Get records older than cursor date, or same date with id less than cursor id
         cursorCondition = or(
-          lt(transactions.date, cursorDate),
-          and(
-            eq(transactions.date, cursorDate),
-            lt(transactions.id, decoded.id)
-          )
+          lt(txns.date, cursorDate),
+          and(eq(txns.date, cursorDate), lt(txns.id, decoded.id))
         );
       }
 
       const results = await ctx.db.query.transactions.findMany({
         where: and(...dateConditions, cursorCondition),
-        orderBy: [desc(transactions.date), desc(transactions.id)],
-        limit: limit + 1, // Fetch one extra to determine if more pages exist
+        orderBy: [desc(txns.date), desc(txns.id)],
+        limit: limit + 1,
         with: {
           fund: {
             columns: { name: true },

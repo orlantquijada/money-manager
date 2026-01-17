@@ -99,7 +99,14 @@ export const fundsRouter = router({
         return null;
       }
 
-      // Calculate total spent for this fund this month
+      const folder = await ctx.db.query.folders.findFirst({
+        where: eq(folders.id, fund.folderId),
+      });
+
+      if (!folder || folder.userId !== ctx.userId) {
+        return null;
+      }
+
       const now = new Date();
       const [spent] = await ctx.db
         .select({ amount: sum(transactions.amount).mapWith(Number) })
@@ -123,12 +130,45 @@ export const fundsRouter = router({
     .input(updateFundSchema)
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
+
+      const fund = await ctx.db.query.funds.findFirst({
+        where: eq(funds.id, id),
+      });
+
+      if (!fund) {
+        throw new Error("Fund not found");
+      }
+
+      const folder = await ctx.db.query.folders.findFirst({
+        where: eq(folders.id, fund.folderId),
+      });
+
+      if (!folder || folder.userId !== ctx.userId) {
+        throw new Error("Fund not found");
+      }
+
       await ctx.db.update(funds).set(data).where(eq(funds.id, id));
     }),
 
   delete: protectedProcedure
     .input(z.number())
     .mutation(async ({ ctx, input }) => {
+      const fund = await ctx.db.query.funds.findFirst({
+        where: eq(funds.id, input),
+      });
+
+      if (!fund) {
+        throw new Error("Fund not found");
+      }
+
+      const folder = await ctx.db.query.folders.findFirst({
+        where: eq(folders.id, fund.folderId),
+      });
+
+      if (!folder || folder.userId !== ctx.userId) {
+        throw new Error("Fund not found");
+      }
+
       await ctx.db.delete(funds).where(eq(funds.id, input));
     }),
 });

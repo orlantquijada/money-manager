@@ -1,13 +1,12 @@
 import { stores } from "db/schema";
-import { asc } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { protectedProcedure, router } from "../trpc";
 import type { StorePick } from "../utils/types";
 
 export const storesRouter = router({
   list: protectedProcedure.query(async ({ ctx }): Promise<StorePick[]> => {
     const result = await ctx.db.query.stores.findMany({
-      // TODO: implement auth
-      // where: eq(Store.userId, ctx.auth.userId || ""),
+      where: eq(stores.userId, ctx.userId),
       orderBy: asc(stores.name),
       columns: {
         name: true,
