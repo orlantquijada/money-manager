@@ -8,7 +8,13 @@ import GlassButton from "@/components/glass-button";
 import { StyledLeanView } from "@/config/interop";
 import { useSyncTabPosition } from "@/hooks/use-sync-tab-position";
 import { useTabChangeHaptics } from "@/hooks/use-tab-change-haptics";
-import { ActivityRecDuoDark, HomeDuoDark, Plus, PlusRecDuoDark } from "@/icons";
+import {
+  ActivityRecDuoDark,
+  ChartColumnDuoDark,
+  HomeDuoDark,
+  Plus,
+  PlusRecDuoDark,
+} from "@/icons";
 import type { TabBarIconProps } from "@/utils/types";
 import { ScalePressable } from "./scale-pressable";
 import { useThemeColor } from "./theme-provider";
@@ -25,8 +31,8 @@ type RouteConfig = {
 const ROUTE_CONFIG: RouteConfig[] = [
   { name: "(dashboard)", label: "Home", icon: HomeDuoDark },
   { name: "add-expense", label: "Add", icon: PlusRecDuoDark },
-  { name: "transactions", label: "Spending", icon: ActivityRecDuoDark },
-  { name: "spending", label: "Spending", icon: ActivityRecDuoDark },
+  { name: "spending", label: "Insights", icon: ChartColumnDuoDark },
+  { name: "transactions", label: "History", icon: ActivityRecDuoDark },
 ];
 
 const ROUTE_MAP = new Map(ROUTE_CONFIG.map((config) => [config.name, config]));

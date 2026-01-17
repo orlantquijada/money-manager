@@ -1,10 +1,15 @@
 # Progress Notes
 
 ## Current Session
-Working on: Transactions tab
-Next up: Build transactions list view
+Working on: Insights & History Tab Split (spec: insights-history-tabs.json)
+Last completed: TAB-001, TAB-002 - Navigation foundation with new tab labels/icons
 
 ## Recent Progress
+- 2026-01-17: Insights & History tab split - Navigation foundation
+  - Created ChartColumnDuoDark icon for Insights tab
+  - Updated tab bar labels: spending→"Insights", transactions→"History"
+  - Added index mapping comment to _layout.tsx (per pre-mortem mitigation)
+  - Verified AnimatedTabScreen indexes match screen order
 - 2026-01-08: Redesigned add expense flow for cleaner UX
   - Simplified header (close button + date picker only)
   - Removed "unlock notes" - notes now immediately accessible

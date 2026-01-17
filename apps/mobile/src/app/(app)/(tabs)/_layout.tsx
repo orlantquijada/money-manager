@@ -29,6 +29,16 @@ function TabsContent() {
         tabBar={TabBar}
         tabBarPosition="bottom"
       >
+        {/*
+        Screen order determines AnimatedTabScreen indexes:
+          0: add-expense
+          1: (dashboard)
+          2: spending (Insights)
+          3: transactions (History)
+        
+        If you change the order here, update each screen's 
+        AnimatedTabScreen index prop to match!
+      */}
         <MaterialTopTabs.Screen name="add-expense" />
         <MaterialTopTabs.Screen name="(dashboard)" />
         <MaterialTopTabs.Screen name="spending" />
