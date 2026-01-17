@@ -1,14 +1,16 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import type { RouterOutputs } from "api";
+import { Stack } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Keyboard, TextInput } from "react-native";
+import type {
+  NativeSyntheticEvent,
+  TextInputFocusEventData,
+} from "react-native";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
-import { ScalePressable } from "@/components/scale-pressable";
 import PeriodChips, { type Period } from "@/components/stats/period-chips";
 import { useTabBarHeight } from "@/components/tab-bar";
 import { useThemeColor } from "@/components/theme-provider";
 import { TransactionList } from "@/components/transactions";
-import { IconSymbol } from "@/components/ui/icon-symbol.ios";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { trpc } from "@/utils/api";
 
@@ -25,8 +27,8 @@ const PERIOD_LABELS: Record<Period, string> = {
 export default function History() {
   const queryClient = useQueryClient();
   const tabBarHeight = useTabBarHeight();
+  const backgroundColor = useThemeColor("background");
   const foregroundColor = useThemeColor("foreground");
-  const mutedColor = useThemeColor("foreground-muted");
 
   // Period selection state
   const [period, setPeriod] = useState<Period>("month");
@@ -90,10 +92,16 @@ export default function History() {
     setIsRefreshing(false);
   }, [queryClient]);
 
-  // Clear search
-  const handleClearSearch = useCallback(() => {
+  // Search handler for native search bar
+  const handleSearchChange = useCallback(
+    (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+      setSearchQuery(e.nativeEvent.text);
+    },
+    []
+  );
+
+  const handleSearchClear = useCallback(() => {
     setSearchQuery("");
-    Keyboard.dismiss();
   }, []);
 
   // Empty state: show search-specific message if searching with no results
@@ -102,75 +110,70 @@ export default function History() {
   const showSearchEmptyState = isSearching && !hasSearchResults;
 
   return (
-    <AnimatedTabScreen index={3}>
-      <StyledLeanView
-        className="flex-1 bg-background pt-safe"
-        style={{ paddingBottom: tabBarHeight }}
-      >
-        <StyledLeanView className="flex-1 gap-4 px-4 pt-4">
-          {/* Large title header */}
-          <StyledLeanText className="font-satoshi-bold text-3xl text-foreground">
-            History
-          </StyledLeanText>
-
-          {/* Search bar */}
-          <StyledLeanView
-            className="h-10 flex-row items-center gap-2 rounded-xl bg-muted px-3"
-            style={{ borderCurve: "continuous" }}
-          >
-            <IconSymbol color={mutedColor} name="magnifyingglass" size={16} />
-            <TextInput
-              className="h-full flex-1 font-satoshi text-base text-foreground placeholder:text-foreground-muted"
-              cursorColor={foregroundColor}
-              onChangeText={setSearchQuery}
-              placeholder="Search stores or funds"
-              placeholderTextColor={mutedColor}
-              returnKeyType="search"
-              selectionColor={foregroundColor}
-              style={{ lineHeight: undefined }}
-              value={searchQuery}
+    <>
+      <Stack.Screen
+        options={{
+          title: "History",
+          headerLargeTitle: true,
+          headerLargeTitleShadowVisible: false,
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor },
+          headerTitleStyle: {
+            fontFamily: "Satoshi-Bold",
+            color: foregroundColor,
+          },
+          headerLargeTitleStyle: {
+            fontFamily: "Satoshi-Bold",
+            color: foregroundColor,
+          },
+          headerSearchBarOptions: {
+            placeholder: "Search stores or funds",
+            onChangeText: handleSearchChange,
+            onCancelButtonPress: handleSearchClear,
+            onClose: handleSearchClear,
+          },
+        }}
+      />
+      <AnimatedTabScreen index={3}>
+        <StyledLeanView
+          className="flex-1 bg-background"
+          style={{ paddingBottom: tabBarHeight }}
+        >
+          <StyledLeanView className="flex-1 gap-4 px-4 pt-4">
+            {/* Period chips */}
+            <PeriodChips
+              className="mb-2"
+              onChange={handlePeriodChange}
+              value={period}
             />
-            {searchQuery.length > 0 && (
-              <ScalePressable hitSlop={8} onPress={handleClearSearch}>
-                <IconSymbol
-                  color={mutedColor}
-                  name="xmark.circle.fill"
-                  size={18}
+
+            {/* Transaction list or search empty state */}
+            <StyledLeanView
+              className="flex-1"
+              style={{ marginHorizontal: -16 }}
+            >
+              {showSearchEmptyState ? (
+                <StyledLeanView className="flex-1 items-center justify-center px-4">
+                  <StyledLeanText className="text-center font-satoshi-medium text-foreground-muted">
+                    No transactions found
+                  </StyledLeanText>
+                </StyledLeanView>
+              ) : (
+                <TransactionList
+                  emptyStateVariant="period-empty"
+                  hasNextPage={!!listData?.nextCursor && !isSearching}
+                  isFetchingNextPage={listFetching && !!cursor}
+                  isRefreshing={isRefreshing}
+                  onLoadMore={handleLoadMore}
+                  onRefresh={handleRefresh}
+                  periodLabel={PERIOD_LABELS[period]}
+                  transactions={filteredTransactions}
                 />
-              </ScalePressable>
-            )}
-          </StyledLeanView>
-
-          {/* Period chips */}
-          <PeriodChips
-            className="mb-2"
-            onChange={handlePeriodChange}
-            value={period}
-          />
-
-          {/* Transaction list or search empty state */}
-          <StyledLeanView className="flex-1" style={{ marginHorizontal: -16 }}>
-            {showSearchEmptyState ? (
-              <StyledLeanView className="flex-1 items-center justify-center px-4">
-                <StyledLeanText className="text-center font-satoshi-medium text-foreground-muted">
-                  No transactions found
-                </StyledLeanText>
-              </StyledLeanView>
-            ) : (
-              <TransactionList
-                emptyStateVariant="period-empty"
-                hasNextPage={!!listData?.nextCursor && !isSearching}
-                isFetchingNextPage={listFetching && !!cursor}
-                isRefreshing={isRefreshing}
-                onLoadMore={handleLoadMore}
-                onRefresh={handleRefresh}
-                periodLabel={PERIOD_LABELS[period]}
-                transactions={filteredTransactions}
-              />
-            )}
+              )}
+            </StyledLeanView>
           </StyledLeanView>
         </StyledLeanView>
-      </StyledLeanView>
-    </AnimatedTabScreen>
+      </AnimatedTabScreen>
+    </>
   );
 }

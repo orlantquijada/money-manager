@@ -2,9 +2,13 @@
 
 ## Current Session
 Working on: Insights & History Tab Split (spec: insights-history-tabs.json)
-Last completed: TAB-001, HIS-001 - Tab bar cleanup + History tab
+Last completed: HIS-001 - Native iOS search header via nested Stack
 
 ## Recent Progress
+- 2026-01-17: Insights & History tab split - Native search header
+  - Nested Stack under transactions/ folder for native iOS header
+  - headerLargeTitle + headerSearchBarOptions for native UX
+  - Removed custom title/search bar in favor of native implementation
 - 2026-01-17: Insights & History tab split - History tab
   - Removed add-expense from tab bar ROUTE_CONFIG (FAB-only now)
   - Implemented History tab with large title + search bar
