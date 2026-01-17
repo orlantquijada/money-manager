@@ -44,10 +44,10 @@ function AppContent() {
   const segments = useSegments();
 
   // Sync Clerk token to tRPC client
-  useAuthTokenSync();
+  const { isTokenReady } = useAuthTokenSync();
 
-  // Ensure user exists in database on sign-in
-  const { isProvisioned } = useUserProvisioning();
+  // Ensure user exists in database on sign-in (waits for token to be ready)
+  const { isProvisioned } = useUserProvisioning({ isTokenReady });
 
   // Check if we're on a protected route
   const inAuthGroup = segments[0] === "(app)";

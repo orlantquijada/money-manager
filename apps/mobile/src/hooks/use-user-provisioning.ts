@@ -3,11 +3,20 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { trpc } from "@/utils/api";
 
+type UseUserProvisioningOptions = {
+  /** Whether the auth token has been synced and is ready for authenticated requests */
+  isTokenReady: boolean;
+};
+
 /**
  * Ensures a user record exists in our database when a Clerk user signs in.
  * This is called "user provisioning" - creating the local user on first sign-in.
+ *
+ * @param options.isTokenReady - Must be true before provisioning to avoid 401 errors
  */
-export function useUserProvisioning() {
+export function useUserProvisioning({
+  isTokenReady,
+}: UseUserProvisioningOptions) {
   const { isSignedIn } = useAuth();
   const { user } = useUser();
   const queryClient = useQueryClient();
@@ -23,9 +32,12 @@ export function useUserProvisioning() {
   );
 
   useEffect(() => {
-    // Only provision once per session and when signed in
+    // Only provision once per session, when signed in, AND when token is ready
+    // The token check prevents race conditions where we call ensureUser before
+    // the auth token has been synced to the tRPC client headers
     if (
       isSignedIn &&
+      isTokenReady &&
       !hasProvisioned.current &&
       !ensureUserMutation.isPending
     ) {
@@ -39,7 +51,7 @@ export function useUserProvisioning() {
     if (!isSignedIn) {
       hasProvisioned.current = false;
     }
-  }, [isSignedIn, user, ensureUserMutation]);
+  }, [isSignedIn, isTokenReady, user, ensureUserMutation]);
 
   return {
     isProvisioning: ensureUserMutation.isPending,
