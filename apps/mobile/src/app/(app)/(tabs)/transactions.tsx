@@ -85,7 +85,7 @@ export default function Transactions() {
   const showStatsHeader = !isNewUser;
 
   return (
-    <AnimatedTabScreen index={2}>
+    <AnimatedTabScreen index={3}>
       <StyledLeanView
         className="flex-1 bg-background pt-safe"
         style={{ paddingBottom: tabBarHeight }}

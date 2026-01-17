@@ -1,5 +1,6 @@
 import { View } from "react-native";
 import { AnimatedBlurOverlay } from "@/components/animated-blur-overlay";
+// import TabBarText from "@/components/tab-bar-text";
 import TabBar from "@/components/tab-bar";
 import { useTheme } from "@/components/theme-provider";
 import {
@@ -23,11 +24,14 @@ function TabsContent() {
               : theme.background.tertiary,
           },
         }}
+        // tabBar={TabBarText}
+        // tabBarPosition="top"
         tabBar={TabBar}
         tabBarPosition="bottom"
       >
         <MaterialTopTabs.Screen name="add-expense" />
         <MaterialTopTabs.Screen name="(dashboard)" />
+        <MaterialTopTabs.Screen name="spending" />
         <MaterialTopTabs.Screen name="transactions" />
       </MaterialTopTabs>
 

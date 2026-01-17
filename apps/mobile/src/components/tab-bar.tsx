@@ -1,13 +1,14 @@
 import type { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
-import { GlassView } from "expo-glass-effect";
+import { GlassContainer, GlassView } from "expo-glass-effect";
 import type { ComponentType } from "react";
 import { useCallback, useMemo } from "react";
-import { Animated, StyleSheet } from "react-native";
+import { Animated } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import GlassButton from "@/components/glass-button";
+import { StyledLeanView } from "@/config/interop";
 import { useSyncTabPosition } from "@/hooks/use-sync-tab-position";
 import { useTabChangeHaptics } from "@/hooks/use-tab-change-haptics";
-import { ActivityRecDuoDark, HomeDuoDark, PlusRecDuoDark } from "@/icons";
+import { ActivityRecDuoDark, HomeDuoDark, Plus, PlusRecDuoDark } from "@/icons";
 import type { TabBarIconProps } from "@/utils/types";
 import { ScalePressable } from "./scale-pressable";
 import { useThemeColor } from "./theme-provider";
@@ -25,9 +26,12 @@ const ROUTE_CONFIG: RouteConfig[] = [
   { name: "(dashboard)", label: "Home", icon: HomeDuoDark },
   { name: "add-expense", label: "Add", icon: PlusRecDuoDark },
   { name: "transactions", label: "Spending", icon: ActivityRecDuoDark },
+  { name: "spending", label: "Spending", icon: ActivityRecDuoDark },
 ];
 
 const ROUTE_MAP = new Map(ROUTE_CONFIG.map((config) => [config.name, config]));
+
+const FAB_GAP = 12;
 
 export default function TabBar({
   navigation,
@@ -37,9 +41,28 @@ export default function TabBar({
   const insets = useSafeAreaInsets();
   useSyncTabPosition(position, state.routes);
   useTabChangeHaptics(state.index);
-  const height = useTabBarHeight();
 
-  const inputRange = useMemo(
+  const fabIconColor = useThemeColor("foreground");
+  // const fabTintColor = useThemeColor("background");
+  const fabTintColor = undefined;
+
+  // Get visible tabs (those in ROUTE_MAP) with their actual navigator positions
+  const visibleTabs = useMemo(
+    () =>
+      state.routes
+        .map((route, index) => ({ route, position: index }))
+        .filter(({ route }) => ROUTE_MAP.has(route.name)),
+    [state.routes]
+  );
+
+  // Input range uses actual navigator positions of visible tabs
+  const tabInputRange = useMemo(
+    () => visibleTabs.map(({ position: pos }) => pos),
+    [visibleTabs]
+  );
+
+  // Full input range for translateY (includes add-expense at position 0)
+  const fullInputRange = useMemo(
     () => state.routes.map((_, i) => i),
     [state.routes]
   );
@@ -47,46 +70,72 @@ export default function TabBar({
   const translateY = useMemo(
     () =>
       position.interpolate({
-        inputRange,
-        outputRange: inputRange.map((i) =>
+        inputRange: fullInputRange,
+        outputRange: fullInputRange.map((i) =>
           i === 0 ? TAB_BAR_HEIGHT + insets.bottom : 0
         ),
       }),
-    [position, inputRange, insets.bottom]
+    [position, fullInputRange, insets.bottom]
   );
+
+  const handleFabPress = useCallback(() => {
+    navigation.navigate("add-expense");
+  }, [navigation]);
 
   return (
     <Animated.View
-      className="absolute inset-x-0 bottom-0"
+      className="absolute right-4 left-4"
       style={{
-        height,
+        height: TAB_BAR_HEIGHT,
+        bottom: insets.bottom,
         transform: [{ translateY }],
       }}
     >
-      <GlassView
-        glassEffectStyle="regular"
-        isInteractive
-        style={StyleSheet.absoluteFill}
+      <GlassContainer
+        spacing={FAB_GAP}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          // justifyContent: "center",
+        }}
       >
-        <StyledLeanView
-          className="absolute inset-0 flex-row items-center justify-center px-4"
-          style={{ height: TAB_BAR_HEIGHT }}
+        <GlassView
+          glassEffectStyle="regular"
+          isInteractive
+          style={{
+            // flex: 1,
+            height: TAB_BAR_HEIGHT,
+            borderRadius: 999,
+            borderCurve: "continuous",
+          }}
+          tintColor={fabTintColor}
         >
-          <StyledLeanView className="w-full flex-row">
-            {state.routes.map((route, index) => (
+          <StyledLeanView className="h-full flex-row items-center justify-evenly">
+            {visibleTabs.map(({ route, position: tabPosition }) => (
               <TabItem
-                index={index}
-                inputRange={inputRange}
-                isFocused={state.index === index}
+                inputRange={tabInputRange}
+                isFocused={state.index === tabPosition}
                 key={route.key}
                 navigation={navigation}
                 position={position}
                 route={route}
+                tabPosition={tabPosition}
               />
             ))}
           </StyledLeanView>
-        </StyledLeanView>
-      </GlassView>
+        </GlassView>
+
+        <GlassButton
+          onPress={handleFabPress}
+          size="xxl"
+          // style={{ marginLeft: FAB_GAP }}
+          tintColor={fabTintColor}
+          variant="icon"
+        >
+          <Plus color={fabIconColor} size={24} />
+        </GlassButton>
+      </GlassContainer>
     </Animated.View>
   );
 }
@@ -94,14 +143,14 @@ export default function TabBar({
 function useTabBarAnimations(
   position: MaterialTopTabBarProps["position"],
   inputRange: number[],
-  index: number
+  tabPosition: number
 ) {
   return useMemo(() => {
     const createInterpolation = (activeValue: number, inactiveValue: number) =>
       position.interpolate({
         inputRange,
-        outputRange: inputRange.map((i) =>
-          i === index ? activeValue : inactiveValue
+        outputRange: inputRange.map((pos) =>
+          pos === tabPosition ? activeValue : inactiveValue
         ),
       });
 
@@ -110,7 +159,7 @@ function useTabBarAnimations(
       fillOpacity: createInterpolation(1, 0.2),
       outlineOpacity: createInterpolation(0, 1),
     };
-  }, [position, inputRange, index]);
+  }, [position, inputRange, tabPosition]);
 }
 
 export function useTabBarHeight() {
@@ -120,7 +169,7 @@ export function useTabBarHeight() {
 
 type TabItemProps = {
   route: MaterialTopTabBarProps["state"]["routes"][number];
-  index: number;
+  tabPosition: number;
   isFocused: boolean;
   position: MaterialTopTabBarProps["position"];
   inputRange: number[];
@@ -129,7 +178,7 @@ type TabItemProps = {
 
 function TabItem({
   route,
-  index,
+  tabPosition,
   isFocused,
   position,
   inputRange,
@@ -138,7 +187,7 @@ function TabItem({
   const { opacity, fillOpacity, outlineOpacity } = useTabBarAnimations(
     position,
     inputRange,
-    index
+    tabPosition
   );
 
   const config = ROUTE_MAP.get(route.name);
@@ -170,7 +219,9 @@ function TabItem({
 
   return (
     <ScalePressable
-      className="w-1/3"
+      // className="w-1/3"
+      // className="px-4 py-2"
+      className="h-full items-center justify-center px-6"
       disableOpacity
       hitSlop={10}
       onLongPress={handleLongPress}
@@ -183,12 +234,6 @@ function TabItem({
           fillOpacity={fillOpacity}
           outlineOpacity={outlineOpacity}
         />
-        <StyledLeanText
-          className="font-satoshi-medium text-xs"
-          style={{ color: tabBarColor }}
-        >
-          {config.label}
-        </StyledLeanText>
       </Animated.View>
     </ScalePressable>
   );
