@@ -61,7 +61,7 @@ export default function DashboardLayout() {
             <TabTrigger asChild href="/" name="budgets">
               <TabButton className="ml-4">Budgets</TabButton>
             </TabTrigger>
-            <TabTrigger asChild href="/transactions" name="transactions">
+            <TabTrigger asChild href="/activity" name="Activity">
               <TabButton>Activity</TabButton>
             </TabTrigger>
           </TabList>

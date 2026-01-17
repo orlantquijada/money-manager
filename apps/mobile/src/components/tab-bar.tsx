@@ -47,9 +47,8 @@ export default function TabBar({
   useSyncTabPosition(position, state.routes);
   useTabChangeHaptics(state.index);
 
-  const fabIconColor = useThemeColor("foreground");
-  // const fabTintColor = useThemeColor("background");
-  const fabTintColor = undefined;
+  const fabIconColor = useThemeColor("muted-foreground");
+  const fabTintColor = useThemeColor("muted");
 
   // Get visible tabs (those in ROUTE_MAP) with their actual navigator positions
   const visibleTabs = useMemo(
