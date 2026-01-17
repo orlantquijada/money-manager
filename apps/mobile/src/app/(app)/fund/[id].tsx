@@ -106,7 +106,7 @@ function SpendingStats({
         </StyledLeanText>
       </StyledLeanView>
 
-      <CategoryProgressBars fund={fund} />
+      <CategoryProgressBars fund={fund} variant="detail" />
 
       <StyledLeanView className="flex-row items-center justify-between">
         <StyledLeanText className="font-nunito-semibold text-foreground">
@@ -161,7 +161,7 @@ function NonNegotiableStats({
         </StyledLeanText>
       </StyledLeanView>
 
-      <CategoryProgressBars fund={fund} />
+      <CategoryProgressBars fund={fund} variant="detail" />
 
       <StyledLeanView className="flex-row items-center justify-between">
         <StyledLeanText className="font-nunito-semibold text-foreground">
@@ -255,7 +255,7 @@ function EventuallyStats({
         </StyledLeanText>
       </StyledLeanView>
 
-      <CategoryProgressBars fund={fund} />
+      <CategoryProgressBars fund={fund} variant="detail" />
 
       <StyledLeanView className="flex-row items-center justify-between">
         <StyledLeanText className="font-nunito-semibold text-foreground">

@@ -95,3 +95,74 @@ function calculateSpendingProgress(
     overfundedRatio: 0,
   };
 }
+
+type RollingProgressResult = {
+  /** 0-1 value: portion of budget remaining */
+  progress: number;
+  /** Ratio of overspent amount to single period budget (for red bar sizing) */
+  overspentRatio: number;
+  /** Ratio of overfunded amount to single period budget (for NON_NEGOTIABLE) */
+  overfundedRatio: number;
+};
+
+/**
+ * Calculates rolling budget progress for a single consolidated bar.
+ *
+ * Rolling logic: Budget accumulates across periods. If you underspend in
+ * Week 1, that surplus rolls into Week 2's available budget.
+ *
+ * SPENDING funds: progress = remaining / budgetThroughNow
+ * NON_NEGOTIABLE funds: progress = saved / monthlyTarget
+ */
+export function useRollingProgress(fund: FundWithMeta): RollingProgressResult {
+  return useMemo(() => {
+    if (fund.fundType === "NON_NEGOTIABLE") {
+      return calculateRollingSavings(fund);
+    }
+    return calculateRollingSpending(fund);
+  }, [fund]);
+}
+
+/** SPENDING: Single bar showing rolling remaining budget */
+function calculateRollingSpending(fund: FundWithMeta): RollingProgressResult {
+  const currentPeriodIndex = getCurrentPeriodIndex(fund.timeMode);
+  const budgetThroughNow = fund.budgetedAmount * (currentPeriodIndex + 1);
+  const rollingRemaining = budgetThroughNow - fund.totalSpent;
+
+  if (rollingRemaining < 0) {
+    // Overspent: bar is empty, show red overspent segment
+    return {
+      progress: 0,
+      overspentRatio: Math.abs(rollingRemaining) / fund.budgetedAmount,
+      overfundedRatio: 0,
+    };
+  }
+
+  return {
+    progress: budgetThroughNow > 0 ? rollingRemaining / budgetThroughNow : 1,
+    overspentRatio: 0,
+    overfundedRatio: 0,
+  };
+}
+
+/** NON_NEGOTIABLE: Single bar showing savings toward monthly target */
+function calculateRollingSavings(fund: FundWithMeta): RollingProgressResult {
+  const monthlyTarget =
+    fund.budgetedAmount * getTimeModeMultiplier(fund.timeMode);
+  const amountSaved = fund.totalSpent;
+
+  if (amountSaved >= monthlyTarget) {
+    // Fully funded, show overfunded ratio if exceeded
+    return {
+      progress: 1,
+      overspentRatio: 0,
+      overfundedRatio: (amountSaved - monthlyTarget) / fund.budgetedAmount,
+    };
+  }
+
+  return {
+    progress: monthlyTarget > 0 ? amountSaved / monthlyTarget : 0,
+    overspentRatio: 0,
+    overfundedRatio: 0,
+  };
+}

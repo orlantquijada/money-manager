@@ -36,21 +36,21 @@ export default function DashboardLayout() {
         <StyledLeanView className="mb-4 w-full flex-row items-start justify-between px-4 py-2">
           <TotalSpent />
 
-          <StyledLeanView className="flex-row items-center gap-3">
-            <SettingsButton
-              onPress={() => {
-                router.push("/settings");
-              }}
-            />
-            <AddButton
-              onLongPress={() => {
-                createSheetRef.current?.present();
-              }}
-              onPress={() => {
-                createSheetRef.current?.present();
-              }}
-            />
-          </StyledLeanView>
+          {/* <StyledLeanView className="flex-row items-center gap-3"> */}
+          {/*   <SettingsButton */}
+          {/*     onPress={() => { */}
+          {/*       router.push("/settings"); */}
+          {/*     }} */}
+          {/*   /> */}
+          {/*   <AddButton */}
+          {/*     onLongPress={() => { */}
+          {/*       createSheetRef.current?.present(); */}
+          {/*     }} */}
+          {/*     onPress={() => { */}
+          {/*       createSheetRef.current?.present(); */}
+          {/*     }} */}
+          {/*   /> */}
+          {/* </StyledLeanView> */}
         </StyledLeanView>
 
         <Tabs>

@@ -1,18 +1,54 @@
+import { useCallback, useRef } from "react";
 import { ScrollView, Text } from "react-native";
+import { makeMutable, type SharedValue } from "react-native-reanimated";
 import Budget from "@/components/budgets/budget";
+import { ScalePressable } from "@/components/scale-pressable";
+import { StyledLeanText } from "@/config/interop";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
+
+function useOpenStates() {
+  const statesRef = useRef<Map<number, SharedValue<boolean>>>(new Map());
+
+  const getOpenState = useCallback((id: number): SharedValue<boolean> => {
+    const existing = statesRef.current.get(id);
+    if (existing) return existing;
+
+    // makeMutable creates a real SharedValue outside of hooks
+    const sharedValue = makeMutable(true);
+    statesRef.current.set(id, sharedValue);
+
+    return sharedValue;
+  }, []);
+
+  const collapseAll = useCallback(() => {
+    for (const state of statesRef.current.values()) {
+      state.value = false;
+    }
+  }, []);
+
+  return { getOpenState, collapseAll };
+}
 
 export default function BudgetsScreen() {
   const { data: foldersWithFunds, isLoading } = useFoldersWithFunds();
+  const { getOpenState, collapseAll } = useOpenStates();
 
   return (
     <ScrollView
       className="flex-1 px-4"
       contentContainerClassName="gap-3 py-4 min-h-full"
     >
-      {/* {isLoading && ( */}
-      {/*   <Text className="text-center text-mauveDark3">Loading...</Text> */}
-      {/* )} */}
+      {foldersWithFunds && foldersWithFunds.length > 0 && (
+        <ScalePressable
+          className="self-end rounded-lg px-3 py-1.5"
+          onPress={collapseAll}
+          scaleValue={0.95}
+        >
+          <StyledLeanText className="font-satoshi-medium text-foreground-muted text-sm">
+            Collapse all
+          </StyledLeanText>
+        </ScalePressable>
+      )}
 
       {foldersWithFunds?.map((folder) => (
         <Budget
@@ -20,6 +56,7 @@ export default function BudgetsScreen() {
           folderName={folder.name}
           funds={folder.funds}
           key={folder.id}
+          open={getOpenState(folder.id)}
         />
       ))}
 

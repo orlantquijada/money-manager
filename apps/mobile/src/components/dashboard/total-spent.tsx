@@ -38,13 +38,13 @@ export default function TotalSpent() {
           </Animated.Text>
         )}
 
-        {!isLoading && scoreData && (
-          <BudgetScoreIndicator
-            onPress={() => router.push("/budget-score")}
-            score={scoreData.score}
-            status={scoreData.status}
-          />
-        )}
+        {/* {!isLoading && scoreData && ( */}
+        {/*   <BudgetScoreIndicator */}
+        {/*     onPress={() => router.push("/budget-score")} */}
+        {/*     score={scoreData.score} */}
+        {/*     status={scoreData.status} */}
+        {/*   /> */}
+        {/* )} */}
       </StyledLeanView>
 
       <StyledLeanText className="mr-1 font-satoshi-medium text-base text-foreground-muted">

@@ -14,7 +14,7 @@ import { Cross } from "@/icons";
 import { cn } from "@/utils/cn";
 
 type GlassButtonVariant = "icon" | "default";
-type GlassButtonSize = "sm" | "md" | "lg" | "xl";
+type GlassButtonSize = "sm" | "md" | "lg" | "xl" | "xxl";
 
 type GlassButtonProps = PressableProps & {
   /**
@@ -31,7 +31,7 @@ type GlassButtonProps = PressableProps & {
   size?: GlassButtonSize;
   glassViewProps?: GlassViewProps;
   children?: ReactNode;
-  tintColor?: string;
+  tintColor?: string | null;
 };
 
 const iconSizeClasses: Record<GlassButtonSize, string> = {
@@ -39,6 +39,7 @@ const iconSizeClasses: Record<GlassButtonSize, string> = {
   md: "size-10",
   lg: "size-12",
   xl: "size-14",
+  xxl: "size-16",
 };
 
 const paddingBySize: Record<
@@ -49,6 +50,7 @@ const paddingBySize: Record<
   md: { horizontal: 16, vertical: 8 },
   lg: { horizontal: 20, vertical: 10 },
   xl: { horizontal: 24, vertical: 12 },
+  xxl: { horizontal: 28, vertical: 14 },
 };
 
 export default function GlassButton({
@@ -62,7 +64,8 @@ export default function GlassButton({
 }: GlassButtonProps) {
   const { style, ..._glassViewProps } = glassViewProps;
   const themeTintColor = useThemeColor("background");
-  const tintColor = tintColorProp ?? themeTintColor;
+  const tintColor =
+    tintColorProp !== null ? (tintColorProp ?? themeTintColor) : undefined;
 
   const isIcon = variant === "icon";
   const sizeClass = isIcon ? iconSizeClasses[size] : undefined;

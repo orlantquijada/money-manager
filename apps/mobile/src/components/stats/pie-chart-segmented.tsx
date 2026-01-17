@@ -226,11 +226,7 @@ function CenterLabel({ displaySlice, selectedFundId }: CenterLabelProps) {
         layout={layoutSpringify("snappy")}
         text={animatedText}
       />
-      <Animated.View
-        key={selectedFundId}
-        layout={layoutSpringify("snappy")}
-        {...fadeInOutSpringify("snappy")}
-      >
+      <Animated.View key={selectedFundId} {...fadeInOutSpringify("snappy")}>
         <StyledLeanText
           className="max-w-[80%] text-center font-satoshi-medium text-foreground text-xs"
           ellipsizeMode="tail"

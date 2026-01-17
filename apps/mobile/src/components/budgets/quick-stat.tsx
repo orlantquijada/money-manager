@@ -1,13 +1,9 @@
 import { useState } from "react";
 import { Text } from "react-native";
 import { ScalePressable } from "@/components/scale-pressable";
-import {
-  type FundWithMeta,
-  getMonthlyBudget,
-  TIME_MODE_LABELS,
-} from "@/lib/fund";
+import { type FundWithMeta, getMonthlyBudget } from "@/lib/fund";
 import { cn } from "@/utils/cn";
-import { toCurrencyNarrow } from "@/utils/format";
+import { toWholeCurrency } from "@/utils/format";
 import { getCurrentPeriodIndex } from "./category-utils";
 
 const QUICK_STAT_MODES_SPENDING = ["remaining", "percentage", "spent"] as const;
@@ -17,7 +13,7 @@ const QUICK_STAT_MODES_NON_NEGOTIABLE = [
   "target",
 ] as const;
 
-type Stat = { value: string; label: string; textColor?: string };
+type Stat = { label: string; value: string; textColor?: string };
 
 type Props = {
   fund: FundWithMeta;
@@ -65,29 +61,29 @@ export default function BudgetQuickStats({ fund }: Props) {
     switch (mode) {
       case "saved":
         return {
-          value: toCurrencyNarrow(amountSaved),
           label: statusLabel,
+          value: toWholeCurrency(amountSaved),
           textColor,
         };
       case "percentage":
         return {
-          value: `${Math.min(Math.round(percentSaved), 100)}%`,
           label: statusLabel,
+          value: `${Math.min(Math.round(percentSaved), 100)}%`,
           textColor,
         };
       case "target":
         return {
-          value: toCurrencyNarrow(monthlyBudget),
           label: isEventually ? "goal" : "target",
+          value: toWholeCurrency(monthlyBudget),
           textColor,
         };
       default:
-        return { value: "", label: "" };
+        return { label: "", value: "" };
     }
   }
 
   function getSpendingStat(): Stat {
-    // Calculate budget available through current period (time-aware)
+    // Calculate budget available through current period (rolling budget)
     const currentPeriodIndex = getCurrentPeriodIndex(fund.timeMode);
     const budgetThroughNow = fund.budgetedAmount * (currentPeriodIndex + 1);
 
@@ -104,30 +100,29 @@ export default function BudgetQuickStats({ fund }: Props) {
     switch (mode) {
       case "remaining":
         return {
-          value: toCurrencyNarrow(Math.abs(remaining)),
-          label: isOverspent
-            ? `over ${TIME_MODE_LABELS[fund.timeMode]}`
-            : TIME_MODE_LABELS[fund.timeMode],
+          label: isOverspent ? "over" : "left",
+          value: toWholeCurrency(Math.abs(remaining)),
           textColor,
         };
       case "percentage":
+        // No label when under budget, "over" prefix when overspent
         return {
+          label: isOverspent ? "over" : "",
           value: `${Math.abs(Math.round(percentLeft))}%`,
-          label: isOverspent ? "over" : "left",
           textColor,
         };
       case "spent":
         return {
-          value: toCurrencyNarrow(fund.totalSpent),
           label: "spent",
+          value: toWholeCurrency(fund.totalSpent),
           textColor,
         };
       default:
-        return { value: "", label: "" };
+        return { label: "", value: "" };
     }
   }
 
-  const { value, label, textColor } =
+  const { label, value, textColor } =
     isNonNegotiable || isEventually
       ? getNonNegotiableStat()
       : getSpendingStat();
@@ -140,7 +135,8 @@ export default function BudgetQuickStats({ fund }: Props) {
       scaleValue={0.95}
     >
       <Text className={cn("font-satoshi text-xs", textColor)}>
-        <Text className={cn("font-nunito-bold text-xs")}>{value}</Text> {label}
+        {label && <Text>{label} </Text>}
+        <Text className="font-nunito-bold">{value}</Text>
       </Text>
     </ScalePressable>
   );

@@ -11,7 +11,7 @@ const TIME_MODE_MULTIPLIERS: Record<TimeMode, number | (() => number)> = {
 export const TIME_MODE_LABELS: Record<TimeMode, string> = {
   WEEKLY: "this week",
   BIMONTHLY: "this 2 weeks",
-  MONTHLY: "this month",
+  MONTHLY: "",
   EVENTUALLY: "away from goal",
 };
 

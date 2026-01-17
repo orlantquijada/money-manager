@@ -4,7 +4,6 @@ import { Text } from "react-native";
 import Animated, {
   type SharedValue,
   useAnimatedStyle,
-  useSharedValue,
 } from "react-native-reanimated";
 import { ScalePressable } from "@/components/scale-pressable";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
@@ -17,16 +16,10 @@ type Props = {
   folderId: Folder["id"];
   folderName: Folder["name"];
   funds: FundWithMeta[];
-  defaultOpen?: boolean;
+  open: SharedValue<boolean>;
 };
 
-export default function Budget({
-  funds,
-  folderId,
-  folderName,
-  defaultOpen,
-}: Props) {
-  const open = useSharedValue(true);
+export default function Budget({ funds, folderId, folderName, open }: Props) {
   const toggle = () => {
     open.set((prev) => !prev);
   };

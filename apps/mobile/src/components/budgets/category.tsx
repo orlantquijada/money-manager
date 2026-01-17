@@ -42,20 +42,19 @@ type CategoryHeaderProps = {
 function CategoryHeader({ fund, isFunded }: CategoryHeaderProps) {
   return (
     <StyledLeanView className="flex-row items-center justify-between gap-3">
-      <StyledLeanView className="shrink flex-row items-center gap-1.5">
-        <StyledLeanText
-          className="shrink font-satoshi-medium text-base text-foreground"
-          ellipsizeMode="tail"
-          numberOfLines={1}
-        >
-          {fund.name}
-        </StyledLeanText>
-        {isFunded && (
-          <Check className="text-quick-stat-non-negotiable" size={16} />
-        )}
-      </StyledLeanView>
+      <StyledLeanText
+        className="shrink font-satoshi-medium text-base text-foreground"
+        ellipsizeMode="tail"
+        numberOfLines={1}
+      >
+        {fund.name}
+      </StyledLeanText>
 
-      <BudgetQuickStats fund={fund} />
+      {isFunded ? (
+        <Check className="text-quick-stat-non-negotiable" size={16} />
+      ) : (
+        <BudgetQuickStats fund={fund} />
+      )}
     </StyledLeanView>
   );
 }
