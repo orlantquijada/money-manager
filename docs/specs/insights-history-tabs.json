@@ -1,14 +1,99 @@
 {
   "feature": "Insights & History Tab Split",
-  "version": "1.0",
+  "version": "1.1",
   "created": "2026-01-17",
+  "updated": "2026-01-17",
   "goal": "Split the transactions screen into two focused tabs: Insights (analytics/behavior) and History (transaction log)",
+
+  "decisions": {
+    "eventually_funds": {
+      "decision": "Show utilization-only alerts for EVENTUALLY funds",
+      "rationale": "These funds have no deadline, so time-based messaging ('3 days left') doesn't apply. Show '95% spent' without time context."
+    },
+    "alert_threshold": {
+      "decision": "Fixed 90% threshold for all fund types",
+      "rationale": "Simple and predictable. Time-weighted alerts (factoring burn rate vs days remaining) deferred to v2."
+    },
+    "period_state": {
+      "decision": "Independent between tabs, preserved in session",
+      "rationale": "Different use cases per tab. Each tab remembers its period selection when switching, but resets on app restart."
+    },
+    "alert_overflow": {
+      "decision": "Max 3 inline alerts, 'See all' opens modal at /(app)/alerts",
+      "rationale": "Prevents wall-of-warnings. Modal uses sheet transition, groups alerts by severity (critical first)."
+    },
+    "zero_alerts": {
+      "decision": "Hide alerts section entirely",
+      "rationale": "Cleaner than showing 'All budgets on track' card. Section only appears when there's actionable info."
+    },
+    "alert_refresh": {
+      "decision": "Optimistic removal when returning from fund detail",
+      "rationale": "If user adds budget in fund detail, assume alert resolved. Avoid stale warning after user took action."
+    },
+    "alert_computation": {
+      "decision": "Client-side from transaction.stats data",
+      "rationale": "Stats already include budgetUtilization per fund. No extra round trip. Remove budget.alerts endpoint from spec."
+    },
+    "chart_interaction": {
+      "decision": "Keep current donut chart behavior",
+      "rationale": "Whatever segment tap currently does, preserve it. Chart is donut style (not pie)."
+    },
+    "history_summary": {
+      "decision": "Pure list, no summary header",
+      "rationale": "Clean separation—Insights handles all analytics. History is focused transaction log."
+    },
+    "history_search": {
+      "decision": "Native stack header with large title + search bar",
+      "rationale": "iOS native pattern. Search filters store + fund name, client-side. Respects period filter."
+    },
+    "insights_header": {
+      "decision": "No navigation header",
+      "rationale": "Headerless for more content space. Period chips at top provide context."
+    },
+    "insights_scroll": {
+      "decision": "Single ScrollView (chips scroll with content)",
+      "rationale": "Simpler implementation. Sticky chips not needed given typical content length."
+    },
+    "empty_state_priority": {
+      "decision": "New user with zero transactions",
+      "rationale": "Most important empty state to nail. Show CTA to add first expense (no chart skeleton)."
+    },
+    "alert_styling": {
+      "decision": "Subtle border accent + system icons",
+      "rationale": "Color + icon for accessibility (colorblind-friendly). Left border accent, not background tint."
+    },
+    "alert_card_content": {
+      "decision": "Fund name + utilization % + message",
+      "rationale": "e.g., 'Food • 95% spent • Over by ₱200'. Enough info to understand severity."
+    },
+    "alert_sorting": {
+      "decision": "Severity first (critical → warning), then utilization %",
+      "rationale": "Most urgent alerts surface first."
+    },
+    "refresh_behavior": {
+      "decision": "Pull-to-refresh on both tabs",
+      "rationale": "Consistent UX across tabs. Offline shows stale cached data."
+    },
+    "deep_linking": {
+      "decision": "Skip for v1",
+      "rationale": "Not needed until push notifications implemented."
+    },
+    "rtl_support": {
+      "decision": "LTR only",
+      "rationale": "Target market doesn't require RTL."
+    },
+    "testing": {
+      "decision": "Manual testing only",
+      "rationale": "No unit/E2E tests for v1. Keep scope tight."
+    }
+  },
+
   "spec": {
-    "overview": "The current transactions.tsx tries to serve two purposes: showing spending analytics AND listing transaction history. This split separates concerns into dedicated tabs, allowing each to evolve independently. Insights becomes the analytics hub (charts, comparisons, alerts, future AI features), while History becomes a focused transaction log.",
+    "overview": "The current transactions.tsx tries to serve two purposes: showing spending analytics AND listing transaction history. This split separates concerns into dedicated tabs, allowing each to evolve independently. Insights becomes the analytics hub (charts, comparisons, alerts, future AI features), while History becomes a focused transaction log with search.",
 
-    "design": "## Tab Structure\n\n| Order | Route | Label | Icon | Purpose |\n|-------|-------|-------|------|--------|\n| 0 | `add-expense` | (FAB only) | Plus | Hidden from tab bar |\n| 1 | `(dashboard)` | Home | HomeDuo | Budget folders/funds |\n| 2 | `spending` | **Insights** | ChartColumn | Analytics & behavior |\n| 3 | `transactions` | **History** | ActivityRec | Transaction log |\n\n---\n\n## Insights Tab Layout\n\n```\n┌─────────────────────────────────────┐\n│  [Week] [Month] [3mo] [All]         │  ← Period Chips\n├─────────────────────────────────────┤\n│       ┌───────────┐                 │\n│       │  ◐ Chart  │   ₱12,500       │  ← Pie Chart + Total\n│       └───────────┘   this month    │\n│                                     │\n│   ↑ ₱2,500 vs last month           │  ← Period Comparison\n├─────────────────────────────────────┤\n│  ⚠️ Food is 95% spent (3 days left) │  ← Budget Alerts\n│  🔴 Transport over by ₱200          │     (inline cards)\n└─────────────────────────────────────┘\n```\n\n### Components\n- **PeriodChips**: Reuse existing (week/month/3mo/all)\n- **StatsHeader**: Reuse existing (pie chart + total + comparison)\n- **BudgetAlerts**: NEW - inline cards showing over-budget/at-risk funds\n\n---\n\n## History Tab Layout\n\n```\n┌─────────────────────────────────────┐\n│  [Week] [Month] [3mo] [All]         │  ← Period Chips\n├─────────────────────────────────────┤\n│  Today                              │\n│  ├─ Jollibee        -₱250  Food    │\n│  └─ Grab            -₱150  Trans   │\n│                                     │\n│  Yesterday                          │\n│  ├─ SM Supermarket  -₱1,200  Groc  │\n│  ...                                │\n└─────────────────────────────────────┘\n```\n\n### Components\n- **PeriodChips**: Reuse existing\n- **TransactionList**: Move from current transactions.tsx (with pagination)\n- NO StatsHeader - just the list\n\n---\n\n## Budget Alerts Card Design\n\n```\n┌─ Warning (yellow border) ──────────────────┐\n│  ⚠️  Food                                  │\n│  95% spent · 3 days until reset           │\n└────────────────────────────────────────────┘\n\n┌─ Critical (red border) ────────────────────┐\n│  🔴  Transport                             │\n│  Over budget by ₱200                       │\n└────────────────────────────────────────────┘\n```\n\nTappable → navigates to fund detail page",
+    "design": "## Tab Structure\n\n| Order | Route | Label | Icon | Purpose |\n|-------|-------|-------|------|--------|\n| 0 | `add-expense` | (FAB only) | Plus | Hidden from tab bar |\n| 1 | `(dashboard)` | Home | HomeDuo | Budget folders/funds |\n| 2 | `spending` | **Insights** | ChartColumn | Analytics & behavior |\n| 3 | `transactions` | **History** | ActivityRec | Transaction log |\n\n---\n\n## Insights Tab Layout\n\n```\n┌─────────────────────────────────────┐\n│  [Week] [Month] [3mo] [All]         │  ← Period Chips (scrolls with content)\n├─────────────────────────────────────┤\n│       ┌───────────┐                 │\n│       │  ◐ Donut  │   ₱12,500       │  ← Donut Chart + Total\n│       └───────────┘   this month    │\n│                                     │\n│   ↑ ₱2,500 vs last month           │  ← Period Comparison\n├─────────────────────────────────────┤\n│  ! Food • 95% spent               │  ← Budget Alerts (max 3 inline)\n│  ● Transport • Over by ₱200        │     Tap → fund detail\n│  [See all alerts]                   │     → /(app)/alerts modal\n└─────────────────────────────────────┘\n```\n\n### Insights Components\n- **No header** - content starts at top\n- **PeriodChips**: Reuse existing (week/month/3mo/all)\n- **StatsHeader**: Reuse existing (donut chart + total + comparison)\n- **BudgetAlerts**: NEW - inline cards, max 3, 'See all' opens sheet modal\n- **Empty state**: Zero transactions → CTA button to add first expense\n- **Pull-to-refresh**: Enabled\n- **Offline**: Show stale cached data\n\n---\n\n## History Tab Layout\n\n```\n┌─────────────────────────────────────┐\n│  History                     🔍     │  ← Native large title + search\n├─────────────────────────────────────┤\n│  [Week] [Month] [3mo] [All]         │  ← Period Chips\n├─────────────────────────────────────┤\n│  Today                              │\n│  ├─ Jollibee        -₱250  Food    │  ← Tap → transaction detail\n│  └─ Grab            -₱150  Trans   │\n│                                     │\n│  Yesterday                          │\n│  ├─ SM Supermarket  -₱1,200  Groc  │\n│  ...                                │\n└─────────────────────────────────────┘\n```\n\n### History Components\n- **Native stack header**: Large title 'History' with search bar\n- **Search**: Client-side filter on store + fund name. Respects period filter.\n- **Search UX**: Clear button dismisses keyboard. No results → 'No transactions found' text.\n- **PeriodChips**: Reuse existing\n- **TransactionList**: Move from current transactions.tsx (with pagination)\n- **NO summary stats** - pure list\n- **Pull-to-refresh**: Enabled\n\n---\n\n## Budget Alert Card Design\n\n```\n┌─ Warning (yellow left border) ────────────────────┐\n│  !  Food                                         │\n│     95% spent                                    │\n└───────────────────────────────────────────────────┘\n\n┌─ Critical (red left border) ──────────────────────┐\n│  ●  Transport                                    │\n│     Over by ₱200                                 │\n└───────────────────────────────────────────────────┘\n```\n\n### Alert Card Details\n- **Styling**: Subtle left border accent (yellow=warning, red=critical)\n- **Icons**: System icons (SF Symbols/Phosphor) for accessibility\n- **Content**: Fund name + utilization % or overage message\n- **Tap action**: Navigate to fund detail screen\n- **Sorting**: Critical first, then by utilization % descending\n- **EVENTUALLY funds**: Show utilization only, no time-based message\n\n---\n\n## See All Alerts Modal\n\n**Route**: `app/(app)/alerts.tsx`\n**Transition**: Sheet modal (bottom sheet slide up)\n\n```\n┌─────────────────────────────────────┐\n│  ─────  (grab handle)               │\n│                                     │\n│  Over Budget                        │  ← Section header\n│  ├─ Transport • Over by ₱200       │\n│  └─ Entertainment • Over by ₱50    │\n│                                     │\n│  At Risk                            │  ← Section header\n│  ├─ Food • 95% spent               │\n│  ├─ Groceries • 92% spent          │\n│  └─ ...                             │\n└─────────────────────────────────────┘\n```\n\n- **Grouped by severity**: 'Over Budget' section, then 'At Risk' section\n- **Tap alert**: Navigate to fund detail (dismisses modal)",
 
-    "api": "## Existing Endpoints (No Changes Needed)\n\n### `transaction.stats`\n```typescript\nInput: { period: 'week' | 'month' | '3mo' | 'all' }\nOutput: {\n  totalSpent: number\n  byFund: Array<{\n    fundId: number\n    fundName: string\n    amount: number\n    percentage: number\n    budgetedAmount?: number\n    budgetUtilization?: number\n  }>\n  comparison?: {\n    previousTotal: number\n    difference: number\n    percentageChange: number\n  }\n}\n```\n\n### `budget.alerts`\n```typescript\nOutput: Array<{\n  type: 'over_budget' | 'almost_over'\n  fundId: number\n  fundName: string\n  message: string\n  severity: 'warning' | 'info'\n}>\n```\n\n### `transaction.list`\n```typescript\nInput: { period, cursor?, limit? }\nOutput: {\n  transactions: Transaction[]\n  nextCursor?: string\n}\n```",
+    "api": "## Endpoints\n\n### `transaction.stats` (existing, no changes)\n```typescript\nInput: { period: 'week' | 'month' | '3mo' | 'all' }\nOutput: {\n  totalSpent: number\n  byFund: Array<{\n    fundId: number\n    fundName: string\n    amount: number\n    percentage: number\n    budgetedAmount?: number\n    budgetUtilization?: number  // Used for client-side alert computation\n  }>\n  comparison?: {\n    previousTotal: number\n    difference: number\n    percentageChange: number\n  }\n}\n```\n\n### `transaction.list` (existing, no changes)\n```typescript\nInput: { period, cursor?, limit? }\nOutput: {\n  transactions: Transaction[]\n  nextCursor?: string\n}\n```\n\n### Alert Computation (client-side)\n```typescript\n// Derive alerts from transaction.stats.byFund\nconst alerts = stats.byFund\n  .filter(f => f.budgetUtilization && f.budgetUtilization >= 0.9)\n  .map(f => ({\n    fundId: f.fundId,\n    fundName: f.fundName,\n    type: f.budgetUtilization >= 1.0 ? 'over_budget' : 'almost_over',\n    utilization: f.budgetUtilization,\n    overage: f.budgetUtilization >= 1.0 \n      ? f.amount - (f.budgetedAmount ?? 0) \n      : null,\n    severity: f.budgetUtilization >= 1.0 ? 'critical' : 'warning'\n  }))\n  .sort((a, b) => {\n    // Critical first, then by utilization\n    if (a.severity !== b.severity) return a.severity === 'critical' ? -1 : 1;\n    return b.utilization - a.utilization;\n  });\n```",
 
     "files": [
       {
@@ -19,37 +104,43 @@
       {
         "action": "modify",
         "path": "apps/mobile/src/components/tab-bar.tsx",
-        "purpose": "Update ROUTE_CONFIG labels: spending→'Insights', transactions→'History'. Consider ChartColumn icon for Insights"
+        "purpose": "Update ROUTE_CONFIG labels: spending→'Insights', transactions→'History'. Use ChartColumn icon for Insights"
       },
       {
         "action": "modify",
         "path": "apps/mobile/src/app/(app)/(tabs)/spending.tsx",
-        "purpose": "Build out Insights tab: StatsHeader + BudgetAlerts"
+        "purpose": "Build out Insights tab: no header, StatsHeader + BudgetAlerts, empty state CTA, pull-to-refresh"
       },
       {
         "action": "modify",
         "path": "apps/mobile/src/app/(app)/(tabs)/transactions.tsx",
-        "purpose": "Simplify to History tab: remove StatsHeader, keep PeriodChips + TransactionList"
+        "purpose": "Simplify to History tab: native stack header with large title + search, remove StatsHeader, keep PeriodChips + TransactionList"
       },
       {
         "action": "create",
         "path": "apps/mobile/src/components/stats/budget-alerts.tsx",
-        "purpose": "New component: inline alert cards for over-budget/at-risk funds"
+        "purpose": "Container component: renders max 3 BudgetAlertCards + 'See all' button if overflow"
       },
       {
         "action": "create",
         "path": "apps/mobile/src/components/stats/budget-alert-card.tsx",
-        "purpose": "Individual alert card with warning/critical styling"
+        "purpose": "Individual alert card with left border accent, system icon, fund name + message"
+      },
+      {
+        "action": "create",
+        "path": "apps/mobile/src/app/(app)/alerts.tsx",
+        "purpose": "Sheet modal route for 'See all alerts'. Grouped list by severity."
       }
     ]
   },
 
   "v2_future": {
-    "overview": "AI-powered features to add after core v1 is stable",
+    "overview": "AI-powered features to add after core v1 is stable. Prioritize Quiz + AI together.",
     "features": [
       {
         "name": "Spending Quiz",
         "description": "Pre-designed question templates with answers fetched at runtime. Gamified way to engage users with their data.",
+        "form_factor": "Full-screen modal with reveal animation",
         "examples": [
           "What was your biggest expense this week?",
           "Which fund are you closest to overspending?",
@@ -67,6 +158,15 @@
           "You haven't used your Entertainment fund in 2 weeks"
         ],
         "implementation_notes": "Could use OpenAI/Claude API. Feed summarized spending data, get natural language insights. Consider caching to reduce API costs."
+      },
+      {
+        "name": "Smart Alert Timing",
+        "description": "Time-weighted alert thresholds that factor in days remaining in budget period.",
+        "examples": [
+          "80% spent with 2 days left = warning (even though under 90%)",
+          "90% spent with 20 days left = no alert (pace is fine)"
+        ],
+        "implementation_notes": "Deferred from v1. Requires burn rate calculation and period-aware logic."
       }
     ]
   },
@@ -76,11 +176,11 @@
       "risk": "Insights tab feels empty",
       "likelihood": "Medium",
       "impact": "High",
-      "description": "With just pie chart + comparison + alerts, the Insights tab may feel sparse compared to History which has a full scrollable list.",
+      "description": "With just donut chart + comparison + alerts (which may be hidden if none), the Insights tab may feel sparse.",
       "mitigations": [
         "Ensure StatsHeader is visually substantial (good spacing, animations)",
-        "Add top funds list below chart (already in StatsHeader)",
-        "Consider adding a 'quick stats' row (total transactions count, avg transaction size)",
+        "Top funds list below chart (already in StatsHeader) provides scrollable content",
+        "Zero alerts = section hidden, not awkward empty card",
         "Plan v2 features (quiz, AI) to fill the space"
       ]
     },
@@ -91,8 +191,8 @@
       "description": "Existing users expect 'Transactions' to show transaction list. Renaming to 'History' + adding 'Insights' may cause confusion.",
       "mitigations": [
         "History is a common pattern (banking apps use it)",
-        "Consider a one-time tooltip/onboarding if user was active before",
-        "Insights icon (chart) visually differentiates from History (list)"
+        "Insights icon (chart) visually differentiates from History (list)",
+        "Large 'History' title with search makes purpose clear"
       ]
     },
     {
@@ -101,21 +201,23 @@
       "impact": "Medium",
       "description": "Users with many funds could see 5+ alerts, making the tab feel like a wall of warnings.",
       "mitigations": [
-        "Limit to top 3 alerts, with 'See all' expansion",
-        "Prioritize critical (over_budget) over warnings (almost_over)",
-        "Collapsible section if >2 alerts"
-      ]
+        "Max 3 inline alerts, 'See all' button for overflow",
+        "Critical alerts sorted first",
+        "Zero alerts = section hidden entirely"
+      ],
+      "status": "Mitigated by design decisions"
     },
     {
       "risk": "Period state not synced between tabs",
-      "likelihood": "Medium",
+      "likelihood": "Low",
       "impact": "Low",
-      "description": "User selects 'Month' on Insights, switches to History, expects same period but it defaults to something else.",
+      "description": "User selects 'Month' on Insights, switches to History, expects same period but it's different.",
       "mitigations": [
-        "Share period state via Zustand store or context",
-        "Or accept they're independent (different use cases)",
-        "Start both with 'Month' as sensible default"
-      ]
+        "Accepted: tabs are independent (different use cases)",
+        "Both default to 'Month'",
+        "Period preserved in session per tab"
+      ],
+      "status": "Accepted"
     },
     {
       "risk": "AnimatedTabScreen index mismatch",
@@ -129,14 +231,13 @@
       ]
     },
     {
-      "risk": "budget.alerts endpoint not returning useful data",
+      "risk": "Client-side alert computation misses edge cases",
       "likelihood": "Low",
       "impact": "Medium",
-      "description": "If the endpoint returns empty or unhelpful alerts, the Insights tab loses a key feature.",
+      "description": "Computing alerts from stats.byFund may miss funds with no transactions but high budget (utilization = 0).",
       "mitigations": [
-        "Verify endpoint behavior in Drizzle Studio / API testing",
-        "Add fallback empty state: 'All budgets on track!'",
-        "Ensure thresholds (90% warning, 100% critical) are sensible"
+        "Only alert on high utilization (>=90%), so zero-transaction funds won't alert",
+        "Test with EVENTUALLY funds to ensure utilization-only messaging works"
       ]
     },
     {
@@ -159,8 +260,8 @@
       "description": "Update tab bar labels and icons",
       "steps_to_verify": [
         "Tab bar shows: Home, Insights, History (in that order)",
-        "Insights tab has chart-style icon (different from History)",
-        "History tab has activity/list icon",
+        "Insights tab has ChartColumn icon",
+        "History tab has ActivityRec icon",
         "FAB still navigates to add-expense"
       ],
       "passes": false
@@ -181,13 +282,15 @@
     {
       "id": "INS-001",
       "category": "UI Component",
-      "description": "Insights tab displays StatsHeader with pie chart and comparison",
+      "description": "Insights tab displays StatsHeader with donut chart and comparison",
       "steps_to_verify": [
+        "No navigation header (headerless)",
         "Period chips are visible and functional",
-        "Pie chart renders with fund breakdown",
+        "Donut chart renders with fund breakdown",
         "Total spent displays with correct formatting",
         "Period comparison shows (e.g., '↑ ₱2,500 vs last month')",
-        "Changing period updates all data"
+        "Changing period updates all data",
+        "Pull-to-refresh works"
       ],
       "passes": false
     },
@@ -196,50 +299,109 @@
       "category": "UI Component",
       "description": "Budget alerts display as inline cards on Insights",
       "steps_to_verify": [
-        "Alerts fetch from budget.alerts endpoint",
-        "Over-budget funds show critical (red) styling",
-        "At-risk funds (>90%) show warning (yellow) styling",
+        "Alerts computed client-side from transaction.stats.byFund",
+        "Over-budget funds show critical (red border + icon)",
+        "At-risk funds (>=90%) show warning (yellow border + icon)",
         "Tapping alert navigates to fund detail page",
-        "Empty state shows 'All budgets on track' or similar",
-        "Max 3 alerts shown with expansion option if more exist"
+        "Zero alerts = section hidden entirely",
+        "Max 3 alerts shown inline",
+        "If >3 alerts, 'See all' button appears"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INS-003",
+      "category": "UI Component",
+      "description": "Insights empty state for new users",
+      "steps_to_verify": [
+        "Zero transactions shows CTA to add first expense",
+        "No chart skeleton or placeholder",
+        "CTA navigates to add-expense screen"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ALERT-001",
+      "category": "UI Component",
+      "description": "'See all alerts' modal works correctly",
+      "steps_to_verify": [
+        "Modal opens at /(app)/alerts route",
+        "Sheet transition (slide up from bottom)",
+        "Alerts grouped by severity: 'Over Budget' section, then 'At Risk'",
+        "Tapping alert in modal navigates to fund detail",
+        "Modal dismisses when navigating"
       ],
       "passes": false
     },
     {
       "id": "HIS-001",
       "category": "UI Component",
-      "description": "History tab shows transaction list without stats header",
+      "description": "History tab shows transaction list with native search header",
       "steps_to_verify": [
-        "Period chips are visible and functional",
+        "Native stack header with large title 'History'",
+        "Search bar in header",
+        "Period chips visible below header",
         "Transaction list renders with date grouping",
-        "NO pie chart or stats header visible",
-        "Pull-to-refresh works",
-        "Infinite scroll pagination works",
-        "Empty state appropriate for period (new user vs period-empty)"
+        "NO donut chart or stats visible",
+        "Tap transaction → transaction detail screen"
       ],
       "passes": false
     },
     {
       "id": "HIS-002",
       "category": "UI Component",
+      "description": "History search functionality",
+      "steps_to_verify": [
+        "Search filters by store name and fund name",
+        "Search is client-side (instant, no loading)",
+        "Search respects selected period filter",
+        "Clear button clears text and dismisses keyboard",
+        "No results shows 'No transactions found' text"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HIS-003",
+      "category": "UI Component",
       "description": "History tab pagination and refresh",
       "steps_to_verify": [
         "Scrolling to bottom loads more transactions",
         "Loading indicator shows during fetch",
         "Pull-to-refresh clears and reloads list",
-        "Changing period resets pagination"
+        "Changing period resets pagination and clears search"
       ],
       "passes": false
     },
     {
-      "id": "ALERT-001",
-      "category": "API Integration",
-      "description": "budget.alerts endpoint returns correct data",
+      "id": "STATE-001",
+      "category": "State Management",
+      "description": "Period state preserved per tab in session",
       "steps_to_verify": [
-        "Funds at >100% utilization return type='over_budget'",
-        "Funds at >90% utilization return type='almost_over'",
-        "Response includes fundId, fundName, message, severity",
-        "Funds under 90% do not appear in alerts"
+        "Select 'Week' on History, switch to Insights, return to History → still 'Week'",
+        "Insights and History can have different periods simultaneously",
+        "Both default to 'Month' on fresh app launch"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ALERT-002",
+      "category": "State Management",
+      "description": "Alert optimistic removal on return from fund detail",
+      "steps_to_verify": [
+        "Tap alert → fund detail → add budget → return to Insights",
+        "Alert for that fund is removed (or utilization updated)",
+        "No stale alert showing resolved condition"
+      ],
+      "passes": false
+    },
+    {
+      "id": "OFFLINE-001",
+      "category": "Edge Cases",
+      "description": "Offline behavior",
+      "steps_to_verify": [
+        "Insights shows stale cached data when offline",
+        "History shows stale cached data when offline",
+        "No error blocking UI"
       ],
       "passes": false
     }
