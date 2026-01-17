@@ -13,7 +13,6 @@ import {
   ChartColumnDuoDark,
   HomeDuoDark,
   Plus,
-  PlusRecDuoDark,
 } from "@/icons";
 import type { TabBarIconProps } from "@/utils/types";
 import { ScalePressable } from "./scale-pressable";
@@ -28,9 +27,9 @@ type RouteConfig = {
   icon: ComponentType<TabBarIconProps>;
 };
 
+// Only tabs shown in the tab bar (add-expense is FAB-only)
 const ROUTE_CONFIG: RouteConfig[] = [
   { name: "(dashboard)", label: "Home", icon: HomeDuoDark },
-  { name: "add-expense", label: "Add", icon: PlusRecDuoDark },
   { name: "spending", label: "Insights", icon: ChartColumnDuoDark },
   { name: "transactions", label: "History", icon: ActivityRecDuoDark },
 ];

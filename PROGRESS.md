@@ -2,9 +2,15 @@
 
 ## Current Session
 Working on: Insights & History Tab Split (spec: insights-history-tabs.json)
-Last completed: TAB-001, TAB-002 - Navigation foundation with new tab labels/icons
+Last completed: TAB-001, HIS-001 - Tab bar cleanup + History tab
 
 ## Recent Progress
+- 2026-01-17: Insights & History tab split - History tab
+  - Removed add-expense from tab bar ROUTE_CONFIG (FAB-only now)
+  - Implemented History tab with large title + search bar
+  - Client-side search filters by store/fund name
+  - Removed StatsHeader (pure transaction list)
+  - Search empty state shows "No transactions found"
 - 2026-01-17: Insights & History tab split - Navigation foundation
   - Created ChartColumnDuoDark icon for Insights tab
   - Updated tab bar labels: spending→"Insights", transactions→"History"
