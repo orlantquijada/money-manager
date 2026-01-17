@@ -7,7 +7,7 @@ export default function HistoryLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: true,
+        headerShown: false,
         contentStyle: { backgroundColor },
       }}
     />

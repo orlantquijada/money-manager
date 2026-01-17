@@ -1,60 +1,29 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
 import { GlassCloseButton } from "@/components/glass-button";
-import {
-  type TransactionItem,
-  TransactionList,
-} from "@/components/transactions";
+import { TransactionList } from "@/components/transactions";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { useFundTransactions } from "@/hooks/use-transactions";
 import { trpc } from "@/utils/api";
 
 export default function FundTransactionsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const fundId = Number(id);
-  const queryClient = useQueryClient();
-
-  // Pagination state
-  const [cursor, setCursor] = useState<string | undefined>();
-  const [transactions, setTransactions] = useState<TransactionItem[]>([]);
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Query fund for header
   const { data: fund, isLoading: fundLoading } = useQuery(
     trpc.fund.retrieve.queryOptions(fundId)
   );
 
-  // Query list with pagination
-  const { data: listData, isFetching: listFetching } = useQuery(
-    trpc.transaction.listByFund.queryOptions({ fundId, cursor, limit: 50 })
-  );
-
-  // Accumulate transactions when data changes
-  useEffect(() => {
-    if (listData?.transactions) {
-      setTransactions((prev) =>
-        cursor ? [...prev, ...listData.transactions] : listData.transactions
-      );
-    }
-  }, [listData?.transactions, cursor]);
-
-  // Load more handler
-  const handleLoadMore = useCallback(() => {
-    if (listData?.nextCursor) {
-      setCursor(listData.nextCursor);
-    }
-  }, [listData?.nextCursor]);
-
-  // Refresh handler
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true);
-    setCursor(undefined);
-    setTransactions([]);
-    await queryClient.invalidateQueries({
-      queryKey: ["transaction"],
-    });
-    setIsRefreshing(false);
-  }, [queryClient]);
+  // Fetch transactions
+  const {
+    transactions,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    refetch,
+    isRefreshing,
+  } = useFundTransactions(fundId);
 
   if (fundLoading) {
     return (
@@ -95,11 +64,11 @@ export default function FundTransactionsScreen() {
       <StyledLeanView className="flex-1" style={{ marginHorizontal: -16 }}>
         <TransactionList
           emptyStateVariant="period-empty"
-          hasNextPage={!!listData?.nextCursor}
-          isFetchingNextPage={listFetching && !!cursor}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
           isRefreshing={isRefreshing}
-          onLoadMore={handleLoadMore}
-          onRefresh={handleRefresh}
+          onLoadMore={fetchNextPage}
+          onRefresh={refetch}
           transactions={transactions}
         />
       </StyledLeanView>
