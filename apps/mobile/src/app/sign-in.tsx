@@ -2,11 +2,10 @@ import { useSSO } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useCallback } from "react";
-import { Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { ScalePressable } from "@/components/scale-pressable";
-import { useThemeColor } from "@/components/theme-provider";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import AppleIcon from "@/icons/apple";
 import GoogleIcon from "@/icons/google";
 
@@ -15,9 +14,6 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function SignInScreen() {
   const router = useRouter();
-  const backgroundColor = useThemeColor("background");
-  const foreground = useThemeColor("foreground");
-  const foregroundSecondary = useThemeColor("foreground-secondary");
 
   const { startSSOFlow: startAppleFlow } = useSSO();
   const { startSSOFlow: startGoogleFlow } = useSSO();
@@ -53,31 +49,28 @@ export default function SignInScreen() {
   }, [startGoogleFlow, router]);
 
   return (
-    <View
-      className="flex-1 px-6 pt-safe-offset-20 pb-safe-offset-8"
-      style={{ backgroundColor }}
-    >
+    <StyledLeanView className="flex-1 bg-background px-6 pt-safe-offset-20 pb-safe-offset-8">
       {/* Header */}
       <Animated.View entering={FadeInDown.delay(100).springify()}>
-        <Text className="font-bold text-4xl" style={{ color: foreground }}>
+        <StyledLeanText className="font-bold text-4xl text-foreground">
           Welcome to{"\n"}Money Manager
-        </Text>
-        <Text className="mt-4 text-lg" style={{ color: foregroundSecondary }}>
+        </StyledLeanText>
+        <StyledLeanText className="mt-4 text-foreground-secondary text-lg">
           Take control of your finances with simple envelope budgeting.
-        </Text>
+        </StyledLeanText>
       </Animated.View>
 
       {/* Sign in buttons */}
-      <View className="mt-auto gap-3">
+      <StyledLeanView className="mt-auto gap-3">
         <Animated.View entering={FadeInDown.delay(200).springify()}>
           <ScalePressable
             className="h-14 flex-row items-center justify-center gap-3 rounded-2xl bg-black"
             onPress={handleAppleSignIn}
           >
             <AppleIcon color="#fff" height={20} width={20} />
-            <Text className="font-semibold text-base text-white">
+            <StyledLeanText className="font-semibold text-base text-white">
               Continue with Apple
-            </Text>
+            </StyledLeanText>
           </ScalePressable>
         </Animated.View>
 
@@ -87,21 +80,18 @@ export default function SignInScreen() {
             onPress={handleGoogleSignIn}
           >
             <GoogleIcon height={20} width={20} />
-            <Text className="font-semibold text-base text-gray-900">
+            <StyledLeanText className="font-semibold text-base text-gray-900">
               Continue with Google
-            </Text>
+            </StyledLeanText>
           </ScalePressable>
         </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(400).springify()}>
-          <Text
-            className="mt-4 text-center text-sm"
-            style={{ color: foregroundSecondary }}
-          >
+          <StyledLeanText className="mt-4 text-center text-foreground-secondary text-sm">
             By continuing, you agree to our Terms of Service and Privacy Policy.
-          </Text>
+          </StyledLeanText>
         </Animated.View>
-      </View>
-    </View>
+      </StyledLeanView>
+    </StyledLeanView>
   );
 }

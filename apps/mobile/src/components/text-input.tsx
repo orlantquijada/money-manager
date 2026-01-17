@@ -6,7 +6,6 @@ import {
 } from "react-native";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { cn } from "@/utils/cn";
-import { useThemeColor } from "./theme-provider";
 
 const slots = {
   container: "h-10 rounded-xl bg-muted px-4 flex-row items-center",
@@ -17,12 +16,11 @@ const slots = {
 type Props = TextInputProps;
 
 export default function TextInput({ className, style, ...props }: Props) {
-  const cursorColor = useThemeColor("foreground");
   return (
     <RNTextInput
       className={cn(slots.container, slots.input, className)}
-      cursorColor={cursorColor}
-      selectionColor={cursorColor}
+      cursorColorClassName="accent-foreground"
+      selectionColorClassName="accent-foreground"
       style={[{ lineHeight: undefined, borderCurve: "continuous" }, style]}
       {...props}
     />
@@ -43,8 +41,6 @@ export function InputGroup({
   style,
   ...props
 }: InputGroupProps) {
-  const cursorColor = useThemeColor("foreground");
-
   return (
     <StyledLeanView
       {...containerProps}
@@ -55,8 +51,8 @@ export function InputGroup({
 
       <RNTextInput
         className={cn(slots.input, "h-full", className)}
-        cursorColor={cursorColor}
-        selectionColor={cursorColor}
+        cursorColorClassName="accent-foreground"
+        selectionColorClassName="accent-foreground"
         style={[{ lineHeight: undefined }, style]}
         {...props}
       />
