@@ -40,6 +40,10 @@ type Props = {
   periodLabel?: string;
   // Activity tab footer
   showSeeAllLink?: boolean;
+  // Layout props
+  bottomInset?: number;
+  // Keyboard behavior
+  keyboardDismissMode?: "none" | "on-drag" | "interactive";
 };
 
 function groupTransactionsByDate(
@@ -94,6 +98,8 @@ export function TransactionList({
   emptyStateVariant = "period-empty",
   periodLabel,
   showSeeAllLink = false,
+  bottomInset = 16,
+  keyboardDismissMode,
 }: Props) {
   const router = useRouter();
   const navigation =
@@ -214,7 +220,12 @@ export function TransactionList({
 
   return (
     <SectionList
-      contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
+      contentContainerStyle={{
+        paddingHorizontal: 16,
+        paddingBottom: bottomInset,
+      }}
+      contentInsetAdjustmentBehavior="automatic"
+      keyboardDismissMode={keyboardDismissMode}
       keyExtractor={keyExtractor}
       ListFooterComponent={renderFooter}
       refreshControl={
@@ -228,6 +239,7 @@ export function TransactionList({
       }
       renderItem={renderItem}
       renderSectionHeader={renderSectionHeader}
+      scrollIndicatorInsets={{ bottom: bottomInset }}
       sections={sections}
       stickySectionHeadersEnabled={false}
     />
