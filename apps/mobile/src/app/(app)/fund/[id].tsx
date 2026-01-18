@@ -98,7 +98,7 @@ function SpendingStats({
           {TIME_MODE_LABELS[fund.timeMode]} Budget
         </StyledLeanText>
         <StyledLeanText
-          className={`font-nunito-bold text-base ${isOverBudget ? "text-destructive" : "text-quick-stat-spending"}`}
+          className={`font-nunito-bold text-base ${isOverBudget ? "text-destructive" : "text-foreground-muted"}`}
         >
           {isOverBudget
             ? `${toCurrencyNarrow(overspent)} overspent`
