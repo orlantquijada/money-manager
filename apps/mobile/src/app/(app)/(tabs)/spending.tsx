@@ -1,13 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
+import Button from "@/components/button";
+import { BudgetAlerts } from "@/components/stats/budget-alerts";
 import PeriodChips, { type Period } from "@/components/stats/period-chips";
 import StatsHeader from "@/components/stats/stats-header";
 import { useTabBarHeight } from "@/components/tab-bar";
-import { StyledLeanView } from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { trpc } from "@/utils/api";
 
-export default function Transactions() {
+export default function Insights() {
+  const router = useRouter();
   const tabBarHeight = useTabBarHeight();
 
   // Period selection state
@@ -22,6 +26,16 @@ export default function Transactions() {
   const handlePeriodChange = useCallback((newPeriod: Period) => {
     setPeriod(newPeriod);
   }, []);
+
+  // Navigate to alerts modal
+  const handleSeeAllAlerts = useCallback(() => {
+    router.push("/alerts");
+  }, [router]);
+
+  // Navigate to add expense
+  const handleAddExpense = useCallback(() => {
+    router.navigate("/add-expense");
+  }, [router]);
 
   // Determine empty state variant
   // "new-user" only if they have no transactions ever (check "all" period with 0 total)
@@ -53,6 +67,30 @@ export default function Transactions() {
               period={period}
             />
           )}
+
+          {/* Empty state for new users */}
+          {isNewUser && (
+            <StyledLeanView className="flex-1 items-center justify-center gap-4 pt-12">
+              <StyledLeanText className="text-center font-satoshi-medium text-foreground-muted">
+                No transactions yet
+              </StyledLeanText>
+              <Button
+                className="h-10 bg-primary px-6"
+                onPress={handleAddExpense}
+              >
+                <StyledLeanText className="font-satoshi-bold text-primary-foreground">
+                  Add first expense
+                </StyledLeanText>
+              </Button>
+            </StyledLeanView>
+          )}
+
+          {/* Budget alerts - only show when stats loaded */}
+          <BudgetAlerts
+            isLoading={statsLoading}
+            onSeeAll={handleSeeAllAlerts}
+            stats={stats}
+          />
         </StyledLeanView>
       </StyledLeanView>
     </AnimatedTabScreen>

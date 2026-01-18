@@ -34,6 +34,10 @@ export default function AppLayout() {
       <Stack.Screen name="create-folder" options={modalHeaderOptions} />
       <Stack.Screen name="fund/[id]" options={modalHeaderOptions} />
       <Stack.Screen name="transaction/[id]" options={formSheetOptions} />
+      <Stack.Screen
+        name="alerts"
+        options={{ ...formSheetOptions, sheetAllowedDetents: "fitToContents" }}
+      />
       <Stack.Screen name="budget-score" options={modalHeaderOptions} />
       <Stack.Screen
         name="settings"
