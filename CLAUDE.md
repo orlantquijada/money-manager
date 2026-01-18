@@ -93,6 +93,24 @@ Expo Router (file-based):
 - **Schema changes**: Run `pnpm generate` then `pnpm push` (dev) or `pnpm migrate` (prod)
 - **Currency formatting**: Use `Intl.NumberFormat` API
 
+## Code Quality
+
+### Checklist
+Before marking work complete:
+- Code readable, well-named
+- Functions <50 lines
+- Files <800 lines
+- No deep nesting (>4 levels)
+- No hardcoded values
+- Many small files > few large files
+
+### Principles
+- Readability first—code is read more than written
+- Self-documenting code over comments
+- Extract common logic into functions
+- Create reusable components
+- Share utilities across modules
+
 ## Plan Mode
 
 - Make the plan extremely concise. Sacrifice grammar for the sake of concision.
