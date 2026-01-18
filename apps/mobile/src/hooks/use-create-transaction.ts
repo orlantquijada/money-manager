@@ -24,12 +24,12 @@ export function useCreateTransactionMutation() {
         // Success haptics
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-        // Invalidate all related queries to refresh UI state
-        queryClient.invalidateQueries({ queryKey: ["transaction"] });
-        queryClient.invalidateQueries({ queryKey: ["fund"] });
-        queryClient.invalidateQueries({ queryKey: ["folder"] });
-        queryClient.invalidateQueries({ queryKey: ["budget"] });
-        queryClient.invalidateQueries({ queryKey: ["store"] });
+        // Invalidate all related queries to refresh UI state using type-safe filters
+        queryClient.invalidateQueries(trpc.transaction.pathFilter());
+        queryClient.invalidateQueries(trpc.fund.pathFilter());
+        queryClient.invalidateQueries(trpc.folder.pathFilter());
+        queryClient.invalidateQueries(trpc.budget.pathFilter());
+        queryClient.invalidateQueries(trpc.store.pathFilter());
 
         // Reset form state
         useAddExpenseStore.getState().reset();
