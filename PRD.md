@@ -50,7 +50,7 @@ People who are intimidated by budgeting but want to take control of their financ
 - Contextual whispers
 - Spending trends
 - Category breakdown
-- Budget health indicators
+- Budget alerts
 - Streaks & habits
 
 ### Phase 4: Polish

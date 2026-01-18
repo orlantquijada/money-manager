@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Alert } from "react-native";
@@ -8,7 +7,7 @@ import { GlassIconButton } from "@/components/glass-button";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
-import { toCurrencyNarrow } from "@/utils/format";
+import { toCurrencyNarrow, toDateTime } from "@/utils/format";
 
 // TODO: Remove this toggle after deciding on final design
 const EMPHASIZE_AMOUNT = false;
@@ -128,12 +127,7 @@ export default function TransactionDetailScreen() {
         {!EMPHASIZE_AMOUNT && (
           <DetailRow isAmount label="Amount" value={toCurrencyNarrow(amount)} />
         )}
-        {date && (
-          <DetailRow
-            label="Created at"
-            value={format(date, "MMMM d, h:mm a")}
-          />
-        )}
+        {date && <DetailRow label="Created at" value={toDateTime(date)} />}
         {fund.name && <DetailRow label="Fund" value={fund.name} />}
         {store && <DetailRow label="Store" value={store.name} />}
         {transaction.note && (

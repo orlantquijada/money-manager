@@ -1,6 +1,7 @@
-import { format, isToday, isYesterday } from "date-fns";
+import { isToday, isYesterday } from "date-fns";
 
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { toDayDate } from "@/utils/format";
 
 type Props = {
   date: Date;
@@ -10,7 +11,7 @@ type Props = {
 function formatDateLabel(date: Date): string {
   if (isToday(date)) return "Today";
   if (isYesterday(date)) return "Yesterday";
-  return format(date, "EEE, MMM d"); // e.g., "Mon, Jan 6"
+  return toDayDate(date); // e.g., "Mon, Jan 6"
 }
 
 export function TransactionDateHeader({ date, total }: Props) {

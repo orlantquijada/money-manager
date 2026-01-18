@@ -1,17 +1,14 @@
 import type { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
 import { useNavigation } from "@react-navigation/native";
-import { format, startOfDay } from "date-fns";
+import { FlashList } from "@shopify/flash-list";
+import { startOfDay } from "date-fns";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
-import {
-  ActivityIndicator,
-  RefreshControl,
-  SectionList,
-  type SectionListData,
-  type SectionListRenderItem,
-} from "react-native";
+import { ActivityIndicator, RefreshControl } from "react-native";
+
 import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { toIsoDate } from "@/utils/format";
 import { sum } from "@/utils/math";
 import GlassButton from "../glass-button";
 import { IconSymbol } from "../ui/icon-symbol.ios";
@@ -21,11 +18,9 @@ import { type TransactionItem, TransactionRow } from "./transaction-row";
 
 type Transaction = TransactionItem;
 
-type TransactionSection = {
-  date: Date;
-  total: number;
-  data: Transaction[];
-};
+type ListItem =
+  | { type: "header"; date: Date; total: number; id: string }
+  | { type: "transaction"; data: Transaction };
 
 type Props = {
   transactions: Transaction[];
@@ -46,46 +41,53 @@ type Props = {
   keyboardDismissMode?: "none" | "on-drag" | "interactive";
 };
 
-function groupTransactionsByDate(
-  transactions: Transaction[]
-): TransactionSection[] {
-  const grouped = new Map<
-    string,
-    { date: Date; transactions: Transaction[] }
-  >();
+function useFlattenedTransactions(transactions: Transaction[]): ListItem[] {
+  return useMemo(() => {
+    const grouped = new Map<
+      string,
+      { date: Date; transactions: Transaction[] }
+    >();
 
-  for (const transaction of transactions) {
-    if (!transaction.date) continue;
+    for (const transaction of transactions) {
+      if (!transaction.date) continue;
 
-    const dateDayStart = startOfDay(transaction.date);
-    const dayKey = format(dateDayStart, "yyyy-MM-dd");
+      const dateDayStart = startOfDay(transaction.date);
+      const dayKey = toIsoDate(dateDayStart);
 
-    const existing = grouped.get(dayKey);
-    if (existing) {
-      existing.transactions.push(transaction);
-    } else {
-      grouped.set(dayKey, {
-        date: dateDayStart,
-        transactions: [transaction],
-      });
+      const existing = grouped.get(dayKey);
+      if (existing) {
+        existing.transactions.push(transaction);
+      } else {
+        grouped.set(dayKey, {
+          date: dateDayStart,
+          transactions: [transaction],
+        });
+      }
     }
-  }
 
-  // Convert to sections with totals
-  const sections: TransactionSection[] = [];
-  for (const [, group] of grouped) {
-    const total = sum(group.transactions.map(({ amount }) => Number(amount)));
-    sections.push({
-      date: group.date,
-      total,
-      data: group.transactions,
+    // Convert to array and sort by date descending
+    const sortedGroups = Array.from(grouped.values()).sort(
+      (a, b) => b.date.getTime() - a.date.getTime()
+    );
+
+    // Flatten
+    return sortedGroups.flatMap((group) => {
+      const total = sum(group.transactions.map(({ amount }) => Number(amount)));
+      const header: ListItem = {
+        type: "header",
+        date: group.date,
+        total,
+        id: `header-${group.date.getTime()}`,
+      };
+
+      const items: ListItem[] = group.transactions.map((txn) => ({
+        type: "transaction",
+        data: txn,
+      }));
+
+      return [header, ...items];
     });
-  }
-
-  // Sort by date descending (most recent first)
-  sections.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-  return sections;
+  }, [transactions]);
 }
 
 export function TransactionList({
@@ -107,10 +109,7 @@ export function TransactionList({
   const foregroundColor = useThemeColor("foreground");
   const mutedColor = useThemeColor("muted");
 
-  const sections = useMemo(
-    () => groupTransactionsByDate(transactions),
-    [transactions]
-  );
+  const data = useFlattenedTransactions(transactions);
 
   const handleTransactionPress = useCallback(
     (transactionId: string) => {
@@ -122,30 +121,30 @@ export function TransactionList({
     [router]
   );
 
-  const renderSectionHeader = useCallback(
-    ({
-      section,
-    }: {
-      section: SectionListData<Transaction, TransactionSection>;
-    }) => <TransactionDateHeader date={section.date} total={section.total} />,
-    []
+  const renderItem = useCallback(
+    ({ item }: { item: ListItem }) => {
+      if (item.type === "header") {
+        return <TransactionDateHeader date={item.date} total={item.total} />;
+      }
+      return (
+        <TransactionRow
+          onPress={() => handleTransactionPress(item.data.id)}
+          transaction={item.data}
+        />
+      );
+    },
+    [handleTransactionPress]
   );
 
-  const renderItem: SectionListRenderItem<TransactionItem, TransactionSection> =
-    useCallback(
-      ({ item }) => (
-        <TransactionRow
-          onPress={() => handleTransactionPress(item.id)}
-          transaction={item}
-        />
-      ),
-      [handleTransactionPress]
-    );
+  const getItemType = useCallback((item: ListItem) => {
+    return item.type;
+  }, []);
 
-  const keyExtractor = useCallback((item: Transaction) => item.id, []);
+  const keyExtractor = useCallback((item: ListItem) => {
+    return item.type === "header" ? item.id : item.data.id;
+  }, []);
 
   const handleSeeAllPress = useCallback(() => {
-    // Get parent navigator (MaterialTopTabs) since we're inside nested tabs
     const parentNav = navigation.getParent();
     if (parentNav) {
       parentNav.navigate("transactions");
@@ -153,7 +152,6 @@ export function TransactionList({
   }, [navigation]);
 
   const renderFooter = useCallback(() => {
-    // "See all spending" link for Activity tab
     if (showSeeAllLink) {
       return (
         <StyledLeanView className="items-center py-6">
@@ -177,7 +175,6 @@ export function TransactionList({
       );
     }
 
-    // Pagination footer
     if (!hasNextPage) return null;
 
     return (
@@ -209,7 +206,7 @@ export function TransactionList({
     mutedColor,
   ]);
 
-  if (sections.length === 0) {
+  if (data.length === 0) {
     return (
       <TransactionsEmptyState
         periodLabel={periodLabel}
@@ -219,15 +216,19 @@ export function TransactionList({
   }
 
   return (
-    <SectionList
+    <FlashList
       contentContainerStyle={{
         paddingHorizontal: 16,
         paddingBottom: bottomInset,
       }}
       contentInsetAdjustmentBehavior="automatic"
+      data={data}
+      getItemType={getItemType}
       keyboardDismissMode={keyboardDismissMode}
       keyExtractor={keyExtractor}
       ListFooterComponent={renderFooter}
+      onEndReached={onLoadMore}
+      onEndReachedThreshold={0.5}
       refreshControl={
         onRefresh ? (
           <RefreshControl
@@ -238,10 +239,6 @@ export function TransactionList({
         ) : undefined
       }
       renderItem={renderItem}
-      renderSectionHeader={renderSectionHeader}
-      scrollIndicatorInsets={{ bottom: bottomInset }}
-      sections={sections}
-      stickySectionHeadersEnabled={false}
     />
   );
 }

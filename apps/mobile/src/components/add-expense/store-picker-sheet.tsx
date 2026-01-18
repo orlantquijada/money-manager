@@ -198,13 +198,12 @@ type StoreRowProps = {
 };
 
 function StoreRow({ store, isSelected, onPress }: StoreRowProps) {
-  const displayText = store.lastSelectedFundName
-    ? `${store.name} (${store.lastSelectedFundName})`
-    : store.name;
-
   return (
     <ScalePressable
-      className={cn("px-6 py-3", isSelected ? "bg-mauve-4" : "bg-background")}
+      className={cn(
+        "flex-row items-center justify-between gap-1.5 px-6 py-3",
+        isSelected ? "bg-mauve-4" : "bg-background"
+      )}
       onPress={onPress}
       opacityValue={0.7}
       scaleValue={0.98}
@@ -214,8 +213,17 @@ function StoreRow({ store, isSelected, onPress }: StoreRowProps) {
         ellipsizeMode="tail"
         numberOfLines={1}
       >
-        {displayText}
+        {store.name}
       </StyledLeanText>
+      {store.lastSelectedFundName && (
+        <StyledLeanText
+          className="font-satoshi-medium text-foreground-muted"
+          ellipsizeMode="tail"
+          numberOfLines={1}
+        >
+          {store.lastSelectedFundName}
+        </StyledLeanText>
+      )}
     </ScalePressable>
   );
 }

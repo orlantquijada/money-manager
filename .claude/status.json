@@ -9,7 +9,7 @@
         "authentication": "done",
         "user_provisioning": "todo",
         "add_expense_flow": "done",
-        "transactions_tab": "todo",
+        "transactions_tab": "done",
         "polish_bug_fixes": "todo"
       }
     },
@@ -29,9 +29,9 @@
       "tasks": {
         "ai_foundation": "todo",
         "contextual_whispers": "todo",
-        "spending_trends": "todo",
+        "spending_trends": "in_progress",
         "category_breakdown": "todo",
-        "budget_health": "todo",
+        "budget_alerts": "in_progress",
         "streaks_habits": "todo"
       }
     },

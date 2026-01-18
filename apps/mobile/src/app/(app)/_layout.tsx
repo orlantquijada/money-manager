@@ -38,7 +38,6 @@ export default function AppLayout() {
         name="alerts"
         options={{ ...formSheetOptions, sheetAllowedDetents: "fitToContents" }}
       />
-      <Stack.Screen name="budget-score" options={modalHeaderOptions} />
       <Stack.Screen
         name="settings"
         options={{ ...modalHeaderOptions, headerShown: true }}

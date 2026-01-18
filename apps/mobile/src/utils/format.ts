@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 const shortFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
   currency: "PHP",
@@ -31,4 +33,20 @@ const wholeFormatter = new Intl.NumberFormat(
 
 export function toWholeCurrency(amount: number) {
   return wholeFormatter.format(amount);
+}
+
+export function toIsoDate(date: Date | number) {
+  return format(date, "yyyy-MM-dd");
+}
+
+export function toShortDate(date: Date | number) {
+  return format(date, "MMM d");
+}
+
+export function toDateTime(date: Date | number) {
+  return format(date, "MMMM d, h:mm a");
+}
+
+export function toDayDate(date: Date | number) {
+  return format(date, "EEE, MMM d");
 }

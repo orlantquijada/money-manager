@@ -2,8 +2,6 @@
 export {
   amber,
   amberDark,
-  green,
-  greenDark,
   lime,
   limeDark,
   mauve,

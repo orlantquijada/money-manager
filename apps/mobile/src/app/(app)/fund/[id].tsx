@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { TimeMode } from "api";
-import { differenceInDays, endOfMonth, endOfWeek, format } from "date-fns";
+import { differenceInDays, endOfMonth, endOfWeek } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -23,8 +23,8 @@ import {
   TIME_MODE_LABELS,
 } from "@/lib/fund";
 import { trpc } from "@/utils/api";
-import { green, red } from "@/utils/colors";
-import { toCurrencyNarrow } from "@/utils/format";
+import { red } from "@/utils/colors";
+import { toCurrencyNarrow, toShortDate } from "@/utils/format";
 
 function getDaysUntilReset(timeMode: TimeMode): number {
   const now = new Date();
@@ -174,17 +174,13 @@ function NonNegotiableStats({
 
       {isPaid && paidAt ? (
         <StyledLeanView
-          className="mt-1 items-center rounded-xl py-2"
+          className="mt-1 items-center rounded-xl border border-lime-9 py-2"
           style={{
             borderCurve: "continuous",
-            backgroundColor: green.green3,
           }}
         >
-          <StyledLeanText
-            className="font-satoshi-medium"
-            style={{ color: green.green11 }}
-          >
-            ✓ Paid on {format(new Date(paidAt), "MMM d")}
+          <StyledLeanText className="font-satoshi-medium text-quick-stat-non-negotiable">
+            ✓ Paid on {toShortDate(new Date(paidAt))}
           </StyledLeanText>
         </StyledLeanView>
       ) : (
@@ -197,17 +193,13 @@ function NonNegotiableStats({
 
           {isFunded && (
             <ScalePressable
-              className="mt-2 items-center rounded-xl py-3"
+              className="mt-2 items-center rounded-xl border border-lime-9 py-3"
               onPress={onMarkAsPaid}
               style={{
                 borderCurve: "continuous",
-                backgroundColor: green.green3,
               }}
             >
-              <StyledLeanText
-                className="font-satoshi-medium"
-                style={{ color: green.green11 }}
-              >
+              <StyledLeanText className="font-satoshi-medium text-quick-stat-non-negotiable">
                 ✓ Fully Funded — Tap to Mark as Paid
               </StyledLeanText>
             </ScalePressable>
@@ -565,7 +557,7 @@ export default function FundDetailScreen() {
                   </StyledLeanText>
                   <StyledLeanText className="font-satoshi text-foreground-muted text-xs">
                     {transaction.date
-                      ? format(new Date(transaction.date), "MMM d")
+                      ? toShortDate(new Date(transaction.date))
                       : ""}
                   </StyledLeanText>
                 </StyledLeanView>

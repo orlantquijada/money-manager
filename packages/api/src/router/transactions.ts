@@ -1,5 +1,5 @@
 import { endOfMonth, startOfMonth, subDays, subMonths } from "date-fns";
-import { funds, transactions as txns } from "db/schema";
+import { funds, stores, transactions as txns } from "db/schema";
 import { and, count, desc, eq, gte, lt, or, sum } from "drizzle-orm";
 import { z } from "zod";
 
@@ -284,7 +284,7 @@ export const transactionsRouter = router({
         store: z.string().default(""),
       })
     )
-    .mutation(({ ctx, input: { store, ...input } }) => {
+    .mutation(async ({ ctx, input: { store: storeName, ...input } }) => {
       const _input = {
         ...input,
         amount: input.amount.toString(),
@@ -292,13 +292,40 @@ export const transactionsRouter = router({
         userId: ctx.userId,
       };
 
-      if (store) {
-        return ctx.db.insert(txns).values({
-          ..._input,
+      let storeId: number | undefined;
+
+      if (storeName && storeName.trim().length > 0) {
+        const normalizedName = storeName.trim();
+        const existingStore = await ctx.db.query.stores.findFirst({
+          where: and(
+            eq(stores.name, normalizedName),
+            eq(stores.userId, ctx.userId)
+          ),
         });
+
+        if (existingStore) {
+          storeId = existingStore.id;
+          await ctx.db
+            .update(stores)
+            .set({ lastSelectedFundId: input.fundId })
+            .where(eq(stores.id, storeId));
+        } else {
+          const [newStore] = await ctx.db
+            .insert(stores)
+            .values({
+              name: normalizedName,
+              userId: ctx.userId,
+              lastSelectedFundId: input.fundId,
+            })
+            .returning({ id: stores.id });
+          storeId = newStore?.id;
+        }
       }
 
-      return ctx.db.insert(txns).values(_input);
+      return ctx.db.insert(txns).values({
+        ..._input,
+        storeId,
+      });
     }),
 
   totalThisMonth: protectedProcedure.query(async ({ ctx }) => {

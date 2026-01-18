@@ -5,6 +5,10 @@ Working on: Insights & History Tab Split (spec: insights-history-tabs.json)
 Last completed: HIS-001 - Native iOS search header via nested Stack
 
 ## Recent Progress
+- 2026-01-18: Fixed store creation logic in transaction mutation
+  - Transaction creation now resolves or creates stores by name
+  - Automatically updates store's lastSelectedFundId
+  - Associates transaction with correct storeId
 - 2026-01-17: Insights & History tab split - Native search header
   - Nested Stack under transactions/ folder for native iOS header
   - headerLargeTitle + headerSearchBarOptions for native UX
@@ -53,12 +57,13 @@ Last completed: HIS-001 - Native iOS search header via nested Stack
 - Numpad + amount input UI
 - Authentication (Clerk with Apple + Google)
 - Add expense flow (fund selection, notes, submission)
+- Transactions (History) tab
+- Insights (Spending trends)
+- Budget alerts
 
 ## What's Missing for MVP
 - User provisioning on first sign-in
-- Transactions tab
 - Onboarding experience
 
 ## Blockers / Notes
-- Store creation in transaction mutation is currently commented out (needs fix)
 - Development is iOS-first to streamline iteration

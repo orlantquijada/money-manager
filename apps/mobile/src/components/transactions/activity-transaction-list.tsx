@@ -1,11 +1,12 @@
 import type { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
 import { useNavigation } from "@react-navigation/native";
-import { format, startOfDay } from "date-fns";
+import { startOfDay } from "date-fns";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { toIsoDate } from "@/utils/format";
 import { sum } from "@/utils/math";
 import GlassButton from "../glass-button";
 import { IconSymbol } from "../ui/icon-symbol.ios";
@@ -40,7 +41,7 @@ function groupTransactionsByDate(
     if (!transaction.date) continue;
 
     const dateDayStart = startOfDay(transaction.date);
-    const dayKey = format(dateDayStart, "yyyy-MM-dd");
+    const dayKey = toIsoDate(dateDayStart);
 
     const existing = grouped.get(dayKey);
     if (existing) {

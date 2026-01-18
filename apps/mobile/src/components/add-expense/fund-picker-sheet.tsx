@@ -24,8 +24,6 @@ import { cn } from "@/utils/cn";
 import {
   amber,
   amberDark,
-  green,
-  greenDark,
   lime,
   limeDark,
   mauve,
@@ -348,7 +346,7 @@ function FolderHeader({
   );
 }
 
-// SPENDING funds: color based on spending depletion (green → amber → red)
+// SPENDING funds: color based on spending depletion (lime → amber → red)
 function getBudgetStatusColor(progress: number, isDark: boolean) {
   if (progress < 0.7) {
     return isDark ? limeDark.lime9 : lime.lime9;
@@ -359,11 +357,7 @@ function getBudgetStatusColor(progress: number, isDark: boolean) {
   return isDark ? redDark.red9 : red.red9;
 }
 
-// NON_NEGOTIABLE funds: color based on savings accumulation (muted → lime → green)
 function getSavingsStatusColor(progress: number, isDark: boolean) {
-  if (progress >= 1) {
-    return isDark ? greenDark.green9 : green.green9; // Fully funded
-  }
   if (progress >= 0.5) {
     return isDark ? limeDark.lime9 : lime.lime9; // Good progress
   }
