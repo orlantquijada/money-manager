@@ -1,4 +1,3 @@
-import { Host, Image } from "@expo/ui/swift-ui";
 import * as Haptics from "expo-haptics";
 import type { SFSymbol } from "expo-symbols";
 import { useCallback, useRef } from "react";
@@ -166,13 +165,11 @@ export function HistoryHeader({
                 <StyledLeanText className="font-satoshi-medium text-foreground">
                   {currentPeriodLabel}
                 </StyledLeanText>
-                <Host matchContents>
-                  <Image
-                    color={foregroundSecondary}
-                    size={12}
-                    systemName="chevron.up.chevron.down"
-                  />
-                </Host>
+                <IconSymbol
+                  color={foregroundSecondary}
+                  name="chevron.up.chevron.down"
+                  size={12}
+                />
               </StyledLeanView>
             </GlassButton>
           </DropdownMenu.Trigger>

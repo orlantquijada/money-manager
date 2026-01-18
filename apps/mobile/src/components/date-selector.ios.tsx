@@ -1,4 +1,4 @@
-import { BottomSheet, DateTimePicker, Host, Image } from "@expo/ui/swift-ui";
+import { BottomSheet, DateTimePicker, Host } from "@expo/ui/swift-ui";
 import { isToday, isYesterday, subDays } from "date-fns";
 import type { SFSymbol } from "expo-symbols";
 import { useState } from "react";
@@ -7,6 +7,7 @@ import * as DropdownMenu from "zeego/dropdown-menu";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import GlassButton from "./glass-button";
 import { useThemeColor } from "./theme-provider";
+import { IconSymbol } from "./ui/icon-symbol";
 
 const monthDateFormat = new Intl.DateTimeFormat("en-US", {
   month: "long",
@@ -98,15 +99,11 @@ export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
               <StyledLeanText className="mr-2 font-satoshi-medium text-base text-foreground">
                 {dateLabel}
               </StyledLeanText>
-              <Host matchContents>
-                <Image
-                  // color={PlatformColor("secondaryLabel") as unknown as string}
-                  // color={mauveDarkRgb.mauveDark11}
-                  color={foregroundSecondary}
-                  size={14}
-                  systemName="chevron.up.chevron.down"
-                />
-              </Host>
+              <IconSymbol
+                color={foregroundSecondary}
+                name="chevron.up.chevron.down"
+                size={14}
+              />
             </GlassButton>
           </StyledLeanView>
         </DropdownMenu.Trigger>
