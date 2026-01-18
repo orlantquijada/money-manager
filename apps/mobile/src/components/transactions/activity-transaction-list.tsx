@@ -6,6 +6,7 @@ import { useCallback, useMemo } from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { useFabHeight } from "@/hooks/use-fab-height";
 import { toIsoDate } from "@/utils/format";
 import { sum } from "@/utils/math";
 import GlassButton from "../glass-button";
@@ -87,6 +88,7 @@ export function ActivityTransactionList({
     useNavigation<MaterialTopTabNavigationProp<Record<string, object>>>();
   const foregroundColor = useThemeColor("foreground");
   const mutedColor = useThemeColor("muted");
+  const fabHeight = useFabHeight();
 
   const sections = useMemo(
     () => groupTransactionsByDate(transactions),
@@ -117,7 +119,10 @@ export function ActivityTransactionList({
 
   return (
     <ScrollView
-      contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
+      contentContainerStyle={{
+        paddingHorizontal: 16,
+        paddingBottom: fabHeight + 16,
+      }}
       refreshControl={
         onRefresh ? (
           <RefreshControl

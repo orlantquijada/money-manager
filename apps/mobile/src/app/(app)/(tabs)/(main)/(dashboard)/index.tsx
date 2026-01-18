@@ -4,6 +4,7 @@ import { makeMutable, type SharedValue } from "react-native-reanimated";
 import Budget from "@/components/budgets/budget";
 import { ScalePressable } from "@/components/scale-pressable";
 import { StyledLeanText } from "@/config/interop";
+import { useFabHeight } from "@/hooks/use-fab-height";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
 
 function useOpenStates() {
@@ -32,11 +33,14 @@ function useOpenStates() {
 export default function BudgetsScreen() {
   const { data: foldersWithFunds, isLoading } = useFoldersWithFunds();
   const { getOpenState, collapseAll } = useOpenStates();
+  const fabHeight = useFabHeight();
 
   return (
     <ScrollView
       className="flex-1 px-4"
-      contentContainerClassName="gap-3 py-4 min-h-full"
+      contentContainerClassName="gap-3 pt-4 min-h-full"
+      contentContainerStyle={{ paddingBottom: fabHeight + 16 }}
+      contentInsetAdjustmentBehavior="automatic"
     >
       {foldersWithFunds && foldersWithFunds.length > 0 && (
         <ScalePressable

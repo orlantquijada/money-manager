@@ -9,7 +9,7 @@ import { useTabChangeHaptics } from "@/hooks/use-tab-change-haptics";
 import { Plus } from "@/icons";
 import { useThemeColor } from "./theme-provider";
 
-const FAB_SIZE = 56;
+export const FAB_SIZE = 56;
 const TAB_BAR_HEIGHT = 48;
 const GAP = 16;
 

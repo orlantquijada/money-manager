@@ -1,6 +1,5 @@
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-export const FAB_SIZE = 64;
+import { FAB_SIZE } from "@/components/fab-overlay";
 
 export function useFabHeight() {
   const insets = useSafeAreaInsets();
