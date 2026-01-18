@@ -1,7 +1,6 @@
 import { View } from "react-native";
 import { AnimatedBlurOverlay } from "@/components/animated-blur-overlay";
-// import TabBarText from "@/components/tab-bar-text";
-import TabBar from "@/components/tab-bar";
+import FabOverlay from "@/components/fab-overlay";
 import { useTheme } from "@/components/theme-provider";
 import {
   TabPositionProvider,
@@ -24,25 +23,17 @@ function TabsContent() {
               : theme.background.tertiary,
           },
         }}
-        // tabBar={TabBarText}
-        // tabBarPosition="top"
-        tabBar={TabBar}
+        tabBar={FabOverlay}
         tabBarPosition="bottom"
       >
         {/*
         Screen order determines AnimatedTabScreen indexes:
           0: add-expense
-          1: (dashboard)
-          2: spending (Insights)
-          3: transactions (History)
-        
-        If you change the order here, update each screen's 
-        AnimatedTabScreen index prop to match!
+          1: (main) - contains NativeTabs for dashboard/spending/transactions
+        If you change the order here, update AnimatedTabScreen index prop!
       */}
         <MaterialTopTabs.Screen name="add-expense" />
-        <MaterialTopTabs.Screen name="(dashboard)" />
-        <MaterialTopTabs.Screen name="spending" />
-        <MaterialTopTabs.Screen name="transactions" />
+        <MaterialTopTabs.Screen name="(main)" />
       </MaterialTopTabs>
 
       {position && routes.length > 0 && (
