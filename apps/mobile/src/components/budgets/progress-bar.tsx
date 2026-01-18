@@ -1,6 +1,16 @@
-import { StyleSheet } from "react-native";
+import { useEffect } from "react";
+import { StyleSheet, type ViewProps } from "react-native";
+import Animated, {
+  type AnimatedProps,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { StyledLeanView } from "@/config/interop";
 import { clamp } from "@/utils/math";
+import { transitions } from "@/utils/motion";
+
+const AnimatedStyledLeanView = Animated.createAnimatedComponent(StyledLeanView);
 
 type ColorVariant = "spending" | "non-negotiable" | "destructive";
 
@@ -27,25 +37,40 @@ type Props = {
   /** Progress value from 0 to 1 */
   progress?: number;
   colorVariant?: ColorVariant;
-};
+} & AnimatedProps<ViewProps>;
 
 export default function ProgressBar({
   flex = 1,
   highlight,
   progress = 1,
   colorVariant = "spending",
+  style,
+  ...props
 }: Props) {
   const clampedProgress = clamp(progress, 0, 1);
   const { bg, border } = colorSlots[colorVariant];
+  const progressSV = useSharedValue(clampedProgress);
+
+  useEffect(() => {
+    progressSV.value = withSpring(clampedProgress, transitions.soft);
+  }, [clampedProgress, progressSV]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    width: `${progressSV.value * 100}%`,
+  }));
 
   return (
-    <StyledLeanView
+    <AnimatedStyledLeanView
       className={`h-2 shrink-0 rounded-full ${border}`}
-      style={{
-        flex,
-        borderCurve: "continuous",
-        borderWidth: highlight ? 1 : StyleSheet.hairlineWidth,
-      }}
+      style={[
+        {
+          flex,
+          borderCurve: "continuous",
+          borderWidth: highlight ? 1 : StyleSheet.hairlineWidth,
+        },
+        style,
+      ]}
+      {...props}
     >
       <StyledLeanView
         className="absolute inset-0 overflow-hidden rounded-full bg-muted"
@@ -62,14 +87,16 @@ export default function ProgressBar({
         className="absolute inset-0 overflow-hidden rounded-full"
         style={{ borderCurve: "continuous" }}
       >
-        <StyledLeanView
+        <AnimatedStyledLeanView
           className={`h-full rounded-full ${bg}`}
-          style={{
-            borderCurve: "continuous",
-            width: `${clampedProgress * 100}%`,
-          }}
+          style={[
+            {
+              borderCurve: "continuous",
+            },
+            animatedStyle,
+          ]}
         />
       </StyledLeanView>
-    </StyledLeanView>
+    </AnimatedStyledLeanView>
   );
 }

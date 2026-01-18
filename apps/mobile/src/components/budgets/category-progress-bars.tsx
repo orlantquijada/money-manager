@@ -1,6 +1,7 @@
 import { StyledLeanView } from "@/config/interop";
 import type { FundWithMeta } from "@/lib/fund";
 import { getTimeModeMultiplier } from "@/lib/fund";
+import { fadeInOutSpringify, layoutSpringify } from "@/utils/motion";
 import {
   getCurrentPeriodIndex,
   useFundProgress,
@@ -41,11 +42,17 @@ function SingleRollingBar({ fund }: { fund: FundWithMeta }) {
       {overspentRatio > 0 && (
         <ProgressBar
           colorVariant="destructive"
+          entering={fadeInOutSpringify("soft").entering}
           flex={overspentRatio}
+          layout={layoutSpringify("soft")}
           progress={1}
         />
       )}
-      <ProgressBar colorVariant={colorVariant} progress={progress} />
+      <ProgressBar
+        colorVariant={colorVariant}
+        layout={layoutSpringify("soft")}
+        progress={progress}
+      />
     </StyledLeanView>
   );
 }
@@ -62,7 +69,9 @@ function MultiSegmentBars({ fund }: { fund: FundWithMeta }) {
       {overspentRatio > 0 && (
         <ProgressBar
           colorVariant="destructive"
+          entering={fadeInOutSpringify("soft").entering}
           flex={overspentRatio}
+          layout={layoutSpringify("soft")}
           progress={1}
         />
       )}
@@ -73,6 +82,7 @@ function MultiSegmentBars({ fund }: { fund: FundWithMeta }) {
             barCount > 1 && index === getCurrentPeriodIndex(fund.timeMode)
           }
           key={index}
+          layout={layoutSpringify("soft")}
           progress={progress}
         />
       ))}
