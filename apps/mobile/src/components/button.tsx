@@ -1,4 +1,3 @@
-import { cva, type VariantProps } from "class-variance-authority";
 import { useCallback, useEffect } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 import {
@@ -12,33 +11,25 @@ import {
   type ScalePressableProps,
 } from "@/components/scale-pressable";
 import { useThemeColor } from "@/components/theme-provider";
+import {
+  type ButtonSize,
+  type ButtonVariant,
+  iconSizeClasses,
+  paddingBySize,
+} from "@/components/ui/button-tokens";
 import { cn } from "@/utils/cn";
 import { TW_TRANSITION_ALL } from "@/utils/motion";
 
-const buttonVariants = cva(
-  "relative items-center justify-center gap-2 rounded-xl",
-  {
-    variants: {
-      variant: {
-        default: "",
-      },
-      size: {
-        default: "h-8 px-4",
-      },
-    },
-    defaultVariants: { variant: "default", size: "default" },
-  }
-);
-
-type Props = Omit<ScalePressableProps, "style"> &
-  VariantProps<typeof buttonVariants> & {
-    style?: StyleProp<ViewStyle>;
-  };
+type Props = Omit<ScalePressableProps, "style"> & {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  style?: StyleProp<ViewStyle>;
+};
 
 export default function Button({
   className,
-  size,
-  variant,
+  size = "lg",
+  variant = "default",
   disabled,
   onPressIn,
   onPressOut,
@@ -87,14 +78,28 @@ export default function Button({
     [colorProgress, disabled, onPressOut]
   );
 
+  const isIcon = variant === "icon";
+  const sizeClass = isIcon ? iconSizeClasses[size] : undefined;
+
   return (
     <ScalePressable
       {...props}
-      className={cn(buttonVariants({ size, variant, className }))}
+      className={cn(
+        "relative items-center justify-center gap-2 rounded-full",
+        sizeClass,
+        className
+      )}
       disabled={disabled}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={[animatedStyle, style]}
+      style={[
+        animatedStyle,
+        !isIcon && {
+          paddingHorizontal: paddingBySize[size].horizontal,
+          paddingVertical: paddingBySize[size].vertical,
+        },
+        style,
+      ]}
     />
   );
 }

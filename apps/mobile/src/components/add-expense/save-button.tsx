@@ -44,7 +44,6 @@ export function SaveButton({
       onPress={handlePress}
       size="xl"
       tintColor={tintColor}
-      variant="default"
       {...props}
     >
       {loading ? (

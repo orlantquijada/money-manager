@@ -156,11 +156,7 @@ export function ActivityTransactionList({
 
       {sections.length > 0 && (
         <StyledLeanView className="items-center py-6">
-          <GlassButton
-            onPress={handleSeeAllPress}
-            tintColor={mutedColor}
-            variant="default"
-          >
+          <GlassButton onPress={handleSeeAllPress} tintColor={mutedColor}>
             <StyledLeanView className="flex-row items-center justify-center gap-1">
               <StyledLeanText className="font-satoshi-medium text-foreground">
                 See all spending

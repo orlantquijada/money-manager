@@ -59,7 +59,7 @@ function _BackButton({ _onPress }: { _onPress?: () => void }) {
   const iconColor = useThemeColor("foreground");
 
   return (
-    <GlassButton>
+    <GlassButton variant="icon">
       <ChevronLeft color={iconColor} size={24} />
     </GlassButton>
   );

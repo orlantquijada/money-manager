@@ -95,7 +95,7 @@ export function DateSelector({ date, onDateChange }: DateSelectorProps) {
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <StyledLeanView className="p-8 pr-4">
-            <GlassButton size="xl" tintColor={mutedColor} variant="default">
+            <GlassButton size="xl" tintColor={mutedColor}>
               <StyledLeanText className="mr-2 font-satoshi-medium text-base text-foreground">
                 {dateLabel}
               </StyledLeanText>

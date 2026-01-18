@@ -9,12 +9,15 @@ import {
   type ViewStyle,
 } from "react-native";
 import { useThemeColor } from "@/components/theme-provider";
+import {
+  type ButtonSize,
+  type ButtonVariant,
+  iconSizeClasses,
+  paddingBySize,
+} from "@/components/ui/button-tokens";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Cross } from "@/icons";
 import { cn } from "@/utils/cn";
-
-type GlassButtonVariant = "icon" | "default";
-type GlassButtonSize = "sm" | "md" | "lg" | "xl" | "xxl";
 
 type GlassButtonProps = PressableProps & {
   /**
@@ -22,41 +25,22 @@ type GlassButtonProps = PressableProps & {
    * - "icon": Circular button for icons (fixed size)
    * - "default": Pill-shaped button that auto-sizes to content
    */
-  variant?: GlassButtonVariant;
+  variant?: ButtonVariant;
   /**
    * Size of the button:
    * - For "icon" variant: affects the circle diameter (sm=32, md=40, lg=48)
    * - For "default" variant: affects padding and min-height
    */
-  size?: GlassButtonSize;
+  size?: ButtonSize;
   glassViewProps?: GlassViewProps;
   children?: ReactNode;
   tintColor?: string | null;
 };
 
-const iconSizeClasses: Record<GlassButtonSize, string> = {
-  sm: "size-8",
-  md: "size-10",
-  lg: "size-12",
-  xl: "size-14",
-  xxl: "size-16",
-};
-
-const paddingBySize: Record<
-  GlassButtonSize,
-  { horizontal: number; vertical: number }
-> = {
-  sm: { horizontal: 12, vertical: 6 },
-  md: { horizontal: 16, vertical: 8 },
-  lg: { horizontal: 20, vertical: 10 },
-  xl: { horizontal: 24, vertical: 12 },
-  xxl: { horizontal: 28, vertical: 14 },
-};
-
 export default function GlassButton({
   className,
   children,
-  variant = "icon",
+  variant = "default",
   size = "lg",
   glassViewProps = {},
   tintColor: tintColorProp,

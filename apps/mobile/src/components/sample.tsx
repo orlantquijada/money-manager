@@ -9,7 +9,7 @@ export default function Sample() {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <GlassButton size="xl" tintColor={muted} variant="default">
+        <GlassButton size="xl" tintColor={muted}>
           <StyledLeanText className="text-foreground">Hello</StyledLeanText>
         </GlassButton>
       </DropdownMenu.Trigger>

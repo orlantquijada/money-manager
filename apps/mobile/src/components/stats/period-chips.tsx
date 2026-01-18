@@ -41,7 +41,6 @@ export default function PeriodChips({ value, onChange, className }: Props) {
             }}
             size="sm"
             tintColor={isActive ? foregroundColor : backgroundColor}
-            variant="default"
           >
             <StyledLeanText
               className={cn(

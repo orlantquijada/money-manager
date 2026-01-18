@@ -160,7 +160,7 @@ export function HistoryHeader({
         {/* Period dropdown */}
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
-            <GlassButton size="md" tintColor={muted} variant="default">
+            <GlassButton size="md" tintColor={muted}>
               <StyledLeanView className="flex-row items-center gap-1.5">
                 <StyledLeanText className="font-satoshi-medium text-foreground">
                   {currentPeriodLabel}

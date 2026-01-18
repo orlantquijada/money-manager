@@ -155,11 +155,7 @@ export function TransactionList({
     if (showSeeAllLink) {
       return (
         <StyledLeanView className="items-center py-6">
-          <GlassButton
-            onPress={handleSeeAllPress}
-            tintColor={mutedColor}
-            variant="default"
-          >
+          <GlassButton onPress={handleSeeAllPress} tintColor={mutedColor}>
             <StyledLeanView className="flex-row items-center justify-center gap-1">
               <StyledLeanText className="font-satoshi-medium text-foreground">
                 See all spending
@@ -184,7 +180,6 @@ export function TransactionList({
           onPress={onLoadMore}
           style={{ opacity: isFetchingNextPage ? 0.6 : 1 }}
           tintColor={mutedColor}
-          variant="default"
         >
           {isFetchingNextPage ? (
             <ActivityIndicator color={foregroundColor} size="small" />
