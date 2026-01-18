@@ -9,7 +9,9 @@ import { useTabChangeHaptics } from "@/hooks/use-tab-change-haptics";
 import { Plus } from "@/icons";
 import { useThemeColor } from "./theme-provider";
 
-const FAB_SIZE = 64;
+const FAB_SIZE = 56;
+const TAB_BAR_HEIGHT = 48;
+const GAP = 16;
 
 /**
  * FAB-only overlay for navigating to add-expense.
@@ -33,15 +35,17 @@ export default function FabOverlay({
     [state.routes]
   );
 
+  const bottom = insets.bottom + TAB_BAR_HEIGHT + GAP;
+
   const translateY = useMemo(
     () =>
       position.interpolate({
         inputRange: fullInputRange,
         outputRange: fullInputRange.map((i) =>
-          i === 0 ? FAB_SIZE + insets.bottom + 16 : 0
+          i === 0 ? FAB_SIZE + bottom : 0
         ),
       }),
-    [position, fullInputRange, insets.bottom]
+    [position, fullInputRange, bottom]
   );
 
   const handleFabPress = useCallback(() => {
@@ -52,14 +56,14 @@ export default function FabOverlay({
     <Animated.View
       className="absolute right-4"
       style={{
-        bottom: insets.bottom,
+        bottom,
         transform: [{ translateY }],
       }}
     >
       <GlassContainer>
         <GlassButton
           onPress={handleFabPress}
-          size="xxl"
+          size="xl"
           tintColor={fabTintColor}
           variant="icon"
         >
