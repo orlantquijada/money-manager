@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useLocalSearchParams } from "expo-router";
-import { GlassCloseButton } from "@/components/glass-button";
+import { router, useLocalSearchParams } from "expo-router";
+import { GlassIconButton } from "@/components/glass-button";
 import { TransactionList } from "@/components/transactions";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { useFundTransactions } from "@/hooks/use-transactions";
@@ -49,7 +49,11 @@ export default function FundTransactionsScreen() {
     <StyledLeanView className="flex-1 bg-background pt-safe">
       {/* Header */}
       <StyledLeanView className="flex-row items-center justify-between px-4 pb-4">
-        <GlassCloseButton />
+        <GlassIconButton
+          icon="chevron.left"
+          onPress={() => router.back()}
+          size="lg"
+        />
         <StyledLeanText
           className="flex-1 text-center font-satoshi-medium text-foreground text-lg"
           ellipsizeMode="tail"
