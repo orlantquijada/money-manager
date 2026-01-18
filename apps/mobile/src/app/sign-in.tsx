@@ -26,7 +26,7 @@ export default function SignInScreen() {
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
-        router.replace("/(app)/(tabs)/(dashboard)");
+        router.replace("/(app)/(tabs)/(main)/(dashboard)");
       }
     } catch (error) {
       console.error("Apple sign-in error:", error);
@@ -41,7 +41,7 @@ export default function SignInScreen() {
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
-        router.replace("/(app)/(tabs)/(dashboard)");
+        router.replace("/(app)/(tabs)/(main)/(dashboard)");
       }
     } catch (error) {
       console.error("Google sign-in error:", error);

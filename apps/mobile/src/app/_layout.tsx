@@ -64,7 +64,7 @@ function AppContent() {
   }
 
   if (isSignedIn && (segments[0] as string) === "sign-in") {
-    return <Redirect href="/(app)/(tabs)/(dashboard)" />;
+    return <Redirect href="/(app)/(tabs)/(main)/(dashboard)" />;
   }
 
   return (

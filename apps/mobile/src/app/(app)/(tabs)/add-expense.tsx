@@ -58,7 +58,7 @@ export default function AddExpense() {
 
   // Handlers
   const handleCancel = useCallback(() => {
-    router.navigate("/(app)/(tabs)/(dashboard)");
+    router.navigate("/(app)/(tabs)/(main)/(dashboard)");
   }, [router]);
 
   const openFundPicker = useCallback(() => {
