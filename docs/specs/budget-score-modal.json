@@ -67,7 +67,8 @@
         "Tapping 'How is this calculated?' expands explanation",
         "Explanation shows score calculation rules clearly"
       ],
-      "passes": false
+      "passes": false,
+      "deferred_to": "v2"
     },
     {
       "id": "BSM-003",
@@ -80,7 +81,8 @@
         "Progress bars use correct status colors",
         "Tapping a fund row navigates to /fund/[id]"
       ],
-      "passes": false
+      "passes": false,
+      "deferred_to": "v2"
     },
     {
       "id": "BSM-004",
@@ -92,7 +94,8 @@
         "Styling is subtle/light, not overwhelming",
         "Tapping card navigates to relevant fund if fundId is set"
       ],
-      "passes": false
+      "passes": false,
+      "deferred_to": "v2"
     },
     {
       "id": "BSM-005",
@@ -105,7 +108,8 @@
         "Shows loading state while fetching",
         "Handles error states gracefully"
       ],
-      "passes": false
+      "passes": false,
+      "deferred_to": "v2"
     },
     {
       "id": "BSM-006",
@@ -116,7 +120,8 @@
         "Modal can be dismissed to return to dashboard",
         "Navigation is smooth with proper transition"
       ],
-      "passes": false
+      "passes": false,
+      "deferred_to": "v2"
     }
   ],
   "future_considerations": [

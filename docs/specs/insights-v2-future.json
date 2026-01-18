@@ -1,0 +1,66 @@
+{
+  "feature": "Insights V2: AI & Advanced Analytics",
+  "version": "1.0",
+  "created": "2026-01-18",
+  "updated": "2026-01-18",
+  "goal": "Enhance the Insights tab with AI-powered observations, gamified quizzes, and smarter alert logic to increase user engagement and financial awareness.",
+  "status": "planned",
+  "depends_on": "insights-history-tabs.json (v1 must be stable)",
+
+  "overview": "AI-powered features to add after core v1 is stable. Prioritize Quiz + AI together.",
+
+  "features": [
+    {
+      "name": "Spending Quiz",
+      "priority": "high",
+      "description": "Pre-designed question templates with answers fetched at runtime. Gamified way to engage users with their data.",
+      "form_factor": "Full-screen modal with reveal animation",
+      "examples": [
+        "What was your biggest expense this week?",
+        "Which fund are you closest to overspending?",
+        "How many transactions did you make yesterday?",
+        "What store do you visit most often?"
+      ],
+      "implementation_notes": "Questions stored in code as templates. Answers fetched via new tRPC endpoints. Reveal animation when user taps to see answer.",
+      "api_endpoints": [
+        {
+          "name": "quiz.getQuestion",
+          "description": "Returns a random question with computed answer from user data"
+        }
+      ]
+    },
+    {
+      "name": "AI Insights Button",
+      "priority": "high",
+      "description": "LLM-powered recommendations and observations about spending patterns. Goal is 'out of the box' surprising insights.",
+      "examples": [
+        "You spend 40% more on weekends than weekdays",
+        "Your grocery spending has dropped 15% this month",
+        "You haven't used your Entertainment fund in 2 weeks"
+      ],
+      "implementation_notes": "Could use OpenAI/Claude API. Feed summarized spending data, get natural language insights. Consider caching to reduce API costs.",
+      "considerations": [
+        "Rate limiting to control API costs",
+        "Cache insights for 24h unless new transactions added",
+        "Fallback to rule-based insights if API fails"
+      ]
+    },
+    {
+      "name": "Smart Alert Timing",
+      "priority": "medium",
+      "description": "Time-weighted alert thresholds that factor in days remaining in budget period.",
+      "examples": [
+        "80% spent with 2 days left = warning (even though under 90%)",
+        "90% spent with 20 days left = no alert (pace is fine)"
+      ],
+      "implementation_notes": "Requires burn rate calculation and period-aware logic. Formula: alert if (utilization / days_elapsed) > (1 / total_days) by significant margin.",
+      "formula": "projected_utilization = (spent / days_elapsed) * total_days / budget"
+    }
+  ],
+
+  "open_questions": [
+    "Which LLM provider to use (OpenAI vs Claude vs local)?",
+    "How to handle quiz for users with very few transactions?",
+    "Should smart alerts be opt-in or replace current fixed threshold?"
+  ]
+}

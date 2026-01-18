@@ -113,7 +113,7 @@
       },
       {
         "action": "modify",
-        "path": "apps/mobile/src/app/(app)/(tabs)/transactions.tsx",
+        "path": "apps/mobile/src/app/(app)/(tabs)/transactions/index.tsx",
         "purpose": "Simplify to History tab: native stack header with large title + search, remove StatsHeader, keep PeriodChips + TransactionList"
       },
       {
@@ -134,42 +134,7 @@
     ]
   },
 
-  "v2_future": {
-    "overview": "AI-powered features to add after core v1 is stable. Prioritize Quiz + AI together.",
-    "features": [
-      {
-        "name": "Spending Quiz",
-        "description": "Pre-designed question templates with answers fetched at runtime. Gamified way to engage users with their data.",
-        "form_factor": "Full-screen modal with reveal animation",
-        "examples": [
-          "What was your biggest expense this week?",
-          "Which fund are you closest to overspending?",
-          "How many transactions did you make yesterday?",
-          "What store do you visit most often?"
-        ],
-        "implementation_notes": "Questions stored in code as templates. Answers fetched via new tRPC endpoints. Reveal animation when user taps to see answer."
-      },
-      {
-        "name": "AI Insights Button",
-        "description": "LLM-powered recommendations and observations about spending patterns. Goal is 'out of the box' surprising insights.",
-        "examples": [
-          "You spend 40% more on weekends than weekdays",
-          "Your grocery spending has dropped 15% this month",
-          "You haven't used your Entertainment fund in 2 weeks"
-        ],
-        "implementation_notes": "Could use OpenAI/Claude API. Feed summarized spending data, get natural language insights. Consider caching to reduce API costs."
-      },
-      {
-        "name": "Smart Alert Timing",
-        "description": "Time-weighted alert thresholds that factor in days remaining in budget period.",
-        "examples": [
-          "80% spent with 2 days left = warning (even though under 90%)",
-          "90% spent with 20 days left = no alert (pace is fine)"
-        ],
-        "implementation_notes": "Deferred from v1. Requires burn rate calculation and period-aware logic."
-      }
-    ]
-  },
+  "v2_ref": "See insights-v2-future.json for planned AI features (Quiz, AI Insights, Smart Alert Timing)",
 
   "pre_mortems": [
     {
@@ -264,7 +229,7 @@
         "History tab has ActivityRec icon",
         "FAB still navigates to add-expense"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "TAB-002",
@@ -277,7 +242,7 @@
         "transactions (History) uses index 3",
         "Swipe gestures work correctly between tabs"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INS-001",
@@ -292,7 +257,7 @@
         "Changing period updates all data",
         "Pull-to-refresh works"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INS-002",
@@ -307,7 +272,7 @@
         "Max 3 alerts shown inline",
         "If >3 alerts, 'See all' button appears"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INS-003",
@@ -318,7 +283,7 @@
         "No chart skeleton or placeholder",
         "CTA navigates to add-expense screen"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ALERT-001",
@@ -331,7 +296,7 @@
         "Tapping alert in modal navigates to fund detail",
         "Modal dismisses when navigating"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HIS-001",
@@ -345,7 +310,7 @@
         "NO donut chart or stats visible",
         "Tap transaction → transaction detail screen"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HIS-002",
@@ -358,7 +323,7 @@
         "Clear button clears text and dismisses keyboard",
         "No results shows 'No transactions found' text"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HIS-003",
@@ -370,7 +335,7 @@
         "Pull-to-refresh clears and reloads list",
         "Changing period resets pagination and clears search"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "STATE-001",
@@ -381,7 +346,7 @@
         "Insights and History can have different periods simultaneously",
         "Both default to 'Month' on fresh app launch"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ALERT-002",
@@ -392,7 +357,7 @@
         "Alert for that fund is removed (or utilization updated)",
         "No stale alert showing resolved condition"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "OFFLINE-001",
@@ -403,7 +368,7 @@
         "History shows stale cached data when offline",
         "No error blocking UI"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
