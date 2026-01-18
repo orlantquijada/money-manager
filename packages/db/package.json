@@ -22,6 +22,7 @@
     "push": "pnpm with-env drizzle-kit push",
     "migrate": "pnpm with-env drizzle-kit migrate",
     "seed": "pnpm with-env tsx src/seed.ts",
+    "type-check": "tsc --noEmit",
     "clean": "rm -rf ./.turbo/ ./dist/ ./node_modules/"
   },
   "dependencies": {
