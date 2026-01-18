@@ -25,6 +25,7 @@ export function MetadataRow({
       )}
     >
       {segments.map((segment, index) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: segments are static
         <StyledLeanView className="flex-row items-center" key={index}>
           {index > 0 && (
             <StyledLeanText className="mx-2 text-foreground-muted">

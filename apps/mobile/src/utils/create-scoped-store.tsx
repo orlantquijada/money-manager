@@ -41,6 +41,7 @@ export function createScopedStore<T>(initializer: () => StoreApi<T>) {
       );
     }
     if (selector) {
+      // biome-ignore lint/correctness/useHookAtTopLevel: intentional conditional hook usage
       return useZustandStore(store, selector);
     }
     return store;

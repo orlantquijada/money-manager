@@ -48,6 +48,7 @@ export function useScrollReachedEdge({
   const dimension = orientation === "vertical" ? "height" : "width";
 
   const handleScroll = useCallback(
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: legacy complexity
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const { layoutMeasurement, contentOffset, contentSize } =
         event.nativeEvent;

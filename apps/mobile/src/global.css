@@ -431,6 +431,8 @@
   --font-inter-bold: "Inter_700Bold";
   --font-inter-bold-italic: "Inter_700Bold_Italic";
 
+  /* biome-ignore lint/correctness/noUnknownFunction: hairlineWidth is a custom function */
   --height-hairline: hairlineWidth();
+  /* biome-ignore lint/correctness/noUnknownFunction: hairlineWidth is a custom function */
   --border-width-hairline: hairlineWidth();
 }

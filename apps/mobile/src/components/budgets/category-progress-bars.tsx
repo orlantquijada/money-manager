@@ -81,6 +81,7 @@ function MultiSegmentBars({ fund }: { fund: FundWithMeta }) {
           highlight={
             barCount > 1 && index === getCurrentPeriodIndex(fund.timeMode)
           }
+          // biome-ignore lint/suspicious/noArrayIndexKey: simple number array
           key={index}
           layout={layoutSpringify("soft")}
           progress={progress}

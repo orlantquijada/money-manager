@@ -43,7 +43,7 @@ type DateSelectorProps = {
   style?: ViewStyle;
 };
 
-export function DateSelector({ date, onDateChange, style }: DateSelectorProps) {
+export function DateSelector({ date, onDateChange }: DateSelectorProps) {
   const [isOpened, setIsOpened] = useState(false);
   const foregroundColor = useThemeColor("foreground");
   const mutedColor = useThemeColor("muted");
