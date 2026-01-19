@@ -1,0 +1,14 @@
+# Codemap Generation Report
+Generated: 2026-01-19
+
+## architecture.md
++34 lines, -39 lines
+
+## backend.md
++30 lines, -91 lines
+
+## frontend.md
++82 lines, -178 lines
+
+## data.md
++19 lines, -156 lines

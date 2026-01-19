@@ -28,23 +28,6 @@ const getKey = (formattedIndex: number, formatted: string) => {
   return nonCommaIndex;
 };
 
-// // slide comma to the right instead of exiting
-// const getKey = (formattedIndex: number, formatted: string) => {
-//   if (formatted[formattedIndex] === ",") {
-//     let commaIndex = 0
-//     for (let i = 0; i < formattedIndex; i++)
-//       if (formatted[i] === ",") commaIndex++
-//     return commaIndex
-//   }
-//
-//   let nonCommaIndex = 0
-//   for (let i = 0; i < formattedIndex; i++) {
-//     if (formatted[i] === ",") continue
-//     nonCommaIndex++
-//   }
-//   return nonCommaIndex
-// }
-
 function applyKey(prev: string, key: NumpadKey): string {
   if (key === "backspace") {
     return prev.length === 1 ? "0" : prev.slice(0, -1);
