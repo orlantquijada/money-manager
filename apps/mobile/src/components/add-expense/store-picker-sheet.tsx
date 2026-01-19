@@ -30,6 +30,7 @@ type StorePickerSheetProps = {
 };
 
 export function StorePickerSheet({ ref }: StorePickerSheetProps) {
+  const insets = useSafeAreaInsets();
   const handleIndicatorColor = useThemeColor("foreground-muted");
   const backgroundColor = useThemeColor("background");
 
@@ -46,8 +47,11 @@ export function StorePickerSheet({ ref }: StorePickerSheetProps) {
         backgroundColor: handleIndicatorColor,
         width: 80,
       }}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
       ref={ref}
-      snapPoints={["50%", "80%"]}
+      snapPoints={["50%", "100%"]}
+      topInset={insets.top}
     >
       <Content stores={stores ?? []} />
     </BottomSheetModal>

@@ -126,6 +126,7 @@ function buildListItems(
 }
 
 export function FundPickerSheet({ ref }: FundPickerSheetProps) {
+  const insets = useSafeAreaInsets();
   const handleIndicatorColor = useThemeColor("foreground-muted");
   const backgroundColor = useThemeColor("background");
   const iconColor = useThemeColor("foreground-muted");
@@ -160,8 +161,11 @@ export function FundPickerSheet({ ref }: FundPickerSheetProps) {
         backgroundColor: handleIndicatorColor,
         width: 80,
       }}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
       ref={ref}
-      snapPoints={["50%", "80%"]}
+      snapPoints={["50%", "100%"]}
+      topInset={insets.top}
     >
       <Content
         allFunds={allFunds}
