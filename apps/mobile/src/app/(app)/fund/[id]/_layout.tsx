@@ -3,16 +3,27 @@ import { useThemeColor } from "@/components/theme-provider";
 
 export default function FundLayout() {
   const backgroundColor = useThemeColor("background");
+  const foregroundColor = useThemeColor("foreground");
 
   return (
     <Stack
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
+        headerTransparent: true,
+        headerBlurEffect: "none",
+        headerTitleStyle: { color: foregroundColor },
         contentStyle: { backgroundColor },
+        animation: "simple_push",
+        headerBackButtonDisplayMode: "minimal",
       }}
     >
       <Stack.Screen name="index" />
-      <Stack.Screen name="transactions" />
+      <Stack.Screen
+        name="transactions"
+        options={{
+          title: "Transactions",
+        }}
+      />
     </Stack>
   );
 }

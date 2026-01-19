@@ -39,6 +39,8 @@ type Props = {
   bottomInset?: number;
   // Keyboard behavior
   keyboardDismissMode?: "none" | "on-drag" | "interactive";
+  // Context
+  hideFundContext?: boolean;
 };
 
 function useFlattenedTransactions(transactions: Transaction[]): ListItem[] {
@@ -102,6 +104,7 @@ export function TransactionList({
   showSeeAllLink = false,
   bottomInset = 16,
   keyboardDismissMode,
+  hideFundContext = false,
 }: Props) {
   const router = useRouter();
   const navigation =
@@ -128,12 +131,13 @@ export function TransactionList({
       }
       return (
         <TransactionRow
+          hideFundContext={hideFundContext}
           onPress={() => handleTransactionPress(item.data.id)}
           transaction={item.data}
         />
       );
     },
-    [handleTransactionPress]
+    [handleTransactionPress, hideFundContext]
   );
 
   const getItemType = useCallback((item: ListItem) => {

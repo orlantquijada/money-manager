@@ -2,18 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { TimeMode } from "api";
 import { differenceInDays, endOfMonth, endOfWeek } from "date-fns";
 import * as Haptics from "expo-haptics";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import {
-  ActionSheetIOS,
-  Alert,
-  TextInput as RNTextInput,
-  ScrollView,
-} from "react-native";
+import { ActionSheetIOS, Alert, ScrollView } from "react-native";
 import CategoryProgressBars from "@/components/budgets/category-progress-bars";
-import { GlassCloseButton } from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useAddExpenseStore } from "@/lib/add-expense";
@@ -266,7 +259,6 @@ export default function FundDetailScreen() {
   const fundId = Number(id);
   const router = useRouter();
   const queryClient = useQueryClient();
-  const cursorColor = useThemeColor("foreground");
 
   const { data: fund, isLoading: fundLoading } = useQuery(
     trpc.fund.retrieve.queryOptions(fundId)
@@ -445,25 +437,17 @@ export default function FundDetailScreen() {
   }
 
   return (
-    <StyledLeanView className="flex-1 bg-background pt-4">
-      {/* Header */}
-      <StyledLeanView className="flex-row items-center justify-between px-4 pb-4">
-        <GlassCloseButton />
-        <RNTextInput
-          className="flex-1 text-center font-satoshi-medium text-foreground text-lg"
-          cursorColor={cursorColor}
-          onBlur={handleNameBlur}
-          onChangeText={setLocalName}
-          returnKeyType="done"
-          selectionColor={cursorColor}
-          value={localName}
-        />
-        <StyledLeanView className="w-12" />
-      </StyledLeanView>
-
+    <>
+      <Stack.Screen
+        options={{
+          title: fund.name,
+          headerLargeTitleEnabled: true,
+        }}
+      />
       <ScrollView
-        className="flex-1 px-4"
-        contentContainerClassName="gap-6 pb-8"
+        className="flex-1 bg-background"
+        contentContainerClassName="gap-6 pb-8 px-4"
+        contentInsetAdjustmentBehavior="automatic"
       >
         {/* Progress Section */}
         {fund.timeMode === "EVENTUALLY" ? (
@@ -609,6 +593,6 @@ export default function FundDetailScreen() {
           </ScalePressable>
         </StyledLeanView>
       </ScrollView>
-    </StyledLeanView>
+    </>
   );
 }
