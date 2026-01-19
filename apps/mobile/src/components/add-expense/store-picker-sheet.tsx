@@ -119,7 +119,7 @@ function Content({ stores }: ContentProps) {
   return (
     <StyledLeanView className="flex-1">
       {/* Search Input */}
-      <StyledLeanView className="px-6 py-3">
+      <StyledLeanView className="px-6 pt-2 pb-4">
         <BottomSheetTextInput
           autoCapitalize="words"
           autoCorrect={false}
@@ -141,7 +141,7 @@ function Content({ stores }: ContentProps) {
       {/* Add New Store Option */}
       {showAddNew && (
         <ScalePressable
-          className="flex-row items-center gap-2 px-6 py-3"
+          className="mt-4 flex-row items-center gap-2 px-6 py-3"
           onPress={handleAddNew}
           opacityValue={0.7}
           scaleValue={0.98}
@@ -160,7 +160,10 @@ function Content({ stores }: ContentProps) {
       {/* Store List */}
       {filteredStores.length > 0 ? (
         <BottomSheetScrollView
-          contentContainerStyle={{ paddingBottom: insets.bottom }}
+          contentContainerStyle={{
+            paddingBottom: insets.bottom,
+            paddingTop: 16,
+          }}
           scrollEventThrottle={16}
         >
           {filteredStores.map((store) => (

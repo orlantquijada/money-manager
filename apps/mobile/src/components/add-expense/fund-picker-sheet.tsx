@@ -232,7 +232,7 @@ function Content({ allFunds, initialItems, isDark, iconColor }: ContentProps) {
   return (
     <StyledLeanView className="flex-1 bg-background">
       {/* Search Input */}
-      <StyledLeanView className="px-6 py-2">
+      <StyledLeanView className="px-6 pt-2 pb-4">
         <BottomSheetTextInput
           autoCapitalize="none"
           autoCorrect={false}
@@ -312,7 +312,7 @@ function Content({ allFunds, initialItems, isDark, iconColor }: ContentProps) {
 
 function RecentsHeader({ iconColor }: { iconColor: string }) {
   return (
-    <StyledLeanView className="flex-row items-center gap-2 px-6 py-2">
+    <StyledLeanView className="mt-4 flex-row items-center gap-2 px-6 py-2">
       <ClockRewind color={iconColor} size={16} />
       <StyledLeanText
         className="font-satoshi-medium text-foreground-muted text-sm"
@@ -333,7 +333,7 @@ function FolderHeader({
   iconColor: string;
 }) {
   return (
-    <StyledLeanView className="mt-3 flex-row items-center gap-2 px-6 py-2">
+    <StyledLeanView className="mt-6 flex-row items-center gap-2 px-6 py-2">
       <FolderDuo color={iconColor} size={16} />
       <StyledLeanText
         className="font-satoshi-medium text-foreground-muted text-sm"
