@@ -24,7 +24,7 @@ export default function Category({ fund, className }: CategoryProps) {
   return (
     <Link asChild href={{ pathname: "/fund/[id]", params: { id: fund.id } }}>
       <ScalePressable
-        className={cn("justify-center gap-2", className)}
+        className={cn("justify-center gap-3", className)}
         opacityValue={0.7}
         scaleValue={0.98}
         style={{ height: CATEGORY_HEIGHT }}
@@ -45,7 +45,7 @@ function CategoryHeader({ fund, isFunded }: CategoryHeaderProps) {
   return (
     <StyledLeanView className="flex-row items-center justify-between gap-3">
       <StyledLeanText
-        className="shrink font-satoshi-medium text-base text-foreground-secondary"
+        className="shrink font-satoshi-medium text-base text-foreground"
         ellipsizeMode="tail"
         numberOfLines={1}
       >

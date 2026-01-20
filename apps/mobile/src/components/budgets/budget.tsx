@@ -44,16 +44,6 @@ export default function Budget({ funds, folderId, folderName, open }: Props) {
             {folderName}
           </StyledLeanText>
         </StyledLeanView>
-
-        {/* <Text */}
-        {/*   className={cn( */}
-        {/*     "font-satoshi text-mauve12/50 text-xs", */}
-        {/*     didOverspend && "text-pink8" */}
-        {/*   )} */}
-        {/* > */}
-        {/*   <Text className="font-nunito">{toCurrencyNarrow(amountLeft)} </Text> */}
-        {/*   left */}
-        {/* </Text> */}
       </ScalePressable>
 
       <Categories folderId={folderId} funds={funds} open={open} />
@@ -96,7 +86,8 @@ function Categories({ funds, open, folderId }: CategoriesProps) {
           <Category
             className={cn(
               idx === 0 && "mt-1.5",
-              idx === funds.length - 1 && "mb-4"
+              idx === funds.length - 1 && "mb-4",
+              "pl-7"
             )}
             fund={fund}
             key={fund.id}
