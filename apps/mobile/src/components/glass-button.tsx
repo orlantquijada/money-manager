@@ -3,11 +3,14 @@ import { router } from "expo-router";
 import type { SymbolViewProps } from "expo-symbols";
 import type { ReactNode } from "react";
 import {
+  Platform,
   Pressable,
   type PressableProps,
   StyleSheet,
   type ViewStyle,
 } from "react-native";
+
+import Button from "@/components/button";
 import { useThemeColor } from "@/components/theme-provider";
 import {
   type ButtonSize,
@@ -44,18 +47,44 @@ export default function GlassButton({
   size = "lg",
   glassViewProps = {},
   tintColor: tintColorProp,
+  style: styleProp,
   ...props
 }: GlassButtonProps) {
-  const { style, ..._glassViewProps } = glassViewProps;
   const themeTintColor = useThemeColor("background");
   const tintColor =
     tintColorProp !== null ? (tintColorProp ?? themeTintColor) : undefined;
+
+  // Android Fallback: Use the "Secondary" (subtle) Button
+  if (Platform.OS !== "ios") {
+    // Cast style to match Button's expected type (ViewStyle), ignoring the function case for now
+    // as GlassButton is rarely used with function styles in this project context.
+    // If strict type safety is needed for function styles, Button props would need update.
+    return (
+      <Button
+        className={className}
+        intent="secondary"
+        size={size}
+        style={styleProp as ViewStyle}
+        variant={variant}
+        {...props}
+      >
+        {children}
+      </Button>
+    );
+  }
+
+  // iOS Implementation (Glass)
+  const { style: glassStyle, ..._glassViewProps } = glassViewProps;
 
   const isIcon = variant === "icon";
   const sizeClass = isIcon ? iconSizeClasses[size] : undefined;
 
   return (
-    <Pressable className={cn("relative", sizeClass, className)} {...props}>
+    <Pressable
+      className={cn("relative", sizeClass, className)}
+      style={styleProp}
+      {...props}
+    >
       <GlassView
         glassEffectStyle="regular"
         isInteractive
@@ -72,7 +101,7 @@ export default function GlassButton({
             paddingHorizontal: paddingBySize[size].horizontal,
             paddingVertical: paddingBySize[size].vertical,
           },
-          style,
+          glassStyle,
         ]}
         tintColor={tintColor}
         {..._glassViewProps}
