@@ -33,15 +33,48 @@ function BackButton({
   hideBackButton,
   onBackPress,
 }: Pick<Props, "hideBackButton" | "onBackPress">) {
-  const iconColor = useThemeColor("muted-foreground");
   const tintColor = useThemeColor("muted");
 
   if (hideBackButton) return null;
 
   return (
     <GlassButton onPress={onBackPress} tintColor={tintColor} variant="icon">
-      <ChevronLeft color={iconColor} size={24} />
+      <ChevronLeft className="text-muted-foreground" size={24} />
     </GlassButton>
+  );
+}
+
+function ButtonContent({
+  loading,
+  variant,
+  isFinalAction,
+  disabled,
+  children,
+}: PropsWithChildren<
+  Pick<Props, "loading" | "variant" | "isFinalAction" | "disabled">
+>) {
+  const colorClassName = disabled ? "text-muted-foreground" : "text-background";
+
+  if (loading) {
+    return (
+      <ActivityIndicator colorClassName="accent-foreground" size="small" />
+    );
+  }
+
+  if (variant === "text") {
+    return (
+      <StyledLeanText
+        className={`font-satoshi-medium text-sm ${colorClassName}`}
+      >
+        {children}
+      </StyledLeanText>
+    );
+  }
+
+  return isFinalAction ? (
+    <Check className={colorClassName} size={24} />
+  ) : (
+    <ChevronRight className={colorClassName} size={24} />
   );
 }
 
@@ -57,48 +90,15 @@ export default function CreateFooter({
 }: PropsWithChildren<Props>) {
   const insets = useSafeAreaInsets();
   const { height: keyboardHeight } = useReanimatedKeyboardAnimation();
-  const backgroundColor = useThemeColor("background");
   const tintColor = useThemeColor("foreground");
   const disabledTintColor = useThemeColor("muted");
-  const disabledIconColor = useThemeColor("muted-foreground");
 
   const isDisabled = disabled || loading;
-  const currentIconColor = isDisabled ? disabledIconColor : backgroundColor;
   const currentTintColor = isDisabled ? disabledTintColor : tintColor;
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: keyboardHeight.value }],
   }));
-
-  const renderButtonContent = () => {
-    if (loading) {
-      return (
-        <ActivityIndicator colorClassName="accent-foreground" size="small" />
-      );
-    }
-
-    switch (variant) {
-      case "text":
-        return (
-          <StyledLeanText
-            className="font-satoshi-medium text-sm"
-            style={{ color: currentIconColor }}
-          >
-            {children}
-          </StyledLeanText>
-        );
-
-      case "icon-only":
-        return isFinalAction ? (
-          <Check color={currentIconColor} size={24} />
-        ) : (
-          <ChevronRight color={currentIconColor} size={24} />
-        );
-
-      default:
-        return null;
-    }
-  };
 
   // Determine button variant based on footer variant
   const buttonVariant = variant === "icon-only" ? "icon" : "default";
@@ -120,7 +120,14 @@ export default function CreateFooter({
           tintColor={currentTintColor}
           variant={buttonVariant}
         >
-          {renderButtonContent()}
+          <ButtonContent
+            disabled={isDisabled}
+            isFinalAction={isFinalAction}
+            loading={loading}
+            variant={variant}
+          >
+            {children}
+          </ButtonContent>
         </GlassButton>
       </StyledLeanView>
     </Animated.View>

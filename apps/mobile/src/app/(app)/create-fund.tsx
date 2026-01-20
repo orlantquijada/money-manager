@@ -8,8 +8,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChooseFolder from "@/components/create-fund/choose-folder";
 import FundInfo from "@/components/create-fund/fund-info";
 import NonNegotiableInfo from "@/components/create-fund/non-negotiable-info";
+import ProgressStepper from "@/components/create-fund/progress-stepper";
 import SpendingInfo from "@/components/create-fund/spending-info";
 import { GlassCloseButton } from "@/components/glass-button";
+import { StyledLeanView } from "@/config/interop";
 import {
   CreateFundProvider,
   type CreateFundScreens,
@@ -55,6 +57,16 @@ function CreateFundContent() {
   // If folderId is provided via query param, skip the choose-folder step
   const folderIdFromParam = folderIdParam ? Number(folderIdParam) : null;
 
+  const totalSteps = folderIdFromParam ? 2 : 3;
+
+  const stepMap: Record<CreateFundScreens, number> = {
+    fundInfo: 1,
+    spendingInfo: 2,
+    nonNegotiableInfo: 2,
+    chooseFolder: 3,
+  };
+  const currentStep = stepMap[screen];
+
   return (
     <KeyboardAvoidingView
       behavior="padding"
@@ -62,6 +74,10 @@ function CreateFundContent() {
       keyboardVerticalOffset={footerHeight}
     >
       <GlassCloseButton className="absolute top-4 left-4 z-10" />
+
+      <StyledLeanView className="absolute top-4 right-0 left-0 z-0 h-12 justify-center">
+        <ProgressStepper currentStep={currentStep} totalSteps={totalSteps} />
+      </StyledLeanView>
 
       <AnimatePresence mode="wait">
         {screen === "fundInfo" && (
