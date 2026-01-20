@@ -39,7 +39,7 @@ export default function TotalSpent() {
           </Animated.Text>
           <Text className="flex-row text-base text-foreground-muted">
             of
-            <Text className="font-nunito-bold">
+            <Text className="font-nunito-bold text-foreground">
               {" "}
               {toWholeCurrency(Math.round(totalBudgeted))}{" "}
             </Text>

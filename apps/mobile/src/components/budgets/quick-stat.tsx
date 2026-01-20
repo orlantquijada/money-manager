@@ -53,9 +53,9 @@ export default function BudgetQuickStats({ fund }: Props) {
       opacityValue={0.7}
       scaleValue={0.95}
     >
-      <Text className={cn("font-satoshi text-xs", textColor)}>
-        {label && <Text>{label} </Text>}
-        <Text className="font-nunito-bold">{value}</Text>
+      <Text className="font-satoshi text-xs">
+        {label && <Text className="text-foreground-muted">{label} </Text>}
+        <Text className={cn("font-nunito-bold", textColor)}>{value}</Text>
       </Text>
     </ScalePressable>
   );
