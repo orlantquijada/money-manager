@@ -10,7 +10,7 @@ import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScalePressable } from "@/components/scale-pressable";
 import { StyledBottomSheetView } from "@/config/interop";
-import { FolderClosedDuoCreate, ShoppingBag, WalletDuo } from "@/icons";
+import { FolderClosedDuoCreate, WalletDuo } from "@/icons";
 import { cn } from "@/utils/cn";
 import { mauveA } from "@/utils/colors";
 import type { IconComponent } from "@/utils/types";
@@ -74,12 +74,12 @@ const CREATE_ITEMS: Array<{
   Icon: IconComponent;
   pathname: Href;
 }> = [
-  {
-    title: "Transaction",
-    description: "Add transactions to track your spending",
-    Icon: ShoppingBag,
-    pathname: "/add-expense",
-  },
+  // {
+  //   title: "Transaction",
+  //   description: "Add transactions to track your spending",
+  //   Icon: ShoppingBag,
+  //   pathname: "/add-expense",
+  // },
   {
     title: "Fund",
     description: "Manage your money for different goals",

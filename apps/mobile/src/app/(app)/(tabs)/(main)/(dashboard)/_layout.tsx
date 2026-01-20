@@ -1,4 +1,3 @@
-import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import {
   TabList,
   TabSlot,
@@ -7,42 +6,34 @@ import {
   type TabTriggerSlotProps,
 } from "expo-router/ui";
 import type { ReactNode } from "react";
-import { useRef } from "react";
-import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
 import TotalSpent from "@/components/dashboard/total-spent";
 import { ScalePressable } from "@/components/scale-pressable";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { cn } from "@/utils/cn";
 
 export default function DashboardLayout() {
-  const createSheetRef = useRef<BottomSheetModal>(null);
-
   return (
-    <>
-      <DashboardCreateBottomSheet ref={createSheetRef} />
-
-      <StyledLeanView className="flex-1 bg-background pt-safe">
-        <StyledLeanView className="mb-4 w-full flex-row items-start justify-between px-4 py-2">
-          <TotalSpent />
-        </StyledLeanView>
-
-        <Tabs>
-          <TabList
-            className="flex-row gap-2 border-b-border-secondary border-b-hairline"
-            style={{ justifyContent: "flex-start" }}
-          >
-            <TabTrigger asChild href="/" name="budgets">
-              <TabButton className="ml-4">Budgets</TabButton>
-            </TabTrigger>
-            <TabTrigger asChild href="/activity" name="Activity">
-              <TabButton>Activity</TabButton>
-            </TabTrigger>
-          </TabList>
-
-          <TabSlot />
-        </Tabs>
+    <StyledLeanView className="flex-1 bg-background pt-safe">
+      <StyledLeanView className="mb-4 w-full flex-row items-start justify-between px-4 py-2">
+        <TotalSpent />
       </StyledLeanView>
-    </>
+
+      <Tabs>
+        <TabList
+          className="flex-row gap-2 border-b-border-secondary border-b-hairline"
+          style={{ justifyContent: "flex-start" }}
+        >
+          <TabTrigger asChild href="/" name="budgets">
+            <TabButton className="ml-4">Budgets</TabButton>
+          </TabTrigger>
+          <TabTrigger asChild href="/activity" name="Activity">
+            <TabButton>Activity</TabButton>
+          </TabTrigger>
+        </TabList>
+
+        <TabSlot />
+      </Tabs>
+    </StyledLeanView>
   );
 }
 

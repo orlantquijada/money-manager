@@ -27,7 +27,7 @@ export default function Budget({ funds, folderId, folderName, open }: Props) {
   return (
     <StyledLeanView>
       <ScalePressable
-        className="h-14 flex-row items-center justify-between gap-3 rounded-2xl border-border border-hairline bg-card p-4"
+        className="flex-row items-center justify-between gap-3 rounded-2xl"
         disableOpacity
         onPress={toggle}
         scaleValue={0.98}
