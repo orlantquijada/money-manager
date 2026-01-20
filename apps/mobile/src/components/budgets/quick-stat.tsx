@@ -22,7 +22,6 @@ type Props = {
 export default function BudgetQuickStats({ fund }: Props) {
   const [modeIndex, setModeIndex] = useState(0);
   const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
-  const monthlyBudget = getMonthlyBudget(fund);
 
   const modes = isNonNegotiable
     ? QUICK_STAT_MODES_NON_NEGOTIABLE
@@ -36,96 +35,16 @@ export default function BudgetQuickStats({ fund }: Props) {
   // EVENTUALLY funds use non-negotiable stats but with different labels
   const isEventually = fund.timeMode === "EVENTUALLY";
 
-  function getNonNegotiableStat(): Stat {
-    const amountSaved = fund.totalSpent;
-    const percentSaved =
-      monthlyBudget > 0 ? (amountSaved / monthlyBudget) * 100 : 0;
-    const isFunded = amountSaved >= monthlyBudget;
-
-    // Show lime color when past halfway (>50%), otherwise muted
-    const textColor =
-      percentSaved >= 50
-        ? "text-quick-stat-non-negotiable"
-        : "text-foreground-muted";
-
-    // Compute labels upfront to reduce switch complexity
-    let statusLabel: string;
-    if (!isFunded) {
-      statusLabel = "saved";
-    } else if (isEventually) {
-      statusLabel = "goal met";
-    } else {
-      statusLabel = "funded";
-    }
-
-    switch (mode) {
-      case "saved":
-        return {
-          label: statusLabel,
-          value: toWholeCurrency(amountSaved),
-          textColor,
-        };
-      case "percentage":
-        return {
-          label: statusLabel,
-          value: `${Math.min(Math.round(percentSaved), 100)}%`,
-          textColor,
-        };
-      case "target":
-        return {
-          label: isEventually ? "goal" : "target",
-          value: toWholeCurrency(monthlyBudget),
-          textColor,
-        };
-      default:
-        return { label: "", value: "" };
-    }
-  }
-
-  function getSpendingStat(): Stat {
-    // Calculate budget available through current period (rolling budget)
-    const currentPeriodIndex = getCurrentPeriodIndex(fund.timeMode);
-    const budgetThroughNow = fund.budgetedAmount * (currentPeriodIndex + 1);
-
-    const remaining = budgetThroughNow - fund.totalSpent;
-    const isOverspent = remaining < 0;
-    const percentLeft =
-      budgetThroughNow > 0 ? (remaining / budgetThroughNow) * 100 : 0;
-
-    const textColor =
-      isOverspent && mode !== "spent"
-        ? "text-destructive"
-        : "text-foreground-muted";
-
-    switch (mode) {
-      case "remaining":
-        return {
-          label: isOverspent ? "over" : "left",
-          value: toWholeCurrency(Math.abs(remaining)),
-          textColor,
-        };
-      case "percentage":
-        // No label when under budget, "over" prefix when overspent
-        return {
-          label: isOverspent ? "over" : "",
-          value: `${Math.abs(Math.round(percentLeft))}%`,
-          textColor,
-        };
-      case "spent":
-        return {
-          label: "spent",
-          value: toWholeCurrency(fund.totalSpent),
-          textColor,
-        };
-      default:
-        return { label: "", value: "" };
-    }
-  }
-
   const { label, value, textColor } =
     isNonNegotiable || isEventually
-      ? getNonNegotiableStat()
-      : getSpendingStat();
+      ? getNonNegotiableStat(
+          fund,
+          mode as (typeof QUICK_STAT_MODES_NON_NEGOTIABLE)[number]
+        )
+      : getSpendingStat(
+          fund,
+          mode as (typeof QUICK_STAT_MODES_SPENDING)[number]
+        );
 
   return (
     <ScalePressable
@@ -140,4 +59,98 @@ export default function BudgetQuickStats({ fund }: Props) {
       </Text>
     </ScalePressable>
   );
+}
+
+function getNonNegotiableStat(
+  fund: FundWithMeta,
+  mode: (typeof QUICK_STAT_MODES_NON_NEGOTIABLE)[number]
+): Stat {
+  const monthlyBudget = getMonthlyBudget(fund);
+  const isEventually = fund.timeMode === "EVENTUALLY";
+  const amountSaved = fund.totalSpent;
+  const percentSaved =
+    monthlyBudget > 0 ? (amountSaved / monthlyBudget) * 100 : 0;
+  const isFunded = amountSaved >= monthlyBudget;
+
+  // Show lime color when past halfway (>50%), otherwise muted
+  const textColor =
+    percentSaved >= 50
+      ? "text-quick-stat-non-negotiable"
+      : "text-foreground-secondary";
+
+  // Compute labels upfront to reduce switch complexity
+  let statusLabel: string;
+  if (!isFunded) {
+    statusLabel = "saved";
+  } else if (isEventually) {
+    statusLabel = "goal met";
+  } else {
+    statusLabel = "funded";
+  }
+
+  switch (mode) {
+    case "saved":
+      return {
+        label: statusLabel,
+        value: toWholeCurrency(amountSaved),
+        textColor,
+      };
+    case "percentage":
+      return {
+        label: statusLabel,
+        value: `${Math.min(Math.round(percentSaved), 100)}%`,
+        textColor,
+      };
+    case "target":
+      return {
+        label: isEventually ? "goal" : "target",
+        value: toWholeCurrency(monthlyBudget),
+        textColor,
+      };
+    default:
+      return { label: "", value: "" };
+  }
+}
+
+function getSpendingStat(
+  fund: FundWithMeta,
+  mode: (typeof QUICK_STAT_MODES_SPENDING)[number]
+): Stat {
+  // Calculate budget available through current period (rolling budget)
+  const currentPeriodIndex = getCurrentPeriodIndex(fund.timeMode);
+  const budgetThroughNow = fund.budgetedAmount * (currentPeriodIndex + 1);
+
+  const remaining = budgetThroughNow - fund.totalSpent;
+  const isOverspent = remaining < 0;
+  const percentLeft =
+    budgetThroughNow > 0 ? (remaining / budgetThroughNow) * 100 : 0;
+
+  const textColor =
+    isOverspent && mode !== "spent"
+      ? "text-destructive"
+      : "text-foreground-secondary";
+
+  switch (mode) {
+    case "remaining":
+      return {
+        label: isOverspent ? "over" : "left",
+        value: toWholeCurrency(Math.abs(remaining)),
+        textColor,
+      };
+    case "percentage":
+      // No label when under budget, "over" prefix when overspent
+      return {
+        label: isOverspent ? "over" : "",
+        value: `${Math.abs(Math.round(percentLeft))}%`,
+        textColor,
+      };
+    case "spent":
+      return {
+        label: "spent",
+        value: toWholeCurrency(fund.totalSpent),
+        textColor,
+      };
+    default:
+      return { label: "", value: "" };
+  }
 }

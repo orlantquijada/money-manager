@@ -4,6 +4,7 @@ import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { Check } from "@/icons";
 import type { FundWithMeta } from "@/lib/fund";
 import { getTimeModeMultiplier } from "@/lib/fund";
+import { cn } from "@/utils/cn";
 import CategoryProgressBars from "./category-progress-bars";
 import BudgetQuickStats from "./quick-stat";
 
@@ -11,9 +12,10 @@ export const CATEGORY_HEIGHT = 56;
 
 type CategoryProps = {
   fund: FundWithMeta;
+  className?: string;
 };
 
-export default function Category({ fund }: CategoryProps) {
+export default function Category({ fund, className }: CategoryProps) {
   const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
   const barCount = getTimeModeMultiplier(fund.timeMode);
   const overallProgress = fund.totalSpent / (fund.budgetedAmount * barCount);
@@ -22,7 +24,7 @@ export default function Category({ fund }: CategoryProps) {
   return (
     <Link asChild href={{ pathname: "/fund/[id]", params: { id: fund.id } }}>
       <ScalePressable
-        className="justify-center gap-2 px-4"
+        className={cn("justify-center gap-2", className)}
         opacityValue={0.7}
         scaleValue={0.98}
         style={{ height: CATEGORY_HEIGHT }}
@@ -43,7 +45,7 @@ function CategoryHeader({ fund, isFunded }: CategoryHeaderProps) {
   return (
     <StyledLeanView className="flex-row items-center justify-between gap-3">
       <StyledLeanText
-        className="shrink font-satoshi-medium text-base text-foreground"
+        className="shrink font-satoshi-medium text-base text-foreground-secondary"
         ellipsizeMode="tail"
         numberOfLines={1}
       >

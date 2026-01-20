@@ -1,6 +1,5 @@
 import type { Folder } from "api";
 import { Link } from "expo-router";
-import { Text } from "react-native";
 import Animated, {
   type SharedValue,
   useAnimatedStyle,
@@ -9,6 +8,7 @@ import { ScalePressable } from "@/components/scale-pressable";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { FolderClosedDuoCreate, FolderOpenDuo } from "@/icons";
 import type { FundWithMeta } from "@/lib/fund";
+import { cn } from "@/utils/cn";
 import AnimateHeight from "../animate-height";
 import Category from "./category";
 
@@ -61,13 +61,11 @@ export default function Budget({ funds, folderId, folderName, open }: Props) {
   );
 }
 
-function Categories({
-  funds,
-  open,
-  folderId,
-}: Pick<Props, "folderId" | "funds"> & {
+type CategoriesProps = Pick<Props, "folderId" | "funds"> & {
   open: SharedValue<boolean>;
-}) {
+};
+
+function Categories({ funds, open, folderId }: CategoriesProps) {
   if (!funds.length) {
     return (
       <StyledLeanView className="overflow-hidden">
@@ -81,9 +79,9 @@ function Categories({
               opacityValue={0.7}
               scaleValue={0.95}
             >
-              <Text className="font-satoshi text-foreground-muted text-sm">
+              <StyledLeanText className="font-satoshi text-foreground-muted text-sm">
                 Add a fund to this folder
-              </Text>
+              </StyledLeanText>
             </ScalePressable>
           </Link>
         </AnimateHeight>
@@ -94,8 +92,15 @@ function Categories({
   return (
     <StyledLeanView className="overflow-hidden">
       <AnimateHeight isExpanded={open}>
-        {funds.map((fund) => (
-          <Category fund={fund} key={fund.id} />
+        {funds.map((fund, idx) => (
+          <Category
+            className={cn(
+              idx === 0 && "mt-1.5",
+              idx === funds.length - 1 && "mb-4"
+            )}
+            fund={fund}
+            key={fund.id}
+          />
         ))}
       </AnimateHeight>
     </StyledLeanView>

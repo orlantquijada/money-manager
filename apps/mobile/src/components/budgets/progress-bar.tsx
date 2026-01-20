@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { StyleSheet, type ViewProps } from "react-native";
+import type { ViewProps } from "react-native";
 import Animated, {
   type AnimatedProps,
   useAnimatedStyle,
@@ -7,6 +7,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { StyledLeanView } from "@/config/interop";
+import { cn } from "@/utils/cn";
 import { clamp } from "@/utils/math";
 import { transitions } from "@/utils/motion";
 
@@ -61,25 +62,27 @@ export default function ProgressBar({
 
   return (
     <AnimatedStyledLeanView
-      className={`h-2 shrink-0 rounded-full ${border}`}
+      className={cn("h-1.5 shrink-0 rounded-full border-hairline", border)}
       style={[
         {
           flex,
           borderCurve: "continuous",
-          borderWidth: highlight ? 1 : StyleSheet.hairlineWidth,
         },
         style,
       ]}
       {...props}
     >
       <StyledLeanView
-        className="absolute inset-0 overflow-hidden rounded-full bg-muted"
+        className="absolute inset-0 overflow-hidden rounded-full bg-muted/50"
         style={{ borderCurve: "continuous" }}
       />
 
       {highlight && (
         <StyledLeanView
-          className={`absolute -bottom-2 h-1 w-1 self-center rounded-full ${bg}`}
+          className={cn(
+            "absolute -bottom-2 h-1 w-1 self-center rounded-full",
+            bg
+          )}
         />
       )}
 
@@ -88,7 +91,7 @@ export default function ProgressBar({
         style={{ borderCurve: "continuous" }}
       >
         <AnimatedStyledLeanView
-          className={`h-full rounded-full ${bg}`}
+          className={cn("h-full rounded-full", bg)}
           style={[
             {
               borderCurve: "continuous",
