@@ -1,5 +1,4 @@
 import { useSSO } from "@clerk/clerk-expo";
-import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useCallback } from "react";
 import { Platform } from "react-native";
@@ -14,8 +13,6 @@ import GoogleIcon from "@/icons/google";
 WebBrowser.maybeCompleteAuthSession();
 
 export default function SignInScreen() {
-  const router = useRouter();
-
   const { startSSOFlow: startAppleFlow } = useSSO();
   const { startSSOFlow: startGoogleFlow } = useSSO();
 
@@ -27,12 +24,12 @@ export default function SignInScreen() {
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
-        router.replace("/(app)/(tabs)/(main)/(dashboard)");
+        // Navigation handled by <Redirect> in _layout.tsx
       }
     } catch (error) {
       console.error("Apple sign-in error:", error);
     }
-  }, [startAppleFlow, router]);
+  }, [startAppleFlow]);
 
   const handleGoogleSignIn = useCallback(async () => {
     try {
@@ -42,12 +39,12 @@ export default function SignInScreen() {
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
-        router.replace("/(app)/(tabs)/(main)/(dashboard)");
+        // Navigation handled by <Redirect> in _layout.tsx
       }
     } catch (error) {
       console.error("Google sign-in error:", error);
     }
-  }, [startGoogleFlow, router]);
+  }, [startGoogleFlow]);
 
   return (
     <StyledLeanView className="flex-1 bg-background px-6 pt-safe-offset-20 pb-safe-offset-8">
