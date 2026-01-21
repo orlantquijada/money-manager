@@ -1,8 +1,6 @@
 ---
 name: design-iterator
 description: Iteratively refine UI through analyze → improve cycles. Use when design isn't coming together.
-color: violet
-model: inherit
 ---
 
 Refine a UI component through N iterations (default: 5).
