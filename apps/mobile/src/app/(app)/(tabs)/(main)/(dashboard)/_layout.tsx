@@ -1,3 +1,5 @@
+import { useUser } from "@clerk/clerk-expo";
+import { router } from "expo-router";
 import {
   TabList,
   TabSlot,
@@ -6,8 +8,12 @@ import {
   type TabTriggerSlotProps,
 } from "expo-router/ui";
 import type { ReactNode } from "react";
+import { Image, StyleSheet } from "react-native";
 import TotalSpent from "@/components/dashboard/total-spent";
+import GlassButton from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
+import { useThemeColor } from "@/components/theme-provider";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { cn } from "@/utils/cn";
 
@@ -16,6 +22,7 @@ export default function DashboardLayout() {
     <StyledLeanView className="flex-1 bg-background pt-safe">
       <StyledLeanView className="mb-4 w-full flex-row items-start justify-between px-4 py-2">
         <TotalSpent />
+        <ProfileButton />
       </StyledLeanView>
 
       <Tabs>
@@ -34,6 +41,27 @@ export default function DashboardLayout() {
         <TabSlot />
       </Tabs>
     </StyledLeanView>
+  );
+}
+
+function ProfileButton() {
+  const { user } = useUser();
+  const iconColor = useThemeColor("muted-foreground");
+  const tintColor = useThemeColor("muted");
+
+  return (
+    <GlassButton
+      onPress={() => router.push("/settings")}
+      size="md"
+      tintColor={tintColor}
+      variant="icon"
+    >
+      {user?.imageUrl ? (
+        <Image source={{ uri: user.imageUrl }} style={styles.avatar} />
+      ) : (
+        <IconSymbol color={iconColor} name="person.circle.fill" size={24} />
+      )}
+    </GlassButton>
   );
 }
 
@@ -71,3 +99,11 @@ function TabButton({
     </StyledLeanView>
   );
 }
+
+const styles = StyleSheet.create({
+  avatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 999,
+  },
+});

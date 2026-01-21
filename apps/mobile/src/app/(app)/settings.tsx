@@ -1,5 +1,6 @@
+import { useAuth } from "@clerk/clerk-expo";
 import { Stack, useRouter } from "expo-router";
-import { Switch } from "react-native";
+import { Pressable, Switch } from "react-native";
 import GlassButton from "@/components/glass-button";
 import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
@@ -48,8 +49,9 @@ export default function SettingsScreen() {
           // ),
         }}
       />
-      <StyledLeanView className="flex-1 bg-background px-6 pt-6">
+      <StyledLeanView className="flex-1 gap-8 bg-background px-6 pt-6">
         <AIFeaturesSection />
+        <AccountSection />
       </StyledLeanView>
     </>
   );
@@ -100,6 +102,28 @@ function AIFeaturesSection() {
           value={aiInsightsEnabled}
         />
       </StyledLeanView>
+    </StyledLeanView>
+  );
+}
+
+function AccountSection() {
+  const { signOut } = useAuth();
+  const destructiveColor = useThemeColor("red-9");
+
+  return (
+    <StyledLeanView className="gap-4">
+      <StyledLeanText className="font-satoshi-semibold text-foreground-muted text-sm uppercase tracking-wide">
+        Account
+      </StyledLeanText>
+
+      <Pressable onPress={() => signOut()}>
+        <StyledLeanText
+          className="font-satoshi-medium text-base"
+          style={{ color: destructiveColor }}
+        >
+          Log Out
+        </StyledLeanText>
+      </Pressable>
     </StyledLeanView>
   );
 }
