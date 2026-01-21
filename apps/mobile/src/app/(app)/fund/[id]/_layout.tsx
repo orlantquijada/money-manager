@@ -17,7 +17,7 @@ export default function FundLayout() {
         headerBackButtonDisplayMode: "minimal",
       }}
     >
-      <Stack.Screen name="index" />
+      <Stack.Screen name="index" options={{ title: "" }} />
       <Stack.Screen
         name="transactions"
         options={{
