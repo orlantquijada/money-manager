@@ -1,5 +1,6 @@
-import { type ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 import { Uniwind, useUniwind } from "uniwind";
+import { usePreferencesStore } from "@/stores/preferences";
 import {
   amber,
   amberDark,
@@ -20,40 +21,53 @@ import {
 
 export type Theme = "light" | "dark" | "system";
 
-type ThemeProviderProps = {
-  children: ReactNode;
-  initialTheme?: Theme;
-};
-
 /**
- * ThemeProvider wrapper that sets up Uniwind theming.
- * By default, follows system theme.
+ * Hook to access and control the app theme.
+ * Syncs with preferences store (MMKV) and Uniwind automatically.
+ *
+ * @example
+ * const { theme, resolvedTheme, isDark, setTheme } = useTheme();
+ * // theme: stored preference ("light" | "dark" | "system")
+ * // resolvedTheme: actual applied theme ("light" | "dark")
+ * // isDark: boolean shortcut for resolvedTheme === "dark"
+ * // setTheme: updates both preferences and Uniwind
  */
-export function ThemeProvider({
-  children,
-  initialTheme = "system",
-}: ThemeProviderProps) {
-  useEffect(() => {
-    // Set initial theme on mount
-    Uniwind.setTheme(initialTheme);
-  }, [initialTheme]);
+export function useTheme() {
+  const { theme: resolvedTheme, hasAdaptiveThemes } = useUniwind();
+  const storedTheme = usePreferencesStore((s) => s.theme);
+  const setStoredTheme = usePreferencesStore((s) => s.setTheme);
 
-  return <>{children}</>;
+  // Sync stored preference to Uniwind on mount and when it changes
+  useEffect(() => {
+    Uniwind.setTheme(storedTheme);
+  }, [storedTheme]);
+
+  const setTheme = (t: Theme) => {
+    setStoredTheme(t);
+    // Uniwind will be updated via the useEffect above
+  };
+
+  return {
+    /** Stored preference: "light" | "dark" | "system" */
+    theme: storedTheme,
+    /** Resolved theme after applying system preference: "light" | "dark" */
+    resolvedTheme,
+    /** Whether the resolved theme is dark */
+    isDark: resolvedTheme === "dark",
+    /** Whether system theme is being used */
+    isSystem: hasAdaptiveThemes,
+    /** Update theme preference (persists to storage + applies to Uniwind) */
+    setTheme,
+  };
 }
 
 /**
- * Hook to access current theme and whether adaptive themes are enabled.
- * Uses Uniwind's built-in useUniwind hook.
+ * Lightweight hook for components that only need isDark.
+ * More efficient than useTheme() when you don't need setTheme.
  */
-export function useTheme() {
-  const { theme, hasAdaptiveThemes } = useUniwind();
-
-  return {
-    theme,
-    isDark: theme === "dark",
-    isSystem: hasAdaptiveThemes,
-    setTheme: Uniwind.setTheme,
-  };
+export function useIsDark() {
+  const { theme } = useUniwind();
+  return theme === "dark";
 }
 
 type ColorGrade = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
@@ -111,7 +125,7 @@ type ColorScaleName = keyof typeof colorScales;
  * const primary = useThemeColor("primary");
  */
 export function useThemeColor(key: ColorKey): string {
-  const { isDark } = useTheme();
+  const isDark = useIsDark();
 
   // Handle progress color tokens (CSS-based with light/dark values)
   const progressColor = getProgressColor(key, isDark);

@@ -15,7 +15,7 @@ import { configureReanimatedLogger } from "react-native-reanimated";
 import { SafeAreaListener } from "react-native-safe-area-context";
 import { Uniwind } from "uniwind";
 
-import { ThemeProvider, useTheme } from "@/components/theme-provider";
+import { useTheme } from "@/components/theme-provider";
 import { useAuthTokenSync } from "@/hooks/use-auth-token-sync";
 import { useFonts } from "@/hooks/use-fonts";
 import { useUserProvisioning } from "@/hooks/use-user-provisioning";
@@ -106,11 +106,9 @@ export default function RootLayout() {
           <QueryClientProvider client={queryClient}>
             <KeyboardProvider>
               <GestureHandlerRootView style={{ flex: 1 }}>
-                <ThemeProvider>
-                  <BottomSheetModalProvider>
-                    <AppContent />
-                  </BottomSheetModalProvider>
-                </ThemeProvider>
+                <BottomSheetModalProvider>
+                  <AppContent />
+                </BottomSheetModalProvider>
               </GestureHandlerRootView>
             </KeyboardProvider>
           </QueryClientProvider>
