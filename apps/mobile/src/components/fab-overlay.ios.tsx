@@ -1,6 +1,7 @@
 import type { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
+import { GlassContainer } from "expo-glass-effect";
 import { useCallback, useMemo } from "react";
-import { Animated, View } from "react-native";
+import { Animated, Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import GlassButton from "@/components/glass-button";
 import { useSyncTabPosition } from "@/hooks/use-sync-tab-position";
@@ -59,16 +60,29 @@ export default function FabOverlay({
         transform: [{ translateY }],
       }}
     >
-      <View>
-        <GlassButton
-          onPress={handleFabPress}
-          size="xl"
-          tintColor={fabTintColor}
-          variant="icon"
-        >
-          <Plus color={fabIconColor} size={24} />
-        </GlassButton>
-      </View>
+      {Platform.OS === "ios" ? (
+        <GlassContainer>
+          <GlassButton
+            onPress={handleFabPress}
+            size="xl"
+            tintColor={fabTintColor}
+            variant="icon"
+          >
+            <Plus color={fabIconColor} size={24} />
+          </GlassButton>
+        </GlassContainer>
+      ) : (
+        <View>
+          <GlassButton
+            onPress={handleFabPress}
+            size="xl"
+            tintColor={fabTintColor}
+            variant="icon"
+          >
+            <Plus color={fabIconColor} size={24} />
+          </GlassButton>
+        </View>
+      )}
     </Animated.View>
   );
 }

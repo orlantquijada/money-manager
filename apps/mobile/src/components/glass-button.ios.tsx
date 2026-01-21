@@ -1,13 +1,24 @@
+import { GlassView, type GlassViewProps } from "expo-glass-effect";
 import { router } from "expo-router";
 import type { SymbolViewProps } from "expo-symbols";
 import type { ReactNode } from "react";
-import type { PressableProps, ViewStyle } from "react-native";
+import {
+  Pressable,
+  type PressableProps,
+  StyleSheet,
+  type ViewStyle,
+} from "react-native";
 
-import Button from "@/components/button";
 import { useThemeColor } from "@/components/theme-provider";
-import type { ButtonSize, ButtonVariant } from "@/components/ui/button-tokens";
+import {
+  type ButtonSize,
+  type ButtonVariant,
+  iconSizeClasses,
+  paddingBySize,
+} from "@/components/ui/button-tokens";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Cross } from "@/icons";
+import { cn } from "@/utils/cn";
 
 type GlassButtonProps = PressableProps & {
   /**
@@ -22,7 +33,7 @@ type GlassButtonProps = PressableProps & {
    * - For "default" variant: affects padding and min-height
    */
   size?: ButtonSize;
-  glassViewProps?: Record<string, unknown>; // Ignored on Android
+  glassViewProps?: GlassViewProps;
   children?: ReactNode;
   tintColor?: string | null;
 };
@@ -32,21 +43,50 @@ export default function GlassButton({
   children,
   variant = "default",
   size = "lg",
+  glassViewProps = {},
   tintColor: tintColorProp,
   style: styleProp,
   ...props
 }: GlassButtonProps) {
+  const themeTintColor = useThemeColor("background");
+  const tintColor =
+    tintColorProp !== null ? (tintColorProp ?? themeTintColor) : undefined;
+
+  const { style: glassStyle, ..._glassViewProps } = glassViewProps;
+
+  const isIcon = variant === "icon";
+  const sizeClass = isIcon ? iconSizeClasses[size] : undefined;
+
   return (
-    <Button
-      className={className}
-      intent="secondary"
-      size={size}
-      style={styleProp as ViewStyle}
-      variant={variant}
+    <Pressable
+      className={cn("relative", sizeClass, className)}
+      style={styleProp}
       {...props}
     >
-      {children}
-    </Button>
+      <GlassView
+        glassEffectStyle="regular"
+        isInteractive
+        style={[
+          {
+            ...(isIcon ? StyleSheet.absoluteFillObject : {}),
+            borderRadius: 999,
+            justifyContent: "center",
+            alignItems: "center",
+            borderCurve: "continuous",
+          } satisfies ViewStyle,
+          !isIcon && {
+            flexDirection: "row",
+            paddingHorizontal: paddingBySize[size].horizontal,
+            paddingVertical: paddingBySize[size].vertical,
+          },
+          glassStyle,
+        ]}
+        tintColor={tintColor}
+        {..._glassViewProps}
+      >
+        {children}
+      </GlassView>
+    </Pressable>
   );
 }
 

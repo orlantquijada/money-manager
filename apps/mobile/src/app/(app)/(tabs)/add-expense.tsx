@@ -10,7 +10,7 @@ import Numpad from "@/components/add-expense/numpad";
 import { SaveButton } from "@/components/add-expense/save-button";
 import { StorePickerSheet } from "@/components/add-expense/store-picker-sheet";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
-import { DateSelector } from "@/components/date-selector.ios";
+import { DateSelector } from "@/components/date-selector";
 import { GlassCloseButton } from "@/components/glass-button";
 import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanView, StyledSafeAreaView } from "@/config/interop";
