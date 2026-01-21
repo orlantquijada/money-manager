@@ -1,0 +1,27 @@
+import { Path } from "react-native-svg";
+import { StyledSvg } from "@/config/interop";
+import type { IconProps } from "@/utils/types";
+
+export default function Icon({
+  className,
+  color = "currentColor",
+  size = 16,
+}: IconProps) {
+  return (
+    <StyledSvg
+      className={className}
+      fill="none"
+      height={size}
+      viewBox="0 0 16 16"
+      width={size}
+    >
+      <Path
+        clipRule="evenodd"
+        d="M12.5671 4.30032C12.8066 4.0608 12.8066 3.67246 12.5671 3.43294C12.3276 3.19342 11.9392 3.19342 11.6998 3.43294L8.00009 7.13258L4.30045 3.43294C4.06092 3.19342 3.67258 3.19342 3.43306 3.43294C3.19354 3.67246 3.19354 4.0608 3.43306 4.30032L7.13271 7.99997L3.43306 11.6996C3.19354 11.9392 3.19354 12.3274 3.43306 12.567C3.67258 12.8065 4.06092 12.8065 4.30045 12.567L8.00009 8.86735L11.6998 12.567C11.9392 12.8065 12.3276 12.8065 12.5671 12.567C12.8066 12.3274 12.8066 11.9392 12.5671 11.6996L8.86747 7.99997L12.5671 4.30032Z"
+        // fill="#161618"
+        fill={color}
+        fillRule="evenodd"
+      />
+    </StyledSvg>
+  );
+}
