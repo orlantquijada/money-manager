@@ -1,5 +1,5 @@
 import { endOfMonth, startOfMonth, subDays, subMonths } from "date-fns";
-import { funds, stores, transactions as txns } from "db/schema";
+import { folders, funds, stores, transactions as txns } from "db/schema";
 import { and, count, desc, eq, gte, lt, or, sum } from "drizzle-orm";
 import { z } from "zod";
 
@@ -565,4 +565,13 @@ export const transactionsRouter = router({
         nextCursor,
       };
     }),
+
+  clearAll: protectedProcedure.mutation(async ({ ctx }) => {
+    // Delete all user data (transactions, funds, stores, folders)
+    // Order matters due to foreign key constraints
+    await ctx.db.delete(txns).where(eq(txns.userId, ctx.userId));
+    await ctx.db.delete(stores).where(eq(stores.userId, ctx.userId));
+    // Funds are deleted via cascade when folders are deleted
+    await ctx.db.delete(folders).where(eq(folders.userId, ctx.userId));
+  }),
 });

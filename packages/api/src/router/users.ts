@@ -1,4 +1,4 @@
-import { users } from "db/schema";
+import { folders, stores, transactions, users } from "db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
@@ -46,5 +46,33 @@ export const usersRouter = router({
 
   remove: protectedProcedure.mutation(async ({ ctx }) => {
     await ctx.db.delete(users).where(eq(users.id, ctx.userId));
+  }),
+
+  exportData: protectedProcedure.query(async ({ ctx }) => {
+    const userFolders = await ctx.db.query.folders.findMany({
+      where: eq(folders.userId, ctx.userId),
+      with: {
+        funds: {
+          with: {
+            transactions: true,
+          },
+        },
+      },
+    });
+
+    const userStores = await ctx.db.query.stores.findMany({
+      where: eq(stores.userId, ctx.userId),
+    });
+
+    const userTransactions = await ctx.db.query.transactions.findMany({
+      where: eq(transactions.userId, ctx.userId),
+    });
+
+    return {
+      exportedAt: new Date().toISOString(),
+      folders: userFolders,
+      stores: userStores,
+      transactions: userTransactions,
+    };
   }),
 });
