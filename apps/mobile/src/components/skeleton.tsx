@@ -27,18 +27,21 @@ export default function Skeleton({ width, height }: Props) {
 
   return (
     <Animated.View
-      className="rounded-lg"
       entering={FadeIn.duration(200)}
       exiting={FadeOut.duration(200)}
-      style={[
-        {
-          width,
-          height,
-          backgroundColor: mauve.mauve6,
-          borderCurve: "continuous",
-        },
-        animatedStyle,
-      ]}
-    />
+    >
+      <Animated.View
+        className="rounded-lg"
+        style={[
+          {
+            width,
+            height,
+            backgroundColor: mauve.mauve6,
+            borderCurve: "continuous",
+          },
+          animatedStyle,
+        ]}
+      />
+    </Animated.View>
   );
 }
