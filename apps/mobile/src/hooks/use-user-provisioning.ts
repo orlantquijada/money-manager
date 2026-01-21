@@ -25,16 +25,23 @@ export function useUserProvisioning({
   const ensureUserMutation = useMutation(
     trpc.user.ensureUser.mutationOptions({
       onSuccess: () => {
-        // Invalidate queries that depend on user data
-        queryClient.invalidateQueries();
+        // Invalidate only user-related queries to avoid cascade re-renders
+        queryClient.invalidateQueries(trpc.user.pathFilter());
       },
     })
   );
 
+  // Store mutate in ref to avoid unstable dependency
+  // useMutation().mutate creates a new function reference each render
+  const mutateRef = useRef(ensureUserMutation.mutate);
+  mutateRef.current = ensureUserMutation.mutate;
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: isPending intentionally excluded to prevent infinite re-render loop on Android
   useEffect(() => {
     // Only provision once per session, when signed in, AND when token is ready
     // The token check prevents race conditions where we call ensureUser before
     // the auth token has been synced to the tRPC client headers
+    // Access isPending directly (not in deps) to avoid re-trigger loop
     if (
       isSignedIn &&
       isTokenReady &&
@@ -42,16 +49,14 @@ export function useUserProvisioning({
       !ensureUserMutation.isPending
     ) {
       hasProvisioned.current = true;
-      ensureUserMutation.mutate({
-        name: user?.fullName ?? user?.firstName ?? null,
-      });
+      mutateRef.current({ name: user?.fullName ?? user?.firstName ?? null });
     }
 
     // Reset when signed out
     if (!isSignedIn) {
       hasProvisioned.current = false;
     }
-  }, [isSignedIn, isTokenReady, user, ensureUserMutation]);
+  }, [isSignedIn, isTokenReady, user?.fullName, user?.firstName]);
 
   return {
     isProvisioning: ensureUserMutation.isPending,

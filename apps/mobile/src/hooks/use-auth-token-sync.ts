@@ -1,5 +1,5 @@
 import { useAuth } from "@clerk/clerk-expo";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { authTokenStore } from "@/lib/auth-token";
 
 /**
@@ -13,10 +13,14 @@ export function useAuthTokenSync() {
   const { getToken, isSignedIn } = useAuth();
   const [isTokenReady, setIsTokenReady] = useState(false);
 
+  // Use ref to access latest getToken without adding to deps (unstable ref from Clerk)
+  const getTokenRef = useRef(getToken);
+  getTokenRef.current = getToken;
+
   useEffect(() => {
     const syncToken = async () => {
       if (isSignedIn) {
-        const token = await getToken();
+        const token = await getTokenRef.current();
         if (token) {
           authTokenStore.setToken(token);
           setIsTokenReady(true);
@@ -29,7 +33,7 @@ export function useAuthTokenSync() {
     };
 
     syncToken();
-  }, [getToken, isSignedIn]);
+  }, [isSignedIn]);
 
   return { isTokenReady };
 }
