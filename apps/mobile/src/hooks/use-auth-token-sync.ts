@@ -17,8 +17,11 @@ export function useAuthTokenSync() {
     const syncToken = async () => {
       if (isSignedIn) {
         const token = await getToken();
-        authTokenStore.setToken(token);
-        setIsTokenReady(true);
+        if (token) {
+          authTokenStore.setToken(token);
+          setIsTokenReady(true);
+        }
+        // If token is null, don't set ready - Clerk will trigger re-render when session is ready
       } else {
         authTokenStore.setToken(null);
         setIsTokenReady(false);
