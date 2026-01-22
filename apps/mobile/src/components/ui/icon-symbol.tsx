@@ -4,6 +4,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import type { SymbolViewProps, SymbolWeight } from "expo-symbols";
 import type { ComponentProps } from "react";
 import type { OpaqueColorValue, StyleProp, TextStyle } from "react-native";
+import { withUniwind } from "uniwind";
 
 type IconMapping = Record<
   SymbolViewProps["name"],
@@ -23,6 +24,23 @@ const MAPPING = {
   "chevron.right": "chevron-right",
   "chevron.left": "chevron-left",
   "ellipsis.circle": "more-horiz",
+  "sun.max.fill": "wb-sunny",
+  "moon.fill": "nightlight-round",
+  iphone: "smartphone",
+  xmark: "close",
+  envelope: "email",
+  at: "alternate-email",
+  "person.crop.circle": "account-circle",
+  sparkles: "auto-awesome",
+  folder: "folder",
+  clock: "schedule",
+  "bell.badge": "notifications",
+  "square.and.arrow.up": "share",
+  trash: "delete",
+  "hand.raised": "pan-tool",
+  "doc.text": "description",
+  "rectangle.portrait.and.arrow.right": "logout",
+  "arrow.up.right": "open-in-new",
 } as IconMapping;
 
 /**
@@ -38,7 +56,7 @@ export function IconSymbol({
 }: {
   name: IconSymbolName;
   size?: number;
-  color: string | OpaqueColorValue;
+  color?: string | OpaqueColorValue;
   style?: StyleProp<TextStyle>;
   weight?: SymbolWeight;
 }) {
@@ -51,3 +69,10 @@ export function IconSymbol({
     />
   );
 }
+
+export const StyledIconSymbol = withUniwind(IconSymbol, {
+  color: {
+    fromClassName: "colorClassName",
+    styleProperty: "accentColor",
+  },
+});

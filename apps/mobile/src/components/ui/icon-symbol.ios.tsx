@@ -4,6 +4,7 @@ import {
   type SymbolWeight,
 } from "expo-symbols";
 import type { StyleProp, ViewStyle } from "react-native";
+import { withUniwind } from "uniwind";
 
 export function IconSymbol({
   name,
@@ -34,3 +35,10 @@ export function IconSymbol({
     />
   );
 }
+
+export const StyledIconSymbol = withUniwind(IconSymbol, {
+  color: {
+    fromClassName: "colorClassName",
+    styleProperty: "accentColor",
+  },
+});
