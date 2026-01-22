@@ -1,6 +1,41 @@
-import { View, type ViewStyle } from "react-native";
-import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { isToday, isYesterday, subDays } from "date-fns";
+import type { SFSymbol } from "expo-symbols";
+import { useState } from "react";
+import type { ViewStyle } from "react-native";
+import * as DropdownMenu from "zeego/dropdown-menu";
+import { StyledLeanText } from "@/config/interop";
+import { DateSelectorSheet } from "./date-selector-sheet";
+import GlassButton from "./glass-button";
 import { useThemeColor } from "./theme-provider";
+import { StyledIconSymbol } from "./ui/icon-symbol";
+
+const monthDateFormat = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+});
+
+type DateType = "today" | "yesterday" | "custom";
+
+function getDateType(date: Date): DateType {
+  if (isToday(date)) return "today";
+  if (isYesterday(date)) return "yesterday";
+  return "custom";
+}
+
+function getDateLabel(date: Date, dateType: DateType): string {
+  switch (dateType) {
+    case "today":
+      return "Today";
+    case "yesterday":
+      return "Yesterday";
+    case "custom":
+      return monthDateFormat.format(date);
+    default: {
+      const _exhaustive: never = dateType;
+      return _exhaustive;
+    }
+  }
+}
 
 type DateSelectorProps = {
   date: Date;
@@ -8,32 +43,69 @@ type DateSelectorProps = {
   style?: ViewStyle;
 };
 
-const monthDateFormat = new Intl.DateTimeFormat("en-US", {
-  month: "long",
-  day: "numeric",
-});
-
 /**
- * Android fallback for DateSelector.
- * Simplified version that just displays the date since native iOS DateTimePicker is not available.
- * In a real app, this would use a cross-platform date picker like @react-native-community/datetimepicker.
+ * DateSelector with Zeego dropdown menu.
+ * Custom date picker sheet is handled by DateSelectorSheet (iOS only).
  */
-export function DateSelector({ date, style }: DateSelectorProps) {
-  const dateLabel = monthDateFormat.format(date);
+export function DateSelector({ date, onDateChange }: DateSelectorProps) {
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const mutedColor = useThemeColor("muted");
+
+  const today = new Date();
+  const yesterday = subDays(today, 1);
+
+  const dateType = getDateType(date);
+  const dateLabel = getDateLabel(date, dateType);
 
   return (
-    <StyledLeanView className="p-8 pr-4" style={style}>
-      <View
-        className="flex-row items-center justify-center rounded-2xl px-4 py-3"
-        style={{ backgroundColor: useThemeColor("muted") }}
-      >
-        <StyledLeanText className="font-satoshi-medium text-base text-foreground">
-          {dateLabel}
-        </StyledLeanText>
-      </View>
-      <StyledLeanText className="mt-2 text-center text-foreground-secondary text-xs">
-        Date selection is limited on Android
-      </StyledLeanText>
-    </StyledLeanView>
+    <>
+      <DateSelectorSheet
+        date={date}
+        isOpen={isSheetOpen}
+        onDateChange={onDateChange}
+        onOpenChange={setIsSheetOpen}
+      />
+
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger asChild>
+          <GlassButton className="flex-row" size="xl" tintColor={mutedColor}>
+            <StyledLeanText className="mr-2 font-satoshi-medium text-base text-foreground">
+              {dateLabel}
+            </StyledLeanText>
+            <StyledIconSymbol
+              colorClassName="accent-foreground-secondary"
+              name="chevron.up.chevron.down"
+              size={14}
+            />
+          </GlassButton>
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content>
+          <DropdownMenu.Item key="today" onSelect={() => onDateChange(today)}>
+            {dateType === "today" && (
+              <DropdownMenu.ItemIcon ios={{ name: "checkmark" as SFSymbol }} />
+            )}
+
+            <DropdownMenu.ItemTitle>Today</DropdownMenu.ItemTitle>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            key="yesterday"
+            onSelect={() => onDateChange(yesterday)}
+          >
+            {dateType === "yesterday" && (
+              <DropdownMenu.ItemIcon ios={{ name: "checkmark" as SFSymbol }} />
+            )}
+            <DropdownMenu.ItemTitle>Yesterday</DropdownMenu.ItemTitle>
+          </DropdownMenu.Item>
+          <DropdownMenu.Item key="custom" onSelect={() => setIsSheetOpen(true)}>
+            {dateType === "custom" && (
+              <DropdownMenu.ItemIcon ios={{ name: "checkmark" as SFSymbol }} />
+            )}
+            <DropdownMenu.ItemTitle>
+              {dateType === "custom" ? dateLabel : "Pick a date"}
+            </DropdownMenu.ItemTitle>
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
+    </>
   );
 }

@@ -41,6 +41,7 @@ const MAPPING = {
   "doc.text": "description",
   "rectangle.portrait.and.arrow.right": "logout",
   "arrow.up.right": "open-in-new",
+  "chevron.up.chevron.down": "unfold-more",
 } as IconMapping;
 
 /**
