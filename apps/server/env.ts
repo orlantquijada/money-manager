@@ -10,5 +10,6 @@ export const env = createEnv({
       ? z._default(z.string(), "*")
       : z.string().check(z.minLength(1)),
     CLERK_SECRET_KEY: z.string().check(z.minLength(1)),
+    GOOGLE_AI_API_KEY: z.optional(z.string()),
   },
 });

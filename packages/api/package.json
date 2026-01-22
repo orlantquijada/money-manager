@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@clerk/backend": "^2.29.0",
+    "@google/generative-ai": "^0.21.0",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "date-fns": "catalog:",
