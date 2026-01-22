@@ -50,6 +50,7 @@ export function AnimatedBlurOverlay({
 
   return (
     <AnimatedBlurView
+      experimentalBlurMethod="dimezisBlurView"
       intensity={15}
       pointerEvents="none"
       style={[StyleSheet.absoluteFill, { opacity }]}

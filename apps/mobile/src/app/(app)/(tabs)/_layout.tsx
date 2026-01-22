@@ -16,6 +16,7 @@ function TabsContent() {
   return (
     <View className="flex-1">
       <MaterialTopTabs
+        initialRouteName="(main)"
         screenOptions={{
           sceneStyle: {
             backgroundColor: isDark
