@@ -30,7 +30,7 @@ function TabsContent() {
         {/*
         Screen order determines AnimatedTabScreen indexes:
           0: add-expense
-          1: (main) - contains NativeTabs for dashboard/spending/transactions
+          1: (main) - contains NativeTabs for dashboard/insights/transactions
         If you change the order here, update AnimatedTabScreen index prop!
       */}
         <MaterialTopTabs.Screen name="add-expense" />

@@ -15,7 +15,7 @@ export default function MainLayout() {
           )}
           <Label>Home</Label>
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="spending">
+        <NativeTabs.Trigger name="insights">
           {Platform.OS === "ios" && (
             <Icon sf={{ default: "chart.bar", selected: "chart.bar.fill" }} />
           )}
