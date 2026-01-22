@@ -86,6 +86,7 @@ function randomAmount(min: number, max: number): string {
 
 /** Pick a random element from an array */
 function pickRandom<T>(arr: T[]): T {
+  // biome-ignore lint/style/noNonNullAssertion: assumed non-empty
   return arr[Math.floor(Math.random() * arr.length)]!;
 }
 
@@ -279,8 +280,9 @@ type TransactionSeed = {
   date: Date;
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: seed script
 function generateTransactions(
-  fundIdMap: Map<string, number>,
+  _fundIdMap: Map<string, number>,
   today: Date
 ): TransactionSeed[] {
   const txns: TransactionSeed[] = [];
@@ -292,7 +294,7 @@ function generateTransactions(
 
   // Previous periods for historical data
   const lastWeekStart = subWeeks(thisWeekStart, 1);
-  const twoWeeksAgoStart = subWeeks(thisWeekStart, 2);
+  const _twoWeeksAgoStart = subWeeks(thisWeekStart, 2);
   const lastMonthStart = subMonths(thisMonthStart, 1);
 
   // -------------------------------------------------------------------------
@@ -655,6 +657,7 @@ function generateTransactions(
   // Pick 1-2 shopping transactions
   const numShopping = Math.floor(Math.random() * 2) + 1;
   for (let i = 0; i < numShopping; i++) {
+    // biome-ignore lint/style/noNonNullAssertion: safe index
     const item = shoppingItems[i]!;
     txns.push({
       fundName: "Shopping",
@@ -825,6 +828,7 @@ function generateTransactions(
 // Main Seed Function
 // ============================================================================
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: seed script
 async function seed() {
   const today = new Date();
   console.log("🌱 Starting seed...");

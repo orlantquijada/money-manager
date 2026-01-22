@@ -4,9 +4,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "target": "ES2022",
-    "lib": [
-      "ES2022"
-    ],
+    "lib": ["ES2022"],
     "allowJs": true,
     "resolveJsonModule": true,
     "moduleDetection": "force",
@@ -26,14 +24,6 @@
     "outDir": "dist",
     "strictNullChecks": true
   },
-  "exclude": [
-    "node_modules",
-    "build",
-    "dist"
-  ],
-  "include": [
-    "src",
-    "env.ts",
-    "drizzle.config.ts"
-  ]
+  "exclude": ["node_modules", "build", "dist"],
+  "include": ["src", "env.ts", "drizzle.config.ts"]
 }

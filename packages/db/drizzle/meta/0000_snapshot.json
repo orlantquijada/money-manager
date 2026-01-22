@@ -58,12 +58,8 @@
           "name": "folders_user_id_users_id_fk",
           "tableFrom": "folders",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -169,12 +165,8 @@
           "name": "funds_folder_id_folders_id_fk",
           "tableFrom": "funds",
           "tableTo": "folders",
-          "columnsFrom": [
-            "folder_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["folder_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -231,12 +223,8 @@
           "name": "stores_user_id_users_id_fk",
           "tableFrom": "stores",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -244,12 +232,8 @@
           "name": "stores_last_selected_fund_id_funds_id_fk",
           "tableFrom": "stores",
           "tableTo": "funds",
-          "columnsFrom": [
-            "last_selected_fund_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["last_selected_fund_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -259,10 +243,7 @@
         "stores_userId_name_unique": {
           "name": "stores_userId_name_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_id",
-            "name"
-          ]
+          "columns": ["user_id", "name"]
         }
       },
       "policies": {},
@@ -346,12 +327,8 @@
           "name": "transactions_fund_id_funds_id_fk",
           "tableFrom": "transactions",
           "tableTo": "funds",
-          "columnsFrom": [
-            "fund_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["fund_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -359,12 +336,8 @@
           "name": "transactions_store_id_stores_id_fk",
           "tableFrom": "transactions",
           "tableTo": "stores",
-          "columnsFrom": [
-            "store_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["store_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -372,12 +345,8 @@
           "name": "transactions_user_id_users_id_fk",
           "tableFrom": "transactions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -418,20 +387,12 @@
     "public.FundType": {
       "name": "FundType",
       "schema": "public",
-      "values": [
-        "SPENDING",
-        "NON_NEGOTIABLE"
-      ]
+      "values": ["SPENDING", "NON_NEGOTIABLE"]
     },
     "public.TimeMode": {
       "name": "TimeMode",
       "schema": "public",
-      "values": [
-        "WEEKLY",
-        "MONTHLY",
-        "BIMONTHLY",
-        "EVENTUALLY"
-      ]
+      "values": ["WEEKLY", "MONTHLY", "BIMONTHLY", "EVENTUALLY"]
     }
   },
   "schemas": {},

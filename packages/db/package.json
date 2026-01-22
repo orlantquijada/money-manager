@@ -23,7 +23,8 @@
     "migrate": "pnpm with-env drizzle-kit migrate",
     "seed": "pnpm with-env tsx src/seed.ts",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf ./.turbo/ ./dist/ ./node_modules/"
+    "clean": "rm -rf ./.turbo/ ./dist/ ./node_modules/",
+    "lint": "biome check --write"
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^3.0.4",
