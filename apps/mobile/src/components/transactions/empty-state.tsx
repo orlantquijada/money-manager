@@ -1,8 +1,10 @@
 import { useRouter } from "expo-router";
 import { Pressable } from "react-native";
-import { useThemeColor } from "@/components/theme-provider";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import {
+  StyledIconSymbol,
+  StyledLeanText,
+  StyledLeanView,
+} from "@/config/interop";
 
 type Props = {
   variant: "new-user" | "period-empty";
@@ -14,12 +16,15 @@ export function TransactionsEmptyState({
   periodLabel = "this period",
 }: Props) {
   const router = useRouter();
-  const iconColor = useThemeColor("foreground-muted");
 
   if (variant === "new-user") {
     return (
       <StyledLeanView className="flex-1 items-center justify-center px-8 py-16">
-        <IconSymbol color={iconColor} name="chart.pie" size={48} />
+        <StyledIconSymbol
+          colorClassName="accent-foreground-muted"
+          name="chart.pie"
+          size={48}
+        />
 
         <StyledLeanText className="mt-4 font-satoshi-medium text-foreground text-lg">
           No transactions yet

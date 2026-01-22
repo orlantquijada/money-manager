@@ -14,8 +14,11 @@ import * as DropdownMenu from "zeego/dropdown-menu";
 import GlassButton, { GlassIconButton } from "@/components/glass-button";
 import type { Period } from "@/components/stats/period-chips";
 import { useThemeColor } from "@/components/theme-provider";
-import { IconSymbol } from "@/components/ui/icon-symbol";
-import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import {
+  StyledIconSymbol,
+  StyledLeanText,
+  StyledLeanView,
+} from "@/config/interop";
 import { transitions } from "@/utils/motion";
 
 const PERIODS: { value: Period; label: string }[] = [
@@ -43,9 +46,8 @@ function SearchBar({
   onSearchChange,
   onClear,
   showClearButton,
-  mutedColor,
   inputRef,
-}: SearchBarProps) {
+}: Omit<SearchBarProps, "mutedColor">) {
   const pointerEvents = useDerivedValue<
     "auto" | "none" | "box-none" | "box-only" | undefined
   >(() => (isExpanded.get() ? "auto" : "none"));
@@ -66,8 +68,8 @@ function SearchBar({
         className="flex-row items-center gap-2 rounded-xl bg-muted px-3 py-2.5"
         style={{ height: SEARCH_BAR_HEIGHT }}
       >
-        <IconSymbol
-          color={mutedColor}
+        <StyledIconSymbol
+          colorClassName="accent-foreground-muted"
           name="magnifyingglass"
           size={18}
           weight="medium"
@@ -88,7 +90,11 @@ function SearchBar({
         />
         {showClearButton && (
           <Pressable hitSlop={8} onPress={onClear}>
-            <IconSymbol color={mutedColor} name="xmark.circle.fill" size={18} />
+            <StyledIconSymbol
+              colorClassName="accent-foreground-muted"
+              name="xmark.circle.fill"
+              size={18}
+            />
           </Pressable>
         )}
       </StyledLeanView>
@@ -117,9 +123,7 @@ export function HistoryHeader({
 }: Props) {
   const inputRef = useRef<TextInput>(null);
 
-  const mutedColor = useThemeColor("foreground-muted");
   const muted = useThemeColor("muted");
-  const foregroundSecondary = useThemeColor("foreground-secondary");
 
   // Auto-focus input when search expands
   const focusInput = useCallback(() => {
@@ -155,7 +159,7 @@ export function HistoryHeader({
     PERIODS.find((p) => p.value === period)?.label ?? "Month";
 
   return (
-    <StyledLeanView className="gap-3 bg-background px-4 pt-safe">
+    <StyledLeanView className="gap-3 bg-background px-4 pt-safe-offset-4">
       <StyledLeanView className="flex-row items-center justify-end gap-2">
         {/* Period dropdown */}
         <DropdownMenu.Root>
@@ -165,8 +169,8 @@ export function HistoryHeader({
                 <StyledLeanText className="font-satoshi-medium text-foreground">
                   {currentPeriodLabel}
                 </StyledLeanText>
-                <IconSymbol
-                  color={foregroundSecondary}
+                <StyledIconSymbol
+                  colorClassName="accent-foreground-secondary"
                   name="chevron.up.chevron.down"
                   size={12}
                 />
@@ -197,7 +201,6 @@ export function HistoryHeader({
       <SearchBar
         inputRef={inputRef}
         isExpanded={isSearchExpanded}
-        mutedColor={mutedColor}
         onClear={handleClear}
         onSearchChange={onSearchChange}
         searchQuery={searchQuery}

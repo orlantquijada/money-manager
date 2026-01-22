@@ -5,12 +5,15 @@ import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import { useThemeColor } from "@/components/theme-provider";
-import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import {
+  StyledIconSymbol,
+  StyledLeanText,
+  StyledLeanView,
+} from "@/config/interop";
 import { useFabHeight } from "@/hooks/use-fab-height";
 import { toIsoDate } from "@/utils/format";
 import { sum } from "@/utils/math";
 import GlassButton from "../glass-button";
-import { IconSymbol } from "../ui/icon-symbol.ios";
 import { TransactionDateHeader } from "./date-header";
 import { TransactionsEmptyState } from "./empty-state";
 import { type TransactionItem, TransactionRow } from "./transaction-row";
@@ -161,9 +164,9 @@ export function ActivityTransactionList({
               <StyledLeanText className="font-satoshi-medium text-foreground">
                 See all spending
               </StyledLeanText>
-              <IconSymbol
-                color={foregroundColor}
-                name="arrow.right"
+              <StyledIconSymbol
+                colorClassName="accent-foreground"
+                name="arrow.up.right"
                 size={12}
               />
             </StyledLeanView>

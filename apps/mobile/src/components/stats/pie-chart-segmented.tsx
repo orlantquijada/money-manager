@@ -325,14 +325,15 @@ export default function SpendingPieChartSegmented({
     >
       <Svg viewBox={`0 0 ${size} ${size}`}>
         <G transform={[{ translateX: center }, { translateY: center }]}>
-          {arcs.map((arcDatum) => {
+          {arcs.map((arcDatum, idx) => {
             const pathData = arcGenerator(arcDatum) || "";
             return (
               <AnimatedSlice
                 arcDatum={arcDatum}
                 color={arcDatum.data.color}
                 fundId={arcDatum.data.fundId}
-                key={arcDatum.data.label}
+                // key={arcDatum.data.label}
+                key={idx}
                 onPress={handleSlicePress}
                 pathData={pathData}
                 selectedFundId={selectedFundId}

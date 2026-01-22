@@ -10,7 +10,7 @@ import Animated, {
 import { mauve } from "@/utils/colors";
 
 type Props = {
-  width: number;
+  width: number | `${number}%`;
   height: number;
 };
 
