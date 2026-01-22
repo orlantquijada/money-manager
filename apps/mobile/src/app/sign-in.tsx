@@ -1,7 +1,7 @@
 import { useAuth, useSSO } from "@clerk/clerk-expo";
 import * as WebBrowser from "expo-web-browser";
 import { useCallback } from "react";
-import { ActivityIndicator, Platform } from "react-native";
+import { ActivityIndicator } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { ScalePressable } from "@/components/scale-pressable";
@@ -72,19 +72,17 @@ export default function SignInScreen() {
 
       {/* Sign in buttons */}
       <StyledLeanView className="mt-auto gap-3">
-        {Platform.OS === "ios" && (
-          <Animated.View entering={FadeInDown.delay(200).springify()}>
-            <ScalePressable
-              className="h-14 flex-row items-center justify-center gap-3 rounded-2xl bg-black"
-              onPress={handleAppleSignIn}
-            >
-              <AppleIcon color="#fff" height={20} width={20} />
-              <StyledLeanText className="font-semibold text-base text-white">
-                Continue with Apple
-              </StyledLeanText>
-            </ScalePressable>
-          </Animated.View>
-        )}
+        <Animated.View entering={FadeInDown.delay(200).springify()}>
+          <ScalePressable
+            className="h-14 flex-row items-center justify-center gap-3 rounded-2xl bg-black"
+            onPress={handleAppleSignIn}
+          >
+            <AppleIcon color="#fff" height={20} width={20} />
+            <StyledLeanText className="font-semibold text-base text-white">
+              Continue with Apple
+            </StyledLeanText>
+          </ScalePressable>
+        </Animated.View>
 
         <Animated.View entering={FadeInDown.delay(300).springify()}>
           <ScalePressable

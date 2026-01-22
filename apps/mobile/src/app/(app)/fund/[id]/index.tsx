@@ -303,7 +303,7 @@ export default function FundDetailScreen() {
   }, [debouncedName, fundId, updateNameMutation.mutate]);
 
   // Save on blur (immediate)
-  const handleNameBlur = () => {
+  const _handleNameBlur = () => {
     if (
       localName &&
       localName !== lastSavedName.current &&
