@@ -2,7 +2,7 @@ import { AnimatePresence } from "@alloc/moti";
 import { useNavigation, usePreventRemove } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChooseFolder from "@/components/create-fund/choose-folder";
@@ -73,9 +73,15 @@ function CreateFundContent() {
       className="relative flex-1 bg-background"
       keyboardVerticalOffset={footerHeight}
     >
-      <GlassCloseButton className="absolute top-4 left-4 z-10" />
+      <GlassCloseButton
+        className="absolute left-4 z-10"
+        style={{ top: Platform.OS === "android" ? insets.top + 16 : 16 }}
+      />
 
-      <StyledLeanView className="absolute top-4 right-0 left-0 z-0 h-12 justify-center">
+      <StyledLeanView
+        className="absolute right-0 left-0 z-0 h-12 justify-center"
+        style={{ top: Platform.OS === "android" ? insets.top + 16 : 16 }}
+      >
         <ProgressStepper currentStep={currentStep} totalSteps={totalSteps} />
       </StyledLeanView>
 

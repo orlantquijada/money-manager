@@ -20,6 +20,7 @@ export default function CreateFolder() {
   const { name, setName, submit, isPending, isDirty } = useCreateFolderForm();
   const placeholder = useMemo(() => choice(FOLDER_NAME_PLACEHOLDERS), []);
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   usePreventRemove(isDirty, ({ data }) => {
     Alert.alert(
@@ -41,9 +42,18 @@ export default function CreateFolder() {
       behavior="padding"
       className="relative flex-1 bg-background"
     >
-      <GlassCloseButton className="absolute top-4 left-4 z-10" />
+      <GlassCloseButton
+        className="absolute left-4 z-10"
+        style={{ top: Platform.OS === "android" ? insets.top + 16 : 16 }}
+      />
 
-      <ScrollView contentContainerClassName="px-4 pt-20 pb-safe-offset-4 flex-1">
+      <ScrollView
+        contentContainerClassName="px-4 flex-1"
+        contentContainerStyle={{
+          paddingTop: Platform.OS === "android" ? insets.top + 80 : 80,
+          paddingBottom: insets.bottom + 16,
+        }}
+      >
         <StyledLeanView className="flex gap-y-8">
           <Presence delayMultiplier={3}>
             <StyledLeanView className="gap-2.5">

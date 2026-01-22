@@ -1,4 +1,5 @@
 import { useAuth, useUser } from "@clerk/clerk-expo";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system/legacy";
@@ -7,16 +8,20 @@ import { Stack } from "expo-router";
 import * as Sharing from "expo-sharing";
 import type { SymbolViewProps } from "expo-symbols";
 import * as WebBrowser from "expo-web-browser";
+import { useRef, useState } from "react";
 import {
   ActionSheetIOS,
   Alert,
   Linking,
+  Platform,
   ScrollView,
   Switch,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import BottomSheetModal from "@/components/bottom-sheet";
 import { ScalePressable } from "@/components/scale-pressable";
-import { useTheme } from "@/components/theme-provider";
+import { useTheme, useThemeColor } from "@/components/theme-provider";
 import { StyledIconSymbol } from "@/components/ui/icon-symbol";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { usePreferencesStore } from "@/stores/preferences";
@@ -24,6 +29,9 @@ import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
 
 export default function SettingsScreen() {
+  const insets = useSafeAreaInsets();
+  const headerTintColor = useThemeColor("foreground-muted");
+
   return (
     <>
       <Stack.Screen
@@ -33,11 +41,16 @@ export default function SettingsScreen() {
           headerTitle: "",
           headerTransparent: true,
           headerBlurEffect: "none",
+          headerTintColor,
         }}
       />
       <ScrollView
         className="flex-1 bg-background"
-        contentContainerClassName="gap-6 px-6"
+        contentContainerClassName="gap-6 px-4"
+        contentContainerStyle={{
+          paddingTop: Platform.OS === "android" ? insets.top + 64 : 0,
+          paddingBottom: insets.bottom + 24,
+        }}
         contentInsetAdjustmentBehavior="automatic"
       >
         <ProfileHeader />
@@ -141,7 +154,7 @@ function AccountSection() {
 // Appearance Section
 // =============================================================================
 
-function AppearanceSection() {
+function _AppearanceSection() {
   const { theme: activeTheme, setTheme } = useTheme();
 
   return (
@@ -228,6 +241,43 @@ function PreferencesSection() {
   const alertThreshold = usePreferencesStore((s) => s.alertThreshold);
   const setAlertThreshold = usePreferencesStore((s) => s.setAlertThreshold);
 
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const [sheetConfig, setSheetConfig] = useState<{
+    options: readonly string[];
+    title?: string;
+    cancelButtonIndex?: number;
+    callback: (index: number) => void;
+  } | null>(null);
+
+  const showActionSheet = (
+    options: {
+      options: readonly string[];
+      cancelButtonIndex: number;
+      title: string;
+      message?: string;
+    },
+    callback: (buttonIndex: number) => void
+  ) => {
+    if (Platform.OS === "ios") {
+      ActionSheetIOS.showActionSheetWithOptions(
+        // @ts-expect-error - readonly array mismatch
+        options,
+        callback
+      );
+    } else {
+      setSheetConfig({
+        options: options.options,
+        title: options.title,
+        cancelButtonIndex: options.cancelButtonIndex,
+        callback: (index: number) => {
+          bottomSheetRef.current?.dismiss();
+          callback(index);
+        },
+      });
+      bottomSheetRef.current?.present();
+    }
+  };
+
   const fundTypeLabels = {
     SPENDING: "Spending",
     NON_NEGOTIABLE: "Non-Negotiable",
@@ -242,7 +292,7 @@ function PreferencesSection() {
 
   const handleFundTypePicker = () => {
     const fundTypes = ["SPENDING", "NON_NEGOTIABLE"] as const;
-    ActionSheetIOS.showActionSheetWithOptions(
+    showActionSheet(
       {
         options: ["Cancel", "Spending", "Non-Negotiable"],
         cancelButtonIndex: 0,
@@ -257,7 +307,7 @@ function PreferencesSection() {
 
   const handleTimeModePicker = () => {
     const timeModes = ["WEEKLY", "MONTHLY", "BIMONTHLY", "EVENTUALLY"] as const;
-    ActionSheetIOS.showActionSheetWithOptions(
+    showActionSheet(
       {
         options: ["Cancel", "Weekly", "Monthly", "Bimonthly", "Eventually"],
         cancelButtonIndex: 0,
@@ -271,7 +321,7 @@ function PreferencesSection() {
   };
 
   const handleAlertThresholdPicker = () => {
-    ActionSheetIOS.showActionSheetWithOptions(
+    showActionSheet(
       {
         options: ["Cancel", "75%", "80%", "85%", "90%", "95%", "100%"],
         cancelButtonIndex: 0,
@@ -323,6 +373,45 @@ function PreferencesSection() {
           value={`${alertThreshold}%`}
         />
       </StyledLeanView>
+
+      <BottomSheetModal
+        enableDynamicSizing
+        onDismiss={() => setSheetConfig(null)}
+        ref={bottomSheetRef}
+      >
+        <BottomSheetView
+          className="gap-2 px-4 pb-10"
+          style={{ paddingBottom: 40 }}
+        >
+          {sheetConfig?.title && (
+            <StyledLeanText className="py-2 text-center font-satoshi-bold text-foreground text-lg">
+              {sheetConfig.title}
+            </StyledLeanText>
+          )}
+          {sheetConfig?.options.map((option: string, index: number) => {
+            const isCancel = index === sheetConfig.cancelButtonIndex;
+            return (
+              <ScalePressable
+                className={cn(
+                  "items-center rounded-xl bg-mauve-4 py-4 dark:bg-mauve-3",
+                  isCancel && "mt-2 bg-mauve-3 dark:bg-mauve-2"
+                )}
+                key={option}
+                onPress={() => sheetConfig.callback(index)}
+              >
+                <StyledLeanText
+                  className={cn(
+                    "font-satoshi-medium text-lg",
+                    isCancel ? "text-red-9" : "text-foreground"
+                  )}
+                >
+                  {option}
+                </StyledLeanText>
+              </ScalePressable>
+            );
+          })}
+        </BottomSheetView>
+      </BottomSheetModal>
     </StyledLeanView>
   );
 }
