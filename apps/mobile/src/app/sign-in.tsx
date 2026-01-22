@@ -1,7 +1,8 @@
 import { useAuth, useSSO } from "@clerk/clerk-expo";
+import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
-import { useCallback } from "react";
-import { ActivityIndicator } from "react-native";
+import { useCallback, useEffect } from "react";
+import { ActivityIndicator, Platform } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { ScalePressable } from "@/components/scale-pressable";
@@ -12,7 +13,21 @@ import GoogleIcon from "@/icons/google";
 // Handle OAuth redirect
 WebBrowser.maybeCompleteAuthSession();
 
+export const useWarmUpBrowser = () => {
+  useEffect(() => {
+    if (Platform.OS !== "android") return;
+    WebBrowser.warmUpAsync();
+
+    return () => {
+      // Cleanup: closes browser when component unmounts
+      WebBrowser.coolDownAsync();
+    };
+  }, []);
+};
+
 export default function SignInScreen() {
+  useWarmUpBrowser();
+
   const { isSignedIn } = useAuth();
   const { startSSOFlow: startAppleFlow } = useSSO();
   const { startSSOFlow: startGoogleFlow } = useSSO();
@@ -21,6 +36,7 @@ export default function SignInScreen() {
     try {
       const { createdSessionId, setActive } = await startAppleFlow({
         strategy: "oauth_apple",
+        redirectUrl: AuthSession.makeRedirectUri(),
       });
 
       if (createdSessionId && setActive) {
@@ -36,6 +52,7 @@ export default function SignInScreen() {
     try {
       const { createdSessionId, setActive } = await startGoogleFlow({
         strategy: "oauth_google",
+        redirectUrl: AuthSession.makeRedirectUri(),
       });
 
       if (createdSessionId && setActive) {
