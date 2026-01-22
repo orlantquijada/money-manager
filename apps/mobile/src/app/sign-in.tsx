@@ -1,7 +1,7 @@
-import { useSSO } from "@clerk/clerk-expo";
+import { useAuth, useSSO } from "@clerk/clerk-expo";
 import * as WebBrowser from "expo-web-browser";
 import { useCallback } from "react";
-import { Platform } from "react-native";
+import { ActivityIndicator, Platform } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { ScalePressable } from "@/components/scale-pressable";
@@ -13,6 +13,7 @@ import GoogleIcon from "@/icons/google";
 WebBrowser.maybeCompleteAuthSession();
 
 export default function SignInScreen() {
+  const { isSignedIn } = useAuth();
   const { startSSOFlow: startAppleFlow } = useSSO();
   const { startSSOFlow: startGoogleFlow } = useSSO();
 
@@ -24,7 +25,7 @@ export default function SignInScreen() {
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
-        // Navigation handled by <Redirect> in _layout.tsx
+        // Navigation handled by Stack.Protected in _layout.tsx
       }
     } catch (error) {
       console.error("Apple sign-in error:", error);
@@ -39,12 +40,23 @@ export default function SignInScreen() {
 
       if (createdSessionId && setActive) {
         await setActive({ session: createdSessionId });
-        // Navigation handled by <Redirect> in _layout.tsx
+        // Navigation handled by Stack.Protected in _layout.tsx
       }
     } catch (error) {
       console.error("Google sign-in error:", error);
     }
   }, [startGoogleFlow]);
+
+  if (isSignedIn) {
+    return (
+      <StyledLeanView className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator size="large" />
+        <StyledLeanText className="mt-4 text-foreground-secondary">
+          Setting up your account...
+        </StyledLeanText>
+      </StyledLeanView>
+    );
+  }
 
   return (
     <StyledLeanView className="flex-1 bg-background px-6 pt-safe-offset-20 pb-safe-offset-8">
