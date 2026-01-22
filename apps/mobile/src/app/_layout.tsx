@@ -5,7 +5,7 @@ import "@/config/interop";
 import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { type Href, Redirect, Stack, useSegments } from "expo-router";
+import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -41,7 +41,6 @@ SplashScreen.preventAutoHideAsync();
 function AppContent() {
   const { isDark } = useTheme();
   const { isSignedIn } = useAuth();
-  const segments = useSegments();
 
   // Sync Clerk token to tRPC client
   const { isTokenReady } = useAuthTokenSync();
@@ -49,29 +48,21 @@ function AppContent() {
   // Ensure user exists in database on sign-in (waits for token to be ready)
   const { isProvisioned } = useUserProvisioning({ isTokenReady });
 
-  // Check if we're on a protected route
-  const inAuthGroup = segments[0] === "(app)";
-
-  // Redirect based on auth state
-  if (!isSignedIn && inAuthGroup) {
-    return <Redirect href={"/sign-in" as Href} />;
-  }
-
-  // Block rendering protected routes until user is provisioned in the database
-  // This prevents race conditions where queries fire before the user row exists
-  if (isSignedIn && inAuthGroup && !isProvisioned) {
-    return null;
-  }
-
-  if (isSignedIn && (segments[0] as string) === "sign-in") {
-    return <Redirect href="/(app)/(tabs)/(main)" />;
-  }
+  // Full authentication guard: signed in AND provisioned in DB
+  // User stays on sign-in screen during provisioning phase
+  const isAuthenticated = !!isSignedIn && isProvisioned;
 
   return (
     <>
       <Stack>
-        <Stack.Screen name="(app)" options={{ headerShown: false }} />
-        <Stack.Screen name="sign-in" options={{ headerShown: false }} />
+        <Stack.Protected guard={isAuthenticated}>
+          <Stack.Screen name="(app)" options={{ headerShown: false }} />
+        </Stack.Protected>
+
+        <Stack.Protected guard={!isAuthenticated}>
+          <Stack.Screen name="sign-in" options={{ headerShown: false }} />
+        </Stack.Protected>
+
         <Stack.Screen
           name="modal"
           options={{ presentation: "modal", title: "Modal" }}
