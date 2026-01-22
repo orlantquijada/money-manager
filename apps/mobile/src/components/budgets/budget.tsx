@@ -10,7 +10,7 @@ import { FolderClosedDuoCreate, FolderOpenDuo } from "@/icons";
 import type { FundWithMeta } from "@/lib/fund";
 import { cn } from "@/utils/cn";
 import AnimateHeight from "../animate-height";
-import Category from "./category";
+import Category, { CATEGORY_HEIGHT } from "./category";
 
 type Props = {
   folderId: Folder["id"];
@@ -79,9 +79,12 @@ function Categories({ funds, open, folderId }: CategoriesProps) {
     );
   }
 
+  // Pre-calculate height: CATEGORY_HEIGHT per fund + margins (mt-1.5=6 + mb-4=16 = 22px)
+  const totalHeight = CATEGORY_HEIGHT * funds.length + 22;
+
   return (
     <StyledLeanView className="overflow-hidden">
-      <AnimateHeight isExpanded={open}>
+      <AnimateHeight height={totalHeight} isExpanded={open}>
         {funds.map((fund, idx) => (
           <Category
             className={cn(

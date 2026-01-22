@@ -13,11 +13,16 @@ import { transitions } from "@/utils/motion";
 type Props = {
   isExpanded: SharedValue<boolean>;
   children: ReactNode;
-  top?: boolean;
+  /**
+   * Optional pre-calculated height. When provided, skips onLayout measurement
+   * for better performance (no layout pass before animation starts).
+   */
+  height?: number;
 };
 
-export default function AnimateHeight({ isExpanded, children }: Props) {
-  const { handleOnLayout, measuredHeight } = useMeasureHeight();
+export default function AnimateHeight({ isExpanded, children, height }: Props) {
+  const { handleOnLayout, measuredHeight } = useMeasureHeight(height ?? 0);
+  const isHeightKnown = height !== undefined;
 
   // Single spring driving all properties — 1 calculation per frame instead of 4
   const progress = useDerivedValue(() =>
@@ -26,8 +31,9 @@ export default function AnimateHeight({ isExpanded, children }: Props) {
 
   const bodyStyle = useAnimatedStyle(() => {
     const p = progress.get();
+    const targetHeight = isHeightKnown ? height : measuredHeight.get();
     return {
-      height: measuredHeight.get() * p,
+      height: targetHeight * p,
       opacity: p,
       transform: [
         { scale: 0.9 + 0.1 * p }, // 0.9 → 1
@@ -39,7 +45,8 @@ export default function AnimateHeight({ isExpanded, children }: Props) {
   return (
     <Animated.View className="w-full overflow-hidden" style={bodyStyle}>
       <StyledLeanView
-        onLayout={handleOnLayout}
+        // Only attach onLayout when we need to measure
+        onLayout={isHeightKnown ? undefined : handleOnLayout}
         style={{ ...StyleSheet.absoluteFillObject, bottom: "auto" }}
       >
         {children}
