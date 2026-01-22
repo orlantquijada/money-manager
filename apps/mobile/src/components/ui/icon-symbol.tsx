@@ -4,7 +4,6 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import type { SymbolViewProps, SymbolWeight } from "expo-symbols";
 import type { ComponentProps } from "react";
 import type { OpaqueColorValue, StyleProp, TextStyle } from "react-native";
-import { withUniwind } from "uniwind";
 
 type IconMapping = Record<
   SymbolViewProps["name"],
@@ -41,15 +40,18 @@ const MAPPING = {
   "doc.text": "file-document-outline",
   "rectangle.portrait.and.arrow.right": "logout",
   "arrow.up.right": "open-in-new",
+  "arrow.down.right": "arrow-bottom-right",
   "chevron.up.chevron.down": "unfold-more-horizontal",
   "person.circle.fill": "account-circle",
   plus: "plus",
   "chart.pie": "chart-pie",
   "xmark.circle.fill": "close-circle",
   magnifyingglass: "magnify",
+  "lightbulb.fill": "lightbulb-on",
+  number: "numeric",
 } satisfies Partial<IconMapping>;
 
-type IconSymbolName = keyof typeof MAPPING;
+export type IconSymbolName = keyof typeof MAPPING;
 
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Community Icons on Android and web.
@@ -61,6 +63,7 @@ export function IconSymbol({
   size = 24,
   color,
   style,
+  weight: _weight,
 }: {
   name: IconSymbolName;
   size?: number;
@@ -77,10 +80,3 @@ export function IconSymbol({
     />
   );
 }
-
-export const StyledIconSymbol = withUniwind(IconSymbol, {
-  color: {
-    fromClassName: "colorClassName",
-    styleProperty: "accentColor",
-  },
-});

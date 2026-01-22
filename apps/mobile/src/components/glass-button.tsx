@@ -1,12 +1,12 @@
 import { router } from "expo-router";
-import type { SymbolViewProps } from "expo-symbols";
 import type { ReactNode } from "react";
 import type { PressableProps, ViewStyle } from "react-native";
 
 import Button from "@/components/button";
 import { useThemeColor } from "@/components/theme-provider";
 import type { ButtonSize, ButtonVariant } from "@/components/ui/button-tokens";
-import { IconSymbol } from "@/components/ui/icon-symbol";
+import type { IconSymbolName } from "@/components/ui/icon-symbol";
+import { StyledIconSymbol } from "@/config/interop";
 import { Cross } from "@/icons";
 
 type GlassButtonProps = PressableProps & {
@@ -89,7 +89,7 @@ export function GlassCloseButton({
 }
 
 type GlassIconButtonProps = Omit<GlassButtonProps, "children" | "variant"> & {
-  icon: SymbolViewProps["name"];
+  icon: IconSymbolName;
   iconSize?: number;
 };
 
@@ -105,7 +105,6 @@ export function GlassIconButton({
   ...props
 }: GlassIconButtonProps) {
   const tintColor = useThemeColor("muted");
-  const iconColor = useThemeColor("muted-foreground");
 
   return (
     <GlassButton
@@ -115,7 +114,11 @@ export function GlassIconButton({
       variant="icon"
       {...props}
     >
-      <IconSymbol color={iconColor} name={icon} size={iconSize} />
+      <StyledIconSymbol
+        colorClassName="accent-muted-foreground"
+        name={icon}
+        size={iconSize}
+      />
     </GlassButton>
   );
 }
