@@ -116,17 +116,10 @@ const colorScales = {
 
 type ColorScaleName = keyof typeof colorScales;
 
-/**
- * Hook to get a color value that adapts to the current theme.
- *
- * @example
- * const mauve1 = useThemeColor("mauve-1");
- * const bg = useThemeColor("background");
- * const primary = useThemeColor("primary");
- */
-export function useThemeColor(key: ColorKey): string {
-  const isDark = useIsDark();
+// Cache for resolved colors: "light:key" or "dark:key" -> resolved color
+const colorCache = new Map<string, string>();
 
+function resolveColor(key: ColorKey, isDark: boolean): string {
   // Handle progress color tokens (CSS-based with light/dark values)
   const progressColor = getProgressColor(key, isDark);
   if (progressColor) return progressColor;
@@ -144,6 +137,26 @@ export function useThemeColor(key: ColorKey): string {
   const colorKey = `${scaleName}${grade}` as keyof typeof targetScale;
 
   return targetScale[colorKey] ?? key;
+}
+
+/**
+ * Hook to get a color value that adapts to the current theme.
+ *
+ * @example
+ * const mauve1 = useThemeColor("mauve-1");
+ * const bg = useThemeColor("background");
+ * const primary = useThemeColor("primary");
+ */
+export function useThemeColor(key: ColorKey): string {
+  const isDark = useIsDark();
+
+  const cacheKey = `${isDark ? "d" : "l"}:${key}`;
+  const cached = colorCache.get(cacheKey);
+  if (cached) return cached;
+
+  const resolved = resolveColor(key, isDark);
+  colorCache.set(cacheKey, resolved);
+  return resolved;
 }
 
 // Progress color tokens with hardcoded light/dark values
