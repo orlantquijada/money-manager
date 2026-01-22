@@ -3,7 +3,6 @@ import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useRef } from "react";
 import { TextInput } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Amount, useAmount } from "@/components/add-expense/amount";
 import { FundPickerSheet } from "@/components/add-expense/fund-picker-sheet";
@@ -25,7 +24,6 @@ export default function AddExpense() {
   const router = useRouter();
   const mutedForegroundColor = useThemeColor("foreground-muted");
   const foregroundColor = useThemeColor("foreground");
-  const insets = useSafeAreaInsets();
 
   // Bottom sheet refs
   const fundSheetRef = useRef<BottomSheetModal>(null);
