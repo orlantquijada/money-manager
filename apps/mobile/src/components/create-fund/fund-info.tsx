@@ -1,6 +1,6 @@
 import type { FundType } from "api";
 import { useMemo } from "react";
-import { type LayoutChangeEvent, ScrollView } from "react-native";
+import { type LayoutChangeEvent, Platform, ScrollView } from "react-native";
 import Animated, {
   type SharedValue,
   useAnimatedStyle,
@@ -76,7 +76,7 @@ export default function FundInfo({ setScreen }: Props) {
   return (
     <>
       <ScrollView
-        className="px-4 pt-20"
+        className={cn("px-4", Platform.OS === "android" ? "pt-28" : "pt-20")}
         contentContainerClassName="pb-safe-offset-4 flex gap-y-8 flex-1"
       >
         <Presence delay={DELAY} delayMultiplier={5} exitDelayMultiplier={1}>

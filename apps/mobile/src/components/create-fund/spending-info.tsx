@@ -1,5 +1,5 @@
 import type { TimeMode } from "api";
-import { ScrollView } from "react-native";
+import { Platform, ScrollView } from "react-native";
 import Animated, {
   FadeInDown,
   FadeOutUp,
@@ -11,8 +11,8 @@ import {
   useCreateFundStore,
   useSubmitFund,
 } from "@/lib/create-fund";
+import { cn } from "@/utils/cn";
 import { transitions } from "@/utils/motion";
-
 import Presence from "../presence";
 import { CurrencyInput } from "../text-input";
 import Choice from "./choice";
@@ -36,7 +36,7 @@ export default function SpendingInfo({ setScreen, presetFolderId }: Props) {
   return (
     <>
       <ScrollView
-        className="px-4 pt-20"
+        className={cn("px-4", Platform.OS === "android" ? "pt-28" : "pt-20")}
         contentContainerClassName="pb-safe-offset-4 flex gap-y-8"
       >
         <StyledLeanView className="mb-8">

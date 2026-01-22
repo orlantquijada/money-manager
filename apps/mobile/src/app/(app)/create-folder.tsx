@@ -49,8 +49,9 @@ export default function CreateFolder() {
       <ScrollView
         contentContainerClassName="px-4 flex-1"
         contentContainerStyle={{
-          paddingTop: Platform.OS === "android" ? insets.top + 80 : 80,
-          paddingBottom: insets.bottom + 16,
+          paddingTop: Platform.OS === "android" ? insets.top + 110 : 80,
+          paddingBottom:
+            Platform.OS === "android" ? insets.bottom + 32 : insets.bottom + 16,
         }}
       >
         <StyledLeanView className="flex gap-y-8">

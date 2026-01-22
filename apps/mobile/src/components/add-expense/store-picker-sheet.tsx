@@ -14,9 +14,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ScalePressable } from "@/components/scale-pressable";
 import { useThemeColor } from "@/components/theme-provider";
-import { IconSymbol } from "@/components/ui/icon-symbol";
 import {
   StyledBottomSheetView,
+  StyledIconSymbol,
   StyledLeanText,
   StyledLeanView,
 } from "@/config/interop";
@@ -150,7 +150,11 @@ function Content({ stores }: ContentProps) {
           opacityValue={0.7}
           scaleValue={0.98}
         >
-          <IconSymbol color={mutedColor} name="plus" size={16} />
+          <StyledIconSymbol
+            colorClassName="accent-foreground-muted"
+            name="plus"
+            size={16}
+          />
           <StyledLeanText
             className="font-satoshi-medium text-base text-foreground"
             ellipsizeMode="tail"

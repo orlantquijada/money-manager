@@ -1,7 +1,7 @@
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import type { Folder } from "api";
-import { type PressableProps, ScrollView } from "react-native";
+import { Platform, type PressableProps, ScrollView } from "react-native";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { FolderClosedDuoCreate, FolderOpenDuo } from "@/icons";
 import {
@@ -33,7 +33,7 @@ export default function ChooseFolder({ setScreen }: Props) {
   return (
     <>
       <ScrollView
-        className="px-4 pt-20"
+        className={cn("px-4", Platform.OS === "android" ? "pt-28" : "pt-20")}
         contentContainerClassName="pb-safe-offset-4 flex"
       >
         <Presence delay={DELAY} delayMultiplier={3}>

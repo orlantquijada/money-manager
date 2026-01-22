@@ -6,7 +6,6 @@ import * as FileSystem from "expo-file-system/legacy";
 import { Image } from "expo-image";
 import { Stack } from "expo-router";
 import * as Sharing from "expo-sharing";
-import type { SymbolViewProps } from "expo-symbols";
 import * as WebBrowser from "expo-web-browser";
 import { useRef, useState } from "react";
 import {
@@ -22,8 +21,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheetModal from "@/components/bottom-sheet";
 import { ScalePressable } from "@/components/scale-pressable";
 import { useTheme, useThemeColor } from "@/components/theme-provider";
-import { StyledIconSymbol } from "@/components/ui/icon-symbol";
-import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import type { IconSymbolName } from "@/components/ui/icon-symbol";
+import {
+  StyledIconSymbol,
+  StyledLeanText,
+  StyledLeanView,
+} from "@/config/interop";
 import { usePreferencesStore } from "@/stores/preferences";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
@@ -550,11 +553,19 @@ function AboutSection() {
 function DangerSection() {
   const { signOut } = useAuth();
   const { user } = useUser();
+  const queryClient = useQueryClient();
 
   const handleLogout = () => {
     Alert.alert("Sign Out", "Are you sure you want to sign out?", [
       { text: "Cancel", style: "cancel" },
-      { text: "Sign Out", style: "destructive", onPress: () => signOut() },
+      {
+        text: "Sign Out",
+        style: "destructive",
+        onPress: async () => {
+          queryClient.clear();
+          await signOut();
+        },
+      },
     ]);
   };
 
@@ -570,6 +581,7 @@ function DangerSection() {
           onPress: async () => {
             try {
               await user?.delete();
+              queryClient.clear();
               await signOut();
             } catch {
               Alert.alert(
@@ -641,7 +653,7 @@ function ToggleRow({
   onValueChange,
   showBorder,
 }: {
-  icon: SymbolViewProps["name"];
+  icon: IconSymbolName;
   label: string;
   value: boolean;
   onValueChange: (value: boolean) => void;
@@ -682,7 +694,7 @@ function StaticRow({
   value,
   showBorder,
 }: {
-  icon: SymbolViewProps["name"];
+  icon: IconSymbolName;
   label: string;
   value: string;
   showBorder?: boolean;
@@ -724,7 +736,7 @@ function NavigationRow({
   showBorder,
   external,
 }: {
-  icon: SymbolViewProps["name"];
+  icon: IconSymbolName;
   label: string;
   value?: string;
   onPress: () => void;
@@ -773,7 +785,7 @@ function DestructiveRow({
   showBorder,
   external,
 }: {
-  icon: SymbolViewProps["name"];
+  icon: IconSymbolName;
   label: string;
   onPress: () => void;
   showBorder?: boolean;

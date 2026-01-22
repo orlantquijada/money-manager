@@ -1,5 +1,5 @@
 import type { TimeMode } from "api";
-import { ScrollView, Text, View } from "react-native";
+import { Platform, ScrollView, Text, View } from "react-native";
 import Animated, {
   FadeInDown,
   FadeOutUp,
@@ -10,7 +10,7 @@ import {
   useCreateFundStore,
   useSubmitFund,
 } from "@/lib/create-fund";
-
+import { cn } from "@/utils/cn";
 import { layoutSpringify, transitions } from "@/utils/motion";
 import Presence from "../presence";
 import { CurrencyInput } from "../text-input";
@@ -38,7 +38,7 @@ export default function NonNegotiableInfo({
   return (
     <>
       <ScrollView
-        className="px-4 pt-20"
+        className={cn("px-4", Platform.OS === "android" ? "pt-28" : "pt-20")}
         contentContainerClassName="pb-safe-offset-4 flex gap-y-8"
       >
         <View>

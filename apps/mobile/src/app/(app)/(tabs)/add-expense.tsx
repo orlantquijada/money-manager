@@ -74,7 +74,7 @@ export default function AddExpense() {
 
   return (
     <AnimatedTabScreen index={0}>
-      <StyledSafeAreaView className="flex-1 bg-background">
+      <StyledSafeAreaView className="flex-1 bg-background py-4">
         <Header date={date} onCancel={handleCancel} onDateChange={setDate} />
 
         <StyledLeanView className="flex-1 px-4">
