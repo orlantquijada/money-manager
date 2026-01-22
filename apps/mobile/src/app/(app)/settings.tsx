@@ -20,7 +20,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import BottomSheetModal from "@/components/bottom-sheet";
 import { ScalePressable } from "@/components/scale-pressable";
-import { useTheme, useThemeColor } from "@/components/theme-provider";
+import { useTheme } from "@/components/theme-provider";
 import type { IconSymbolName } from "@/components/ui/icon-symbol";
 import {
   StyledIconSymbol,
@@ -33,7 +33,6 @@ import { cn } from "@/utils/cn";
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
-  const headerTintColor = useThemeColor("foreground-muted");
 
   return (
     <>
@@ -44,7 +43,6 @@ export default function SettingsScreen() {
           headerTitle: "",
           headerTransparent: true,
           headerBlurEffect: "none",
-          headerTintColor,
         }}
       />
       <ScrollView

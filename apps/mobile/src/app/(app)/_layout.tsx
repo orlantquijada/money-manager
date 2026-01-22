@@ -20,6 +20,7 @@ const formSheetOptions = {
 
 export default function AppLayout() {
   const backgroundColor = useThemeColor("background");
+  const headerTintColor = useThemeColor("foreground-muted");
 
   return (
     <Stack
@@ -27,6 +28,7 @@ export default function AppLayout() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor },
+        headerTintColor,
       }}
     >
       <Stack.Screen name="(tabs)" />

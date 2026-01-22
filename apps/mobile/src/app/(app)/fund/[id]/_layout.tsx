@@ -4,10 +4,12 @@ import { useThemeColor } from "@/components/theme-provider";
 export default function FundLayout() {
   const backgroundColor = useThemeColor("background");
   const foregroundColor = useThemeColor("foreground");
+  const headerTintColor = useThemeColor("foreground-muted");
 
   return (
     <Stack
       screenOptions={{
+        headerTintColor,
         headerShown: true,
         headerTransparent: true,
         headerBlurEffect: "none",

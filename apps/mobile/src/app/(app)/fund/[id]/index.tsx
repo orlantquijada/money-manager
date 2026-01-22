@@ -1,10 +1,11 @@
+import { useHeaderHeight } from "@react-navigation/elements";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { TimeMode } from "api";
 import { differenceInDays, endOfMonth, endOfWeek } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ActionSheetIOS, Alert, ScrollView } from "react-native";
+import { ActionSheetIOS, Alert, Platform, ScrollView } from "react-native";
 import CategoryProgressBars from "@/components/budgets/category-progress-bars";
 import { ScalePressable } from "@/components/scale-pressable";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
@@ -259,6 +260,7 @@ export default function FundDetailScreen() {
   const fundId = Number(id);
   const router = useRouter();
   const queryClient = useQueryClient();
+  const headerHeight = useHeaderHeight();
 
   const { data: fund, isLoading: fundLoading } = useQuery(
     trpc.fund.retrieve.queryOptions(fundId)
@@ -448,6 +450,7 @@ export default function FundDetailScreen() {
         className="flex-1 bg-background"
         contentContainerClassName="gap-6 pb-8 px-4"
         contentInsetAdjustmentBehavior="automatic"
+        style={{ paddingTop: Platform.OS === "android" ? headerHeight : 0 }}
       >
         {/* Progress Section */}
         {fund.timeMode === "EVENTUALLY" ? (

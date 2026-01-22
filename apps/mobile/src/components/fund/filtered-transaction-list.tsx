@@ -1,5 +1,7 @@
+import { useHeaderHeight } from "@react-navigation/elements";
 import { Stack } from "expo-router";
 import { useMemo, useState } from "react";
+import { Platform } from "react-native";
 import { useThemeColor } from "@/components/theme-provider";
 import { TransactionList } from "@/components/transactions";
 import { StyledLeanView } from "@/config/interop";
@@ -27,6 +29,7 @@ export function FilteredFundTransactionList({
 }: Props) {
   const [search, setSearch] = useState("");
   const foregroundColor = useThemeColor("foreground");
+  const headerHeight = useHeaderHeight();
 
   const filteredTransactions = useMemo(
     () => filterTransactions(transactions, search),
@@ -45,7 +48,10 @@ export function FilteredFundTransactionList({
           },
         }}
       />
-      <StyledLeanView className="flex-1 bg-background">
+      <StyledLeanView
+        className="flex-1 bg-background"
+        style={{ paddingTop: Platform.OS === "android" ? headerHeight : 0 }}
+      >
         <TransactionList
           emptyStateVariant="period-empty"
           hasNextPage={hasNextPage}
