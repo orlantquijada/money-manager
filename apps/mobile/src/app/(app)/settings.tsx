@@ -3,8 +3,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system/legacy";
 import { Image } from "expo-image";
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import * as Sharing from "expo-sharing";
+import type { SymbolViewProps } from "expo-symbols";
 import * as WebBrowser from "expo-web-browser";
 import {
   ActionSheetIOS,
@@ -15,58 +16,45 @@ import {
 } from "react-native";
 
 import { ScalePressable } from "@/components/scale-pressable";
-import { useTheme, useThemeColor } from "@/components/theme-provider";
+import { useTheme } from "@/components/theme-provider";
+import { StyledIconSymbol } from "@/components/ui/icon-symbol";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
-import { ChevronRight } from "@/icons";
 import { usePreferencesStore } from "@/stores/preferences";
 import { trpc } from "@/utils/api";
+import { cn } from "@/utils/cn";
 
 export default function SettingsScreen() {
-  const router = useRouter();
-  const backgroundColor = useThemeColor("background");
-  const foregroundColor = useThemeColor("foreground");
-
   return (
     <>
       <Stack.Screen
         options={{
+          presentation: "modal",
           headerShown: true,
-          headerTitle: "Settings",
-          headerStyle: { backgroundColor },
-          headerTitleStyle: {
-            fontFamily: "Satoshi-Bold",
-            fontSize: 17,
-            color: foregroundColor,
-          },
-          headerShadowVisible: false,
-          unstable_headerLeftItems: () => [
-            {
-              label: "label",
-              type: "button",
-              icon: { name: "chevron.left", type: "sfSymbol" },
-              title: "Edit",
-              onPress: () => router.back(),
-            },
-          ],
+          headerTitle: "",
+          headerTransparent: true,
+          headerBlurEffect: "none",
         }}
       />
       <ScrollView
         className="flex-1 bg-background"
-        contentContainerClassName="gap-8 px-6 py-6"
+        contentContainerClassName="gap-6 px-6"
+        contentInsetAdjustmentBehavior="automatic"
       >
-        <ProfileSection />
-        <AppearanceSection />
+        <ProfileHeader />
+        <AccountSection />
+        {/* <AppearanceSection /> */}
         <PreferencesSection />
         <DataSection />
         <AboutSection />
-        <AccountSection />
+        <DangerSection />
+        <VersionFooter />
       </ScrollView>
     </>
   );
 }
 
 // =============================================================================
-// Profile Section
+// Profile Header
 // =============================================================================
 
 function getUserInitial(user: ReturnType<typeof useUser>["user"]) {
@@ -76,43 +64,75 @@ function getUserInitial(user: ReturnType<typeof useUser>["user"]) {
   return "?";
 }
 
-function ProfileSection() {
+function getUsername(user: ReturnType<typeof useUser>["user"]) {
+  if (user?.username) return user.username;
+  const email = user?.primaryEmailAddress?.emailAddress;
+  if (email) return email.split("@")[0];
+  return "user";
+}
+
+function ProfileHeader() {
+  const { user } = useUser();
+
+  return (
+    <StyledLeanView className="items-center gap-2 py-2">
+      {user?.imageUrl ? (
+        <Image
+          source={{ uri: user.imageUrl }}
+          style={{ width: 96, height: 96, borderRadius: 48 }}
+        />
+      ) : (
+        <StyledLeanView className="h-24 w-24 items-center justify-center rounded-full bg-linear-to-br from-violet-9 to-red-9">
+          <StyledLeanText
+            className="font-satoshi-bold text-white"
+            style={{ fontSize: 50 }}
+          >
+            {getUserInitial(user)}
+          </StyledLeanText>
+        </StyledLeanView>
+      )}
+      <StyledLeanText className="font-satoshi-bold text-foreground text-lg">
+        @{getUsername(user)}
+      </StyledLeanText>
+    </StyledLeanView>
+  );
+}
+
+// =============================================================================
+// Account Section
+// =============================================================================
+
+function AccountSection() {
   const { user } = useUser();
 
   const handleManageAccount = async () => {
-    // Open Clerk's user profile management portal
     await WebBrowser.openBrowserAsync("https://accounts.clerk.dev/user");
   };
 
   return (
-    <StyledLeanView className="gap-4">
-      <SectionHeader title="Profile" />
+    <StyledLeanView className="gap-3">
+      <SectionHeader title="Account" />
 
-      <StyledLeanView className="flex-row items-center gap-4">
-        {user?.imageUrl ? (
-          <Image
-            source={{ uri: user.imageUrl }}
-            style={{ width: 56, height: 56, borderRadius: 28 }}
-          />
-        ) : (
-          <StyledLeanView className="h-14 w-14 items-center justify-center rounded-full bg-mauve-4">
-            <StyledLeanText className="font-satoshi-bold text-foreground text-lg">
-              {getUserInitial(user)}
-            </StyledLeanText>
-          </StyledLeanView>
-        )}
-
-        <StyledLeanView className="flex-1 gap-0.5">
-          <StyledLeanText className="font-satoshi-medium text-base text-foreground">
-            {user?.fullName ?? "User"}
-          </StyledLeanText>
-          <StyledLeanText className="font-satoshi text-foreground-muted text-sm">
-            {user?.primaryEmailAddress?.emailAddress ?? ""}
-          </StyledLeanText>
-        </StyledLeanView>
+      <StyledLeanView className="overflow-hidden rounded-xl bg-mauve-3 dark:bg-card">
+        <StaticRow
+          icon="envelope"
+          label="Email"
+          showBorder
+          value={user?.primaryEmailAddress?.emailAddress ?? ""}
+        />
+        <StaticRow
+          icon="at"
+          label="Username"
+          showBorder
+          value={getUsername(user)}
+        />
+        <NavigationRow
+          external
+          icon="person.crop.circle"
+          label="Manage Account"
+          onPress={handleManageAccount}
+        />
       </StyledLeanView>
-
-      <NavigationRow label="Manage Account" onPress={handleManageAccount} />
     </StyledLeanView>
   );
 }
@@ -125,7 +145,7 @@ function AppearanceSection() {
   const { theme: activeTheme, setTheme } = useTheme();
 
   return (
-    <StyledLeanView className="gap-4">
+    <StyledLeanView className="gap-3">
       <SectionHeader title="Appearance" />
 
       <StyledLeanView className="flex-row gap-3">
@@ -152,12 +172,6 @@ function AppearanceSection() {
   );
 }
 
-const themeIconMap: Record<string, string> = {
-  "sun.max.fill": "☀️",
-  "moon.fill": "🌙",
-  iphone: "📱",
-};
-
 function ThemeButton({
   label,
   icon,
@@ -165,26 +179,25 @@ function ThemeButton({
   onPress,
 }: {
   label: string;
-  icon: string;
+  icon: "sun.max.fill" | "moon.fill" | "iphone";
   isActive: boolean;
   onPress: () => void;
 }) {
-  const activeColor = useThemeColor("violet-9");
-  const inactiveColor = useThemeColor("foreground-muted");
-
   return (
     <ScalePressable
-      className={`flex-1 items-center gap-2 rounded-xl py-4 ${
-        isActive ? "bg-violet-3" : "bg-mauve-3"
-      }`}
+      className={cn(
+        "flex-1 items-center gap-2 rounded-xl border-hairline border-mauve-5 bg-mauve-3 py-4 dark:bg-card",
+        isActive && "bg-violet-3"
+      )}
       onPress={onPress}
     >
-      <StyledLeanText
-        className="text-2xl"
-        style={{ color: isActive ? activeColor : inactiveColor }}
-      >
-        {themeIconMap[icon]}
-      </StyledLeanText>
+      <StyledIconSymbol
+        colorClassName={
+          isActive ? "accent-violet-9" : "accent-foreground-muted"
+        }
+        name={icon}
+        size={24}
+      />
       <StyledLeanText
         className={`font-satoshi-medium text-sm ${
           isActive ? "text-violet-11" : "text-foreground-muted"
@@ -214,10 +227,6 @@ function PreferencesSection() {
 
   const alertThreshold = usePreferencesStore((s) => s.alertThreshold);
   const setAlertThreshold = usePreferencesStore((s) => s.setAlertThreshold);
-
-  const trackColor = useThemeColor("foreground-muted");
-  const thumbColor = useThemeColor("background");
-  const activeTrackColor = useThemeColor("lime-9");
 
   const fundTypeLabels = {
     SPENDING: "Spending",
@@ -279,35 +288,41 @@ function PreferencesSection() {
   };
 
   return (
-    <StyledLeanView className="gap-4">
+    <StyledLeanView className="gap-3">
       <SectionHeader title="Preferences" />
 
-      <ToggleRow
-        description="Show contextual whispers in Activity tab"
-        label="AI Insights"
-        onValueChange={setAiInsightsEnabled}
-        thumbColor={thumbColor}
-        trackColor={{ false: trackColor, true: activeTrackColor }}
-        value={aiInsightsEnabled}
-      />
+      <StyledLeanView className="overflow-hidden rounded-xl bg-mauve-3 dark:bg-card">
+        <ToggleRow
+          icon="sparkles"
+          label="AI Insights"
+          onValueChange={setAiInsightsEnabled}
+          showBorder
+          value={aiInsightsEnabled}
+        />
 
-      <NavigationRow
-        label="Default Fund Type"
-        onPress={handleFundTypePicker}
-        value={fundTypeLabels[defaultFundType]}
-      />
+        <NavigationRow
+          icon="folder"
+          label="Default Fund Type"
+          onPress={handleFundTypePicker}
+          showBorder
+          value={fundTypeLabels[defaultFundType]}
+        />
 
-      <NavigationRow
-        label="Default Time Mode"
-        onPress={handleTimeModePicker}
-        value={timeModeLabels[defaultTimeMode]}
-      />
+        <NavigationRow
+          icon="clock"
+          label="Default Time Mode"
+          onPress={handleTimeModePicker}
+          showBorder
+          value={timeModeLabels[defaultTimeMode]}
+        />
 
-      <NavigationRow
-        label="Budget Alert Threshold"
-        onPress={handleAlertThresholdPicker}
-        value={`${alertThreshold}%`}
-      />
+        <NavigationRow
+          icon="bell.badge"
+          label="Budget Alert"
+          onPress={handleAlertThresholdPicker}
+          value={`${alertThreshold}%`}
+        />
+      </StyledLeanView>
     </StyledLeanView>
   );
 }
@@ -371,12 +386,23 @@ function DataSection() {
   };
 
   return (
-    <StyledLeanView className="gap-4">
+    <StyledLeanView className="gap-3">
       <SectionHeader title="Data" />
 
-      <NavigationRow label="Export Data" onPress={handleExportData} />
+      <StyledLeanView className="overflow-hidden rounded-xl bg-mauve-3 dark:bg-card">
+        <NavigationRow
+          icon="square.and.arrow.up"
+          label="Export Data"
+          onPress={handleExportData}
+          showBorder
+        />
 
-      <DestructiveButton label="Clear All Data" onPress={handleClearData} />
+        <DestructiveRow
+          icon="trash"
+          label="Clear All Data"
+          onPress={handleClearData}
+        />
+      </StyledLeanView>
     </StyledLeanView>
   );
 }
@@ -386,9 +412,6 @@ function DataSection() {
 // =============================================================================
 
 function AboutSection() {
-  const appVersion = Constants.expoConfig?.version ?? "1.0.0";
-  const buildNumber = Constants.expoConfig?.ios?.buildNumber ?? "1";
-
   const handleSendFeedback = () => {
     Linking.openURL("mailto:support@moneymanager.app?subject=App Feedback");
   };
@@ -402,37 +425,47 @@ function AboutSection() {
   };
 
   return (
-    <StyledLeanView className="gap-4">
+    <StyledLeanView className="gap-3">
       <SectionHeader title="About" />
 
-      <StyledLeanView className="flex-row items-center justify-between">
-        <StyledLeanText className="font-satoshi-medium text-base text-foreground">
-          Version
-        </StyledLeanText>
-        <StyledLeanText className="font-satoshi text-base text-foreground-muted">
-          {appVersion} ({buildNumber})
-        </StyledLeanText>
+      <StyledLeanView className="overflow-hidden rounded-xl bg-mauve-3 dark:bg-card">
+        <NavigationRow
+          external
+          icon="envelope"
+          label="Send Feedback"
+          onPress={handleSendFeedback}
+          showBorder
+        />
+        <NavigationRow
+          external
+          icon="hand.raised"
+          label="Privacy Policy"
+          onPress={handlePrivacyPolicy}
+          showBorder
+        />
+        <NavigationRow
+          external
+          icon="doc.text"
+          label="Terms of Service"
+          onPress={handleTermsOfService}
+        />
       </StyledLeanView>
-
-      <NavigationRow label="Send Feedback" onPress={handleSendFeedback} />
-      <NavigationRow label="Privacy Policy" onPress={handlePrivacyPolicy} />
-      <NavigationRow label="Terms of Service" onPress={handleTermsOfService} />
     </StyledLeanView>
   );
 }
 
 // =============================================================================
-// Account Section
+// Danger Section
 // =============================================================================
 
-function AccountSection() {
+function DangerSection() {
   const { signOut } = useAuth();
   const { user } = useUser();
 
   const handleLogout = () => {
-    Alert.alert("Log Out", "Are you sure you want to log out?", [
+    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
       { text: "Cancel", style: "cancel" },
-      { text: "Log Out", style: "destructive", onPress: () => signOut() },
+      { text: "Sign Out", style: "destructive", onPress: () => signOut() },
     ]);
   };
 
@@ -462,11 +495,40 @@ function AccountSection() {
   };
 
   return (
-    <StyledLeanView className="gap-4">
-      <SectionHeader title="Account" />
+    <StyledLeanView className="gap-3">
+      <SectionHeader title="Danger" />
 
-      <DestructiveButton label="Log Out" onPress={handleLogout} />
-      <DestructiveButton label="Delete Account" onPress={handleDeleteAccount} />
+      <StyledLeanView className="overflow-hidden rounded-xl bg-mauve-3 dark:bg-card">
+        <NavigationRow
+          icon="rectangle.portrait.and.arrow.right"
+          label="Sign Out"
+          onPress={handleLogout}
+          showBorder
+        />
+        <DestructiveRow
+          external
+          icon="trash"
+          label="Delete Account"
+          onPress={handleDeleteAccount}
+        />
+      </StyledLeanView>
+    </StyledLeanView>
+  );
+}
+
+// =============================================================================
+// Version Footer
+// =============================================================================
+
+function VersionFooter() {
+  const appVersion = Constants.expoConfig?.version ?? "1.0.0";
+  const buildNumber = Constants.expoConfig?.ios?.buildNumber ?? "1";
+
+  return (
+    <StyledLeanView className="items-center py-4">
+      <StyledLeanText className="font-satoshi text-foreground-muted text-sm">
+        v{appVersion} ({buildNumber})
+      </StyledLeanText>
     </StyledLeanView>
   );
 }
@@ -477,98 +539,179 @@ function AccountSection() {
 
 function SectionHeader({ title }: { title: string }) {
   return (
-    <StyledLeanText className="font-satoshi-semibold text-foreground-muted text-sm uppercase tracking-wide">
+    <StyledLeanText className="pl-4 font-satoshi-semibold text-foreground-muted">
       {title}
     </StyledLeanText>
   );
 }
 
 function ToggleRow({
+  icon,
   label,
-  description,
   value,
   onValueChange,
-  trackColor,
-  thumbColor,
+  showBorder,
 }: {
+  icon: SymbolViewProps["name"];
   label: string;
-  description?: string;
   value: boolean;
   onValueChange: (value: boolean) => void;
-  trackColor: { false: string; true: string };
-  thumbColor: string;
+  showBorder?: boolean;
 }) {
   return (
-    <StyledLeanView className="flex-row items-center justify-between">
-      <StyledLeanView className="flex-1 gap-0.5">
-        <StyledLeanText className="font-satoshi-medium text-base text-foreground">
+    <StyledLeanView
+      className={cn(
+        "flex-row items-center justify-between px-4 py-3.5",
+        showBorder && "border-mauve-4 border-b-hairline"
+      )}
+    >
+      <StyledLeanView className="flex-row items-center gap-3">
+        <StyledIconSymbol
+          colorClassName="accent-foreground-muted"
+          name={icon}
+          size={20}
+        />
+        <StyledLeanText className="font-satoshi-medium text-foreground">
           {label}
         </StyledLeanText>
-        {description && (
-          <StyledLeanText className="font-satoshi text-foreground-muted text-sm">
-            {description}
-          </StyledLeanText>
-        )}
       </StyledLeanView>
 
       <Switch
         onValueChange={onValueChange}
-        thumbColor={thumbColor}
-        trackColor={trackColor}
+        thumbColorClassName="accent-background"
+        trackColorOffClassName="accent-foreground-muted"
+        trackColorOnClassName="accent-violet-9"
         value={value}
       />
     </StyledLeanView>
   );
 }
 
+function StaticRow({
+  icon,
+  label,
+  value,
+  showBorder,
+}: {
+  icon: SymbolViewProps["name"];
+  label: string;
+  value: string;
+  showBorder?: boolean;
+}) {
+  return (
+    <StyledLeanView
+      className={cn(
+        "flex-row items-center justify-between gap-3 px-4 py-3.5",
+        showBorder && "border-mauve-4 border-b-hairline"
+      )}
+    >
+      <StyledLeanView className="flex-row items-center gap-3">
+        <StyledIconSymbol
+          colorClassName="accent-foreground-muted"
+          name={icon}
+          size={20}
+        />
+        <StyledLeanText className="font-satoshi-medium text-foreground">
+          {label}
+        </StyledLeanText>
+      </StyledLeanView>
+
+      <StyledLeanText
+        className="shrink font-satoshi text-foreground-muted"
+        ellipsizeMode="tail"
+        numberOfLines={1}
+      >
+        {value}
+      </StyledLeanText>
+    </StyledLeanView>
+  );
+}
+
 function NavigationRow({
+  icon,
   label,
   value,
   onPress,
+  showBorder,
+  external,
 }: {
+  icon: SymbolViewProps["name"];
   label: string;
   value?: string;
   onPress: () => void;
+  showBorder?: boolean;
+  external?: boolean;
 }) {
-  const chevronColor = useThemeColor("foreground-muted");
-
   return (
     <ScalePressable
-      className="flex-row items-center justify-between py-1"
+      className={cn(
+        "flex-row items-center justify-between px-4 py-3.5",
+        showBorder && "border-mauve-4 border-b-hairline"
+      )}
       onPress={onPress}
     >
-      <StyledLeanText className="font-satoshi-medium text-base text-foreground">
-        {label}
-      </StyledLeanText>
+      <StyledLeanView className="flex-row items-center gap-3">
+        <StyledIconSymbol
+          colorClassName="accent-foreground-muted"
+          name={icon}
+          size={20}
+        />
+        <StyledLeanText className="font-satoshi-medium text-foreground">
+          {label}
+        </StyledLeanText>
+      </StyledLeanView>
+
       <StyledLeanView className="flex-row items-center gap-2">
         {value && (
-          <StyledLeanText className="font-satoshi text-base text-foreground-muted">
+          <StyledLeanText className="font-satoshi text-foreground-muted">
             {value}
           </StyledLeanText>
         )}
-        <ChevronRight color={chevronColor} size={16} />
+        <StyledIconSymbol
+          colorClassName="accent-foreground-muted"
+          name={external ? "arrow.up.right" : "chevron.right"}
+          size={16}
+        />
       </StyledLeanView>
     </ScalePressable>
   );
 }
 
-function DestructiveButton({
+function DestructiveRow({
+  icon,
   label,
   onPress,
+  showBorder,
+  external,
 }: {
+  icon: SymbolViewProps["name"];
   label: string;
   onPress: () => void;
+  showBorder?: boolean;
+  external?: boolean;
 }) {
-  const destructiveColor = useThemeColor("red-9");
-
   return (
-    <ScalePressable className="py-1" onPress={onPress}>
-      <StyledLeanText
-        className="font-satoshi-medium text-base"
-        style={{ color: destructiveColor }}
-      >
-        {label}
-      </StyledLeanText>
+    <ScalePressable
+      className={cn(
+        "flex-row items-center justify-between px-4 py-3.5",
+        showBorder && "border-mauve-4 border-b-hairline"
+      )}
+      onPress={onPress}
+    >
+      <StyledLeanView className="flex-row items-center gap-3">
+        <StyledIconSymbol colorClassName="accent-red-9" name={icon} size={20} />
+        <StyledLeanText className="font-satoshi-medium text-red-9">
+          {label}
+        </StyledLeanText>
+      </StyledLeanView>
+
+      {external && (
+        <StyledIconSymbol
+          colorClassName="accent-foreground-muted"
+          name="arrow.up.right"
+          size={16}
+        />
+      )}
     </ScalePressable>
   );
 }
