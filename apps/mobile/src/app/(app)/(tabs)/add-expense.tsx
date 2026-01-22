@@ -3,6 +3,8 @@ import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo, useRef } from "react";
 import { TextInput } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import { Amount, useAmount } from "@/components/add-expense/amount";
 import { FundPickerSheet } from "@/components/add-expense/fund-picker-sheet";
 import { MetadataRow } from "@/components/add-expense/metadata-row";
@@ -23,6 +25,7 @@ export default function AddExpense() {
   const router = useRouter();
   const mutedForegroundColor = useThemeColor("foreground-muted");
   const foregroundColor = useThemeColor("foreground");
+  const insets = useSafeAreaInsets();
 
   // Bottom sheet refs
   const fundSheetRef = useRef<BottomSheetModal>(null);
@@ -110,7 +113,7 @@ export default function AddExpense() {
 
             {/* Row 2: Note */}
             <TextInput
-              className="h-10 px-1 font-satoshi text-base text-foreground-secondary"
+              className="h-10 px-1 font-satoshi-medium text-base text-foreground-secondary"
               cursorColor={foregroundColor}
               onChangeText={setNote}
               placeholder="Add a note..."
@@ -143,7 +146,7 @@ function Header({ className, date, onDateChange, onCancel }: HeaderProps) {
   return (
     <StyledLeanView
       className={cn(
-        "-mt-8 w-full flex-row items-center justify-between pl-4",
+        "w-full flex-row items-center justify-between px-4",
         className
       )}
     >
