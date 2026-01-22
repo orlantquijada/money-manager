@@ -1,12 +1,13 @@
 import { arc, type PieArcDatum, pie } from "d3-shape";
 import * as Haptics from "expo-haptics";
 import { useCallback, useEffect, useMemo } from "react";
-import { Pressable } from "react-native";
+import { Platform, Pressable } from "react-native";
 import Animated, {
   useAnimatedProps,
   useDerivedValue,
   useSharedValue,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { G, Path, Svg } from "react-native-svg";
 import { AnimatedText } from "@/components/animated-text";
@@ -17,6 +18,7 @@ import { sum } from "@/utils/math";
 import {
   fadeInOutSpringify,
   layoutSpringify,
+  TW_TRANSITION_ALL,
   transitions,
 } from "@/utils/motion";
 
@@ -148,10 +150,16 @@ function AnimatedSlice({
   useEffect(() => {
     offset.set(withSpring(isFocused ? FOCUS_OFFSET : 0, transitions.snappy));
     opacity.set(
-      withSpring(
-        anySelected && !isFocused ? UNFOCUSED_OPACITY : 1,
-        transitions.snappy
-      )
+      Platform.select({
+        android: withTiming(anySelected && !isFocused ? UNFOCUSED_OPACITY : 1, {
+          ...TW_TRANSITION_ALL,
+          duration: 200,
+        }),
+        default: withSpring(
+          anySelected && !isFocused ? UNFOCUSED_OPACITY : 1,
+          transitions.snappy
+        ),
+      })
     );
   }, [anySelected, isFocused, opacity.set, offset.set]);
 
@@ -222,7 +230,7 @@ function CenterLabel({ displaySlice, selectedFundId }: CenterLabelProps) {
       pointerEvents="none"
     >
       <AnimatedText
-        className="font-nunito-bold text-2xl text-foreground"
+        className="min-w-20 text-center font-nunito-bold text-2xl text-foreground"
         layout={layoutSpringify("snappy")}
         text={animatedText}
       />
@@ -236,7 +244,7 @@ function CenterLabel({ displaySlice, selectedFundId }: CenterLabelProps) {
         </StyledLeanText>
         {budgetLine && (
           <StyledLeanText
-            className="mt-0.5 max-w-[90%] text-center font-satoshi-medium text-foreground-muted text-xs"
+            className="mt-0.5 max-w-[90%] text-center font-nunito-bold text-foreground-muted text-xs"
             ellipsizeMode="tail"
             numberOfLines={1}
           >
