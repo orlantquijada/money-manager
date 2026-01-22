@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { ViewStyle } from "react-native";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import { StyledIconSymbol, StyledLeanText } from "@/config/interop";
+import { DateSelectorSheet } from "./date-selector-sheet";
 import GlassButton from "./glass-button";
 import { useThemeColor } from "./theme-provider";
 
@@ -57,12 +58,12 @@ export function DateSelector({ date, onDateChange }: DateSelectorProps) {
 
   return (
     <>
-      {/* <DateSelectorSheet */}
-      {/*   date={date} */}
-      {/*   isOpen={isSheetOpen} */}
-      {/*   onDateChange={onDateChange} */}
-      {/*   onOpenChange={setIsSheetOpen} */}
-      {/* /> */}
+      <DateSelectorSheet
+        date={date}
+        isOpen={isSheetOpen}
+        onDateChange={onDateChange}
+        onOpenChange={setIsSheetOpen}
+      />
 
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
