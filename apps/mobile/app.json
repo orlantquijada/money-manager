@@ -56,6 +56,12 @@
         "projectId": "26201099-9a02-4cb0-9447-3856ed73f2aa"
       }
     },
-    "owner": "orlantquijada"
+    "owner": "orlantquijada",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/26201099-9a02-4cb0-9447-3856ed73f2aa"
+    }
   }
 }
