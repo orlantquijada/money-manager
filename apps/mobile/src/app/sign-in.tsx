@@ -1,5 +1,4 @@
 import { useAuth, useSSO } from "@clerk/clerk-expo";
-import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { useCallback, useEffect } from "react";
 import { ActivityIndicator, Platform } from "react-native";
@@ -36,7 +35,6 @@ export default function SignInScreen() {
     try {
       const { createdSessionId, setActive } = await startAppleFlow({
         strategy: "oauth_apple",
-        redirectUrl: AuthSession.makeRedirectUri(),
       });
 
       if (createdSessionId && setActive) {
@@ -52,7 +50,6 @@ export default function SignInScreen() {
     try {
       const { createdSessionId, setActive } = await startGoogleFlow({
         strategy: "oauth_google",
-        redirectUrl: AuthSession.makeRedirectUri(),
       });
 
       if (createdSessionId && setActive) {
