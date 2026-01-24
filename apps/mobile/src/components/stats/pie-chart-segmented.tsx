@@ -333,6 +333,7 @@ export default function SpendingPieChartSegmented({
                 color={arcDatum.data.color}
                 fundId={arcDatum.data.fundId}
                 // key={arcDatum.data.label}
+                // biome-ignore lint/suspicious/noArrayIndexKey: explanation
                 key={idx}
                 onPress={handleSlicePress}
                 pathData={pathData}
