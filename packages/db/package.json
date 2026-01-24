@@ -27,18 +27,19 @@
     "lint": "biome check --write"
   },
   "dependencies": {
+    "@neondatabase/serverless": "catalog:",
     "@paralleldrive/cuid2": "^3.0.4",
+    "pg": "catalog:",
     "@t3-oss/env-core": "catalog:",
     "dotenv-cli": "catalog:",
     "drizzle-orm": "catalog:",
-    "pg": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/pg": "catalog:",
     "tsx": "catalog:",
     "date-fns": "catalog:",
     "@biomejs/biome": "catalog:",
-    "@types/pg": "catalog:",
     "drizzle-kit": "^0.31.7",
     "typescript": "catalog:",
     "ultracite": "catalog:"
