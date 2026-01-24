@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@alloc/moti": "54.0.0-beta.8",
+    "@t3-oss/env-core": "catalog:",
     "@clerk/clerk-expo": "^2.19.14",
     "@expo-google-fonts/azeret-mono": "^0.4.1",
     "@expo-google-fonts/inter": "^0.4.2",
@@ -92,6 +93,7 @@
     "tailwind-merge": "^3.4.0",
     "uniwind": "^1.2.6",
     "zeego": "^3.0.6",
+    "zod": "catalog:",
     "zustand": "^5.0.9"
   },
   "devDependencies": {
