@@ -42,7 +42,9 @@
         {
           "colorSpace": "displayP3"
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
