@@ -118,11 +118,9 @@ export const transactions = pgTable(
     amount: decimal({ precision: 12, scale: 2 }).default("0"),
     date: timestamp().defaultNow(),
     note: text(),
-    fundId: integer()
-      .notNull()
-      .references(() => funds.id, { onDelete: "cascade" }),
+    fundId: integer().references(() => funds.id, { onDelete: "set null" }),
     storeId: integer().references(() => stores.id, {
-      onDelete: "cascade",
+      onDelete: "set null",
     }),
     userId: text().references(() => users.id, { onDelete: "cascade" }),
   },
