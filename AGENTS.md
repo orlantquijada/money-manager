@@ -21,13 +21,13 @@ The vision is to create the best, prettiest, most user/beginner-friendly budgeti
 
 ## Docs (read when relevant)
 
-- [Architecture](docs/agent/architecture.md) - Data model, tRPC, navigation
-- [iOS Native](docs/agent/ios-native.md) - SwiftUI, glass effects, haptics
-- [Styling](docs/agent/styling.md) - Components, fonts, conventions
-- [Database](docs/agent/database.md) - Schema changes, Drizzle workflow
-- [Code Quality](docs/agent/code-quality.md) - Line limits, file size
-- [Progress Tracking](docs/agent/progress-tracking.md) - Status files, commits
-- [Feature Specs](docs/agent/feature-specs.md) - Ralph Loop workflow
+- [Architecture](docs/agents/architecture.md) - Data model, tRPC, navigation
+- [iOS Native](docs/agents/ios-native.md) - SwiftUI, glass effects, haptics
+- [Styling](docs/agents/styling.md) - Components, fonts, conventions
+- [Database](docs/agents/database.md) - Schema changes, Drizzle workflow
+- [Code Quality](docs/agents/code-quality.md) - Line limits, file size
+- [Progress Tracking](docs/agents/progress-tracking.md) - Status files, commits
+- [Feature Specs](docs/agents/feature-specs.md) - Ralph Loop workflow
 
 ## Plan Mode
 
