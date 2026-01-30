@@ -59,20 +59,32 @@ export const transactionsRouter = router({
     })
   ),
 
-  recentByFund: protectedProcedure.input(z.number()).query(({ ctx, input }) =>
-    ctx.db.query.transactions.findMany({
-      where: and(eq(txns.userId, ctx.userId), eq(txns.fundId, input)),
-      orderBy: desc(txns.date),
-      limit: 10,
-      with: {
-        store: {
-          columns: {
-            name: true,
+  recentByFund: protectedProcedure
+    .input(z.number())
+    .query(async ({ ctx, input }) => {
+      const transactions = await ctx.db.query.transactions.findMany({
+        where: and(eq(txns.userId, ctx.userId), eq(txns.fundId, input)),
+        orderBy: desc(txns.date),
+        limit: 10,
+        with: {
+          fund: {
+            columns: {
+              name: true,
+            },
+          },
+          store: {
+            columns: {
+              name: true,
+            },
           },
         },
-      },
-    })
-  ),
+      });
+
+      return transactions.map((t) => ({
+        ...t,
+        fund: t.fund ?? { name: "Unknown" },
+      }));
+    }),
 
   listByFund: protectedProcedure
     .input(
@@ -132,7 +144,7 @@ export const transactionsRouter = router({
           amount: Number(t.amount),
           date: t.date,
           note: t.note,
-          fund: { name: t.fund.name },
+          fund: { name: t.fund?.name ?? "Unknown" },
           store: t.store ? { name: t.store.name } : undefined,
         })),
         nextCursor,
@@ -147,9 +159,9 @@ export const transactionsRouter = router({
         })
         .optional()
     )
-    .query(({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       const now = new Date();
-      return ctx.db.query.transactions.findMany({
+      const transactions = await ctx.db.query.transactions.findMany({
         where: and(
           eq(txns.userId, ctx.userId),
           gte(txns.date, startOfMonth(now)),
@@ -170,11 +182,16 @@ export const transactionsRouter = router({
         },
         orderBy: desc(txns.date),
       });
+
+      return transactions.map((t) => ({
+        ...t,
+        fund: t.fund ?? { name: "Unknown" },
+      }));
     }),
 
-  allLast7Days: protectedProcedure.query(({ ctx }) => {
+  allLast7Days: protectedProcedure.query(async ({ ctx }) => {
     const now = new Date();
-    return ctx.db.query.transactions.findMany({
+    const transactions = await ctx.db.query.transactions.findMany({
       where: and(
         eq(txns.userId, ctx.userId),
         gte(txns.date, subDays(now, 7)),
@@ -194,21 +211,37 @@ export const transactionsRouter = router({
       },
       orderBy: desc(txns.date),
     });
+
+    return transactions.map((t) => ({
+      ...t,
+      fund: t.fund ?? { name: "Unknown" },
+    }));
   }),
 
-  retrieve: protectedProcedure.input(z.string()).query(({ ctx, input }) =>
-    ctx.db.query.transactions.findFirst({
-      where: and(eq(txns.userId, ctx.userId), eq(txns.id, input)),
-      with: {
-        fund: {
-          columns: { name: true },
+  retrieve: protectedProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const transaction = await ctx.db.query.transactions.findFirst({
+        where: and(eq(txns.userId, ctx.userId), eq(txns.id, input)),
+        with: {
+          fund: {
+            columns: { name: true },
+          },
+          store: {
+            columns: { name: true },
+          },
         },
-        store: {
-          columns: { name: true },
-        },
-      },
-    })
-  ),
+      });
+
+      if (!transaction) {
+        return null;
+      }
+
+      return {
+        ...transaction,
+        fund: transaction.fund ?? { name: "Unknown" },
+      };
+    }),
 
   delete: protectedProcedure
     .input(z.string())
@@ -484,7 +517,7 @@ export const transactionsRouter = router({
             : undefined;
 
         return {
-          fundId: row.fundId,
+          fundId: row.fundId ?? 0,
           fundName: row.fundName,
           amount,
           percentage: totalSpent > 0 ? (amount / totalSpent) * 100 : 0,
@@ -559,7 +592,7 @@ export const transactionsRouter = router({
           amount: Number(t.amount),
           date: t.date,
           note: t.note,
-          fund: { name: t.fund.name },
+          fund: { name: t.fund?.name ?? "Unknown" },
           store: t.store ? { name: t.store.name } : undefined,
         })),
         nextCursor,

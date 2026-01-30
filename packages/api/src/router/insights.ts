@@ -289,7 +289,7 @@ export const insightsRouter = router({
         .reduce((sum, f) => sum + (f.amount ?? 0), 0);
 
       const spendingBreakdown: SpendingCategory[] = top5.map((f) => ({
-        fundId: f.fundId,
+        fundId: f.fundId ?? 0,
         fundName: f.fundName,
         amount: f.amount ?? 0,
         percentage:
