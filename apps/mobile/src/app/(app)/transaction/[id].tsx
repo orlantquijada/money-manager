@@ -3,7 +3,7 @@ import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Alert } from "react-native";
 import * as DropdownMenu from "zeego/dropdown-menu";
-import { GlassIconButton } from "@/components/glass-button";
+import GlassIconButton from "@/components/glass-icon-button";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";

@@ -13,11 +13,8 @@ import TotalSpent from "@/components/dashboard/total-spent";
 import GlassButton from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
 import { useThemeColor } from "@/components/theme-provider";
-import {
-  StyledIconSymbol,
-  StyledLeanText,
-  StyledLeanView,
-} from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { cn } from "@/utils/cn";
 
 export default function DashboardLayout() {

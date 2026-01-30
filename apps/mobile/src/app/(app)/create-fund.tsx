@@ -10,7 +10,7 @@ import FundInfo from "@/components/create-fund/fund-info";
 import NonNegotiableInfo from "@/components/create-fund/non-negotiable-info";
 import ProgressStepper from "@/components/create-fund/progress-stepper";
 import SpendingInfo from "@/components/create-fund/spending-info";
-import { GlassCloseButton } from "@/components/glass-button";
+import GlassCloseButton from "@/components/glass-close-button";
 import { StyledLeanView } from "@/config/interop";
 import {
   CreateFundProvider,

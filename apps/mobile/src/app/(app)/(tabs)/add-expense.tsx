@@ -12,8 +12,7 @@ import { SaveButton } from "@/components/add-expense/save-button";
 import { StorePickerSheet } from "@/components/add-expense/store-picker-sheet";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
 import { DateSelector } from "@/components/date-selector";
-import { GlassCloseButton } from "@/components/glass-button";
-import { useThemeColor } from "@/components/theme-provider";
+import GlassCloseButton from "@/components/glass-close-button";
 import { StyledLeanView, StyledSafeAreaView } from "@/config/interop";
 import { useSubmitTransaction } from "@/hooks/use-create-transaction";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
@@ -22,8 +21,6 @@ import { cn } from "@/utils/cn";
 
 export default function AddExpense() {
   const router = useRouter();
-  const mutedForegroundColor = useThemeColor("foreground-muted");
-  const foregroundColor = useThemeColor("foreground");
 
   // Bottom sheet refs
   const fundSheetRef = useRef<BottomSheetModal>(null);
@@ -73,7 +70,7 @@ export default function AddExpense() {
   }, []);
 
   return (
-    <AnimatedTabScreen index={0}>
+    <AnimatedTabScreen index={1}>
       <StyledSafeAreaView className="flex-1 bg-background py-4">
         <Header date={date} onCancel={handleCancel} onDateChange={setDate} />
 
@@ -112,11 +109,11 @@ export default function AddExpense() {
             {/* Row 2: Note */}
             <TextInput
               className="h-10 px-1 font-satoshi-medium text-base text-foreground-secondary"
-              cursorColor={foregroundColor}
+              cursorColorClassName="accent-foreground"
               onChangeText={setNote}
               placeholder="Add a note..."
-              placeholderTextColor={mutedForegroundColor}
-              selectionColor={foregroundColor}
+              placeholderTextColorClassName="accent-foreground-muted"
+              selectionColorClassName="accent-foreground"
               style={{ lineHeight: undefined }}
               value={note}
             />

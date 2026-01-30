@@ -1,13 +1,21 @@
+import type { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { View } from "react-native";
 import { AnimatedBlurOverlay } from "@/components/animated-blur-overlay";
-import FabOverlay from "@/components/fab-overlay";
 import { useTheme } from "@/components/theme-provider";
 import {
   TabPositionProvider,
   useTabPosition,
 } from "@/contexts/tab-position-context";
+import { useSyncTabPosition } from "@/hooks/use-sync-tab-position";
+import { useTabChangeHaptics } from "@/hooks/use-tab-change-haptics";
 import MaterialTopTabs from "@/navigators/material-top-tabs";
 import { theme, themeDark } from "@/utils/colors";
+
+function HiddenTabBar({ position, state }: MaterialTopTabBarProps) {
+  useSyncTabPosition(position, state.routes);
+  useTabChangeHaptics(state.index);
+  return <View className="absolute" />;
+}
 
 function TabsContent() {
   const { position, routes } = useTabPosition();
@@ -24,17 +32,17 @@ function TabsContent() {
               : theme.background.tertiary,
           },
         }}
-        tabBar={FabOverlay}
+        tabBar={HiddenTabBar}
         tabBarPosition="bottom"
       >
         {/*
         Screen order determines AnimatedTabScreen indexes:
-          0: add-expense
-          1: (main) - contains NativeTabs for dashboard/insights/transactions
+          0: (main) - contains Tabs for dashboard/insights/transactions
+          1: add-expense
         If you change the order here, update AnimatedTabScreen index prop!
       */}
-        <MaterialTopTabs.Screen name="add-expense" />
         <MaterialTopTabs.Screen name="(main)" />
+        <MaterialTopTabs.Screen name="add-expense" />
       </MaterialTopTabs>
 
       {position && routes.length > 0 && (

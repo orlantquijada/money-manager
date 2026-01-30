@@ -7,7 +7,7 @@ import { Alert, Platform, ScrollView } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CreateFooter from "@/components/create-fund/footer";
-import { GlassCloseButton } from "@/components/glass-button";
+import GlassCloseButton from "@/components/glass-close-button";
 import Presence from "@/components/presence";
 import TextInput from "@/components/text-input";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";

@@ -5,7 +5,7 @@ import { makeMutable, type SharedValue } from "react-native-reanimated";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
 import Budget from "@/components/budgets/budget";
-import { GlassIconButton } from "@/components/glass-button";
+import GlassIconButton from "@/components/glass-icon-button";
 import { StyledLeanView } from "@/config/interop";
 import { useFabHeight } from "@/hooks/use-fab-height";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";

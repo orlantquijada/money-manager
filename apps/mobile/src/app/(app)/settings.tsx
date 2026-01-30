@@ -22,11 +22,8 @@ import BottomSheetModal from "@/components/bottom-sheet";
 import { ScalePressable } from "@/components/scale-pressable";
 import { useTheme } from "@/components/theme-provider";
 import type { IconSymbolName } from "@/components/ui/icon-symbol";
-import {
-  StyledIconSymbol,
-  StyledLeanText,
-  StyledLeanView,
-} from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { usePreferencesStore } from "@/stores/preferences";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
