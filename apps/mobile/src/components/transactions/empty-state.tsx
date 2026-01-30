@@ -1,10 +1,7 @@
 import { useRouter } from "expo-router";
 import { Pressable } from "react-native";
-import {
-  StyledIconSymbol,
-  StyledLeanText,
-  StyledLeanView,
-} from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 
 type Props = {
   variant: "new-user" | "period-empty";

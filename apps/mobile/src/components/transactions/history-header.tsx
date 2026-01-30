@@ -11,15 +11,13 @@ import Animated, {
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import * as DropdownMenu from "zeego/dropdown-menu";
-import GlassButton, { GlassIconButton } from "@/components/glass-button";
+import GlassButton from "@/components/glass-button";
 import type { Period } from "@/components/stats/period-chips";
 import { useThemeColor } from "@/components/theme-provider";
-import {
-  StyledIconSymbol,
-  StyledLeanText,
-  StyledLeanView,
-} from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { transitions } from "@/utils/motion";
+import GlassIconButton from "../glass-icon-button";
 
 const PERIODS: { value: Period; label: string }[] = [
   { value: "week", label: "This Week" },

@@ -5,11 +5,8 @@ import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import { useThemeColor } from "@/components/theme-provider";
-import {
-  StyledIconSymbol,
-  StyledLeanText,
-  StyledLeanView,
-} from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { useFabHeight } from "@/hooks/use-fab-height";
 import { toIsoDate } from "@/utils/format";
 import { sum } from "@/utils/math";

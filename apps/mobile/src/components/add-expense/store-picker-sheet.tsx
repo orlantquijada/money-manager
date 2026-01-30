@@ -16,10 +16,10 @@ import { ScalePressable } from "@/components/scale-pressable";
 import { useThemeColor } from "@/components/theme-provider";
 import {
   StyledBottomSheetView,
-  StyledIconSymbol,
   StyledLeanText,
   StyledLeanView,
 } from "@/config/interop";
+import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { useAddExpenseStore } from "@/lib/add-expense";
 import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";

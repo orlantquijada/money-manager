@@ -1,10 +1,7 @@
 import Animated, { FadeIn } from "react-native-reanimated";
 import Skeleton from "@/components/skeleton";
-import {
-  StyledIconSymbol,
-  StyledLeanText,
-  StyledLeanView,
-} from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import InsightCard from "./insight-card";
 
 type Props = {

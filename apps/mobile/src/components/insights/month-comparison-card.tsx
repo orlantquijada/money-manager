@@ -1,9 +1,6 @@
 import Skeleton from "@/components/skeleton";
-import {
-  StyledIconSymbol,
-  StyledLeanText,
-  StyledLeanView,
-} from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { cn } from "@/utils/cn";
 import { toWholeCurrency } from "@/utils/format";
 import InsightCard from "./insight-card";

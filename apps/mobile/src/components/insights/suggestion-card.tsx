@@ -1,10 +1,7 @@
 import Skeleton from "@/components/skeleton";
 import { useThemeColor } from "@/components/theme-provider";
-import {
-  StyledIconSymbol,
-  StyledLeanText,
-  StyledLeanView,
-} from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import InsightCard from "./insight-card";
 
 type Suggestion = {
