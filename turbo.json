@@ -23,8 +23,7 @@
       "cache": false
     },
     "type-check": {
-      "dependsOn": ["^topo", "^build"],
-      "outputs": [".cache/tsbuildinfo.json"]
+      "dependsOn": ["^topo", "^build"]
     }
   }
 }
