@@ -1,5 +1,5 @@
 import { Path } from "react-native-svg";
-import { StyledSvg } from "@/config/interop";
+import { StyledSvg } from "@/config/interop-svg";
 import type { IconProps } from "@/utils/types";
 
 export default function Check({

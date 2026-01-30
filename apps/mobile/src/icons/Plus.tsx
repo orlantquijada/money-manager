@@ -1,4 +1,4 @@
-import { StyledPath, StyledSvg } from "@/config/interop";
+import { StyledPath, StyledSvg } from "@/config/interop-svg";
 import type { IconProps } from "@/utils/types";
 
 export default function Icon({ className, color, size = 20 }: IconProps) {

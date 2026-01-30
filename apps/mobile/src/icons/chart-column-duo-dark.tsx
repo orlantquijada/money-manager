@@ -1,5 +1,5 @@
 import { AnimatedPath } from "@/components/ui/animated-svg";
-import { StyledSvg } from "@/config/interop";
+import { StyledSvg } from "@/config/interop-svg";
 import type { TabBarIconProps } from "@/utils/types";
 
 export default function Icon({
