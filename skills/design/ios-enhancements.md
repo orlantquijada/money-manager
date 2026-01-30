@@ -26,6 +26,7 @@ const tintColor = useThemeColor("background");
 ```
 
 **When to use**:
+
 - Floating buttons (submit, quick actions)
 - Card surfaces that need depth
 - Tab bars and navigation elements
@@ -51,6 +52,7 @@ const iconColor = useThemeColor("foreground");
 **Common symbols**: `chevron.right`, `checkmark`, `plus`, `trash`, `clock`, `calendar`, `location`, `gear`
 
 **When to use**:
+
 - Navigation indicators (chevrons, arrows)
 - Common actions (plus, minus, trash, checkmark)
 - System icons (clock, calendar, location, settings)
@@ -78,6 +80,7 @@ await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 ```
 
 **When to use**:
+
 - Button presses (Light)
 - Tab switches or selections (Light)
 - Confirmation dialogs (Medium)
@@ -165,6 +168,7 @@ import { Switch } from "@expo/ui/swift-ui";
 ```
 
 **When to use**:
+
 - Date/time selection → Use `DateTimePicker` with `BottomSheet`
 - Options menu → Use `ContextMenu` for long-press actions
 - Select from list → Use native `Picker`
@@ -185,8 +189,9 @@ These components can cause rendering issues when used outside of ContextMenu:
   </HStack>
 </Host>
 
-// ✅ DO: Use GlassButton from @/components/glass-button-icon
-import GlassButton, { GlassIconButton } from "@/components/glass-button-icon";
+// ✅ DO: Use GlassButton from @/components/glass-icon-button
+import GlassButton from "@/components/glass-button";
+import GlassIconButton from "@/components/glass-icon-button";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 
 // For icon-only buttons with SF Symbols
@@ -205,6 +210,7 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 ```
 
 **Glass Button API**:
+
 - `variant="icon"`: Circular button for icons (uses `size` for diameter: "sm", "md", "lg")
 - `variant="default"`: Pill-shaped button that auto-sizes to content
 - `tintColor`: Glass tint color (use `useThemeColor("muted")`)
