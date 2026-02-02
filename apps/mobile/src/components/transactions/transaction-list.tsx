@@ -198,7 +198,13 @@ export function TransactionList({
         </StyledGlassButton>
       </StyledLeanView>
     );
-  }, [showSeeAllLink, handleSeeAllPress, hasNextPage, isFetchingNextPage, onLoadMore]);
+  }, [
+    showSeeAllLink,
+    handleSeeAllPress,
+    hasNextPage,
+    isFetchingNextPage,
+    onLoadMore,
+  ]);
 
   if (data.length === 0) {
     return (
@@ -228,7 +234,7 @@ export function TransactionList({
           <RefreshControl
             onRefresh={onRefresh}
             refreshing={isRefreshing}
-            tintColor={foregroundColor}
+            tintColorClassName="accent-foreground"
           />
         ) : undefined
       }

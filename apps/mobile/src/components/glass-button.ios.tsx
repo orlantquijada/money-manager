@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useThemeColor } from "@/components/theme-provider";
 import {
+  type ButtonIntent,
   type ButtonSize,
   type ButtonVariant,
   iconSizeClasses,
@@ -28,6 +29,8 @@ export type GlassButtonProps = PressableProps & {
    * - For "default" variant: affects padding and min-height
    */
   size?: ButtonSize;
+  /** Button intent for API consistency with fallback. Unused on iOS. */
+  intent?: ButtonIntent;
   glassViewProps?: GlassViewProps;
   children?: ReactNode;
   tintColor?: string;
@@ -38,6 +41,7 @@ export default function GlassButton({
   children,
   variant = "default",
   size = "lg",
+  intent: _intent,
   glassViewProps = {},
   tintColor: tintColorProp,
   style: styleProp,
@@ -45,7 +49,7 @@ export default function GlassButton({
 }: GlassButtonProps) {
   const themeTintColor = useThemeColor("background");
   const tintColor =
-    tintColorProp !== null ? (tintColorProp ?? themeTintColor) : undefined;
+    tintColorProp === null ? undefined : (tintColorProp ?? themeTintColor);
 
   const { style: glassStyle, ..._glassViewProps } = glassViewProps;
 

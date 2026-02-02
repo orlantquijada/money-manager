@@ -125,7 +125,7 @@ export function ActivityTransactionList({
           <RefreshControl
             onRefresh={onRefresh}
             refreshing={isRefreshing}
-            tintColor={foregroundColor}
+            tintColorClassName="accent-foreground"
           />
         ) : undefined
       }

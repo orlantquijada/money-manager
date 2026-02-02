@@ -2,7 +2,6 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { Stack } from "expo-router";
 import { useMemo, useState } from "react";
 import { Platform } from "react-native";
-import { useThemeColor } from "@/components/theme-provider";
 import { TransactionList } from "@/components/transactions";
 import { StyledLeanView } from "@/config/interop";
 import type { RouterOutputs } from "@/utils/api";
@@ -28,7 +27,6 @@ export function FilteredFundTransactionList({
   onRefresh,
 }: Props) {
   const [search, setSearch] = useState("");
-  const foregroundColor = useThemeColor("foreground");
   const headerHeight = useHeaderHeight();
 
   const filteredTransactions = useMemo(
@@ -43,7 +41,6 @@ export function FilteredFundTransactionList({
           headerSearchBarOptions: {
             allowToolbarIntegration: false,
             placement: "integrated",
-            textColor: foregroundColor,
             onChangeText: (e) => setSearch(e.nativeEvent.text),
           },
         }}
@@ -55,11 +52,12 @@ export function FilteredFundTransactionList({
         <TransactionList
           emptyStateVariant="period-empty"
           hasNextPage={hasNextPage}
-          hideFundContext // New prop to indicate fund context
+          hideFundContext
           isFetchingNextPage={isFetchingNextPage}
           isRefreshing={isRefreshing}
           onLoadMore={onLoadMore}
           onRefresh={onRefresh}
+          showSeeAllLink
           transactions={filteredTransactions}
         />
       </StyledLeanView>

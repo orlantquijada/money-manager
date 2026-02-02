@@ -38,7 +38,7 @@ export default function TabButton({
   return (
     <ScalePressable
       className={cn(
-        "items-center justify-center rounded-full px-8",
+        "items-center justify-center rounded-full px-6.5",
         isFocused && "android:bg-background bg-muted",
         className
       )}

@@ -17,7 +17,7 @@ import {
 
 const GAP = 16;
 const FAB_SIZE = 56;
-const TAB_BAR_HEIGHT = 48;
+const TAB_BAR_HEIGHT = 56;
 const ICON_SIZE = 24;
 
 export default function MainLayout() {
@@ -59,7 +59,7 @@ export default function MainLayout() {
         >
           {/* Left: Tab icons in glass pill */}
           <StyledGlassView
-            className="h-16 flex-row rounded-full android:border-hairline border-border android:bg-muted android:p-0.5 p-1"
+            className="h-14 flex-row gap-1 rounded-full android:border-hairline border-border android:bg-muted android:p-0.5 p-1"
             isInteractive
             tintColorClassName="accent-background"
           >

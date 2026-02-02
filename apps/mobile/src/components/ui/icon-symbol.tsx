@@ -50,6 +50,7 @@ const MAPPING = {
   "lightbulb.fill": "lightbulb-on",
   number: "numeric",
   storefront: "storefront",
+  "arrow.right": "arrow-right",
 } satisfies Partial<IconMapping>;
 
 export type IconSymbolName = keyof typeof MAPPING;
