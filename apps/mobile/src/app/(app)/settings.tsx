@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system/legacy";
 import { Image } from "expo-image";
-import { Stack } from "expo-router";
 import * as Sharing from "expo-sharing";
 import * as WebBrowser from "expo-web-browser";
 import { useRef, useState } from "react";
@@ -32,35 +31,24 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
 
   return (
-    <>
-      <Stack.Screen
-        options={{
-          presentation: "modal",
-          headerShown: true,
-          headerTitle: "",
-          headerTransparent: true,
-          headerBlurEffect: "none",
-        }}
-      />
-      <ScrollView
-        className="flex-1 bg-background"
-        contentContainerClassName="gap-6 px-4"
-        contentContainerStyle={{
-          paddingTop: Platform.OS === "android" ? insets.top + 64 : 0,
-          paddingBottom: insets.bottom + 24,
-        }}
-        contentInsetAdjustmentBehavior="automatic"
-      >
-        <ProfileHeader />
-        <AccountSection />
-        {/* <AppearanceSection /> */}
-        <PreferencesSection />
-        <DataSection />
-        <AboutSection />
-        <DangerSection />
-        <VersionFooter />
-      </ScrollView>
-    </>
+    <ScrollView
+      className="flex-1 bg-background"
+      contentContainerClassName="gap-6 px-4"
+      contentContainerStyle={{
+        paddingTop: Platform.OS === "android" ? insets.top + 64 : 0,
+        paddingBottom: insets.bottom + 24,
+      }}
+      contentInsetAdjustmentBehavior="automatic"
+    >
+      <ProfileHeader />
+      <AccountSection />
+      {/* <AppearanceSection /> */}
+      <PreferencesSection />
+      <DataSection />
+      <AboutSection />
+      <DangerSection />
+      <VersionFooter />
+    </ScrollView>
   );
 }
 
