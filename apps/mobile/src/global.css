@@ -82,6 +82,20 @@
       --red-11: #ce2c31;
       --red-12: #641723;
 
+      /* Amber */
+      --amber-1: #fefdfb;
+      --amber-2: #fefbe9;
+      --amber-3: #fff7c2;
+      --amber-4: #ffee9c;
+      --amber-5: #fbe577;
+      --amber-6: #f3d768;
+      --amber-7: #e9c162;
+      --amber-8: #e2a336;
+      --amber-9: #ffc53d;
+      --amber-10: #ffba18;
+      --amber-11: #ab6400;
+      --amber-12: #4f3422;
+
       /* Pink */
       --pink-1: #fffcfe;
       --pink-2: #fef7fb;
@@ -217,6 +231,20 @@
       --red-11: #ff9592;
       --red-12: #ffd1d9;
 
+      /* Amber Dark */
+      --amber-1: #16120c;
+      --amber-2: #1d180f;
+      --amber-3: #302008;
+      --amber-4: #3f2700;
+      --amber-5: #4d3000;
+      --amber-6: #5c3d05;
+      --amber-7: #714f19;
+      --amber-8: #8f6424;
+      --amber-9: #ffc53d;
+      --amber-10: #ffd60a;
+      --amber-11: #ffca16;
+      --amber-12: #ffe7b3;
+
       /* Pink Dark */
       --pink-1: #191117;
       --pink-2: #21121d;
@@ -351,6 +379,20 @@
   --color-red-10: var(--red-10);
   --color-red-11: var(--red-11);
   --color-red-12: var(--red-12);
+
+  /* Amber scale */
+  --color-amber-1: var(--amber-1);
+  --color-amber-2: var(--amber-2);
+  --color-amber-3: var(--amber-3);
+  --color-amber-4: var(--amber-4);
+  --color-amber-5: var(--amber-5);
+  --color-amber-6: var(--amber-6);
+  --color-amber-7: var(--amber-7);
+  --color-amber-8: var(--amber-8);
+  --color-amber-9: var(--amber-9);
+  --color-amber-10: var(--amber-10);
+  --color-amber-11: var(--amber-11);
+  --color-amber-12: var(--amber-12);
 
   /* Pink scale */
   --color-pink-1: var(--pink-1);
