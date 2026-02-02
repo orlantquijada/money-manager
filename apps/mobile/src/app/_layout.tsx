@@ -53,6 +53,15 @@ function AppContent() {
   // User stays on sign-in screen during provisioning phase
   const isAuthenticated = !!isSignedIn && isProvisioned;
 
+  // Hide splash only when auth state is fully resolved
+  const isAuthReady = !isSignedIn || isProvisioned;
+
+  useEffect(() => {
+    if (isAuthReady) {
+      SplashScreen.hide();
+    }
+  }, [isAuthReady]);
+
   return (
     <>
       <Stack>
@@ -76,12 +85,6 @@ function AppContent() {
 
 export default function RootLayout() {
   const loaded = useFonts();
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hide();
-    }
-  }, [loaded]);
 
   if (!loaded) {
     return null;
