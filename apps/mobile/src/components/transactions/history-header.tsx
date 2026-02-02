@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 import type { SFSymbol } from "expo-symbols";
 import { useCallback, useRef } from "react";
-import { Pressable, TextInput } from "react-native";
+import { Pressable, StyleSheet, TextInput } from "react-native";
 import Animated, {
   type SharedValue,
   useAnimatedReaction,
@@ -11,10 +11,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import * as DropdownMenu from "zeego/dropdown-menu";
-import GlassButton from "@/components/glass-button";
 import type { Period } from "@/components/stats/period-chips";
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledGlassButton } from "@/config/interop-glass-button";
 import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { transitions } from "@/utils/motion";
 import GlassIconButton from "../glass-icon-button";
@@ -27,6 +26,7 @@ const PERIODS: { value: Period; label: string }[] = [
 ];
 
 export const SEARCH_BAR_HEIGHT = 40;
+const SEARCH_BAR_TOTAL_HEIGHT = SEARCH_BAR_HEIGHT + 12; // +gap-3
 
 type SearchBarProps = {
   isExpanded: SharedValue<boolean>;
@@ -46,25 +46,36 @@ function SearchBar({
   showClearButton,
   inputRef,
 }: Omit<SearchBarProps, "mutedColor">) {
+  const progress = useDerivedValue(() =>
+    withSpring(isExpanded.get() ? 1 : 0, transitions.snappy)
+  );
+
   const pointerEvents = useDerivedValue<
     "auto" | "none" | "box-none" | "box-only" | undefined
   >(() => (isExpanded.get() ? "auto" : "none"));
 
   const animatedStyle = useAnimatedStyle(() => {
-    const expanded = isExpanded.get();
+    const p = progress.get();
     return {
-      opacity: withSpring(expanded ? 1 : 0, transitions.snappy),
-      transform: [
-        { translateY: withSpring(expanded ? 0 : -20, transitions.snappy) },
-      ],
+      height: SEARCH_BAR_TOTAL_HEIGHT * p,
+      opacity: p,
+      transform: [{ scale: 0.9 + 0.1 * p }, { translateY: -25 * (1 - p) }],
     };
   });
 
   return (
-    <Animated.View pointerEvents={pointerEvents} style={animatedStyle}>
+    <Animated.View
+      className="overflow-hidden"
+      pointerEvents={pointerEvents}
+      style={animatedStyle}
+    >
       <StyledLeanView
         className="flex-row items-center gap-2 rounded-xl bg-muted px-3 py-2.5"
-        style={{ height: SEARCH_BAR_HEIGHT }}
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          bottom: "auto",
+          height: SEARCH_BAR_HEIGHT,
+        }}
       >
         <StyledIconSymbol
           colorClassName="accent-foreground-muted"
@@ -121,8 +132,6 @@ export function HistoryHeader({
 }: Props) {
   const inputRef = useRef<TextInput>(null);
 
-  const muted = useThemeColor("muted");
-
   // Auto-focus input when search expands
   const focusInput = useCallback(() => {
     setTimeout(() => inputRef.current?.focus(), 50);
@@ -157,12 +166,18 @@ export function HistoryHeader({
     PERIODS.find((p) => p.value === period)?.label ?? "Month";
 
   return (
-    <StyledLeanView className="gap-3 bg-background px-4 pt-safe-offset-4">
-      <StyledLeanView className="flex-row items-center justify-end gap-2">
+    <StyledLeanView className="bg-background px-4 pt-safe-offset-4">
+      <StyledLeanView className="mb-3 flex-row items-center justify-end gap-2">
         {/* Period dropdown */}
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
-            <GlassButton size="md" tintColor={muted}>
+            <StyledGlassButton
+              glassViewProps={{
+                style: { height: 40 },
+              }}
+              size="md"
+              tintColorClassName="accent-muted"
+            >
               <StyledLeanView className="flex-row items-center gap-1.5">
                 <StyledLeanText className="font-satoshi-medium text-foreground">
                   {currentPeriodLabel}
@@ -173,7 +188,7 @@ export function HistoryHeader({
                   size={12}
                 />
               </StyledLeanView>
-            </GlassButton>
+            </StyledGlassButton>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
             {PERIODS.map((p) => (
@@ -195,7 +210,7 @@ export function HistoryHeader({
         <GlassIconButton icon="magnifyingglass" onPress={onSearchToggle} />
       </StyledLeanView>
 
-      {/* Collapsible search bar - transform-only animation */}
+      {/* Collapsible search bar */}
       <SearchBar
         inputRef={inputRef}
         isExpanded={isSearchExpanded}
