@@ -8,7 +8,8 @@ import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { cn } from "@/utils/cn";
 
 const slots = {
-  container: "h-10 rounded-xl bg-muted px-4 flex-row items-center",
+  container:
+    "h-10 rounded-xl bg-muted px-4 flex-row items-center android:border-hairline border-border",
   input:
     "font-satoshi text-base text-foreground placeholder:text-foreground-muted",
 };

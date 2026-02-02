@@ -105,7 +105,7 @@ function FolderCard({
   return (
     <ScalePressable
       className={cn(
-        "flex-row items-center rounded-xl bg-muted p-4",
+        "flex-row items-center rounded-xl android:border-hairline border-border bg-muted p-4",
         selected && "bg-foreground"
       )}
       scaleValue={0.95}

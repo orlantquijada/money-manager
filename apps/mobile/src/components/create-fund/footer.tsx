@@ -4,6 +4,7 @@ import { useReanimatedKeyboardAnimation } from "react-native-keyboard-controller
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledGlassButton } from "@/config/interop-glass-button";
 import { Check, ChevronLeft, ChevronRight } from "@/icons";
 import GlassButton from "../glass-button";
 import { useThemeColor } from "../theme-provider";
@@ -90,11 +91,8 @@ export default function CreateFooter({
 }: PropsWithChildren<Props>) {
   const insets = useSafeAreaInsets();
   const { height: keyboardHeight } = useReanimatedKeyboardAnimation();
-  const tintColor = useThemeColor("foreground");
-  const disabledTintColor = useThemeColor("muted");
 
   const isDisabled = disabled || loading;
-  const currentTintColor = isDisabled ? disabledTintColor : tintColor;
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: keyboardHeight.value }],
@@ -114,10 +112,11 @@ export default function CreateFooter({
         className="relative ml-auto items-center justify-center"
         style={isDisabled ? { opacity: 0.5 } : undefined}
       >
-        <GlassButton
+        <StyledGlassButton
           disabled={isDisabled}
+          intent={isDisabled ? "secondary" : "primary"}
           onPress={onContinuePress}
-          tintColor={currentTintColor}
+          tintColorClassName={isDisabled ? "accent-muted" : "accent-foreground"}
           variant={buttonVariant}
         >
           <ButtonContent
@@ -128,7 +127,7 @@ export default function CreateFooter({
           >
             {children}
           </ButtonContent>
-        </GlassButton>
+        </StyledGlassButton>
       </StyledLeanView>
     </Animated.View>
   );

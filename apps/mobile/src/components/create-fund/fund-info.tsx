@@ -102,7 +102,7 @@ export default function FundInfo({ setScreen }: Props) {
           <StyledLeanView className="relative">
             <Presence {...presenceProps[selectedType.get()]}>
               <Animated.View
-                className="absolute right-0 left-0 rounded-xl bg-muted"
+                className="absolute right-0 left-0 rounded-xl android:border-hairline border-border bg-muted"
                 style={[{ borderCurve: "continuous" }, style]}
               />
             </Presence>

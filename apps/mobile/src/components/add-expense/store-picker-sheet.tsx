@@ -10,8 +10,8 @@ import { useQuery } from "@tanstack/react-query";
 import type { StorePick } from "api";
 import * as Haptics from "expo-haptics";
 import { useMemo, useState } from "react";
+import { useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import { ScalePressable } from "@/components/scale-pressable";
 import { useThemeColor } from "@/components/theme-provider";
 import {
@@ -86,6 +86,7 @@ function Content({ stores }: ContentProps) {
 
   const foregroundColor = useThemeColor("foreground");
   const mutedColor = useThemeColor("foreground-muted");
+  const { height } = useWindowDimensions();
 
   const filteredStores = useMemo(() => {
     if (!search.trim()) return stores;
@@ -185,15 +186,24 @@ function Content({ stores }: ContentProps) {
         </BottomSheetScrollView>
       ) : (
         !showAddNew && (
-          <StyledBottomSheetView className="flex-1 items-center justify-center px-6">
-            <StyledLeanText
-              className="text-center font-satoshi-medium text-foreground-muted"
-              ellipsizeMode="tail"
-              numberOfLines={2}
-            >
+          <StyledBottomSheetView
+            className="flex-1 items-center justify-center px-8"
+            style={{ height: height / 2.5 }}
+          >
+            <StyledLeanView className="size-14 items-center justify-center rounded-full bg-mauve-4">
+              <StyledIconSymbol
+                colorClassName="accent-foreground-muted"
+                name="storefront"
+                size={28}
+              />
+            </StyledLeanView>
+            <StyledLeanText className="mt-4 text-center font-satoshi-medium text-base text-foreground-secondary">
+              {search.trim() ? "No stores found" : "No stores yet"}
+            </StyledLeanText>
+            <StyledLeanText className="mt-1.5 text-center font-satoshi text-foreground-muted text-sm">
               {search.trim()
-                ? "No stores match your search"
-                : "No stores yet. Stores are created automatically when you add transactions."}
+                ? "Try a different search"
+                : "Stores are created when you add transactions"}
             </StyledLeanText>
           </StyledBottomSheetView>
         )
