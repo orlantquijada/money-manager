@@ -1,5 +1,6 @@
 export type ButtonVariant = "icon" | "default";
 export type ButtonSize = "sm" | "md" | "lg" | "xl" | "xxl";
+export type ButtonIntent = "primary" | "secondary";
 
 export const iconSizeClasses: Record<ButtonSize, string> = {
   sm: "size-8",

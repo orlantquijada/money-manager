@@ -49,6 +49,7 @@ const MAPPING = {
   magnifyingglass: "magnify",
   "lightbulb.fill": "lightbulb-on",
   number: "numeric",
+  storefront: "storefront",
 } satisfies Partial<IconMapping>;
 
 export type IconSymbolName = keyof typeof MAPPING;
