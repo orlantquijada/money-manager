@@ -1,14 +1,16 @@
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useCallback, useRef } from "react";
-import { ScrollView, Text } from "react-native";
+import { ScrollView } from "react-native";
 import { makeMutable, type SharedValue } from "react-native-reanimated";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
 import Budget from "@/components/budgets/budget";
 import GlassIconButton from "@/components/glass-icon-button";
-import { StyledLeanView } from "@/config/interop";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledGlassButton } from "@/config/interop-glass-button";
 import { useFabHeight } from "@/hooks/use-fab-height";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
+import FolderDuo from "@/icons/folder-duo";
 
 function useOpenStates() {
   const statesRef = useRef<Map<number, SharedValue<boolean>>>(new Map());
@@ -100,9 +102,29 @@ export default function BudgetsScreen() {
         </StyledLeanView>
 
         {!isLoading && foldersWithFunds?.length === 0 && (
-          <Text className="text-center text-mauveDark3">
-            No folders yet. Create a fund to get started!
-          </Text>
+          <StyledLeanView className="flex-1 items-center justify-center px-8 py-16">
+            <FolderDuo className="text-foreground-muted" size={48} />
+
+            <StyledLeanText className="mt-4 font-satoshi-medium text-foreground">
+              No funds yet
+            </StyledLeanText>
+
+            <StyledLeanText className="mt-2 text-center font-satoshi text-foreground-muted">
+              Create a fund to start budgeting
+            </StyledLeanText>
+
+            <StyledGlassButton
+              className="mt-6"
+              intent="primary"
+              onPress={() => createSheetRef.current?.present()}
+              size="md"
+              tintColorClassName="accent-foreground"
+            >
+              <StyledLeanText className="font-satoshi-medium text-background">
+                Create Fund
+              </StyledLeanText>
+            </StyledGlassButton>
+          </StyledLeanView>
         )}
       </ScrollView>
     </>

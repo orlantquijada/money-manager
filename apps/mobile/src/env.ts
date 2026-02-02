@@ -9,7 +9,11 @@ const getDevUrl = () => {
 
 export const env = createEnv({
   clientPrefix: "EXPO_PUBLIC_",
-  runtimeEnv: process.env,
+  runtimeEnv: {
+    EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
+    EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY:
+      process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY,
+  },
   client: {
     EXPO_PUBLIC_API_URL: z._default(z.url(), getDevUrl() ?? ""),
     EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),

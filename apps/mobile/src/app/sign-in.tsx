@@ -1,7 +1,7 @@
-import { useAuth, useSSO } from "@clerk/clerk-expo";
+import { useSSO } from "@clerk/clerk-expo";
 import * as WebBrowser from "expo-web-browser";
 import { useCallback, useEffect } from "react";
-import { ActivityIndicator, Platform } from "react-native";
+import { Platform } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 import { ScalePressable } from "@/components/scale-pressable";
@@ -27,50 +27,24 @@ export const useWarmUpBrowser = () => {
 export default function SignInScreen() {
   useWarmUpBrowser();
 
-  const { isSignedIn } = useAuth();
-  const { startSSOFlow: startAppleFlow } = useSSO();
-  const { startSSOFlow: startGoogleFlow } = useSSO();
+  const { startSSOFlow } = useSSO();
 
-  const handleAppleSignIn = useCallback(async () => {
-    try {
-      const { createdSessionId, setActive } = await startAppleFlow({
-        strategy: "oauth_apple",
-      });
+  const handleSignIn = useCallback(
+    async (strategy: "oauth_apple" | "oauth_google") => {
+      try {
+        const { createdSessionId, setActive } = await startSSOFlow({
+          strategy,
+        });
 
-      if (createdSessionId && setActive) {
-        await setActive({ session: createdSessionId });
-        // Navigation handled by Stack.Protected in _layout.tsx
+        if (createdSessionId && setActive) {
+          await setActive({ session: createdSessionId });
+        }
+      } catch (error) {
+        console.error(`${strategy} sign-in error:`, error);
       }
-    } catch (error) {
-      console.error("Apple sign-in error:", error);
-    }
-  }, [startAppleFlow]);
-
-  const handleGoogleSignIn = useCallback(async () => {
-    try {
-      const { createdSessionId, setActive } = await startGoogleFlow({
-        strategy: "oauth_google",
-      });
-
-      if (createdSessionId && setActive) {
-        await setActive({ session: createdSessionId });
-        // Navigation handled by Stack.Protected in _layout.tsx
-      }
-    } catch (error) {
-      console.error("Google sign-in error:", error);
-    }
-  }, [startGoogleFlow]);
-
-  if (isSignedIn) {
-    return (
-      <StyledLeanView className="flex-1 items-center justify-center bg-background">
-        <ActivityIndicator size="large" />
-        <StyledLeanText className="mt-4 text-foreground-secondary">
-          Setting up your account...
-        </StyledLeanText>
-      </StyledLeanView>
-    );
-  }
+    },
+    [startSSOFlow]
+  );
 
   return (
     <StyledLeanView className="flex-1 bg-background px-6 pt-safe-offset-20 pb-safe-offset-8">
@@ -89,7 +63,7 @@ export default function SignInScreen() {
         <Animated.View entering={FadeInDown.delay(200).springify()}>
           <ScalePressable
             className="h-14 flex-row items-center justify-center gap-3 rounded-2xl bg-black"
-            onPress={handleAppleSignIn}
+            onPress={() => handleSignIn("oauth_apple")}
           >
             <AppleIcon color="#fff" height={20} width={20} />
             <StyledLeanText className="font-semibold text-base text-white">
@@ -101,7 +75,7 @@ export default function SignInScreen() {
         <Animated.View entering={FadeInDown.delay(300).springify()}>
           <ScalePressable
             className="h-14 flex-row items-center justify-center gap-3 rounded-2xl border border-gray-200 bg-white"
-            onPress={handleGoogleSignIn}
+            onPress={() => handleSignIn("oauth_google")}
           >
             <GoogleIcon height={20} width={20} />
             <StyledLeanText className="font-semibold text-base text-gray-900">

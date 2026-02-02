@@ -4,7 +4,7 @@ import "@/config/interop";
 
 import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -20,6 +20,8 @@ import { useFonts } from "@/hooks/use-fonts";
 import { useUserProvisioning } from "@/hooks/use-user-provisioning";
 import { tokenCache } from "@/lib/token-cache";
 import { queryClient } from "@/utils/api";
+import { queryPersister, shouldPersistQuery } from "@/utils/query-persister";
+import { asMilliseconds } from "@/utils/time";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -93,7 +95,21 @@ export default function RootLayout() {
             Uniwind.updateInsets(insets);
           }}
         >
-          <QueryClientProvider client={queryClient}>
+          <PersistQueryClientProvider
+            client={queryClient}
+            onSuccess={() => {
+              if (process.env.NODE_ENV === "development") {
+                console.log("[Cache] Hydrated from MMKV");
+              }
+            }}
+            persistOptions={{
+              persister: queryPersister,
+              maxAge: asMilliseconds({ minutes: 24 * 60 }),
+              dehydrateOptions: {
+                shouldDehydrateQuery: shouldPersistQuery,
+              },
+            }}
+          >
             <KeyboardProvider>
               <GestureHandlerRootView style={{ flex: 1 }}>
                 <BottomSheetModalProvider>
@@ -101,7 +117,7 @@ export default function RootLayout() {
                 </BottomSheetModalProvider>
               </GestureHandlerRootView>
             </KeyboardProvider>
-          </QueryClientProvider>
+          </PersistQueryClientProvider>
         </SafeAreaListener>
       </ClerkLoaded>
     </ClerkProvider>
