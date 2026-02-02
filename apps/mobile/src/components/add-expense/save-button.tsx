@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { ActivityIndicator, type PressableProps } from "react-native";
 import { StyledLeanText } from "@/config/interop";
 import { StyledGlassButton } from "@/config/interop-glass-button";
+import { cn } from "@/utils/cn";
 
 type SaveButtonProps = Omit<PressableProps, "children"> & {
   loading?: boolean;
@@ -14,10 +15,6 @@ export function SaveButton({
   onPress,
   ...props
 }: SaveButtonProps) {
-  const foregroundColorClassName = disabled
-    ? "text-muted-foreground"
-    : "text-background";
-
   const handlePress = useCallback(
     (e: Parameters<NonNullable<PressableProps["onPress"]>>[0]) => {
       if (disabled || loading) return;
@@ -43,10 +40,13 @@ export function SaveButton({
       {...props}
     >
       {loading ? (
-        <ActivityIndicator className={foregroundColorClassName} size={24} />
+        <ActivityIndicator colorClassName="accent-muted-foreground" size={24} />
       ) : (
         <StyledLeanText
-          className={`font-satoshi-medium text-base ${foregroundColorClassName}`}
+          className={cn(
+            "font-satoshi-medium text-background text-base",
+            disabled && "text-muted-foreground"
+          )}
         >
           Add
         </StyledLeanText>
