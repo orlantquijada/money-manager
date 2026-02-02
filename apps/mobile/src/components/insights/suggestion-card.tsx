@@ -1,5 +1,4 @@
 import Skeleton from "@/components/skeleton";
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import InsightCard from "./insight-card";
@@ -16,9 +15,6 @@ type Props = {
 };
 
 export default function SuggestionCard({ suggestion, isLoading }: Props) {
-  const violetBg = useThemeColor("violet-4");
-  const violetIcon = useThemeColor("violet-9");
-
   if (isLoading) {
     return (
       <InsightCard>
@@ -41,13 +37,13 @@ export default function SuggestionCard({ suggestion, isLoading }: Props) {
     <InsightCard className="border-violet-6">
       <StyledLeanView className="flex-row gap-3">
         <StyledLeanView
-          className="size-7 items-center justify-center rounded-lg"
-          style={{ backgroundColor: violetBg, borderCurve: "continuous" }}
+          className="size-7 items-center justify-center rounded-lg bg-violet-4"
+          style={{ borderCurve: "continuous" }}
         >
           <StyledIconSymbol
+            colorClassName="accent-violet-9"
             name="lightbulb.fill"
             size={16}
-            style={{ color: violetIcon }}
           />
         </StyledLeanView>
         <StyledLeanView className="flex-1 gap-1">

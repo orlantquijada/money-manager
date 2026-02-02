@@ -3,7 +3,6 @@ import { useRouter } from "expo-router";
 import { Fragment, useCallback } from "react";
 
 import { ScalePressable } from "@/components/scale-pressable";
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { AlertTriangle } from "@/icons";
 import { trpc } from "@/utils/api";
@@ -19,22 +18,17 @@ type BudgetAlert = {
 const MAX_ALERTS = 3;
 
 function AlertBadge({ type }: { type: BudgetAlert["type"] }) {
-  const redBg = useThemeColor("red-4");
-  const redIcon = useThemeColor("red-11");
-  const amberBg = useThemeColor("amber-4");
-  const amberIcon = useThemeColor("amber-10");
-
   const isOverBudget = type === "over_budget";
 
   return (
     <StyledLeanView
-      className="size-7 items-center justify-center rounded-lg"
-      style={{
-        backgroundColor: isOverBudget ? redBg : amberBg,
-        borderCurve: "continuous",
-      }}
+      className={`size-7 items-center justify-center rounded-lg ${isOverBudget ? "bg-red-4" : "bg-amber-4"}`}
+      style={{ borderCurve: "continuous" }}
     >
-      <AlertTriangle color={isOverBudget ? redIcon : amberIcon} size={16} />
+      <AlertTriangle
+        className={isOverBudget ? "text-red-11" : "text-amber-10"}
+        size={16}
+      />
     </StyledLeanView>
   );
 }

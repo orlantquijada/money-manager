@@ -1,5 +1,4 @@
 import { ScalePressable } from "@/components/scale-pressable";
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { AlertTriangle } from "@/icons";
 import { wholeCurrencyFormatterOptions } from "@/utils/format";
@@ -18,27 +17,22 @@ type AlertBadgeProps = {
 };
 
 function AlertBadge({ severity }: AlertBadgeProps) {
-  const redBg = useThemeColor("red-4");
-  const redIcon = useThemeColor("red-11");
-  const amberBg = useThemeColor("amber-4");
-  const amberIcon = useThemeColor("amber-10");
-
   const isCritical = severity === "critical";
 
   return (
     <StyledLeanView
-      className="size-7 items-center justify-center rounded-lg"
-      style={{
-        backgroundColor: isCritical ? redBg : amberBg,
-        borderCurve: "continuous",
-      }}
+      className={`size-7 items-center justify-center rounded-lg ${isCritical ? "bg-red-4" : "bg-amber-4"}`}
+      style={{ borderCurve: "continuous" }}
     >
-      <AlertTriangle color={isCritical ? redIcon : amberIcon} size={16} />
+      <AlertTriangle
+        className={isCritical ? "text-red-11" : "text-amber-10"}
+        size={16}
+      />
     </StyledLeanView>
   );
 }
 
-type Props = {
+type BudgetAlertCardProps = {
   alert: BudgetAlert;
   onPress: () => void;
 };
@@ -48,14 +42,8 @@ const currencyFormatter = new Intl.NumberFormat(
   wholeCurrencyFormatterOptions
 );
 
-export function BudgetAlertCard({ alert, onPress }: Props) {
-  const redBorder = useThemeColor("red-9");
-  const amberBorder = useThemeColor("amber-9");
-
+export function BudgetAlertCard({ alert, onPress }: BudgetAlertCardProps) {
   const isCritical = alert.severity === "critical";
-  const borderColor = isCritical ? redBorder : amberBorder;
-
-  // Build message based on alert type
   const message =
     alert.type === "over_budget"
       ? `Over by ${currencyFormatter.format(alert.overage ?? 0)}`
@@ -63,13 +51,10 @@ export function BudgetAlertCard({ alert, onPress }: Props) {
 
   return (
     <ScalePressable
-      className="flex-row items-center gap-3 rounded-xl border-l-4 bg-card py-3.5 pr-4 pl-3"
+      className={`flex-row items-center gap-3 rounded-xl border-l-4 bg-card py-3.5 pr-4 pl-3 ${isCritical ? "border-l-red-9" : "border-l-amber-9"}`}
       onPress={onPress}
       scaleValue={0.98}
-      style={{
-        borderLeftColor: borderColor,
-        borderCurve: "continuous",
-      }}
+      style={{ borderCurve: "continuous" }}
     >
       <AlertBadge severity={alert.severity} />
       <StyledLeanView className="flex-1 gap-0.5">

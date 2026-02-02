@@ -8,7 +8,6 @@ import {
   BudgetAlertCard,
 } from "@/components/stats/budget-alert-card";
 import { computeAlerts } from "@/components/stats/budget-alerts";
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { trpc } from "@/utils/api";
 
@@ -42,7 +41,6 @@ function AlertSection({ title, alerts, onAlertPress }: AlertSectionProps) {
 export default function AlertsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const backgroundColor = useThemeColor("background");
 
   // Fetch current stats - use month period for alerts
   const { data: stats } = useQuery(
@@ -80,13 +78,12 @@ export default function AlertsScreen() {
 
   return (
     <ScrollView
-      className="flex-1"
+      className="flex-1 bg-background"
       contentContainerStyle={{
         padding: 16,
         paddingBottom: insets.bottom + 16,
         gap: 20,
       }}
-      style={{ backgroundColor }}
     >
       {/* Header */}
       <StyledLeanText className="font-satoshi-bold text-foreground text-lg">
