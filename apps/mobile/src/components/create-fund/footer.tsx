@@ -6,8 +6,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { StyledGlassButton } from "@/config/interop-glass-button";
 import { Check, ChevronLeft, ChevronRight } from "@/icons";
-import GlassButton from "../glass-button";
-import { useThemeColor } from "../theme-provider";
 
 type ButtonVariant = "text" | "icon-only";
 
@@ -34,14 +32,16 @@ function BackButton({
   hideBackButton,
   onBackPress,
 }: Pick<Props, "hideBackButton" | "onBackPress">) {
-  const tintColor = useThemeColor("muted");
-
   if (hideBackButton) return null;
 
   return (
-    <GlassButton onPress={onBackPress} tintColor={tintColor} variant="icon">
+    <StyledGlassButton
+      onPress={onBackPress}
+      tintColorClassName="accent-muted"
+      variant="icon"
+    >
       <ChevronLeft className="text-muted-foreground" size={24} />
-    </GlassButton>
+    </StyledGlassButton>
   );
 }
 

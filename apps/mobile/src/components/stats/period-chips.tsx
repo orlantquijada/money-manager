@@ -1,8 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledGlassButton } from "@/config/interop-glass-button";
 import { cn } from "@/utils/cn";
-import GlassButton from "../glass-button";
-import { useThemeColor } from "../theme-provider";
 
 export type Period = "week" | "month" | "3mo" | "all";
 
@@ -20,9 +19,6 @@ type Props = {
 };
 
 export default function PeriodChips({ value, onChange, className }: Props) {
-  const backgroundColor = useThemeColor("background");
-  const foregroundColor = useThemeColor("foreground");
-
   return (
     <StyledLeanView
       className={cn("flex-row items-center justify-center gap-2", className)}
@@ -31,7 +27,8 @@ export default function PeriodChips({ value, onChange, className }: Props) {
         const isActive = value === period.value;
 
         return (
-          <GlassButton
+          <StyledGlassButton
+            intent={isActive ? "primary" : "secondary"}
             key={period.value}
             onPress={() => {
               if (value !== period.value) {
@@ -40,7 +37,9 @@ export default function PeriodChips({ value, onChange, className }: Props) {
               }
             }}
             size="sm"
-            tintColor={isActive ? foregroundColor : backgroundColor}
+            tintColorClassName={
+              isActive ? "accent-foreground" : "accent-background"
+            }
           >
             <StyledLeanText
               className={cn(
@@ -50,7 +49,7 @@ export default function PeriodChips({ value, onChange, className }: Props) {
             >
               {period.label}
             </StyledLeanText>
-          </GlassButton>
+          </StyledGlassButton>
         );
       })}
     </StyledLeanView>

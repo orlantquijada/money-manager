@@ -4,13 +4,12 @@ import { startOfDay } from "date-fns";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
 import { RefreshControl, ScrollView } from "react-native";
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledGlassButton } from "@/config/interop-glass-button";
 import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { useFabHeight } from "@/hooks/use-fab-height";
 import { toIsoDate } from "@/utils/format";
 import { sum } from "@/utils/math";
-import GlassButton from "../glass-button";
 import { TransactionDateHeader } from "./date-header";
 import { TransactionsEmptyState } from "./empty-state";
 import { type TransactionItem, TransactionRow } from "./transaction-row";
@@ -86,8 +85,6 @@ export function ActivityTransactionList({
   const router = useRouter();
   const navigation =
     useNavigation<MaterialTopTabNavigationProp<Record<string, object>>>();
-  const foregroundColor = useThemeColor("foreground");
-  const mutedColor = useThemeColor("muted");
   const fabHeight = useFabHeight();
 
   const sections = useMemo(
@@ -156,7 +153,10 @@ export function ActivityTransactionList({
 
       {sections.length > 0 && (
         <StyledLeanView className="items-center py-6">
-          <GlassButton onPress={handleSeeAllPress} tintColor={mutedColor}>
+          <StyledGlassButton
+            onPress={handleSeeAllPress}
+            tintColorClassName="accent-muted"
+          >
             <StyledLeanView className="flex-row items-center justify-center gap-1">
               <StyledLeanText className="font-satoshi-medium text-foreground">
                 See all spending
@@ -167,7 +167,7 @@ export function ActivityTransactionList({
                 size={12}
               />
             </StyledLeanView>
-          </GlassButton>
+          </StyledGlassButton>
         </StyledLeanView>
       )}
     </ScrollView>

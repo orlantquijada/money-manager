@@ -1,9 +1,8 @@
 import * as Haptics from "expo-haptics";
 import { useCallback } from "react";
 import { ActivityIndicator, type PressableProps } from "react-native";
-import GlassButton from "@/components/glass-button";
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText } from "@/config/interop";
+import { StyledGlassButton } from "@/config/interop-glass-button";
 
 type SaveButtonProps = Omit<PressableProps, "children"> & {
   loading?: boolean;
@@ -15,13 +14,9 @@ export function SaveButton({
   onPress,
   ...props
 }: SaveButtonProps) {
-  const enabledTintColor = useThemeColor("foreground");
-  const disabledTintColor = useThemeColor("muted");
-  const backgroundColor = useThemeColor("background");
-  const disabledTextColor = useThemeColor("muted-foreground");
-
-  const tintColor = disabled ? disabledTintColor : enabledTintColor;
-  const foregroundColor = disabled ? disabledTextColor : backgroundColor;
+  const foregroundColorClassName = disabled
+    ? "text-muted-foreground"
+    : "text-background";
 
   const handlePress = useCallback(
     (e: Parameters<NonNullable<PressableProps["onPress"]>>[0]) => {
@@ -33,7 +28,7 @@ export function SaveButton({
   );
 
   return (
-    <GlassButton
+    <StyledGlassButton
       disabled={disabled || loading}
       glassViewProps={{
         style: {
@@ -41,21 +36,21 @@ export function SaveButton({
           minWidth: 88,
         },
       }}
+      intent={disabled ? "secondary" : "primary"}
       onPress={handlePress}
       size="xl"
-      tintColor={tintColor}
+      tintColorClassName={disabled ? "accent-muted" : "accent-foreground"}
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={foregroundColor} size={24} />
+        <ActivityIndicator className={foregroundColorClassName} size={24} />
       ) : (
         <StyledLeanText
-          className="font-satoshi-medium text-base"
-          style={{ color: foregroundColor }}
+          className={`font-satoshi-medium text-base ${foregroundColorClassName}`}
         >
           Add
         </StyledLeanText>
       )}
-    </GlassButton>
+    </StyledGlassButton>
   );
 }

@@ -6,12 +6,11 @@ import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
 import { ActivityIndicator, RefreshControl } from "react-native";
 
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledGlassButton } from "@/config/interop-glass-button";
+import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { toIsoDate } from "@/utils/format";
 import { sum } from "@/utils/math";
-import GlassButton from "../glass-button";
-import { IconSymbol } from "../ui/icon-symbol.ios";
 import { TransactionDateHeader } from "./date-header";
 import { TransactionsEmptyState } from "./empty-state";
 import { type TransactionItem, TransactionRow } from "./transaction-row";
@@ -109,8 +108,6 @@ export function TransactionList({
   const router = useRouter();
   const navigation =
     useNavigation<MaterialTopTabNavigationProp<Record<string, object>>>();
-  const foregroundColor = useThemeColor("foreground");
-  const mutedColor = useThemeColor("muted");
 
   const data = useFlattenedTransactions(transactions);
 
@@ -159,18 +156,21 @@ export function TransactionList({
     if (showSeeAllLink) {
       return (
         <StyledLeanView className="items-center py-6">
-          <GlassButton onPress={handleSeeAllPress} tintColor={mutedColor}>
+          <StyledGlassButton
+            onPress={handleSeeAllPress}
+            tintColorClassName="accent-muted"
+          >
             <StyledLeanView className="flex-row items-center justify-center gap-1">
               <StyledLeanText className="font-satoshi-medium text-foreground">
                 See all spending
               </StyledLeanText>
-              <IconSymbol
-                color={foregroundColor}
+              <StyledIconSymbol
+                colorClassName="accent-foreground"
                 name="arrow.right"
                 size={12}
               />
             </StyledLeanView>
-          </GlassButton>
+          </StyledGlassButton>
         </StyledLeanView>
       );
     }
@@ -179,31 +179,26 @@ export function TransactionList({
 
     return (
       <StyledLeanView className="items-center py-6">
-        <GlassButton
+        <StyledGlassButton
           disabled={isFetchingNextPage}
           onPress={onLoadMore}
           style={{ opacity: isFetchingNextPage ? 0.6 : 1 }}
-          tintColor={mutedColor}
+          tintColorClassName="accent-muted"
         >
           {isFetchingNextPage ? (
-            <ActivityIndicator color={foregroundColor} size="small" />
+            <ActivityIndicator
+              colorClassName="accent-foreground"
+              size="small"
+            />
           ) : (
             <StyledLeanText className="font-satoshi-medium text-foreground">
               Load More
             </StyledLeanText>
           )}
-        </GlassButton>
+        </StyledGlassButton>
       </StyledLeanView>
     );
-  }, [
-    showSeeAllLink,
-    handleSeeAllPress,
-    hasNextPage,
-    isFetchingNextPage,
-    onLoadMore,
-    foregroundColor,
-    mutedColor,
-  ]);
+  }, [showSeeAllLink, handleSeeAllPress, hasNextPage, isFetchingNextPage, onLoadMore]);
 
   if (data.length === 0) {
     return (
