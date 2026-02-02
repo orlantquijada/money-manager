@@ -1,7 +1,8 @@
 import type { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { View } from "react-native";
 import { AnimatedBlurOverlay } from "@/components/animated-blur-overlay";
-import { useTheme } from "@/components/theme-provider";
+import { useThemeColor } from "@/components/theme-provider";
+import { StyledLeanView } from "@/config/interop";
 import {
   TabPositionProvider,
   useTabPosition,
@@ -9,7 +10,6 @@ import {
 import { useSyncTabPosition } from "@/hooks/use-sync-tab-position";
 import { useTabChangeHaptics } from "@/hooks/use-tab-change-haptics";
 import MaterialTopTabs from "@/navigators/material-top-tabs";
-import { theme, themeDark } from "@/utils/colors";
 
 function HiddenTabBar({ position, state }: MaterialTopTabBarProps) {
   useSyncTabPosition(position, state.routes);
@@ -19,18 +19,14 @@ function HiddenTabBar({ position, state }: MaterialTopTabBarProps) {
 
 function TabsContent() {
   const { position, routes } = useTabPosition();
-  const { isDark } = useTheme();
+  const backgroundColor = useThemeColor("background-tertiary");
 
   return (
-    <View className="flex-1">
+    <StyledLeanView className="flex-1">
       <MaterialTopTabs
         initialRouteName="(main)"
         screenOptions={{
-          sceneStyle: {
-            backgroundColor: isDark
-              ? themeDark.background.tertiary
-              : theme.background.tertiary,
-          },
+          sceneStyle: { backgroundColor },
         }}
         tabBar={HiddenTabBar}
         tabBarPosition="bottom"
@@ -48,7 +44,7 @@ function TabsContent() {
       {position && routes.length > 0 && (
         <AnimatedBlurOverlay position={position} routes={routes} />
       )}
-    </View>
+    </StyledLeanView>
   );
 }
 
