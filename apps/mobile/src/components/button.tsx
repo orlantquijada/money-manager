@@ -11,6 +11,12 @@ import {
 } from "@/components/ui/button-tokens";
 import { cn } from "@/utils/cn";
 
+const INTENT_CLASSES = {
+  primary:
+    "bg-foreground active:bg-foreground-secondary disabled:bg-foreground-secondary",
+  secondary: "bg-muted active:bg-accent-secondary disabled:bg-accent-secondary",
+} as const;
+
 type Props = Omit<ScalePressableProps, "style"> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
@@ -30,19 +36,12 @@ export default function Button({
   const isIcon = variant === "icon";
   const sizeClass = isIcon ? iconSizeClasses[size] : undefined;
 
-  const intentClasses = {
-    primary:
-      "bg-foreground active:bg-foreground-secondary disabled:bg-foreground-secondary",
-    secondary:
-      "bg-muted active:bg-accent-secondary disabled:bg-accent-secondary",
-  };
-
   return (
     <ScalePressable
       {...props}
       className={cn(
-        "relative items-center justify-center gap-2 rounded-full",
-        intentClasses[intent],
+        "relative items-center justify-center gap-2 rounded-full android:border-hairline border-border",
+        INTENT_CLASSES[intent],
         sizeClass,
         className
       )}
