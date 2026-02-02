@@ -1,6 +1,6 @@
 import * as Haptics from "expo-haptics";
 import type { SFSymbol } from "expo-symbols";
-import { useCallback, useRef } from "react";
+import { type Ref, useCallback, useRef } from "react";
 import { Pressable, StyleSheet, TextInput } from "react-native";
 import Animated, {
   type SharedValue,
@@ -34,8 +34,7 @@ type SearchBarProps = {
   onSearchChange: (text: string) => void;
   onClear: () => void;
   showClearButton: boolean;
-  mutedColor: string;
-  inputRef: React.RefObject<TextInput | null>;
+  inputRef: Ref<TextInput>;
 };
 
 function SearchBar({
@@ -45,7 +44,7 @@ function SearchBar({
   onClear,
   showClearButton,
   inputRef,
-}: Omit<SearchBarProps, "mutedColor">) {
+}: SearchBarProps) {
   const progress = useDerivedValue(() =>
     withSpring(isExpanded.get() ? 1 : 0, transitions.snappy)
   );
@@ -70,7 +69,7 @@ function SearchBar({
       style={animatedStyle}
     >
       <StyledLeanView
-        className="flex-row items-center gap-2 rounded-xl bg-muted px-3 py-2.5"
+        className="h-10 flex-row items-center gap-2 rounded-xl android:border-hairline border-border bg-muted px-3"
         style={{
           ...StyleSheet.absoluteFillObject,
           bottom: "auto",
@@ -86,7 +85,7 @@ function SearchBar({
         <TextInput
           autoCapitalize="none"
           autoCorrect={false}
-          className="flex-1 font-satoshi-medium text-base text-foreground"
+          className="h-full flex-1 font-satoshi-medium text-foreground"
           cursorColorClassName="accent-foreground"
           onChangeText={onSearchChange}
           placeholder="Search stores or funds"
@@ -94,7 +93,6 @@ function SearchBar({
           ref={inputRef}
           returnKeyType="search"
           selectionColorClassName="accent-foreground"
-          style={{ padding: 0, lineHeight: undefined }}
           value={searchQuery}
         />
         {showClearButton && (

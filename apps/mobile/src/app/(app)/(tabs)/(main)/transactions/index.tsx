@@ -66,19 +66,19 @@ export default function History() {
   );
 
   // Handle period change - just update state, cache handles the rest
-  const handlePeriodChange = useCallback((newPeriod: Period) => {
+  const handlePeriodChange = (newPeriod: Period) => {
     setPeriod(newPeriod);
     setSearchQuery(""); // Clear search on period change
-  }, []);
+  };
 
   // Search handlers
-  const handleSearchChange = useCallback((text: string) => {
+  const handleSearchChange = (text: string) => {
     setSearchQuery(text);
-  }, []);
+  };
 
-  const handleSearchClear = useCallback(() => {
+  const handleSearchClear = () => {
     setSearchQuery("");
-  }, []);
+  };
 
   const handleSearchToggle = useCallback(() => {
     isSearchExpanded.value = !isSearchExpanded.value;
@@ -100,6 +100,7 @@ export default function History() {
   const hasSearchResults = filteredTransactions.length > 0;
   const isSearching = debouncedSearchQuery.trim().length > 0;
   const showSearchEmptyState = isSearching && !hasSearchResults;
+  const showTransactionList = !(isLoading || showSearchEmptyState);
 
   return (
     <StyledLeanView className="flex-1 gap-4 bg-background">
@@ -118,7 +119,7 @@ export default function History() {
         <StyledLeanView className="flex-1" style={{ marginHorizontal: -16 }}>
           {isLoading && (
             <StyledLeanView className="flex-1 items-center justify-center">
-              <ActivityIndicator />
+              <ActivityIndicator colorClassName="accent-foreground" />
             </StyledLeanView>
           )}
           {!isLoading && showSearchEmptyState && (
@@ -128,7 +129,7 @@ export default function History() {
               </StyledLeanText>
             </StyledLeanView>
           )}
-          {!(isLoading || showSearchEmptyState) && (
+          {showTransactionList && (
             <TransactionList
               bottomInset={fabHeight}
               emptyStateVariant="period-empty"
