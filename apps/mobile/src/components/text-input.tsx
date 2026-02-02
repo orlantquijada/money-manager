@@ -21,7 +21,8 @@ export default function TextInput({ className, style, ...props }: Props) {
     <RNTextInput
       className={cn(slots.container, slots.input, className)}
       cursorColorClassName="accent-foreground"
-      selectionColorClassName="accent-foreground"
+      placeholderTextColorClassName="accent-foreground-muted"
+      selectionColorClassName="accent-foreground-secondary"
       style={[{ lineHeight: undefined, borderCurve: "continuous" }, style]}
       {...props}
     />
