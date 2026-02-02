@@ -1,24 +1,18 @@
-import { router } from "expo-router";
 import { TabList, TabSlot, Tabs, TabTrigger } from "expo-router/ui";
 import { useMemo } from "react";
 import { Animated } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AnimatedTabScreen } from "@/components/animated-tab-screen";
+import { FabMenu } from "@/components/fab-menu";
 import TabButton from "@/components/tab-button";
 import { StyledGlassView } from "@/config/interop";
-import { StyledGlassButton } from "@/config/interop-glass-button";
 import { useTabPosition } from "@/contexts/tab-position-context";
-import {
-  ActivityRecDuoDark,
-  ChartColumnDuoDark,
-  HomeDuoDark,
-  Plus,
-} from "@/icons";
+import { ActivityRecDuoDark, ChartColumnDuoDark, HomeDuoDark } from "@/icons";
 
 const GAP = 16;
 const FAB_SIZE = 56;
 const TAB_BAR_HEIGHT = 56;
-const ICON_SIZE = 24;
+const TAB_ICON_SIZE = 24;
 
 export default function MainLayout() {
   const insets = useSafeAreaInsets();
@@ -36,10 +30,6 @@ export default function MainLayout() {
     });
   }, [outerPosition, bottom]);
 
-  const handleFabPress = () => {
-    router.navigate("/add-expense");
-  };
-
   return (
     <AnimatedTabScreen index={0}>
       <Tabs>
@@ -54,7 +44,7 @@ export default function MainLayout() {
 
         {/* Custom tab bar */}
         <Animated.View
-          className="absolute inset-x-4 flex-row items-center justify-between"
+          className="absolute inset-x-0 flex-row items-center justify-between px-4"
           style={{ bottom, transform: [{ translateY }] }}
         >
           {/* Left: Tab icons in glass pill */}
@@ -67,29 +57,27 @@ export default function MainLayout() {
               <TabButton
                 className="-mr-2"
                 icon={HomeDuoDark}
-                size={ICON_SIZE}
+                size={TAB_ICON_SIZE}
               />
             </TabTrigger>
             <TabTrigger asChild name="insights">
               <TabButton
                 className="-mx-2"
                 icon={ChartColumnDuoDark}
-                size={ICON_SIZE}
+                size={TAB_ICON_SIZE}
               />
             </TabTrigger>
             <TabTrigger asChild name="transactions">
               <TabButton
                 className="-ml-2"
                 icon={ActivityRecDuoDark}
-                size={ICON_SIZE}
+                size={TAB_ICON_SIZE}
               />
             </TabTrigger>
           </StyledGlassView>
 
-          {/* Right: FAB button */}
-          <StyledGlassButton onPress={handleFabPress} size="xl" variant="icon">
-            <Plus className="text-foreground" size={ICON_SIZE} />
-          </StyledGlassButton>
+          {/* Right: FAB button with expandable menu */}
+          <FabMenu />
         </Animated.View>
       </Tabs>
     </AnimatedTabScreen>
