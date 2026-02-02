@@ -4,10 +4,9 @@ import { useState } from "react";
 import type { ViewStyle } from "react-native";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import { StyledLeanText } from "@/config/interop";
+import { StyledGlassButton } from "@/config/interop-glass-button";
 import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { DateSelectorSheet } from "./date-selector-sheet";
-import GlassButton from "./glass-button";
-import { useThemeColor } from "./theme-provider";
 
 const monthDateFormat = new Intl.DateTimeFormat("en-US", {
   month: "long",
@@ -49,7 +48,6 @@ type DateSelectorProps = {
  */
 export function DateSelector({ date, onDateChange }: DateSelectorProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const mutedColor = useThemeColor("muted");
 
   const today = new Date();
   const yesterday = subDays(today, 1);
@@ -68,7 +66,11 @@ export function DateSelector({ date, onDateChange }: DateSelectorProps) {
 
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
-          <GlassButton className="flex-row" size="xl" tintColor={mutedColor}>
+          <StyledGlassButton
+            className="flex-row"
+            size="xl"
+            tintColorClassName="accent-muted"
+          >
             <StyledLeanText className="mr-2 font-satoshi-medium text-base text-foreground">
               {dateLabel}
             </StyledLeanText>
@@ -77,7 +79,7 @@ export function DateSelector({ date, onDateChange }: DateSelectorProps) {
               name="chevron.up.chevron.down"
               size={14}
             />
-          </GlassButton>
+          </StyledGlassButton>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
           <DropdownMenu.Item key="today" onSelect={() => onDateChange(today)}>

@@ -10,10 +10,9 @@ import {
 import type { ReactNode } from "react";
 import { Image, StyleSheet } from "react-native";
 import TotalSpent from "@/components/dashboard/total-spent";
-import GlassButton from "@/components/glass-button";
 import { ScalePressable } from "@/components/scale-pressable";
-import { useThemeColor } from "@/components/theme-provider";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledGlassButton } from "@/config/interop-glass-button";
 import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { cn } from "@/utils/cn";
 
@@ -46,13 +45,12 @@ export default function DashboardLayout() {
 
 function ProfileButton() {
   const { user } = useUser();
-  const tintColor = useThemeColor("muted");
 
   return (
-    <GlassButton
+    <StyledGlassButton
       onPress={() => router.push("/settings")}
       size="md"
-      tintColor={tintColor}
+      tintColorClassName="accent-muted"
       variant="icon"
     >
       {user?.imageUrl ? (
@@ -64,7 +62,7 @@ function ProfileButton() {
           size={24}
         />
       )}
-    </GlassButton>
+    </StyledGlassButton>
   );
 }
 
