@@ -3,9 +3,9 @@ import type { PressableProps } from "react-native";
 import {
   useAnimatedStyle,
   useSharedValue,
-  withTiming,
+  withSpring,
 } from "react-native-reanimated";
-import { TW_TRANSITION_ALL } from "@/utils/motion";
+import { transitions } from "@/utils/motion";
 import { AnimatedPressable } from "./animated-pressable";
 
 const DEFAULT_SCALE = 0.95;
@@ -39,10 +39,10 @@ export function ScalePressable({
   const handlePressIn = useCallback(
     (e: Parameters<NonNullable<PressableProps["onPressIn"]>>[0]) => {
       if (!disableScale) {
-        scale.value = withTiming(scaleValue, TW_TRANSITION_ALL);
+        scale.value = withSpring(scaleValue, transitions.snappier);
       }
       if (!disableOpacity) {
-        opacity.value = withTiming(opacityValue, TW_TRANSITION_ALL);
+        opacity.value = withSpring(opacityValue, transitions.snappier);
       }
       onPressIn?.(e);
     },
@@ -59,8 +59,8 @@ export function ScalePressable({
 
   const handlePressOut = useCallback(
     (e: Parameters<NonNullable<PressableProps["onPressOut"]>>[0]) => {
-      scale.value = withTiming(1, TW_TRANSITION_ALL);
-      opacity.value = withTiming(1, TW_TRANSITION_ALL);
+      scale.value = withSpring(1, transitions.snappier);
+      opacity.value = withSpring(1, transitions.snappier);
       onPressOut?.(e);
     },
     [scale, opacity, onPressOut]

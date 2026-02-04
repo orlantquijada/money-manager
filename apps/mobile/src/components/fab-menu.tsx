@@ -132,6 +132,7 @@ export function FabMenu() {
             >
               <ScalePressable
                 onPress={() => handleMenuItemPress(item.pathname)}
+                opacityValue={0.75}
               >
                 <StyledLeanView className="flex-row items-center gap-2">
                   <StyledLeanText className="font-satoshi-medium text-base text-foreground">
@@ -154,6 +155,7 @@ export function FabMenu() {
         intent={isExpanded ? "primary" : "secondary"}
         onLongPress={handleLongPress}
         onPress={handlePress}
+        scaleValue={0.9}
         size="xl"
         tintColorClassName={
           isExpanded ? "accent-foreground" : "accent-background"
