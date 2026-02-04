@@ -39,7 +39,6 @@ export default function AppLayout() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="create-fund" options={modalOptions} />
       <Stack.Screen name="create-folder" options={modalOptions} />
-      <Stack.Screen name="fund/[id]" options={modalOptions} />
       <Stack.Screen
         name="transaction/[id]"
         options={{ ...formSheetOptions, sheetAllowedDetents: [0.4] }}
