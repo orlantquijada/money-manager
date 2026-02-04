@@ -68,7 +68,7 @@ export default function AlertsScreen() {
       // Small delay to let sheet dismiss before navigating
       setTimeout(() => {
         router.push({
-          pathname: "/fund/[id]",
+          pathname: "/funds/[id]",
           params: { id: String(fundId) },
         });
       }, 100);

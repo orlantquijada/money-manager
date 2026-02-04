@@ -54,11 +54,6 @@ export default function AddExpense() {
     return null;
   }, [foldersWithFunds, selectedFundId]);
 
-  // Handlers
-  const handleCancel = useCallback(() => {
-    router.navigate("/(app)/(tabs)/(main)/(dashboard)");
-  }, [router]);
-
   const openFundPicker = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     fundSheetRef.current?.present();
@@ -72,7 +67,7 @@ export default function AddExpense() {
   return (
     <AnimatedTabScreen index={1}>
       <StyledSafeAreaView className="flex-1 bg-background py-4">
-        <Header date={date} onCancel={handleCancel} onDateChange={setDate} />
+        <Header date={date} onCancel={router.back} onDateChange={setDate} />
 
         <StyledLeanView className="flex-1 px-4">
           {/* Amount Display */}

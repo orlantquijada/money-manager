@@ -22,7 +22,7 @@ export default function Category({ fund, className }: CategoryProps) {
   const isFunded = isNonNegotiable && overallProgress >= 1;
 
   return (
-    <Link asChild href={{ pathname: "/fund/[id]", params: { id: fund.id } }}>
+    <Link asChild href={{ pathname: "/funds/[id]", params: { id: fund.id } }}>
       <ScalePressable
         className={cn("justify-center gap-3", className)}
         opacityValue={0.7}

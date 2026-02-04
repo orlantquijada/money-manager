@@ -78,7 +78,7 @@ export function BudgetAlerts() {
   const handleAlertPress = useCallback(
     (fundId: number) => {
       router.push({
-        pathname: "/fund/[id]",
+        pathname: "/funds/[id]",
         params: { id: String(fundId) },
       });
     },

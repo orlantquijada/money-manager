@@ -49,7 +49,7 @@ export default function TransactionDetailScreen() {
 
   const handleViewFund = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.push(`/fund/${transaction?.fundId}`);
+    router.push(`/funds/${transaction?.fundId}`);
   };
 
   const handleDelete = () => {
