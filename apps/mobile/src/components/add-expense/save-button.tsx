@@ -35,6 +35,7 @@ export function SaveButton({
       }}
       intent={disabled ? "secondary" : "primary"}
       onPress={handlePress}
+      scaleValue={0.93}
       size="xl"
       tintColorClassName={disabled ? "accent-muted" : "accent-foreground"}
       {...props}

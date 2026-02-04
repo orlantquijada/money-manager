@@ -26,6 +26,7 @@ export default function GlassCloseButton({
 
   return (
     <StyledGlassButton
+      scaleValue={0.9}
       tintColorClassName="accent-muted"
       variant="icon"
       {...props}
