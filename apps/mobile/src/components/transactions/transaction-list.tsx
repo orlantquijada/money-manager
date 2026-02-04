@@ -1,5 +1,3 @@
-import type { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
-import { useNavigation } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 import { startOfDay } from "date-fns";
 import { useRouter } from "expo-router";
@@ -106,8 +104,6 @@ export function TransactionList({
   hideFundContext = false,
 }: Props) {
   const router = useRouter();
-  const navigation =
-    useNavigation<MaterialTopTabNavigationProp<Record<string, object>>>();
 
   const data = useFlattenedTransactions(transactions);
 
@@ -146,11 +142,8 @@ export function TransactionList({
   }, []);
 
   const handleSeeAllPress = useCallback(() => {
-    const parentNav = navigation.getParent();
-    if (parentNav) {
-      parentNav.navigate("transactions");
-    }
-  }, [navigation]);
+    router.dismissTo("/transactions");
+  }, [router]);
 
   const renderFooter = useCallback(() => {
     if (showSeeAllLink) {
