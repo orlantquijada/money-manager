@@ -1,0 +1,82 @@
+import { TabList, TabSlot, Tabs, TabTrigger } from "expo-router/ui";
+import { useMemo } from "react";
+import { Animated } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { FabMenu } from "@/components/fab-menu";
+import TabButton from "@/components/tab-button";
+import { StyledGlassView } from "@/config/interop";
+import { useTabPosition } from "@/contexts/tab-position-context";
+import { ActivityRecDuoDark, ChartColumnDuoDark, HomeDuoDark } from "@/icons";
+
+const GAP = 16;
+const FAB_SIZE = 56;
+const TAB_BAR_HEIGHT = 56;
+const TAB_ICON_SIZE = 24;
+
+export default function HomeLayout() {
+  const insets = useSafeAreaInsets();
+  const { position: outerPosition } = useTabPosition();
+
+  const bottom = insets.bottom + GAP;
+
+  const translateY = useMemo(() => {
+    if (!outerPosition) return 0;
+
+    return outerPosition.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, FAB_SIZE + bottom + TAB_BAR_HEIGHT],
+      extrapolate: "clamp",
+    });
+  }, [outerPosition, bottom]);
+
+  return (
+    <Tabs>
+      <TabSlot />
+
+      {/* Hidden TabList to define routes */}
+      <TabList style={{ display: "none" }}>
+        <TabTrigger href="/" name="home" />
+        <TabTrigger href="/insights" name="insights" />
+        <TabTrigger href="/transactions" name="transactions" />
+      </TabList>
+
+      {/* Custom tab bar */}
+      <Animated.View
+        className="absolute inset-x-0 flex-row items-center justify-between px-4"
+        style={{ bottom, transform: [{ translateY }] }}
+      >
+        {/* Left: Tab icons in glass pill */}
+        <StyledGlassView
+          className="h-14 flex-row gap-1 rounded-full android:border-hairline border-border android:bg-muted android:p-0.5 p-1"
+          isInteractive
+          tintColorClassName="accent-background"
+        >
+          <TabTrigger asChild name="home">
+            <TabButton
+              className="-mr-2"
+              icon={HomeDuoDark}
+              size={TAB_ICON_SIZE}
+            />
+          </TabTrigger>
+          <TabTrigger asChild name="insights">
+            <TabButton
+              className="-mx-2"
+              icon={ChartColumnDuoDark}
+              size={TAB_ICON_SIZE}
+            />
+          </TabTrigger>
+          <TabTrigger asChild name="transactions">
+            <TabButton
+              className="-ml-2"
+              icon={ActivityRecDuoDark}
+              size={TAB_ICON_SIZE}
+            />
+          </TabTrigger>
+        </StyledGlassView>
+
+        {/* Right: FAB button with expandable menu */}
+        <FabMenu />
+      </Animated.View>
+    </Tabs>
+  );
+}

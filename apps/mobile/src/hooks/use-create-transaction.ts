@@ -35,7 +35,9 @@ export function useCreateTransactionMutation() {
         useAddExpenseStore.getState().reset();
 
         // Navigate back to dashboard
-        router.navigate({ pathname: "/(app)/(tabs)/(main)/(dashboard)" });
+        router.navigate({
+          pathname: "/(app)/(tabs)/(main)/(home)/(dashboard)",
+        });
       },
     })
   );
