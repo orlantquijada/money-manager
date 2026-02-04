@@ -1,8 +1,10 @@
-import { endOfMonth, startOfMonth } from "date-fns";
-import { folders, funds, transactions } from "db/schema";
+import { endOfMonth, startOfMonth, subMonths } from "date-fns";
+import { folders, funds, stores, transactions } from "db/schema";
 import {
   and,
   asc,
+  countDistinct,
+  desc,
   eq,
   getTableColumns,
   gte,
@@ -19,6 +21,10 @@ const updateFundSchema = z.object({
   id: z.number(),
   name: z.string().optional(),
   enabled: z.boolean().optional(),
+  budgetedAmount: z.number().optional(),
+  timeMode: timeModeSchema.optional(),
+  dueDay: z.number().min(1).max(31).nullable().optional(),
+  folderId: z.number().optional(),
 });
 
 export const fundsRouter = router({
@@ -147,7 +153,108 @@ export const fundsRouter = router({
         throw new Error("Fund not found");
       }
 
-      await ctx.db.update(funds).set(data).where(eq(funds.id, id));
+      const updateData: Record<string, unknown> = { ...data };
+      if (data.budgetedAmount !== undefined) {
+        updateData.budgetedAmount = data.budgetedAmount.toString();
+      }
+      await ctx.db.update(funds).set(updateData).where(eq(funds.id, id));
+    }),
+
+  topStores: protectedProcedure
+    .input(z.object({ fundId: z.number(), limit: z.number().default(3) }))
+    .query(async ({ ctx, input }) => {
+      const now = new Date();
+      const results = await ctx.db
+        .select({
+          storeId: transactions.storeId,
+          storeName: stores.name,
+          amount: sum(transactions.amount).mapWith(Number),
+        })
+        .from(transactions)
+        .innerJoin(stores, eq(transactions.storeId, stores.id))
+        .where(
+          and(
+            eq(transactions.fundId, input.fundId),
+            eq(transactions.userId, ctx.userId),
+            gte(transactions.date, startOfMonth(now)),
+            lt(transactions.date, endOfMonth(now))
+          )
+        )
+        .groupBy(transactions.storeId, stores.name)
+        .orderBy(desc(sum(transactions.amount)))
+        .limit(input.limit);
+
+      return results.map((r) => ({
+        storeId: r.storeId,
+        storeName: r.storeName,
+        amount: r.amount ?? 0,
+      }));
+    }),
+
+  periodComparison: protectedProcedure
+    .input(z.number())
+    .query(async ({ ctx, input: fundId }) => {
+      const now = new Date();
+      const lastMonth = subMonths(now, 1);
+
+      const [currentResult] = await ctx.db
+        .select({ amount: sum(transactions.amount).mapWith(Number) })
+        .from(transactions)
+        .where(
+          and(
+            eq(transactions.fundId, fundId),
+            eq(transactions.userId, ctx.userId),
+            gte(transactions.date, startOfMonth(now)),
+            lt(transactions.date, endOfMonth(now))
+          )
+        );
+
+      const [previousResult] = await ctx.db
+        .select({ amount: sum(transactions.amount).mapWith(Number) })
+        .from(transactions)
+        .where(
+          and(
+            eq(transactions.fundId, fundId),
+            eq(transactions.userId, ctx.userId),
+            gte(transactions.date, startOfMonth(lastMonth)),
+            lt(transactions.date, endOfMonth(lastMonth))
+          )
+        );
+
+      const current = currentResult?.amount ?? 0;
+      const previous = previousResult?.amount ?? 0;
+
+      if (previous === 0) {
+        return null;
+      }
+
+      const difference = current - previous;
+      const percentageChange = (difference / previous) * 100;
+
+      return {
+        current,
+        previous,
+        difference,
+        percentageChange,
+      };
+    }),
+
+  storeCount: protectedProcedure
+    .input(z.number())
+    .query(async ({ ctx, input: fundId }) => {
+      const now = new Date();
+      const [result] = await ctx.db
+        .select({ count: countDistinct(transactions.storeId) })
+        .from(transactions)
+        .where(
+          and(
+            eq(transactions.fundId, fundId),
+            eq(transactions.userId, ctx.userId),
+            gte(transactions.date, startOfMonth(now)),
+            lt(transactions.date, endOfMonth(now))
+          )
+        );
+      return result?.count ?? 0;
     }),
 
   delete: protectedProcedure
