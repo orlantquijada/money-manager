@@ -7,7 +7,6 @@ The vision is to create the best, prettiest, most user/beginner-friendly budgeti
 ## Essentials
 
 - **Package manager:** pnpm only
-- **Platform focus:** iOS (use `*.ios.tsx` for platform-specific)
 - **Commands:** `pnpm dev` (start all), `pnpm lint && pnpm type-check`
 
 ## Tech Stack
@@ -33,3 +32,13 @@ The vision is to create the best, prettiest, most user/beginner-friendly budgeti
 
 - Make plans extremely concise. Sacrifice grammar for brevity.
 - End each plan with unresolved questions, if any.
+
+## UI/Design Work
+
+When implementing UI redesigns, present a brief visual description or mockup outline BEFORE writing code. Confirm the direction matches expectations before proceeding with implementation.
+
+Before implementing, describe the proposed layout: component hierarchy, spacing values, and visual flow. I'll confirm before you write code.
+
+## Code Quality
+
+Always run type checking (`tsc --noEmit` or equivalent) after TypeScript changes before considering a task complete.
