@@ -13,14 +13,12 @@ import { TransactionDateHeader } from "./date-header";
 import { TransactionsEmptyState } from "./empty-state";
 import { type TransactionItem, TransactionRow } from "./transaction-row";
 
-type Transaction = TransactionItem;
-
 type ListItem =
   | { type: "header"; date: Date; total: number; id: string }
-  | { type: "transaction"; data: Transaction };
+  | { type: "transaction"; data: TransactionItem };
 
 type Props = {
-  transactions: Transaction[];
+  transactions: TransactionItem[];
   isRefreshing?: boolean;
   onRefresh?: () => void;
   // Pagination props
@@ -40,11 +38,11 @@ type Props = {
   hideFundContext?: boolean;
 };
 
-function useFlattenedTransactions(transactions: Transaction[]): ListItem[] {
+function useFlattenedTransactions(transactions: TransactionItem[]): ListItem[] {
   return useMemo(() => {
     const grouped = new Map<
       string,
-      { date: Date; transactions: Transaction[] }
+      { date: Date; transactions: TransactionItem[] }
     >();
 
     for (const transaction of transactions) {
@@ -69,7 +67,6 @@ function useFlattenedTransactions(transactions: Transaction[]): ListItem[] {
       (a, b) => b.date.getTime() - a.date.getTime()
     );
 
-    // Flatten
     return sortedGroups.flatMap((group) => {
       const total = sum(group.transactions.map(({ amount }) => Number(amount)));
       const header: ListItem = {
@@ -87,6 +84,71 @@ function useFlattenedTransactions(transactions: Transaction[]): ListItem[] {
       return [header, ...items];
     });
   }, [transactions]);
+}
+
+function getItemType(item: ListItem) {
+  return item.type;
+}
+
+function keyExtractor(item: ListItem) {
+  return item.type === "header" ? item.id : item.data.id;
+}
+
+function TransactionListFooter({
+  showSeeAllLink,
+  onSeeAllPress,
+  hasNextPage,
+  isFetchingNextPage,
+  onLoadMore,
+}: {
+  showSeeAllLink: boolean;
+  onSeeAllPress: () => void;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  onLoadMore?: () => void;
+}) {
+  if (showSeeAllLink) {
+    return (
+      <StyledLeanView className="items-center py-6">
+        <StyledGlassButton
+          onPress={onSeeAllPress}
+          tintColorClassName="accent-muted"
+        >
+          <StyledLeanView className="flex-row items-center justify-center gap-1">
+            <StyledLeanText className="font-satoshi-medium text-foreground">
+              See all spending
+            </StyledLeanText>
+            <StyledIconSymbol
+              colorClassName="accent-foreground"
+              name="arrow.right"
+              size={12}
+            />
+          </StyledLeanView>
+        </StyledGlassButton>
+      </StyledLeanView>
+    );
+  }
+
+  if (!hasNextPage) return null;
+
+  return (
+    <StyledLeanView className="items-center py-6">
+      <StyledGlassButton
+        disabled={isFetchingNextPage}
+        onPress={onLoadMore}
+        style={{ opacity: isFetchingNextPage ? 0.6 : 1 }}
+        tintColorClassName="accent-muted"
+      >
+        {isFetchingNextPage ? (
+          <ActivityIndicator colorClassName="accent-foreground" size="small" />
+        ) : (
+          <StyledLeanText className="font-satoshi-medium text-foreground">
+            Load More
+          </StyledLeanText>
+        )}
+      </StyledGlassButton>
+    </StyledLeanView>
+  );
 }
 
 export function TransactionList({
@@ -107,16 +169,6 @@ export function TransactionList({
 
   const data = useFlattenedTransactions(transactions);
 
-  const handleTransactionPress = useCallback(
-    (transactionId: string) => {
-      router.push({
-        pathname: "/transaction/[id]",
-        params: { id: transactionId },
-      });
-    },
-    [router]
-  );
-
   const renderItem = useCallback(
     ({ item }: { item: ListItem }) => {
       if (item.type === "header") {
@@ -125,79 +177,18 @@ export function TransactionList({
       return (
         <TransactionRow
           hideFundContext={hideFundContext}
-          onPress={() => handleTransactionPress(item.data.id)}
+          onPress={() =>
+            router.push({
+              pathname: "/transaction/[id]",
+              params: { id: item.data.id },
+            })
+          }
           transaction={item.data}
         />
       );
     },
-    [handleTransactionPress, hideFundContext]
+    [router, hideFundContext]
   );
-
-  const getItemType = useCallback((item: ListItem) => {
-    return item.type;
-  }, []);
-
-  const keyExtractor = useCallback((item: ListItem) => {
-    return item.type === "header" ? item.id : item.data.id;
-  }, []);
-
-  const handleSeeAllPress = useCallback(() => {
-    router.dismissTo("/transactions");
-  }, [router]);
-
-  const renderFooter = useCallback(() => {
-    if (showSeeAllLink) {
-      return (
-        <StyledLeanView className="items-center py-6">
-          <StyledGlassButton
-            onPress={handleSeeAllPress}
-            tintColorClassName="accent-muted"
-          >
-            <StyledLeanView className="flex-row items-center justify-center gap-1">
-              <StyledLeanText className="font-satoshi-medium text-foreground">
-                See all spending
-              </StyledLeanText>
-              <StyledIconSymbol
-                colorClassName="accent-foreground"
-                name="arrow.right"
-                size={12}
-              />
-            </StyledLeanView>
-          </StyledGlassButton>
-        </StyledLeanView>
-      );
-    }
-
-    if (!hasNextPage) return null;
-
-    return (
-      <StyledLeanView className="items-center py-6">
-        <StyledGlassButton
-          disabled={isFetchingNextPage}
-          onPress={onLoadMore}
-          style={{ opacity: isFetchingNextPage ? 0.6 : 1 }}
-          tintColorClassName="accent-muted"
-        >
-          {isFetchingNextPage ? (
-            <ActivityIndicator
-              colorClassName="accent-foreground"
-              size="small"
-            />
-          ) : (
-            <StyledLeanText className="font-satoshi-medium text-foreground">
-              Load More
-            </StyledLeanText>
-          )}
-        </StyledGlassButton>
-      </StyledLeanView>
-    );
-  }, [
-    showSeeAllLink,
-    handleSeeAllPress,
-    hasNextPage,
-    isFetchingNextPage,
-    onLoadMore,
-  ]);
 
   if (data.length === 0) {
     return (
@@ -219,7 +210,15 @@ export function TransactionList({
       getItemType={getItemType}
       keyboardDismissMode={keyboardDismissMode}
       keyExtractor={keyExtractor}
-      ListFooterComponent={renderFooter}
+      ListFooterComponent={
+        <TransactionListFooter
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          onLoadMore={onLoadMore}
+          onSeeAllPress={() => router.dismissTo("/transactions")}
+          showSeeAllLink={showSeeAllLink}
+        />
+      }
       onEndReached={onLoadMore}
       onEndReachedThreshold={0.5}
       refreshControl={
