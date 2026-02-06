@@ -532,22 +532,22 @@ export const transactionsRouter = router({
   list: protectedProcedure
     .input(
       z.object({
-        period: periodSchema,
+        year: z.number(),
+        month: z.number().min(1).max(12),
         cursor: z.string().optional(),
         limit: z.number().min(1).max(100).default(50),
       })
     )
     .query(async ({ ctx, input }) => {
-      const { start, end } = getDateRangeForPeriod(input.period);
+      const start = new Date(input.year, input.month - 1, 1);
+      const end = endOfMonth(start);
       const limit = input.limit;
 
-      const dateConditions = [eq(txns.userId, ctx.userId)];
-      if (start) {
-        dateConditions.push(gte(txns.date, start));
-      }
-      if (end) {
-        dateConditions.push(lt(txns.date, end));
-      }
+      const dateConditions = [
+        eq(txns.userId, ctx.userId),
+        gte(txns.date, start),
+        lt(txns.date, end),
+      ];
 
       let cursorCondition: ReturnType<typeof or> | undefined;
       if (input.cursor) {
