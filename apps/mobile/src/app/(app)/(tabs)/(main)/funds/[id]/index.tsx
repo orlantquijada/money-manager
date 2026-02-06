@@ -2,7 +2,7 @@ import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useRef, useState } from "react";
 import {
   ActionSheetIOS,
@@ -22,14 +22,13 @@ import { EditFundSheet } from "@/components/fund/edit-fund-sheet";
 import FundInsights from "@/components/fund/fund-insights";
 import FundStatsCard from "@/components/fund/fund-stats-card";
 import { MoveFolderSheet } from "@/components/fund/move-folder-sheet";
+import { RecentTransactions } from "@/components/fund/recent-transactions";
 import SpendingPaceWarning from "@/components/fund/spending-pace-warning";
 import GlassIconButton from "@/components/glass-icon-button";
-import { ScalePressable } from "@/components/scale-pressable";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { useAddExpenseStore } from "@/lib/add-expense";
 import { type FundWithMeta, getTimeModeMultiplier } from "@/lib/fund";
 import { trpc } from "@/utils/api";
-import { toCurrencyNarrow, toShortDate } from "@/utils/format";
 import { transitions } from "@/utils/motion";
 
 export default function FundDetailScreen() {
@@ -235,13 +234,11 @@ export default function FundDetailScreen() {
         scrollEventThrottle={48}
         style={{ paddingTop: Platform.OS === "android" ? headerHeight : 0 }}
       >
-        {/* Stats Section */}
         <FundStatsCard
           fund={fund as FundWithMeta}
           onMarkAsPaid={handleMarkAsPaid}
         />
 
-        {/* Spending Pace Warning */}
         {fund.fundType === "SPENDING" && (
           <SpendingPaceWarning
             budget={monthlyBudget}
@@ -250,7 +247,6 @@ export default function FundDetailScreen() {
           />
         )}
 
-        {/* Insights */}
         <FundInsights
           fundType={fund.fundType}
           periodComparison={periodComparison ?? null}
@@ -258,82 +254,17 @@ export default function FundDetailScreen() {
           topStores={topStores}
         />
 
-        {/* Transactions */}
-        <StyledLeanView className="gap-3">
-          <StyledLeanView className="flex-row items-center justify-between">
-            <StyledLeanText className="font-satoshi-semibold text-base text-foreground-muted">
-              Recent Transactions
-            </StyledLeanText>
-            {transactions && transactions.length > 0 && (
-              <Link asChild href={`/funds/${fundId}/transactions`}>
-                <ScalePressable hitSlop={10} opacityValue={0.75}>
-                  <StyledLeanText className="font-satoshi text-foreground-muted text-xs">
-                    See all
-                  </StyledLeanText>
-                </ScalePressable>
-              </Link>
-            )}
-          </StyledLeanView>
-
-          {(!transactions || transactions.length === 0) && (
-            <StyledLeanText className="py-4 text-center text-foreground-muted">
-              No transactions yet
-            </StyledLeanText>
-          )}
-
-          {transactions?.slice(0, 5).map((transaction) => (
-            <ScalePressable
-              className="rounded-xl bg-card p-4"
-              key={transaction.id}
-              onPress={() => router.push(`/transaction/${transaction.id}`)}
-              style={{ borderCurve: "continuous" }}
-            >
-              <StyledLeanView className="flex-row items-center justify-between">
-                <StyledLeanView className="flex-1">
-                  <StyledLeanText
-                    className="font-satoshi-medium text-base text-foreground"
-                    ellipsizeMode="tail"
-                    numberOfLines={1}
-                  >
-                    {transaction.store?.name || "No store"}
-                  </StyledLeanText>
-                  {transaction.note && (
-                    <StyledLeanText
-                      className="mt-0.5 font-satoshi text-foreground-muted text-sm"
-                      ellipsizeMode="tail"
-                      numberOfLines={1}
-                    >
-                      {transaction.note}
-                    </StyledLeanText>
-                  )}
-                </StyledLeanView>
-                <StyledLeanView className="items-end">
-                  <StyledLeanText className="font-nunito-semibold text-base text-foreground">
-                    {toCurrencyNarrow(Number(transaction.amount))}
-                  </StyledLeanText>
-                  <StyledLeanText className="font-satoshi text-foreground-muted text-xs">
-                    {transaction.date
-                      ? toShortDate(new Date(transaction.date))
-                      : ""}
-                  </StyledLeanText>
-                </StyledLeanView>
-              </StyledLeanView>
-            </ScalePressable>
-          ))}
-        </StyledLeanView>
+        <RecentTransactions fundId={fundId} transactions={transactions ?? []} />
       </ScrollView>
 
-      {/* Collapsible Bottom Action Bar */}
       <CollapsibleActionBarControlled
         isCollapsed={isCollapsed}
         label={actionLabel}
         onPress={handleAddExpense}
       />
 
-      {/* Edit Sheet */}
       <EditFundSheet fund={fund} ref={editSheetRef} />
 
-      {/* Move Folder Sheet */}
       <MoveFolderSheet
         currentFolderId={fund.folderId}
         fundId={fundId}
