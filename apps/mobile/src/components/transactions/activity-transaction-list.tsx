@@ -1,6 +1,5 @@
 import type { MaterialTopTabNavigationProp } from "@react-navigation/material-top-tabs";
 import { useNavigation } from "@react-navigation/native";
-import { startOfDay } from "date-fns";
 import { useRouter } from "expo-router";
 import { useCallback, useMemo } from "react";
 import { RefreshControl, ScrollView } from "react-native";
@@ -8,74 +7,18 @@ import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { StyledGlassButton } from "@/config/interop-glass-button";
 import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { useFabHeight } from "@/hooks/use-fab-height";
-import { toIsoDate } from "@/utils/format";
-import { sum } from "@/utils/math";
+import { groupTransactionsByDate } from "@/utils/transaction";
 import { TransactionDateHeader } from "./date-header";
 import { TransactionsEmptyState } from "./empty-state";
 import { type TransactionItem, TransactionRow } from "./transaction-row";
 
-type Transaction = TransactionItem;
-
-type TransactionSection = {
-  date: Date;
-  total: number;
-  data: Transaction[];
-};
-
 type Props = {
-  transactions: Transaction[];
+  transactions: TransactionItem[];
   isRefreshing?: boolean;
   onRefresh?: () => void;
   header?: React.ReactNode;
 };
 
-function groupTransactionsByDate(
-  transactions: Transaction[]
-): TransactionSection[] {
-  const grouped = new Map<
-    string,
-    { date: Date; transactions: Transaction[] }
-  >();
-
-  for (const transaction of transactions) {
-    if (!transaction.date) continue;
-
-    const dateDayStart = startOfDay(transaction.date);
-    const dayKey = toIsoDate(dateDayStart);
-
-    const existing = grouped.get(dayKey);
-    if (existing) {
-      existing.transactions.push(transaction);
-    } else {
-      grouped.set(dayKey, {
-        date: dateDayStart,
-        transactions: [transaction],
-      });
-    }
-  }
-
-  // Convert to sections with totals
-  const sections: TransactionSection[] = [];
-  for (const [, group] of grouped) {
-    const total = sum(group.transactions.map(({ amount }) => Number(amount)));
-    sections.push({
-      date: group.date,
-      total,
-      data: group.transactions,
-    });
-  }
-
-  // Sort by date descending (most recent first)
-  sections.sort((a, b) => b.date.getTime() - a.date.getTime());
-
-  return sections;
-}
-
-/**
- * ScrollView-based transaction list for the Activity tab.
- * Unlike the full TransactionList, this doesn't need virtualization
- * since we only show a limited set of recent transactions.
- */
 export function ActivityTransactionList({
   transactions,
   isRefreshing = false,
