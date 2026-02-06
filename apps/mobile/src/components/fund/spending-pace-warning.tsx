@@ -42,23 +42,19 @@ export default function SpendingPaceWarning({
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  // Skip for EVENTUALLY funds
   if (timeMode === "EVENTUALLY") {
     return null;
   }
 
   const { elapsed, total } = getPeriodDays(timeMode);
 
-  // Calculate projected spending
   const dailyRate = elapsed > 0 ? spent / elapsed : 0;
   const projected = dailyRate * total;
 
-  // Only show if projected spending exceeds budget
   if (projected <= budget) {
     return null;
   }
 
-  // Calculate sustainable daily spend
   const remaining = Math.max(budget - spent, 0);
   const daysLeft = total - elapsed;
   const sustainableDaily = daysLeft > 0 ? remaining / daysLeft : 0;

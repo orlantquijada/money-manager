@@ -2,10 +2,6 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { trpc } from "@/utils/api";
 
-/**
- * Hook for paginated transaction list with month filtering.
- * Handles caching per year/month - switching back to a cached month shows data instantly.
- */
 export function useTransactionList(year: number, month: number) {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -54,10 +50,6 @@ export function useTransactionList(year: number, month: number) {
   };
 }
 
-/**
- * Hook for paginated transactions by fund.
- * Caches per fundId.
- */
 export function useFundTransactions(fundId: number) {
   const [isRefreshing, setIsRefreshing] = useState(false);
 

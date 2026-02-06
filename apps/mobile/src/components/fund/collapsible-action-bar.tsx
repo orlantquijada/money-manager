@@ -19,7 +19,6 @@ type Props = {
   onPress: () => void;
 };
 
-// Hook to control collapse state from scroll events
 export function useCollapsibleBarScroll() {
   const isCollapsed = useSharedValue(0);
   const lastScrollY = useRef(0);
@@ -28,14 +27,11 @@ export function useCollapsibleBarScroll() {
     const currentY = event.nativeEvent.contentOffset.y;
     const diff = currentY - lastScrollY.current;
 
-    // Only collapse/expand after threshold
     if (Math.abs(diff) < 5) return;
 
     if (diff > 0 && currentY > SCROLL_THRESHOLD) {
-      // Scrolling down - collapse
       isCollapsed.value = withSpring(1, transitions.soft);
     } else if (diff < 0) {
-      // Scrolling up - expand
       isCollapsed.value = withSpring(0, transitions.soft);
     }
 
@@ -45,7 +41,6 @@ export function useCollapsibleBarScroll() {
   return { isCollapsed, onScroll };
 }
 
-// Variant with external collapse control
 type CollapsibleActionBarControlledProps = Props & {
   isCollapsed: SharedValue<number>;
 };

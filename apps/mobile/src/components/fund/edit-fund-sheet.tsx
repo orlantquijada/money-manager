@@ -136,7 +136,6 @@ function Content({ fund, onSuccess }: { fund: Fund; onSuccess?: () => void }) {
         contentContainerStyle={{ paddingBottom: insets.bottom + 80 }}
       >
         <StyledLeanView className="gap-6 px-6">
-          {/* Name */}
           <StyledLeanView className="gap-2">
             <StyledLeanText className="font-satoshi-medium text-foreground-muted text-sm">
               Name
@@ -163,7 +162,6 @@ function Content({ fund, onSuccess }: { fund: Fund; onSuccess?: () => void }) {
             />
           </StyledLeanView>
 
-          {/* Budget Amount */}
           <StyledLeanView className="gap-2">
             <StyledLeanText className="font-satoshi-medium text-foreground-muted text-sm">
               Budget Amount
@@ -195,7 +193,6 @@ function Content({ fund, onSuccess }: { fund: Fund; onSuccess?: () => void }) {
             </StyledLeanView>
           </StyledLeanView>
 
-          {/* Time Mode */}
           <StyledLeanView className="gap-2">
             <StyledLeanText className="font-satoshi-medium text-foreground-muted text-sm">
               Budget Period
@@ -228,7 +225,6 @@ function Content({ fund, onSuccess }: { fund: Fund; onSuccess?: () => void }) {
             </StyledLeanView>
           </StyledLeanView>
 
-          {/* Due Day (NON_NEGOTIABLE only) */}
           {isNonNegotiable && (
             <StyledLeanView className="gap-2">
               <StyledLeanText className="font-satoshi-medium text-foreground-muted text-sm">
@@ -269,7 +265,6 @@ function Content({ fund, onSuccess }: { fund: Fund; onSuccess?: () => void }) {
         </StyledLeanView>
       </BottomSheetScrollView>
 
-      {/* Save Button */}
       <StyledLeanView
         className="absolute right-0 bottom-0 left-0 border-border border-t bg-background px-6 py-4"
         style={{ paddingBottom: insets.bottom + 16 }}

@@ -223,7 +223,6 @@ export function HistoryHeader({
 }: Props) {
   const inputRef = useRef<TextInput>(null);
 
-  // Auto-focus input when search expands
   const focusInput = useCallback(() => {
     setTimeout(() => inputRef.current?.focus(), 50);
   }, []);
@@ -257,7 +256,6 @@ export function HistoryHeader({
         <GlassIconButton icon="magnifyingglass" onPress={onSearchToggle} />
       </StyledLeanView>
 
-      {/* Collapsible search bar */}
       <SearchBar
         inputRef={inputRef}
         isExpanded={isSearchExpanded}

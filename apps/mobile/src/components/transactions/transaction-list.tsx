@@ -62,7 +62,6 @@ function useFlattenedTransactions(transactions: TransactionItem[]): ListItem[] {
       }
     }
 
-    // Convert to array and sort by date descending
     const sortedGroups = Array.from(grouped.values()).sort(
       (a, b) => b.date.getTime() - a.date.getTime()
     );
