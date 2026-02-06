@@ -1,13 +1,12 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
-import type { Period } from "@/components/stats/period-chips";
 import { trpc } from "@/utils/api";
 
 /**
- * Hook for paginated transaction list with period filtering.
- * Handles caching per period - switching back to a cached period shows data instantly.
+ * Hook for paginated transaction list with month filtering.
+ * Handles caching per year/month - switching back to a cached month shows data instantly.
  */
-export function useTransactionList(period: Period) {
+export function useTransactionList(year: number, month: number) {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const {
@@ -19,7 +18,7 @@ export function useTransactionList(period: Period) {
     refetch,
   } = useInfiniteQuery(
     trpc.transaction.list.infiniteQueryOptions(
-      { period, limit: 50 },
+      { year, month, limit: 50 },
       { getNextPageParam: (lastPage) => lastPage.nextCursor }
     )
   );

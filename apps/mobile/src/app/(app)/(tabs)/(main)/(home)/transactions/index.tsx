@@ -5,7 +5,6 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import type { Period } from "@/components/stats/period-chips";
 import { TransactionList } from "@/components/transactions";
 import {
   HistoryHeader,
@@ -17,13 +16,6 @@ import { useFabHeight } from "@/hooks/use-fab-height";
 import { useTransactionList } from "@/hooks/use-transactions";
 import type { RouterOutputs } from "@/utils/api";
 import { transitions } from "@/utils/motion";
-
-const PERIOD_LABELS: Record<Period, string> = {
-  week: "this week",
-  month: "this month",
-  "3mo": "these 3 months",
-  all: "",
-};
 
 type Transaction = RouterOutputs["transaction"]["list"]["transactions"][number];
 
@@ -37,11 +29,14 @@ function filterTransactions(transactions: Transaction[], searchQuery: string) {
   });
 }
 
+const now = new Date();
+
 export default function History() {
   const fabHeight = useFabHeight();
 
-  // Period selection state
-  const [period, setPeriod] = useState<Period>("month");
+  // Month selection state
+  const [year, setYear] = useState(now.getFullYear());
+  const [month, setMonth] = useState(now.getMonth() + 1);
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,7 +52,7 @@ export default function History() {
     fetchNextPage,
     refetch,
     isRefreshing,
-  } = useTransactionList(period);
+  } = useTransactionList(year, month);
 
   // Filter transactions based on search query (store name + fund name)
   const filteredTransactions = useMemo(
@@ -65,20 +60,15 @@ export default function History() {
     [transactions, debouncedSearchQuery]
   );
 
-  // Handle period change - just update state, cache handles the rest
-  const handlePeriodChange = (newPeriod: Period) => {
-    setPeriod(newPeriod);
-    setSearchQuery(""); // Clear search on period change
-  };
+  const canGoNext =
+    year < now.getFullYear() ||
+    (year === now.getFullYear() && month < now.getMonth() + 1);
 
-  // Search handlers
-  const handleSearchChange = (text: string) => {
-    setSearchQuery(text);
-  };
-
-  const handleSearchClear = () => {
+  const handleMonthChange = useCallback((newYear: number, newMonth: number) => {
+    setYear(newYear);
+    setMonth(newMonth);
     setSearchQuery("");
-  };
+  }, []);
 
   const handleSearchToggle = useCallback(() => {
     isSearchExpanded.value = !isSearchExpanded.value;
@@ -105,16 +95,18 @@ export default function History() {
   return (
     <StyledLeanView className="flex-1 gap-4 bg-background">
       <HistoryHeader
+        canGoNext={canGoNext}
         isSearchExpanded={isSearchExpanded}
-        onPeriodChange={handlePeriodChange}
-        onSearchChange={handleSearchChange}
-        onSearchClear={handleSearchClear}
+        month={month}
+        onMonthChange={handleMonthChange}
+        onSearchChange={setSearchQuery}
+        onSearchClear={() => setSearchQuery("")}
         onSearchToggle={handleSearchToggle}
-        period={period}
         searchQuery={searchQuery}
+        year={year}
       />
 
-      <Animated.View className="flex-1 px-4" style={[contentAnimatedStyle]}>
+      <Animated.View className="flex-1 px-4" style={contentAnimatedStyle}>
         {/* Transaction list or search empty state */}
         <StyledLeanView className="flex-1" style={{ marginHorizontal: -16 }}>
           {isLoading && (
@@ -139,7 +131,7 @@ export default function History() {
               keyboardDismissMode="on-drag"
               onLoadMore={fetchNextPage}
               onRefresh={refetch}
-              periodLabel={PERIOD_LABELS[period]}
+              periodLabel="this month"
               transactions={filteredTransactions}
             />
           )}
