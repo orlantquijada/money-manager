@@ -15,6 +15,13 @@
       "when": 1769323656886,
       "tag": "0001_reflective_moira_mactaggert",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770274042209,
+      "tag": "0002_chubby_deathbird",
+      "breakpoints": true
     }
   ]
 }

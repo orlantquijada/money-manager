@@ -22,8 +22,8 @@ export const timeModeEnum = pgEnum("TimeMode", [
 ]);
 
 const timestampFields = {
-  createdAt: timestamp().defaultNow().notNull(),
-  updatedAt: timestamp()
+  createdAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp({ withTimezone: true })
     .defaultNow()
     .$onUpdate(() => new Date()),
 };
@@ -66,7 +66,7 @@ export const funds = pgTable("funds", {
   enabled: boolean().default(true).notNull(),
   timeMode: timeModeEnum().notNull(),
   dueDay: integer(), // Day of month (1-31), only for NON_NEGOTIABLE funds
-  paidAt: timestamp(), // When NON_NEGOTIABLE fund was marked as paid (current period)
+  paidAt: timestamp({ withTimezone: true }), // When NON_NEGOTIABLE fund was marked as paid (current period)
   folderId: integer()
     .notNull()
     .references(() => folders.id, { onDelete: "cascade" }),
@@ -116,7 +116,7 @@ export const transactions = pgTable(
       .primaryKey()
       .$defaultFn(() => createId()),
     amount: decimal({ precision: 12, scale: 2 }).default("0"),
-    date: timestamp().defaultNow(),
+    date: timestamp({ withTimezone: true }).defaultNow(),
     note: text(),
     fundId: integer().references(() => funds.id, { onDelete: "set null" }),
     storeId: integer().references(() => stores.id, {
