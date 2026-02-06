@@ -187,11 +187,13 @@ function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
         </DropdownMenu.Root>
       </StyledLeanView>
 
-      {canGoNext ? (
-        <GlassIconButton icon="chevron.right" iconSize={14} onPress={goNext} />
-      ) : (
-        <StyledLeanView className="h-10 w-10" />
-      )}
+      <GlassIconButton
+        disabled={!canGoNext}
+        icon="chevron.right"
+        iconSize={14}
+        onPress={goNext}
+        style={{ opacity: canGoNext ? 1 : 0.5 }}
+      />
     </StyledLeanView>
   );
 }
