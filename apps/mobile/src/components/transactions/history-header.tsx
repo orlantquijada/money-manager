@@ -1,6 +1,6 @@
 import * as Haptics from "expo-haptics";
 import type { SFSymbol } from "expo-symbols";
-import { type Ref, useCallback, useRef } from "react";
+import { type Ref, useCallback, useMemo, useRef } from "react";
 import { Pressable, StyleSheet, TextInput } from "react-native";
 import Animated, {
   type SharedValue,
@@ -11,19 +11,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import * as DropdownMenu from "zeego/dropdown-menu";
-import type { Period } from "@/components/stats/period-chips";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
-import { StyledGlassButton } from "@/config/interop-glass-button";
 import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { transitions } from "@/utils/motion";
 import GlassIconButton from "../glass-icon-button";
-
-const PERIODS: { value: Period; label: string }[] = [
-  { value: "week", label: "This Week" },
-  { value: "month", label: "Month" },
-  { value: "3mo", label: "Quarter" },
-  { value: "all", label: "All Time" },
-];
+import { ScalePressable } from "../scale-pressable";
 
 export const SEARCH_BAR_HEIGHT = 40;
 const SEARCH_BAR_TOTAL_HEIGHT = SEARCH_BAR_HEIGHT + 12; // +gap-3
@@ -109,14 +101,111 @@ function SearchBar({
   );
 }
 
+function formatMonthLabel(year: number, month: number) {
+  const date = new Date(year, month - 1);
+  return date.toLocaleString("en", {
+    month: "long",
+    ...(year !== new Date().getFullYear() && { year: "numeric" }),
+  });
+}
+
+function getLast12Months() {
+  const now = new Date();
+  return Array.from({ length: 12 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    return {
+      year: d.getFullYear(),
+      month: d.getMonth() + 1,
+      label: formatMonthLabel(d.getFullYear(), d.getMonth() + 1),
+    };
+  });
+}
+
+type MonthNavProps = {
+  year: number;
+  month: number;
+  onMonthChange: (year: number, month: number) => void;
+  canGoNext: boolean;
+};
+
+function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
+  const months = useMemo(() => getLast12Months(), []);
+
+  const goPrev = useCallback(() => {
+    Haptics.selectionAsync();
+    const d = new Date(year, month - 2, 1);
+    onMonthChange(d.getFullYear(), d.getMonth() + 1);
+  }, [year, month, onMonthChange]);
+
+  const goNext = useCallback(() => {
+    if (!canGoNext) return;
+    Haptics.selectionAsync();
+    const d = new Date(year, month, 1);
+    onMonthChange(d.getFullYear(), d.getMonth() + 1);
+  }, [year, month, canGoNext, onMonthChange]);
+
+  const label = formatMonthLabel(year, month);
+
+  return (
+    <StyledLeanView className="flex-1 flex-row items-center justify-center">
+      <GlassIconButton icon="chevron.left" iconSize={14} onPress={goPrev} />
+
+      <StyledLeanView className="flex-1 self-stretch">
+        <DropdownMenu.Root modal>
+          <DropdownMenu.Trigger asChild>
+            <ScalePressable
+              className="h-10 items-center justify-center"
+              hitSlop={10}
+              opacityValue={0.7}
+              scaleValue={0.93}
+            >
+              <StyledLeanText className="text-center font-satoshi-medium text-base text-foreground">
+                {label}
+              </StyledLeanText>
+            </ScalePressable>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content>
+            {months.map((m) => (
+              <DropdownMenu.Item
+                key={`${m.year}-${m.month}`}
+                onSelect={() => {
+                  if (m.year !== year || m.month !== month) {
+                    Haptics.selectionAsync();
+                    onMonthChange(m.year, m.month);
+                  }
+                }}
+              >
+                {m.year === year && m.month === month && (
+                  <DropdownMenu.ItemIcon
+                    ios={{ name: "checkmark" as SFSymbol }}
+                  />
+                )}
+                <DropdownMenu.ItemTitle>{m.label}</DropdownMenu.ItemTitle>
+              </DropdownMenu.Item>
+            ))}
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+      </StyledLeanView>
+
+      {canGoNext ? (
+        <GlassIconButton icon="chevron.right" iconSize={14} onPress={goNext} />
+      ) : (
+        <StyledLeanView className="h-10 w-10" />
+      )}
+    </StyledLeanView>
+  );
+}
+
 type Props = {
   searchQuery: string;
   onSearchChange: (text: string) => void;
   onSearchClear: () => void;
   isSearchExpanded: SharedValue<boolean>;
   onSearchToggle: () => void;
-  period: Period;
-  onPeriodChange: (period: Period) => void;
+  year: number;
+  month: number;
+  onMonthChange: (year: number, month: number) => void;
+  canGoNext: boolean;
 };
 
 export function HistoryHeader({
@@ -125,8 +214,10 @@ export function HistoryHeader({
   onSearchClear,
   isSearchExpanded,
   onSearchToggle,
-  period,
-  onPeriodChange,
+  year,
+  month,
+  onMonthChange,
+  canGoNext,
 }: Props) {
   const inputRef = useRef<TextInput>(null);
 
@@ -149,61 +240,17 @@ export function HistoryHeader({
     inputRef.current?.blur();
   }, [onSearchClear]);
 
-  const handlePeriodSelect = useCallback(
-    (newPeriod: Period) => {
-      if (newPeriod !== period) {
-        Haptics.selectionAsync();
-        onPeriodChange(newPeriod);
-      }
-    },
-    [period, onPeriodChange]
-  );
-
   const showClearButton = searchQuery.length > 0;
-  const currentPeriodLabel =
-    PERIODS.find((p) => p.value === period)?.label ?? "Month";
 
   return (
-    <StyledLeanView className="bg-background px-4 pt-safe-offset-4">
-      <StyledLeanView className="mb-3 flex-row items-center justify-end gap-2">
-        {/* Period dropdown */}
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <StyledGlassButton
-              glassViewProps={{
-                style: { height: 40 },
-              }}
-              size="md"
-              tintColorClassName="accent-muted"
-            >
-              <StyledLeanView className="flex-row items-center gap-1.5">
-                <StyledLeanText className="font-satoshi-medium text-foreground">
-                  {currentPeriodLabel}
-                </StyledLeanText>
-                <StyledIconSymbol
-                  colorClassName="accent-foreground-secondary"
-                  name="chevron.up.chevron.down"
-                  size={12}
-                />
-              </StyledLeanView>
-            </StyledGlassButton>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content>
-            {PERIODS.map((p) => (
-              <DropdownMenu.Item
-                key={p.value}
-                onSelect={() => handlePeriodSelect(p.value)}
-              >
-                {period === p.value && (
-                  <DropdownMenu.ItemIcon
-                    ios={{ name: "checkmark" as SFSymbol }}
-                  />
-                )}
-                <DropdownMenu.ItemTitle>{p.label}</DropdownMenu.ItemTitle>
-              </DropdownMenu.Item>
-            ))}
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
+    <StyledLeanView className="mb-4 bg-background px-4 pt-safe-offset-4">
+      <StyledLeanView className="mb-3 flex-row items-center gap-2">
+        <MonthNav
+          canGoNext={canGoNext}
+          month={month}
+          onMonthChange={onMonthChange}
+          year={year}
+        />
 
         <GlassIconButton icon="magnifyingglass" onPress={onSearchToggle} />
       </StyledLeanView>
