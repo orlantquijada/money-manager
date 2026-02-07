@@ -97,7 +97,7 @@ export default function BudgetsScreen() {
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
               <GlassIconButton
-                hitSlop={10}
+                hitSlop={{ left: 10, right: 10, top: 10 }}
                 icon="ellipsis"
                 opacityValue={0.7}
                 scaleValue={0.9}

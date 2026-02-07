@@ -29,7 +29,7 @@ export default function Budget({ funds, folderId, folderName, open }: Props) {
       <ScalePressable
         className="flex-row items-center justify-between gap-3 rounded-2xl"
         disableOpacity
-        hitSlop={10}
+        hitSlop={8}
         onPress={toggle}
         scaleValue={0.98}
         style={{ borderCurve: "continuous" }}
