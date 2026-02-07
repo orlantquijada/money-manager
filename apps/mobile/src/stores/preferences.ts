@@ -33,6 +33,10 @@ type PreferencesState = {
   // Alerts
   alertThreshold: number;
   setAlertThreshold: (threshold: number) => void;
+
+  // Balance visibility
+  balanceHidden: boolean;
+  toggleBalanceHidden: () => void;
 };
 
 export const usePreferencesStore = create<PreferencesState>()(
@@ -60,6 +64,11 @@ export const usePreferencesStore = create<PreferencesState>()(
       alertThreshold: 90,
       setAlertThreshold: (threshold: number) =>
         set({ alertThreshold: threshold }),
+
+      // Balance visibility
+      balanceHidden: false,
+      toggleBalanceHidden: () =>
+        set((state) => ({ balanceHidden: !state.balanceHidden })),
     }),
     {
       name: "preferences-storage",

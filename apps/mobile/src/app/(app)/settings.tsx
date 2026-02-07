@@ -19,7 +19,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import BottomSheetModal from "@/components/bottom-sheet";
 import { ScalePressable } from "@/components/scale-pressable";
-import { useTheme } from "@/components/theme-provider";
 import type { IconSymbolName } from "@/components/ui/icon-symbol";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { StyledIconSymbol } from "@/config/interop-icon-symbol";
@@ -42,7 +41,6 @@ export default function SettingsScreen() {
     >
       <ProfileHeader />
       <AccountSection />
-      {/* <AppearanceSection /> */}
       <PreferencesSection />
       <DataSection />
       <AboutSection />
@@ -137,78 +135,6 @@ function AccountSection() {
 }
 
 // =============================================================================
-// Appearance Section
-// =============================================================================
-
-function _AppearanceSection() {
-  const { theme: activeTheme, setTheme } = useTheme();
-
-  return (
-    <StyledLeanView className="gap-3">
-      <SectionHeader title="Appearance" />
-
-      <StyledLeanView className="flex-row gap-3">
-        <ThemeButton
-          icon="sun.max.fill"
-          isActive={activeTheme === "light"}
-          label="Light"
-          onPress={() => setTheme("light")}
-        />
-        <ThemeButton
-          icon="moon.fill"
-          isActive={activeTheme === "dark"}
-          label="Dark"
-          onPress={() => setTheme("dark")}
-        />
-        <ThemeButton
-          icon="iphone"
-          isActive={activeTheme === "system"}
-          label="System"
-          onPress={() => setTheme("system")}
-        />
-      </StyledLeanView>
-    </StyledLeanView>
-  );
-}
-
-function ThemeButton({
-  label,
-  icon,
-  isActive,
-  onPress,
-}: {
-  label: string;
-  icon: "sun.max.fill" | "moon.fill" | "iphone";
-  isActive: boolean;
-  onPress: () => void;
-}) {
-  return (
-    <ScalePressable
-      className={cn(
-        "flex-1 items-center gap-2 rounded-xl border-hairline border-mauve-5 bg-mauve-3 py-4 dark:bg-card",
-        isActive && "bg-violet-3"
-      )}
-      onPress={onPress}
-    >
-      <StyledIconSymbol
-        colorClassName={
-          isActive ? "accent-violet-9" : "accent-foreground-muted"
-        }
-        name={icon}
-        size={24}
-      />
-      <StyledLeanText
-        className={`font-satoshi-medium text-sm ${
-          isActive ? "text-violet-11" : "text-foreground-muted"
-        }`}
-      >
-        {label}
-      </StyledLeanText>
-    </ScalePressable>
-  );
-}
-
-// =============================================================================
 // Preferences Section
 // =============================================================================
 
@@ -217,6 +143,9 @@ function PreferencesSection() {
   const setAiInsightsEnabled = usePreferencesStore(
     (s) => s.setAiInsightsEnabled
   );
+
+  const balanceHidden = usePreferencesStore((s) => s.balanceHidden);
+  const toggleBalanceHidden = usePreferencesStore((s) => s.toggleBalanceHidden);
 
   const defaultFundType = usePreferencesStore((s) => s.defaultFundType);
   const setDefaultFundType = usePreferencesStore((s) => s.setDefaultFundType);
@@ -334,6 +263,14 @@ function PreferencesSection() {
           onValueChange={setAiInsightsEnabled}
           showBorder
           value={aiInsightsEnabled}
+        />
+
+        <ToggleRow
+          icon="eye.slash"
+          label="Hide Balance"
+          onValueChange={toggleBalanceHidden}
+          showBorder
+          value={balanceHidden}
         />
 
         <NavigationRow

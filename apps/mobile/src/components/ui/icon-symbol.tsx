@@ -51,6 +51,8 @@ const MAPPING = {
   number: "numeric",
   storefront: "storefront",
   "arrow.right": "arrow-right",
+  eye: "eye-outline",
+  "eye.slash": "eye-off-outline",
 } satisfies Partial<IconMapping>;
 
 export type IconSymbolName = keyof typeof MAPPING;
