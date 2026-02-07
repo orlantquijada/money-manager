@@ -45,7 +45,6 @@ type ListItem =
   | { type: "folder-header"; folderName: string; folderId: number }
   | { type: "fund"; fund: FundWithFolderAndBudget };
 
-// Helper: Transform folders data into flat fund list with budget info
 function transformFoldersToFunds(
   foldersWithFunds: ReturnType<typeof useFoldersWithFunds>["data"]
 ): FundWithFolderAndBudget[] {
@@ -70,7 +69,6 @@ function transformFoldersToFunds(
   );
 }
 
-// Helper: Group funds by folder
 function groupFundsByFolder(funds: FundWithFolderAndBudget[]) {
   const folderMap = new Map<
     number,
@@ -91,14 +89,12 @@ function groupFundsByFolder(funds: FundWithFolderAndBudget[]) {
   return folderMap;
 }
 
-// Helper: Build list items from funds (with optional recents section)
 function buildListItems(
   funds: FundWithFolderAndBudget[],
   recentFunds?: FundWithFolderAndBudget[]
 ): ListItem[] {
   const listItems: ListItem[] = [];
 
-  // Add "Recently Used" section if provided
   if (recentFunds && recentFunds.length > 0) {
     listItems.push({ type: "recents-header" });
     listItems.push(
@@ -109,7 +105,6 @@ function buildListItems(
     );
   }
 
-  // Group funds by folder and add sections
   const folderMap = groupFundsByFolder(funds);
   for (const folder of folderMap.values()) {
     listItems.push({
@@ -133,7 +128,6 @@ export function FundPickerSheet({ ref }: FundPickerSheetProps) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  // Pre-compute data BEFORE sheet opens (this runs in the parent, not during animation)
   const { data: foldersWithFunds } = useFoldersWithFunds();
   const recentFundIds = useRecentFundsStore((s) => s.recentFundIds);
 
@@ -142,7 +136,6 @@ export function FundPickerSheet({ ref }: FundPickerSheetProps) {
     [foldersWithFunds]
   );
 
-  // Pre-compute initial items (when search is empty) before sheet opens
   const initialItems = useMemo(() => {
     const recentFunds = recentFundIds
       .map((id) => allFunds.find((f) => f.id === id))
@@ -200,28 +193,23 @@ function Content({ allFunds, initialItems, isDark, iconColor }: ContentProps) {
   const insets = useSafeAreaInsets();
   const { close } = useBottomSheet();
 
-  // Get state from store
   const selectedFundId = useAddExpenseStore((s) => s.selectedFundId);
   const setSelectedFundId = useAddExpenseStore((s) => s.setSelectedFundId);
 
   const foregroundColor = useThemeColor("foreground");
   const mutedColor = useThemeColor("foreground-muted");
 
-  // Use pre-computed items when not searching, only compute when filtering
   const items = useMemo(() => {
     const searchLower = search.toLowerCase().trim();
 
-    // When not searching, use pre-computed initial items
     if (!searchLower) {
       return initialItems;
     }
 
-    // Only compute filtered items when actually searching
     const filteredFunds = allFunds.filter((f) =>
       f.name.toLowerCase().includes(searchLower)
     );
 
-    // No recents section when searching
     return buildListItems(filteredFunds);
   }, [search, initialItems, allFunds]);
 
@@ -235,7 +223,6 @@ function Content({ allFunds, initialItems, isDark, iconColor }: ContentProps) {
 
   return (
     <StyledLeanView className="flex-1 bg-background">
-      {/* Search Input */}
       <StyledLeanView className="px-6 pt-2 pb-4">
         <BottomSheetTextInput
           autoCapitalize="none"
@@ -401,7 +388,6 @@ function FundRow({ fund, isDark, isSelected, onSelect }: FundRowProps) {
       opacityValue={0.7}
       scaleValue={0.98}
     >
-      {/* Fund name on left */}
       <StyledLeanText
         className="mr-3 flex-1 font-satoshi-medium text-base text-foreground"
         ellipsizeMode="tail"
@@ -410,9 +396,7 @@ function FundRow({ fund, isDark, isSelected, onSelect }: FundRowProps) {
         {fund.name}
       </StyledLeanText>
 
-      {/* Budget info on right */}
       <StyledLeanView className="flex-row items-center gap-2">
-        {/* Mini progress bar */}
         <StyledLeanView className="h-2 w-10 overflow-hidden rounded-full border border-mauve-6 bg-mauve-5">
           <StyledLeanView
             className="h-full rounded-full"

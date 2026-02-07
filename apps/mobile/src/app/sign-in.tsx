@@ -9,7 +9,6 @@ import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import AppleIcon from "@/icons/apple";
 import GoogleIcon from "@/icons/google";
 
-// Handle OAuth redirect
 WebBrowser.maybeCompleteAuthSession();
 
 export const useWarmUpBrowser = () => {
@@ -18,7 +17,6 @@ export const useWarmUpBrowser = () => {
     WebBrowser.warmUpAsync();
 
     return () => {
-      // Cleanup: closes browser when component unmounts
       WebBrowser.coolDownAsync();
     };
   }, []);
@@ -48,7 +46,6 @@ export default function SignInScreen() {
 
   return (
     <StyledLeanView className="flex-1 bg-background px-6 pt-safe-offset-20 pb-safe-offset-8">
-      {/* Header */}
       <Animated.View entering={FadeInDown.delay(100).springify()}>
         <StyledLeanText className="font-bold text-4xl text-foreground">
           Welcome to{"\n"}Money Manager
@@ -58,7 +55,6 @@ export default function SignInScreen() {
         </StyledLeanText>
       </Animated.View>
 
-      {/* Sign in buttons */}
       <StyledLeanView className="mt-auto gap-3">
         <Animated.View entering={FadeInDown.delay(200).springify()}>
           <ScalePressable

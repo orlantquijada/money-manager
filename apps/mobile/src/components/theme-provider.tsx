@@ -120,15 +120,12 @@ type ColorScaleName = keyof typeof colorScales;
 const colorCache = new Map<string, string>();
 
 function resolveColor(key: ColorKey, isDark: boolean): string {
-  // Handle progress color tokens (CSS-based with light/dark values)
   const progressColor = getProgressColor(key, isDark);
   if (progressColor) return progressColor;
 
-  // Handle semantic tokens (e.g., "background", "primary-foreground")
   const semanticValue = getSemanticColor(key, isDark);
   if (semanticValue) return semanticValue;
 
-  // Handle raw color scales (e.g., "mauve-8", "violet-9")
   const [scaleName, grade] = key.split("-") as [ColorScaleName, string];
   const scale = colorScales[scaleName];
   if (!scale) return key;
