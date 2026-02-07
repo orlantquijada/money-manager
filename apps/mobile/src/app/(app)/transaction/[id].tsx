@@ -9,9 +9,6 @@ import { trpc } from "@/utils/api";
 import { cn } from "@/utils/cn";
 import { toCurrencyNarrow, toDateTime } from "@/utils/format";
 
-// TODO: Remove this toggle after deciding on final design
-const EMPHASIZE_AMOUNT = false;
-
 export default function TransactionDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -95,7 +92,6 @@ export default function TransactionDetailScreen() {
 
   return (
     <StyledLeanView className="flex-1 pt-4">
-      {/* Header */}
       <StyledLeanView className="relative flex-row items-center justify-between pb-6 pl-4">
         <StyledLeanText
           className="flex-1 font-satoshi-medium text-foreground text-xl"
@@ -113,20 +109,8 @@ export default function TransactionDetailScreen() {
         />
       </StyledLeanView>
 
-      {/* Emphasized Amount */}
-      {EMPHASIZE_AMOUNT && (
-        <StyledLeanView className="items-center py-6">
-          <StyledLeanText className="font-nunito-bold text-4xl text-foreground">
-            {toCurrencyNarrow(amount)}
-          </StyledLeanText>
-        </StyledLeanView>
-      )}
-
-      {/* Details */}
       <StyledLeanView className="gap-2.5 px-4">
-        {!EMPHASIZE_AMOUNT && (
-          <DetailRow isAmount label="Amount" value={toCurrencyNarrow(amount)} />
-        )}
+        <DetailRow isAmount label="Amount" value={toCurrencyNarrow(amount)} />
         {date && <DetailRow label="Created at" value={toDateTime(date)} />}
         {fund.name && <DetailRow label="Fund" value={fund.name} />}
         {store && <DetailRow label="Store" value={store.name} />}

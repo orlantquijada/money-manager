@@ -133,18 +133,6 @@ export default function FundInfo({ setScreen }: Props) {
                   pillLabel="Fixed"
                 />
               </Presence>
-
-              {/* <Presence {...presenceProps.TARGET}> */}
-              {/*   <FundCard */}
-              {/*     description="Set a target amount to build up over time. Usually for savings, big purchases" */}
-              {/*     icon={<Gps />} */}
-              {/*     label="Targets" */}
-              {/*     onLayout={handleTargetOnLayout} */}
-              {/*     onPress={() => { */}
-              {/*       selectedType.set("TARGET"); */}
-              {/*     }} */}
-              {/*   /> */}
-              {/* </Presence> */}
             </StyledLeanView>
           </StyledLeanView>
         </StyledLeanView>

@@ -27,11 +27,7 @@ export default function TransactionsScreen() {
   }, [queryClient]);
 
   if (isLoading) {
-    return (
-      <StyledLeanView className="flex-1 items-center justify-center">
-        {/* Could add a skeleton here */}
-      </StyledLeanView>
-    );
+    return null;
   }
 
   const hasAlerts = alerts.length > 0;

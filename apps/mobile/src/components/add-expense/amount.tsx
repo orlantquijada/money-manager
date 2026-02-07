@@ -65,7 +65,6 @@ export function Amount({ amount }: { amount: number }) {
 
   return (
     <StyledLeanView className="relative w-full flex-row justify-center">
-      {/* <View className="w-full flex-row justify-center overflow-hidden"> */}
       <StyledLeanView className="w-full flex-row justify-center">
         {[...formattedAmount].map((char, i) => (
           <Animated.View
