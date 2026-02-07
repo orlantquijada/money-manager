@@ -1,13 +1,17 @@
+import { useUser } from "@clerk/clerk-expo";
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
 import { useCallback, useRef } from "react";
-import { ScrollView } from "react-native";
+import { Image, ScrollView } from "react-native";
 import { makeMutable, type SharedValue } from "react-native-reanimated";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import DashboardCreateBottomSheet from "@/components/bottom-sheet/create-bottom-sheet";
 import Budget from "@/components/budgets/budget";
+import TotalSpent from "@/components/dashboard/total-spent";
 import GlassIconButton from "@/components/glass-icon-button";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
 import { StyledGlassButton } from "@/config/interop-glass-button";
+import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { useFabHeight } from "@/hooks/use-fab-height";
 import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
 import FolderDuo from "@/icons/folder-duo";
@@ -41,6 +45,32 @@ function useOpenStates() {
   return { getOpenState, collapseAll, expandAll };
 }
 
+function ProfileButton() {
+  const { user } = useUser();
+
+  return (
+    <StyledGlassButton
+      onPress={() => router.push("/settings")}
+      size="md"
+      tintColorClassName="accent-muted"
+      variant="icon"
+    >
+      {user?.imageUrl ? (
+        <Image
+          className="size-8 rounded-full"
+          source={{ uri: user.imageUrl }}
+        />
+      ) : (
+        <StyledIconSymbol
+          colorClassName="accent-muted-foreground"
+          name="person.circle.fill"
+          size={24}
+        />
+      )}
+    </StyledGlassButton>
+  );
+}
+
 export default function BudgetsScreen() {
   const { data: foldersWithFunds, isLoading } = useFoldersWithFunds();
   const { getOpenState, collapseAll, expandAll } = useOpenStates();
@@ -58,6 +88,11 @@ export default function BudgetsScreen() {
         contentContainerStyle={{ paddingBottom: fabHeight + 16 }}
         contentInsetAdjustmentBehavior="automatic"
       >
+        <StyledLeanView className="mb-4 w-full flex-row items-start justify-between py-2">
+          <TotalSpent />
+          <ProfileButton />
+        </StyledLeanView>
+
         <StyledLeanView className="w-full flex-row items-center justify-end">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
@@ -84,13 +119,6 @@ export default function BudgetsScreen() {
                   </DropdownMenu.Item>
                 </>
               )}
-              <DropdownMenu.Item
-                key="new-fund"
-                onSelect={() => createSheetRef.current?.present()}
-              >
-                <DropdownMenu.ItemTitle>New Fund</DropdownMenu.ItemTitle>
-                <DropdownMenu.ItemIcon ios={{ name: "plus" }} />
-              </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         </StyledLeanView>
