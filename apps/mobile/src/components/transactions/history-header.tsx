@@ -7,11 +7,12 @@ import Animated, {
   useAnimatedReaction,
   useAnimatedStyle,
   useDerivedValue,
+  useSharedValue,
   withSpring,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import * as DropdownMenu from "zeego/dropdown-menu";
-import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { StyledLeanView } from "@/config/interop";
 import { StyledIconSymbol } from "@/config/interop-icon-symbol";
 import { transitions } from "@/utils/motion";
 import GlassIconButton from "../glass-icon-button";
@@ -128,11 +129,47 @@ type MonthNavProps = {
   canGoNext: boolean;
 };
 
+const MONTH_SLIDE_OFFSET = 20;
+
 function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
   const months = useMemo(() => getLast12Months(), []);
+  const direction = useSharedValue(1);
+
+  const entering = useCallback(() => {
+    "worklet";
+    const dir = direction.get();
+    const animations = {
+      transform: [{ translateX: withSpring(0, transitions.snappy) }],
+      opacity: withSpring(1, transitions.snappy),
+    };
+    const initialValues = {
+      transform: [{ translateX: dir * MONTH_SLIDE_OFFSET }],
+      opacity: 0,
+    };
+    return { animations, initialValues };
+  }, []);
+
+  const exiting = useCallback(() => {
+    "worklet";
+    const dir = direction.get();
+    const animations = {
+      transform: [
+        {
+          translateX: withSpring(-dir * MONTH_SLIDE_OFFSET, transitions.snappy),
+        },
+      ],
+      opacity: withSpring(0, transitions.snappy),
+    };
+    const initialValues = {
+      transform: [{ translateX: 0 }],
+      opacity: 1,
+    };
+    return { animations, initialValues };
+  }, []);
 
   const goPrev = useCallback(() => {
     Haptics.selectionAsync();
+    direction.set(-1);
     const d = new Date(year, month - 2, 1);
     onMonthChange(d.getFullYear(), d.getMonth() + 1);
   }, [year, month, onMonthChange]);
@@ -140,6 +177,7 @@ function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
   const goNext = useCallback(() => {
     if (!canGoNext) return;
     Haptics.selectionAsync();
+    direction.set(1);
     const d = new Date(year, month, 1);
     onMonthChange(d.getFullYear(), d.getMonth() + 1);
   }, [year, month, canGoNext, onMonthChange]);
@@ -159,9 +197,14 @@ function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
               opacityValue={0.7}
               scaleValue={0.93}
             >
-              <StyledLeanText className="text-center font-satoshi-medium text-base text-foreground">
+              <Animated.Text
+                className="text-center font-satoshi-medium text-base text-foreground"
+                entering={entering}
+                exiting={exiting}
+                key={label}
+              >
                 {label}
-              </StyledLeanText>
+              </Animated.Text>
             </ScalePressable>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content>
@@ -171,6 +214,9 @@ function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
                 onSelect={() => {
                   if (m.year !== year || m.month !== month) {
                     Haptics.selectionAsync();
+                    const isForward =
+                      m.year > year || (m.year === year && m.month > month);
+                    direction.set(isForward ? 1 : -1);
                     onMonthChange(m.year, m.month);
                   }
                 }}
