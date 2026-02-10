@@ -2,8 +2,11 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { trpc } from "@/utils/api";
 
-export function useTransactionList(year: number, month: number) {
+export function useTransactionList(month: Date) {
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const year = month.getFullYear();
+  const monthNum = month.getMonth() + 1;
 
   const {
     data,
@@ -14,7 +17,7 @@ export function useTransactionList(year: number, month: number) {
     refetch,
   } = useInfiniteQuery(
     trpc.transaction.list.infiniteQueryOptions(
-      { year, month, limit: 50 },
+      { year, month: monthNum, limit: 50 },
       { getNextPageParam: (lastPage) => lastPage.nextCursor }
     )
   );
