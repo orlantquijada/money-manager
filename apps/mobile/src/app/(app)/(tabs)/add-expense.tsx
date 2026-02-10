@@ -22,14 +22,11 @@ import { cn } from "@/utils/cn";
 export default function AddExpense() {
   const router = useRouter();
 
-  // Bottom sheet refs
   const fundSheetRef = useRef<BottomSheetModal>(null);
   const storeSheetRef = useRef<BottomSheetModal>(null);
 
-  // Amount state (kept separate as specified)
   const { amount, handleKeyPress, reset: resetAmount } = useAmount();
 
-  // Store state via Zustand
   const date = useAddExpenseStore((s) => s.date);
   const setDate = useAddExpenseStore((s) => s.setDate);
   const selectedFundId = useAddExpenseStore((s) => s.selectedFundId);
@@ -37,13 +34,11 @@ export default function AddExpense() {
   const note = useAddExpenseStore((s) => s.note);
   const setNote = useAddExpenseStore((s) => s.setNote);
 
-  // Transaction mutation
   const { submit, isPending, canSubmit } = useSubmitTransaction(
     amount,
     resetAmount
   );
 
-  // Data fetching for fund display
   const { data: foldersWithFunds } = useFoldersWithFunds();
   const selectedFund = useMemo(() => {
     if (!(foldersWithFunds && selectedFundId)) return null;
@@ -70,15 +65,12 @@ export default function AddExpense() {
         <Header date={date} onCancel={router.back} onDateChange={setDate} />
 
         <StyledLeanView className="flex-1 px-4">
-          {/* Amount Display */}
           <StyledLeanView className="grow items-center justify-center">
             <Amount amount={amount} />
           </StyledLeanView>
 
-          {/* Metadata Section */}
           <StyledLeanView className="mb-10">
             <StyledLeanView className="flex-row items-center justify-between gap-3">
-              {/* Row 1: Store + Fund */}
               <MetadataRow
                 segments={[
                   {
@@ -93,7 +85,6 @@ export default function AddExpense() {
                   },
                 ]}
               />
-              {/* Save Button */}
               <SaveButton
                 disabled={!canSubmit}
                 loading={isPending}
@@ -101,7 +92,6 @@ export default function AddExpense() {
               />
             </StyledLeanView>
 
-            {/* Row 2: Note */}
             <TextInput
               className="h-10 px-1 font-satoshi-medium text-base text-foreground-secondary"
               cursorColorClassName="accent-foreground"
@@ -118,7 +108,6 @@ export default function AddExpense() {
         </StyledLeanView>
       </StyledSafeAreaView>
 
-      {/* Bottom Sheets */}
       <FundPickerSheet ref={fundSheetRef} />
       <StorePickerSheet ref={storeSheetRef} />
     </AnimatedTabScreen>

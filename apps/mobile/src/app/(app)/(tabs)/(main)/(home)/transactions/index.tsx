@@ -34,15 +34,11 @@ const now = new Date();
 export default function History() {
   const fabHeight = useFabHeight();
 
-  // Month selection state
   const [month, setMonth] = useState(now);
-
-  // Search state
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const isSearchExpanded = useSharedValue(false);
 
-  // Fetch transactions
   const {
     transactions,
     isLoading,
@@ -53,7 +49,6 @@ export default function History() {
     isRefreshing,
   } = useTransactionList(month);
 
-  // Filter transactions based on search query (store name + fund name)
   const filteredTransactions = useMemo(
     () => filterTransactions(transactions, debouncedSearchQuery),
     [transactions, debouncedSearchQuery]
@@ -68,7 +63,6 @@ export default function History() {
     isSearchExpanded.value = !isSearchExpanded.value;
   }, [isSearchExpanded]);
 
-  // Animated style for content translation
   const contentAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
       {
@@ -80,7 +74,6 @@ export default function History() {
     ],
   }));
 
-  // Empty state: show search-specific message if searching with no results
   const hasSearchResults = filteredTransactions.length > 0;
   const isSearching = debouncedSearchQuery.trim().length > 0;
   const showSearchEmptyState = isSearching && !hasSearchResults;
@@ -99,7 +92,6 @@ export default function History() {
       />
 
       <Animated.View className="flex-1 px-4" style={contentAnimatedStyle}>
-        {/* Transaction list or search empty state */}
         <StyledLeanView className="flex-1" style={{ marginHorizontal: -16 }}>
           {isLoading && (
             <StyledLeanView className="flex-1 items-center justify-center">

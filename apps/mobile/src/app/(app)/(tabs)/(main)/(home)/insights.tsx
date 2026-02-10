@@ -19,23 +19,19 @@ export default function Insights() {
   const router = useRouter();
   const fabHeight = useFabHeight();
 
-  // Query insights data
   const { data: stats, isLoading: statsLoading } = useQuery(
     trpc.insights.monthlyStats.queryOptions()
   );
 
-  // Query AI summary
   const { data: summary, isLoading: summaryLoading } = useQuery({
     ...trpc.insights.summary.queryOptions(),
     staleTime: 5 * 60 * 1000, // 5 minute cache for AI summary
   });
 
-  // Navigate to add expense
   const handleAddExpense = useCallback(() => {
     router.navigate("/add-expense");
   }, [router]);
 
-  // Empty state check - no spending data at all
   const isNewUser = !statsLoading && stats?.totalSpending === 0;
 
   return (
@@ -71,39 +67,33 @@ export default function Insights() {
           </StyledLeanView>
         ) : (
           <>
-            {/* AI Summary Card */}
             <MonthlySummaryCard
               isLoading={summaryLoading}
               text={summary?.text}
             />
 
-            {/* Envelope Health */}
             <EnvelopeHealthCard
               health={stats?.envelopeHealth}
               isLoading={statsLoading}
             />
 
-            {/* Key Highlights */}
             <KeyHighlightCard
               isLoading={statsLoading}
               topLeftover={stats?.topLeftover}
               topOverspent={stats?.topOverspent}
             />
 
-            {/* Month Comparison */}
             <MonthComparisonCard
               comparison={stats?.monthComparison}
               isLoading={statsLoading}
             />
 
-            {/* Spending Breakdown */}
             <SpendingBreakdownCard
               breakdown={stats?.spendingBreakdown}
               isLoading={statsLoading}
               totalSpending={stats?.totalSpending}
             />
 
-            {/* Suggestion */}
             <SuggestionCard
               isLoading={statsLoading}
               suggestion={stats?.suggestion}
