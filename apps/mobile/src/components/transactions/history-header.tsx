@@ -1,4 +1,4 @@
-import { isSameMonth } from "date-fns";
+import { addMonths, isSameMonth, startOfMonth, subMonths } from "date-fns";
 import * as Haptics from "expo-haptics";
 import type { SFSymbol } from "expo-symbols";
 import { type Ref, useCallback, useMemo, useRef } from "react";
@@ -118,7 +118,7 @@ function formatMonthLabel(date: Date) {
 
 function getLast12Months() {
   return Array.from({ length: 12 }, (_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const d = startOfMonth(subMonths(now, i));
     return { date: d, label: formatMonthLabel(d) };
   });
 }
@@ -149,7 +149,7 @@ function MonthNav({ month, onMonthChange }: MonthNavProps) {
       if (delta > 0 && !canGoNext) return;
       Haptics.selectionAsync();
       direction.set(delta > 0 ? 1 : -1);
-      onMonthChange(new Date(month.getFullYear(), month.getMonth() + delta, 1));
+      onMonthChange(startOfMonth(addMonths(month, delta)));
     },
     [month, canGoNext, onMonthChange, direction]
   );
