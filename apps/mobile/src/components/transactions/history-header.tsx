@@ -1,3 +1,4 @@
+import { isSameMonth } from "date-fns";
 import * as Haptics from "expo-haptics";
 import type { SFSymbol } from "expo-symbols";
 import { type Ref, useCallback, useMemo, useRef } from "react";
@@ -20,6 +21,7 @@ import { ScalePressable } from "../scale-pressable";
 
 export const SEARCH_BAR_HEIGHT = 40;
 const SEARCH_BAR_TOTAL_HEIGHT = SEARCH_BAR_HEIGHT + 12; // +gap-3
+const now = new Date();
 
 type SearchBarProps = {
   isExpanded: SharedValue<boolean>;
@@ -102,31 +104,28 @@ function SearchBar({
   );
 }
 
-function formatMonthLabel(year: number, month: number) {
-  const date = new Date(year, month - 1);
-  return date.toLocaleString("en", {
-    month: "long",
-    ...(year !== new Date().getFullYear() && { year: "numeric" }),
-  });
+const monthFmt = new Intl.DateTimeFormat("en", { month: "long" });
+const monthYearFmt = new Intl.DateTimeFormat("en", {
+  month: "long",
+  year: "numeric",
+});
+
+function formatMonthLabel(date: Date) {
+  return date.getFullYear() !== now.getFullYear()
+    ? monthYearFmt.format(date)
+    : monthFmt.format(date);
 }
 
 function getLast12Months() {
-  const now = new Date();
   return Array.from({ length: 12 }, (_, i) => {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    return {
-      year: d.getFullYear(),
-      month: d.getMonth() + 1,
-      label: formatMonthLabel(d.getFullYear(), d.getMonth() + 1),
-    };
+    return { date: d, label: formatMonthLabel(d) };
   });
 }
 
 type MonthNavProps = {
-  year: number;
-  month: number;
-  onMonthChange: (year: number, month: number) => void;
-  canGoNext: boolean;
+  month: Date;
+  onMonthChange: (month: Date) => void;
 };
 
 const MONTH_SLIDE_OFFSET = 20;
@@ -135,8 +134,10 @@ const DELTA_DIRECTION = {
   next: 1,
 };
 
-function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
+function MonthNav({ month, onMonthChange }: MonthNavProps) {
   const months = useMemo(() => getLast12Months(), []);
+  const canGoNext = !isSameMonth(month, now);
+
   const direction = useSharedValue(1);
   const { entering, exiting } = useMemo(
     () => directionSlide(direction, MONTH_SLIDE_OFFSET),
@@ -148,24 +149,22 @@ function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
       if (delta > 0 && !canGoNext) return;
       Haptics.selectionAsync();
       direction.set(delta > 0 ? 1 : -1);
-      const d = new Date(year, month - 1 + delta, 1);
-      onMonthChange(d.getFullYear(), d.getMonth() + 1);
+      onMonthChange(new Date(month.getFullYear(), month.getMonth() + delta, 1));
     },
-    [year, month, canGoNext, onMonthChange, direction]
+    [month, canGoNext, onMonthChange, direction]
   );
 
   const onDropdownSelect = useCallback(
-    (m: { year: number; month: number }) => {
-      if (m.year === year && m.month === month) return;
+    (m: { date: Date }) => {
+      if (isSameMonth(m.date, month)) return;
       Haptics.selectionAsync();
-      const isForward = m.year > year || (m.year === year && m.month > month);
-      direction.set(isForward ? 1 : -1);
-      onMonthChange(m.year, m.month);
+      direction.set(m.date > month ? 1 : -1);
+      onMonthChange(m.date);
     },
-    [year, month, onMonthChange, direction]
+    [month, onMonthChange, direction]
   );
 
-  const label = formatMonthLabel(year, month);
+  const label = formatMonthLabel(month);
 
   return (
     <StyledLeanView className="flex-1 flex-row items-center justify-center">
@@ -197,10 +196,10 @@ function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
           <DropdownMenu.Content>
             {months.map((m) => (
               <DropdownMenu.Item
-                key={`${m.year}-${m.month}`}
+                key={m.label}
                 onSelect={() => onDropdownSelect(m)}
               >
-                {m.year === year && m.month === month && (
+                {isSameMonth(m.date, month) && (
                   <DropdownMenu.ItemIcon
                     ios={{ name: "checkmark" as SFSymbol }}
                   />
@@ -229,10 +228,8 @@ type Props = {
   onSearchClear: () => void;
   isSearchExpanded: SharedValue<boolean>;
   onSearchToggle: () => void;
-  year: number;
-  month: number;
-  onMonthChange: (year: number, month: number) => void;
-  canGoNext: boolean;
+  month: Date;
+  onMonthChange: (month: Date) => void;
 };
 
 export function HistoryHeader({
@@ -241,10 +238,8 @@ export function HistoryHeader({
   onSearchClear,
   isSearchExpanded,
   onSearchToggle,
-  year,
   month,
   onMonthChange,
-  canGoNext,
 }: Props) {
   const inputRef = useRef<TextInput>(null);
 
@@ -271,12 +266,7 @@ export function HistoryHeader({
   return (
     <StyledLeanView className="mb-4 bg-background px-4 pt-safe-offset-4">
       <StyledLeanView className="mb-3 flex-row items-center gap-2">
-        <MonthNav
-          canGoNext={canGoNext}
-          month={month}
-          onMonthChange={onMonthChange}
-          year={year}
-        />
+        <MonthNav month={month} onMonthChange={onMonthChange} />
 
         <GlassIconButton icon="magnifyingglass" onPress={onSearchToggle} />
       </StyledLeanView>
