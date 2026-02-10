@@ -64,8 +64,7 @@ export async function generateMonthlySummary(
     });
 
     const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response.text();
+    const text = result.response.text();
 
     return text.trim() || null;
   } catch (error) {

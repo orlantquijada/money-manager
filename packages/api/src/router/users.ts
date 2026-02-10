@@ -4,7 +4,6 @@ import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../trpc";
 
 export const usersRouter = router({
-  // Ensure user exists in database (called on sign-in)
   ensureUser: protectedProcedure
     .input(
       z
@@ -14,7 +13,6 @@ export const usersRouter = router({
         .optional()
     )
     .mutation(async ({ ctx, input }) => {
-      // Check if user already exists
       const existingUser = await ctx.db.query.users.findFirst({
         where: eq(users.id, ctx.userId),
       });
@@ -23,7 +21,6 @@ export const usersRouter = router({
         return existingUser;
       }
 
-      // Create new user with Clerk ID
       const [newUser] = await ctx.db
         .insert(users)
         .values({

@@ -50,7 +50,6 @@ export const fundsRouter = router({
   list: protectedProcedure.query(async ({ ctx }) => {
     const now = new Date();
 
-    // Fetch all funds with folder join, filtered by user
     const _funds = await ctx.db
       .select({
         ...getTableColumns(funds),
@@ -64,7 +63,6 @@ export const fundsRouter = router({
       return [];
     }
 
-    // Calculate total spent for each fund this month
     const totalSpentByFund = await ctx.db
       .select({
         fundId: transactions.fundId,

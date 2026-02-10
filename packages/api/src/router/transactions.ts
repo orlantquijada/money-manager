@@ -600,11 +600,9 @@ export const transactionsRouter = router({
     }),
 
   clearAll: protectedProcedure.mutation(async ({ ctx }) => {
-    // Delete all user data (transactions, funds, stores, folders)
-    // Order matters due to foreign key constraints
+    // Order matters: foreign key constraints; funds cascade-delete with folders
     await ctx.db.delete(txns).where(eq(txns.userId, ctx.userId));
     await ctx.db.delete(stores).where(eq(stores.userId, ctx.userId));
-    // Funds are deleted via cascade when folders are deleted
     await ctx.db.delete(folders).where(eq(folders.userId, ctx.userId));
   }),
 });

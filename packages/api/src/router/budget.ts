@@ -49,7 +49,6 @@ export const budgetRouter = router({
     const monthStart = startOfMonth(now);
     const monthEnd = endOfMonth(now);
 
-    // Get all funds with budgets (budgetedAmount > 0), excluding EVENTUALLY
     const budgetedFunds = await ctx.db
       .select({
         id: funds.id,
@@ -62,7 +61,6 @@ export const budgetRouter = router({
       .where(and(eq(folders.userId, ctx.userId), gt(funds.budgetedAmount, "0")))
       .orderBy(asc(funds.name));
 
-    // Filter out EVENTUALLY funds (no recurring budget)
     const recurringFunds = budgetedFunds.filter(
       (f) => f.timeMode !== "EVENTUALLY"
     );
@@ -71,7 +69,6 @@ export const budgetRouter = router({
       return [];
     }
 
-    // Get current month spending for these funds
     const spending = await ctx.db
       .select({
         fundId: transactions.fundId,
@@ -92,7 +89,6 @@ export const budgetRouter = router({
 
     const spendingMap = new Map(spending.map((s) => [s.fundId, s.amount ?? 0]));
 
-    // Generate alerts
     const alerts: BudgetAlert[] = [];
 
     for (const fund of recurringFunds) {
@@ -128,7 +124,6 @@ export const budgetRouter = router({
       }
     }
 
-    // Sort: warnings first, then info
     alerts.sort((a, b) => {
       if (a.severity === "warning" && b.severity === "info") {
         return -1;

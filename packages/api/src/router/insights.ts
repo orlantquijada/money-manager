@@ -88,7 +88,6 @@ export const insightsRouter = router({
       const monthStart = startOfMonth(referenceDate);
       const monthEnd = endOfMonth(referenceDate);
 
-      // Get all funds with budgets (budgetedAmount > 0), excluding EVENTUALLY
       const budgetedFunds = await ctx.db
         .select({
           id: funds.id,
@@ -100,14 +99,12 @@ export const insightsRouter = router({
         .innerJoin(folders, eq(funds.folderId, folders.id))
         .where(and(eq(folders.userId, ctx.userId)));
 
-      // Get all recurring funds (non-EVENTUALLY with budget)
       const recurringFunds = budgetedFunds.filter(
         (f) => f.timeMode !== "EVENTUALLY" && Number(f.budgetedAmount) > 0
       );
 
       const allFundIds = budgetedFunds.map((f) => f.id);
 
-      // Get current month spending for all funds
       const spending =
         allFundIds.length > 0
           ? await ctx.db
@@ -311,7 +308,6 @@ export const insightsRouter = router({
 
       // Check for funds overspent 2+ months in a row
       for (const fund of overspentFunds.slice(0, 3)) {
-        // Check if overspent last month
         const [lastMonthSpending] = await ctx.db
           .select({ amount: sum(transactions.amount).mapWith(Number) })
           .from(transactions)
@@ -389,7 +385,6 @@ export const insightsRouter = router({
       const monthStart = startOfMonth(referenceDate);
       const monthEnd = endOfMonth(referenceDate);
 
-      // Get all funds with budgets
       const budgetedFunds = await ctx.db
         .select({
           id: funds.id,
@@ -407,7 +402,6 @@ export const insightsRouter = router({
 
       const allFundIds = budgetedFunds.map((f) => f.id);
 
-      // Get current month spending
       const spending =
         allFundIds.length > 0
           ? await ctx.db
@@ -430,7 +424,6 @@ export const insightsRouter = router({
         spending.map((s) => [s.fundId, s.amount ?? 0])
       );
 
-      // Calculate envelope health
       const envelopeHealth = { onTrack: 0, atRisk: 0, overspent: 0 };
       let topOverspent: {
         fundName: string;
@@ -479,7 +472,6 @@ export const insightsRouter = router({
         }
       }
 
-      // Month comparison
       const prevMonthStart = startOfMonth(subMonths(referenceDate, 1));
       const prevMonthEnd = endOfMonth(subMonths(referenceDate, 1));
 
