@@ -15,6 +15,7 @@ import { configureReanimatedLogger } from "react-native-reanimated";
 import { SafeAreaListener } from "react-native-safe-area-context";
 import { Uniwind } from "uniwind";
 import { useTheme } from "@/components/theme-provider";
+import { env } from "@/env";
 import { useAuthTokenSync } from "@/hooks/use-auth-token-sync";
 import { useFonts } from "@/hooks/use-fonts";
 import { useUserProvisioning } from "@/hooks/use-user-provisioning";
@@ -22,12 +23,6 @@ import { tokenCache } from "@/lib/token-cache";
 import { queryClient } from "@/utils/api";
 import { queryPersister, shouldPersistQuery } from "@/utils/query-persister";
 import { asMilliseconds } from "@/utils/time";
-
-const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
-
-if (!publishableKey) {
-  throw new Error("Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY");
-}
 
 if (process.env.NODE_ENV === "development") {
   configureReanimatedLogger({ strict: false });
@@ -91,7 +86,10 @@ export default function RootLayout() {
   }
 
   return (
-    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+    <ClerkProvider
+      publishableKey={env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      tokenCache={tokenCache}
+    >
       <ClerkLoaded>
         <SafeAreaListener
           onChange={({ insets }) => {
