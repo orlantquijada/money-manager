@@ -14,7 +14,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import { StyledLeanView } from "@/config/interop";
 import { StyledIconSymbol } from "@/config/interop-icon-symbol";
-import { transitions } from "@/utils/motion";
+import { directionSlide, transitions } from "@/utils/motion";
 import GlassIconButton from "../glass-icon-button";
 import { ScalePressable } from "../scale-pressable";
 
@@ -130,63 +130,50 @@ type MonthNavProps = {
 };
 
 const MONTH_SLIDE_OFFSET = 20;
+const DELTA_DIRECTION = {
+  prev: -1,
+  next: 1,
+};
 
 function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
   const months = useMemo(() => getLast12Months(), []);
   const direction = useSharedValue(1);
+  const { entering, exiting } = useMemo(
+    () => directionSlide(direction, MONTH_SLIDE_OFFSET),
+    [direction]
+  );
 
-  const entering = useCallback(() => {
-    "worklet";
-    const dir = direction.get();
-    const animations = {
-      transform: [{ translateX: withSpring(0, transitions.snappy) }],
-      opacity: withSpring(1, transitions.snappy),
-    };
-    const initialValues = {
-      transform: [{ translateX: dir * MONTH_SLIDE_OFFSET }],
-      opacity: 0,
-    };
-    return { animations, initialValues };
-  }, []);
+  const navigateMonth = useCallback(
+    (delta: number) => {
+      if (delta > 0 && !canGoNext) return;
+      Haptics.selectionAsync();
+      direction.set(delta > 0 ? 1 : -1);
+      const d = new Date(year, month - 1 + delta, 1);
+      onMonthChange(d.getFullYear(), d.getMonth() + 1);
+    },
+    [year, month, canGoNext, onMonthChange, direction]
+  );
 
-  const exiting = useCallback(() => {
-    "worklet";
-    const dir = direction.get();
-    const animations = {
-      transform: [
-        {
-          translateX: withSpring(-dir * MONTH_SLIDE_OFFSET, transitions.snappy),
-        },
-      ],
-      opacity: withSpring(0, transitions.snappy),
-    };
-    const initialValues = {
-      transform: [{ translateX: 0 }],
-      opacity: 1,
-    };
-    return { animations, initialValues };
-  }, []);
-
-  const goPrev = useCallback(() => {
-    Haptics.selectionAsync();
-    direction.set(-1);
-    const d = new Date(year, month - 2, 1);
-    onMonthChange(d.getFullYear(), d.getMonth() + 1);
-  }, [year, month, onMonthChange]);
-
-  const goNext = useCallback(() => {
-    if (!canGoNext) return;
-    Haptics.selectionAsync();
-    direction.set(1);
-    const d = new Date(year, month, 1);
-    onMonthChange(d.getFullYear(), d.getMonth() + 1);
-  }, [year, month, canGoNext, onMonthChange]);
+  const onDropdownSelect = useCallback(
+    (m: { year: number; month: number }) => {
+      if (m.year === year && m.month === month) return;
+      Haptics.selectionAsync();
+      const isForward = m.year > year || (m.year === year && m.month > month);
+      direction.set(isForward ? 1 : -1);
+      onMonthChange(m.year, m.month);
+    },
+    [year, month, onMonthChange, direction]
+  );
 
   const label = formatMonthLabel(year, month);
 
   return (
     <StyledLeanView className="flex-1 flex-row items-center justify-center">
-      <GlassIconButton icon="chevron.left" iconSize={14} onPress={goPrev} />
+      <GlassIconButton
+        icon="chevron.left"
+        iconSize={14}
+        onPress={() => navigateMonth(DELTA_DIRECTION.prev)}
+      />
 
       <StyledLeanView className="flex-1 self-stretch">
         <DropdownMenu.Root modal>
@@ -211,15 +198,7 @@ function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
             {months.map((m) => (
               <DropdownMenu.Item
                 key={`${m.year}-${m.month}`}
-                onSelect={() => {
-                  if (m.year !== year || m.month !== month) {
-                    Haptics.selectionAsync();
-                    const isForward =
-                      m.year > year || (m.year === year && m.month > month);
-                    direction.set(isForward ? 1 : -1);
-                    onMonthChange(m.year, m.month);
-                  }
-                }}
+                onSelect={() => onDropdownSelect(m)}
               >
                 {m.year === year && m.month === month && (
                   <DropdownMenu.ItemIcon
@@ -237,7 +216,7 @@ function MonthNav({ year, month, onMonthChange, canGoNext }: MonthNavProps) {
         disabled={!canGoNext}
         icon="chevron.right"
         iconSize={14}
-        onPress={goNext}
+        onPress={() => navigateMonth(DELTA_DIRECTION.next)}
         style={{ opacity: canGoNext ? 1 : 0.5 }}
       />
     </StyledLeanView>

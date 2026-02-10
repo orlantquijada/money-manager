@@ -6,6 +6,7 @@ import {
   FadeOutLeft,
   LinearTransition,
   Reanimated3DefaultSpringConfig,
+  type SharedValue,
   type WithTimingConfig,
   withDelay,
   withRepeat,
@@ -113,6 +114,46 @@ export function fadeInOutRightSpringify(config: SpringConfigKeys) {
       .damping(transitions[config].damping)
       .mass(transitions[config].mass),
   };
+}
+
+export function directionSlide(
+  direction: SharedValue<number>,
+  offset: number,
+  config: SpringConfigKeys = "snappy"
+) {
+  const entering = () => {
+    "worklet";
+    const dir = direction.get();
+    return {
+      animations: {
+        transform: [{ translateX: withSpring(0, transitions[config]) }],
+        opacity: withSpring(1, transitions[config]),
+      },
+      initialValues: {
+        transform: [{ translateX: dir * offset }],
+        opacity: 0,
+      },
+    };
+  };
+
+  const exiting = () => {
+    "worklet";
+    const dir = direction.get();
+    return {
+      animations: {
+        transform: [
+          { translateX: withSpring(-dir * offset, transitions[config]) },
+        ],
+        opacity: withSpring(0, transitions[config]),
+      },
+      initialValues: {
+        transform: [{ translateX: 0 }],
+        opacity: 1,
+      },
+    };
+  };
+
+  return { entering, exiting };
 }
 
 export const totalSpentSlideOutUpConfig = {
