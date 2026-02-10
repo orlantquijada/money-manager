@@ -22,6 +22,13 @@
       "when": 1770274042209,
       "tag": "0002_chubby_deathbird",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1739180400000,
+      "tag": "0003_adjust_transaction_dates_pht",
+      "breakpoints": true
     }
   ]
 }
