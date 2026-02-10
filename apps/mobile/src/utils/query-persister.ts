@@ -2,10 +2,9 @@ import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persi
 import type { Query } from "@tanstack/react-query";
 import { createMMKV } from "react-native-mmkv";
 
-// Separate MMKV instance for query cache
 const storage = createMMKV({ id: "query-cache" });
 
-// Async wrapper around sync MMKV (required by TanStack persister)
+// Async wrapper required by TanStack persister
 const asyncStorage = {
   getItem: (key: string) => Promise.resolve(storage.getString(key) ?? null),
   setItem: (key: string, value: string) => {
@@ -28,21 +27,16 @@ const PERSISTED_QUERY_KEYS = new Set([
   "folder.list", // folders
 ]);
 
-/**
- * Determines if a query should be persisted to MMKV.
- * Only whitelisted queries are cached to limit storage size (~50KB).
- */
 export function shouldPersistQuery(query: Query): boolean {
   const queryKey = query.queryKey;
 
-  // tRPC queries have shape: [["trpc", routerPath], { input, type }]
+  // tRPC query keys: [["trpc", routerPath], { input, type }]
   if (!Array.isArray(queryKey) || queryKey.length < 1) {
     return false;
   }
 
   const firstElement = queryKey[0];
 
-  // Handle tRPC query key format
   if (Array.isArray(firstElement) && firstElement[0] === "trpc") {
     const routerPath = firstElement[1];
     return PERSISTED_QUERY_KEYS.has(routerPath);

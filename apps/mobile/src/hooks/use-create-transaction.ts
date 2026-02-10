@@ -6,10 +6,6 @@ import { useAddExpenseStore } from "@/lib/add-expense";
 import { useRecentFundsStore } from "@/stores/recent-funds";
 import { trpc } from "@/utils/api";
 
-/**
- * Low-level mutation hook for creating transactions.
- * Handles success side effects: recent funds, haptics, cache invalidation, store reset, navigation.
- */
 export function useCreateTransactionMutation() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -18,23 +14,16 @@ export function useCreateTransactionMutation() {
   return useMutation(
     trpc.transaction.create.mutationOptions({
       onSuccess: (_data, variables) => {
-        // Track recently used fund
         addRecentFund(variables.fundId);
-
-        // Success haptics
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-        // Invalidate all related queries to refresh UI state using type-safe filters
         queryClient.invalidateQueries(trpc.transaction.pathFilter());
         queryClient.invalidateQueries(trpc.fund.pathFilter());
         queryClient.invalidateQueries(trpc.folder.pathFilter());
         queryClient.invalidateQueries(trpc.budget.pathFilter());
         queryClient.invalidateQueries(trpc.store.pathFilter());
 
-        // Reset form state
         useAddExpenseStore.getState().reset();
-
-        // Navigate back to dashboard
         router.navigate({
           pathname: "/(app)/(tabs)/(main)/(home)/(dashboard)",
         });
@@ -43,13 +32,6 @@ export function useCreateTransactionMutation() {
   );
 }
 
-/**
- * Convenience hook combining store state with mutation.
- * Returns a submit function, loading state, and canSubmit flag.
- *
- * @param amount - Current amount from useAmount hook
- * @param resetAmount - Reset callback from useAmount hook
- */
 export function useSubmitTransaction(amount: number, resetAmount: () => void) {
   const date = useAddExpenseStore((s) => s.date);
   const selectedFundId = useAddExpenseStore((s) => s.selectedFundId);
@@ -71,7 +53,6 @@ export function useSubmitTransaction(amount: number, resetAmount: () => void) {
       },
       {
         onSuccess: () => {
-          // Reset the amount hook state as well
           resetAmount();
         },
       }

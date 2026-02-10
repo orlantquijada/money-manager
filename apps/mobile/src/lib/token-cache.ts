@@ -6,8 +6,7 @@ const createTokenCache = (): TokenCache => {
   return {
     getToken: async (key: string) => {
       try {
-        const item = await SecureStore.getItemAsync(key);
-        return item;
+        return SecureStore.getItemAsync(key);
       } catch (error) {
         console.error("SecureStore getToken error:", error);
         await SecureStore.deleteItemAsync(key);

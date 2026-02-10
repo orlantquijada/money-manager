@@ -38,17 +38,10 @@ function AppContent() {
   const { isDark } = useTheme();
   const { isSignedIn } = useAuth();
 
-  // Sync Clerk token to tRPC client
   const { isTokenReady } = useAuthTokenSync();
-
-  // Ensure user exists in database on sign-in (waits for token to be ready)
   const { isProvisioned } = useUserProvisioning({ isTokenReady });
 
-  // Full authentication guard: signed in AND provisioned in DB
-  // User stays on sign-in screen during provisioning phase
   const isAuthenticated = !!isSignedIn && isProvisioned;
-
-  // Hide splash only when auth state is fully resolved
   const isAuthReady = !isSignedIn || isProvisioned;
 
   useEffect(() => {
