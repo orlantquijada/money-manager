@@ -50,6 +50,7 @@ const MAPPING = {
   "lightbulb.fill": "lightbulb-on",
   number: "numeric",
   storefront: "storefront",
+  "arrow.triangle.2.circlepath": "refresh",
   "arrow.right": "arrow-right",
   eye: "eye-outline",
   "eye.slash": "eye-off-outline",

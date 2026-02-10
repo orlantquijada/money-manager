@@ -5,6 +5,7 @@ import Constants from "expo-constants";
 import * as FileSystem from "expo-file-system/legacy";
 import { Image } from "expo-image";
 import * as Sharing from "expo-sharing";
+import * as Updates from "expo-updates";
 import * as WebBrowser from "expo-web-browser";
 import { useRef, useState } from "react";
 import {
@@ -424,6 +425,33 @@ function DataSection() {
 // =============================================================================
 
 function AboutSection() {
+  const handleCheckForUpdate = async () => {
+    if (process.env.NODE_ENV === "development") {
+      Alert.alert("Not Available", "Updates are not available in development");
+      return;
+    }
+
+    try {
+      const update = await Updates.checkForUpdateAsync();
+
+      if (update.isAvailable) {
+        await Updates.fetchUpdateAsync();
+        Alert.alert(
+          "Update Ready",
+          "A new update has been downloaded. Restart the app to apply it.",
+          [
+            { text: "Later", style: "cancel" },
+            { text: "Restart", onPress: () => Updates.reloadAsync() },
+          ]
+        );
+      } else {
+        Alert.alert("Up to Date", "You're already on the latest version");
+      }
+    } catch {
+      Alert.alert("Error", "Failed to check for updates. Please try again.");
+    }
+  };
+
   const handleSendFeedback = () => {
     Linking.openURL("mailto:support@moneymanager.app?subject=App Feedback");
   };
@@ -441,6 +469,12 @@ function AboutSection() {
       <SectionHeader title="About" />
 
       <StyledLeanView className="overflow-hidden rounded-xl bg-mauve-3 dark:bg-card">
+        <NavigationRow
+          icon="arrow.triangle.2.circlepath"
+          label="Check for Updates"
+          onPress={handleCheckForUpdate}
+          showBorder
+        />
         <NavigationRow
           external
           icon="envelope"
