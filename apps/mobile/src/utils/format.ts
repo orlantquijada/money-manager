@@ -1,5 +1,3 @@
-import { format } from "date-fns";
-
 const shortFormatter = new Intl.NumberFormat("en-PH", {
   style: "currency",
   currency: "PHP",
@@ -35,18 +33,37 @@ export function toWholeCurrency(amount: number) {
   return wholeFormatter.format(amount);
 }
 
+const shortDateFmt = new Intl.DateTimeFormat("en", {
+  month: "short",
+  day: "numeric",
+});
+const dayDateFmt = new Intl.DateTimeFormat("en", {
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+});
+const dateTimeFmt = new Intl.DateTimeFormat("en", {
+  month: "long",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+});
+
 export function toIsoDate(date: Date | number) {
-  return format(date, "yyyy-MM-dd");
+  const d = date instanceof Date ? date : new Date(date);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
 export function toShortDate(date: Date | number) {
-  return format(date, "MMM d");
+  return shortDateFmt.format(date);
 }
 
 export function toDateTime(date: Date | number) {
-  return format(date, "MMMM d, h:mm a");
+  return dateTimeFmt.format(date);
 }
 
 export function toDayDate(date: Date | number) {
-  return format(date, "EEE, MMM d");
+  return dayDateFmt.format(date);
 }
