@@ -1,18 +1,9 @@
 import type { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useRef, useState } from "react";
-import {
-  ActionSheetIOS,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-  Platform,
-  RefreshControl,
-  ScrollView,
-} from "react-native";
-import { withSpring } from "react-native-reanimated";
+import { Stack, useLocalSearchParams } from "expo-router";
+import { useCallback, useRef } from "react";
+import { Platform, RefreshControl, ScrollView } from "react-native";
 import * as DropdownMenu from "zeego/dropdown-menu";
 import {
   CollapsibleActionBarControlled,
@@ -26,112 +17,31 @@ import { RecentTransactions } from "@/components/fund/recent-transactions";
 import SpendingPaceWarning from "@/components/fund/spending-pace-warning";
 import GlassIconButton from "@/components/glass-icon-button";
 import { StyledLeanText, StyledLeanView } from "@/config/interop";
-import { useAddExpenseStore } from "@/lib/add-expense";
+import { useFundActions } from "@/hooks/use-fund-actions";
+import { useFundDetailQueries } from "@/hooks/use-fund-detail-queries";
 import { type FundWithMeta, getTimeModeMultiplier } from "@/lib/fund";
-import { trpc } from "@/utils/api";
-import { transitions } from "@/utils/motion";
 
 export default function FundDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const fundId = Number(id);
-  const router = useRouter();
-  const queryClient = useQueryClient();
   const headerHeight = useHeaderHeight();
 
   const editSheetRef = useRef<BottomSheetModal>(null);
   const moveSheetRef = useRef<BottomSheetModal>(null);
 
-  const { isCollapsed } = useCollapsibleBarScroll();
-  const lastScrollY = useRef(0);
-
+  const { isCollapsed, onScroll } = useCollapsibleBarScroll();
   const {
-    data: fund,
-    isLoading: fundLoading,
-    refetch: refetchFund,
-  } = useQuery(trpc.fund.retrieve.queryOptions(fundId));
-
-  const {
-    data: transactions,
-    isLoading: txLoading,
-    refetch: refetchTx,
-  } = useQuery(trpc.transaction.recentByFund.queryOptions(fundId));
-
-  const { data: topStores = [] } = useQuery(
-    trpc.fund.topStores.queryOptions({ fundId, limit: 3 })
-  );
-
-  const { data: storeCount = 0 } = useQuery(
-    trpc.fund.storeCount.queryOptions(fundId)
-  );
-
-  const { data: periodComparison } = useQuery(
-    trpc.fund.periodComparison.queryOptions(fundId)
-  );
-
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true);
-    await Promise.all([refetchFund(), refetchTx()]);
-    setIsRefreshing(false);
-  }, [refetchFund, refetchTx]);
-
-  const handleScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const currentY = event.nativeEvent.contentOffset.y;
-      const diff = currentY - lastScrollY.current;
-
-      if (Math.abs(diff) < 5) return;
-
-      if (diff > 0 && currentY > 50) {
-        isCollapsed.value = withSpring(1, transitions.soft);
-      } else if (diff < 0) {
-        isCollapsed.value = withSpring(0, transitions.soft);
-      }
-
-      lastScrollY.current = currentY;
-    },
-    [isCollapsed]
-  );
-
-  const markAsPaid = useMutation(
-    trpc.transaction.markAsPaid.mutationOptions({
-      onSuccess: () => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        queryClient.invalidateQueries();
-      },
-    })
-  );
-
-  const archiveMutation = useMutation(
-    trpc.fund.update.mutationOptions({
-      onSuccess: () => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        queryClient.invalidateQueries();
-        router.back();
-      },
-    })
-  );
-
-  const deleteMutation = useMutation(
-    trpc.fund.delete.mutationOptions({
-      onSuccess: () => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        queryClient.invalidateQueries();
-        router.back();
-      },
-    })
-  );
-
-  const handleAddExpense = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    useAddExpenseStore.getState().setSelectedFundId(fundId);
-    router.navigate("/add-expense");
-  }, [fundId, router]);
-
-  const handleMarkAsPaid = useCallback(() => {
-    markAsPaid.mutate({ fundId });
-  }, [fundId, markAsPaid]);
+    fund,
+    transactions,
+    topStores,
+    storeCount,
+    periodComparison,
+    isLoading,
+    isRefreshing,
+    handleRefresh,
+  } = useFundDetailQueries(fundId);
+  const { handleAddExpense, handleMarkAsPaid, handleArchive, handleDelete } =
+    useFundActions(fundId);
 
   const handleEdit = useCallback(() => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -142,45 +52,6 @@ export default function FundDetailScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     moveSheetRef.current?.present();
   }, []);
-
-  const handleArchive = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    ActionSheetIOS.showActionSheetWithOptions(
-      {
-        options: ["Cancel", "Archive Fund"],
-        destructiveButtonIndex: 1,
-        cancelButtonIndex: 0,
-        title: "Archive this fund?",
-        message: "You can restore it later from settings.",
-      },
-      (index) => {
-        if (index === 1) {
-          archiveMutation.mutate({ id: fundId, enabled: false });
-        }
-      }
-    );
-  }, [fundId, archiveMutation]);
-
-  const handleDelete = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    ActionSheetIOS.showActionSheetWithOptions(
-      {
-        options: ["Cancel", "Delete Fund"],
-        destructiveButtonIndex: 1,
-        cancelButtonIndex: 0,
-        title: "Delete this fund?",
-        message:
-          "This action cannot be undone. All transactions will be preserved but unlinked.",
-      },
-      (index) => {
-        if (index === 1) {
-          deleteMutation.mutate(fundId);
-        }
-      }
-    );
-  }, [fundId, deleteMutation]);
-
-  const isLoading = fundLoading || txLoading;
 
   if (isLoading) {
     return (
@@ -227,7 +98,7 @@ export default function FundDetailScreen() {
         className="flex-1 bg-background"
         contentContainerClassName="gap-6 pb-32 px-4"
         contentInsetAdjustmentBehavior="automatic"
-        onScroll={handleScroll}
+        onScroll={onScroll}
         refreshControl={
           <RefreshControl onRefresh={handleRefresh} refreshing={isRefreshing} />
         }
