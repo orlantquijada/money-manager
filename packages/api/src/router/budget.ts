@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz";
 import { endOfMonth, getDaysInMonth, startOfMonth } from "date-fns";
 import { folders, funds, transactions } from "db/schema";
 import { and, asc, eq, gt, gte, inArray, lt, sum } from "drizzle-orm";
@@ -45,7 +46,7 @@ export const budgetRouter = router({
    * Over-budget (>100%) alerts come first, then almost-over (>90%).
    */
   alerts: protectedProcedure.query(async ({ ctx }): Promise<BudgetAlert[]> => {
-    const now = new Date();
+    const now = TZDate.tz(ctx.timezone);
     const monthStart = startOfMonth(now);
     const monthEnd = endOfMonth(now);
 

@@ -3,6 +3,7 @@ import { db } from "db/client";
 
 interface CreateContextOptions {
   authToken?: string | null;
+  timezone?: string;
 }
 
 export const createTRPCContext = async (opts: CreateContextOptions = {}) => {
@@ -27,5 +28,6 @@ export const createTRPCContext = async (opts: CreateContextOptions = {}) => {
   return {
     db,
     userId,
+    timezone: opts.timezone || "UTC",
   };
 };

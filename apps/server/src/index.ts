@@ -35,7 +35,8 @@ function createApp() {
         const authToken = authHeader?.startsWith("Bearer ")
           ? authHeader.slice(7)
           : null;
-        return createTRPCContext({ authToken });
+        const timezone = c.req.header("x-timezone") || "UTC";
+        return createTRPCContext({ authToken, timezone });
       },
     })
   );

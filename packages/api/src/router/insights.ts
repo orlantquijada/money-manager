@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz";
 import { endOfMonth, getDaysInMonth, startOfMonth, subMonths } from "date-fns";
 import { folders, funds, transactions } from "db/schema";
 import { and, count, desc, eq, gte, inArray, lt, sum } from "drizzle-orm";
@@ -84,7 +85,7 @@ export const insightsRouter = router({
     )
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Data aggregation requires multiple conditionals
     .query(async ({ ctx, input }) => {
-      const referenceDate = input?.month ?? new Date();
+      const referenceDate = input?.month ?? TZDate.tz(ctx.timezone);
       const monthStart = startOfMonth(referenceDate);
       const monthEnd = endOfMonth(referenceDate);
 
@@ -127,7 +128,6 @@ export const insightsRouter = router({
         spending.map((s) => [s.fundId, s.amount ?? 0])
       );
 
-      // Calculate envelope health
       const envelopeHealth: EnvelopeHealth = {
         onTrack: 0,
         atRisk: 0,
@@ -175,7 +175,6 @@ export const insightsRouter = router({
         }
       }
 
-      // Find top overspent (highest overage)
       const overspentFunds = fundUtilizations
         .filter((f) => f.utilization > 100)
         .sort((a, b) => b.spent - b.budget - (a.spent - a.budget));
@@ -189,7 +188,6 @@ export const insightsRouter = router({
           }
         : null;
 
-      // Find top leftover (most remaining budget)
       const underBudgetFunds = fundUtilizations
         .filter((f) => f.remaining > 0)
         .sort((a, b) => b.remaining - a.remaining);
@@ -203,7 +201,6 @@ export const insightsRouter = router({
           }
         : null;
 
-      // Month comparison
       const prevMonthStart = startOfMonth(subMonths(referenceDate, 1));
       const prevMonthEnd = endOfMonth(subMonths(referenceDate, 1));
 
@@ -381,7 +378,7 @@ export const insightsRouter = router({
     .query(async ({ ctx, input }) => {
       const { generateMonthlySummary } = await import("../services/gemini");
 
-      const referenceDate = input?.month ?? new Date();
+      const referenceDate = input?.month ?? TZDate.tz(ctx.timezone);
       const monthStart = startOfMonth(referenceDate);
       const monthEnd = endOfMonth(referenceDate);
 

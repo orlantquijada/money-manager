@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz";
 import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 import { folders, funds, stores, transactions } from "db/schema";
 import {
@@ -48,7 +49,7 @@ export const fundsRouter = router({
     ),
 
   list: protectedProcedure.query(async ({ ctx }) => {
-    const now = new Date();
+    const now = TZDate.tz(ctx.timezone);
 
     const _funds = await ctx.db
       .select({
@@ -111,7 +112,7 @@ export const fundsRouter = router({
         return null;
       }
 
-      const now = new Date();
+      const now = TZDate.tz(ctx.timezone);
       const [spent] = await ctx.db
         .select({ amount: sum(transactions.amount).mapWith(Number) })
         .from(transactions)
@@ -161,7 +162,7 @@ export const fundsRouter = router({
   topStores: protectedProcedure
     .input(z.object({ fundId: z.number(), limit: z.number().default(3) }))
     .query(async ({ ctx, input }) => {
-      const now = new Date();
+      const now = TZDate.tz(ctx.timezone);
       const results = await ctx.db
         .select({
           storeId: transactions.storeId,
@@ -192,7 +193,7 @@ export const fundsRouter = router({
   periodComparison: protectedProcedure
     .input(z.number())
     .query(async ({ ctx, input: fundId }) => {
-      const now = new Date();
+      const now = TZDate.tz(ctx.timezone);
       const lastMonth = subMonths(now, 1);
 
       const [currentResult] = await ctx.db
@@ -240,7 +241,7 @@ export const fundsRouter = router({
   storeCount: protectedProcedure
     .input(z.number())
     .query(async ({ ctx, input: fundId }) => {
-      const now = new Date();
+      const now = TZDate.tz(ctx.timezone);
       const [result] = await ctx.db
         .select({ count: countDistinct(transactions.storeId) })
         .from(transactions)

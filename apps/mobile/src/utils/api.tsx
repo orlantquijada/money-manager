@@ -31,6 +31,10 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
         headers() {
           const headers = new Map<string, string>();
           headers.set("x-trpc-source", "expo-react");
+          headers.set(
+            "x-timezone",
+            Intl.DateTimeFormat().resolvedOptions().timeZone
+          );
 
           const token = authTokenStore.getToken();
           if (token) {

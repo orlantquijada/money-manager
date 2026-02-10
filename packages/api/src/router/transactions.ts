@@ -1,3 +1,4 @@
+import { TZDate } from "@date-fns/tz";
 import { endOfMonth, startOfMonth, subDays, subMonths } from "date-fns";
 import { folders, funds, stores, transactions as txns } from "db/schema";
 import { and, count, desc, eq, gte, lt, or, sum } from "drizzle-orm";
@@ -8,11 +9,14 @@ import { protectedProcedure, router } from "../trpc";
 const periodSchema = z.enum(["week", "month", "3mo", "all"]);
 type Period = z.infer<typeof periodSchema>;
 
-function getDateRangeForPeriod(period: Period): {
+function getDateRangeForPeriod(
+  period: Period,
+  timezone: string
+): {
   start: Date | null;
   end: Date | null;
 } {
-  const now = new Date();
+  const now = TZDate.tz(timezone);
   switch (period) {
     case "week":
       return { start: subDays(now, 7), end: now };
@@ -27,11 +31,14 @@ function getDateRangeForPeriod(period: Period): {
   }
 }
 
-function getPreviousPeriodDateRange(period: Period): {
+function getPreviousPeriodDateRange(
+  period: Period,
+  timezone: string
+): {
   start: Date | null;
   end: Date | null;
 } | null {
-  const now = new Date();
+  const now = TZDate.tz(timezone);
   switch (period) {
     case "week": {
       const currentStart = subDays(now, 7);
@@ -160,7 +167,7 @@ export const transactionsRouter = router({
         .optional()
     )
     .query(async ({ ctx, input }) => {
-      const now = new Date();
+      const now = TZDate.tz(ctx.timezone);
       const transactions = await ctx.db.query.transactions.findMany({
         where: and(
           eq(txns.userId, ctx.userId),
@@ -190,7 +197,7 @@ export const transactionsRouter = router({
     }),
 
   allLast7Days: protectedProcedure.query(async ({ ctx }) => {
-    const now = new Date();
+    const now = TZDate.tz(ctx.timezone);
     const transactions = await ctx.db.query.transactions.findMany({
       where: and(
         eq(txns.userId, ctx.userId),
@@ -261,7 +268,7 @@ export const transactionsRouter = router({
         throw new Error("Fund not found");
       }
 
-      const now = new Date();
+      const now = TZDate.tz(ctx.timezone);
       const weeksInMonth = Math.ceil(
         (endOfMonth(now).getDate() - startOfMonth(now).getDate() + 1) / 7
       );
@@ -362,7 +369,7 @@ export const transactionsRouter = router({
     }),
 
   totalThisMonth: protectedProcedure.query(async ({ ctx }) => {
-    const now = new Date();
+    const now = TZDate.tz(ctx.timezone);
     const result = await ctx.db
       .select({ amount: sum(txns.amount).mapWith(Number) })
       .from(txns)
@@ -378,7 +385,7 @@ export const transactionsRouter = router({
   }),
 
   totalLastMonth: protectedProcedure.query(async ({ ctx }) => {
-    const now = new Date();
+    const now = TZDate.tz(ctx.timezone);
     const lastMonth = subMonths(now, 1);
     const result = await ctx.db
       .select({ amount: sum(txns.amount).mapWith(Number) })
@@ -397,6 +404,7 @@ export const transactionsRouter = router({
   byFund: protectedProcedure
     .input(z.number().optional())
     .query(async ({ ctx, input }) => {
+      const now = TZDate.tz(ctx.timezone);
       const txnsResult = await ctx.db
         .select({
           fundId: txns.fundId,
@@ -406,8 +414,8 @@ export const transactionsRouter = router({
         .where(
           and(
             eq(txns.userId, ctx.userId),
-            gte(txns.date, startOfMonth(new Date())),
-            lt(txns.date, endOfMonth(new Date()))
+            gte(txns.date, startOfMonth(now)),
+            lt(txns.date, endOfMonth(now))
           )
         )
         .groupBy(txns.fundId)
@@ -421,7 +429,7 @@ export const transactionsRouter = router({
     }),
 
   countByFund: protectedProcedure.query(async ({ ctx }) => {
-    const now = new Date();
+    const now = TZDate.tz(ctx.timezone);
     const counts = await ctx.db
       .select({
         fundId: txns.fundId,
@@ -446,8 +454,11 @@ export const transactionsRouter = router({
   stats: protectedProcedure
     .input(z.object({ period: periodSchema }))
     .query(async ({ ctx, input }) => {
-      const { start, end } = getDateRangeForPeriod(input.period);
-      const previousRange = getPreviousPeriodDateRange(input.period);
+      const { start, end } = getDateRangeForPeriod(input.period, ctx.timezone);
+      const previousRange = getPreviousPeriodDateRange(
+        input.period,
+        ctx.timezone
+      );
 
       const dateConditions = [eq(txns.userId, ctx.userId)];
       if (start) {
@@ -539,8 +550,8 @@ export const transactionsRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const start = new Date(Date.UTC(input.year, input.month - 1, 1));
-      const end = new Date(Date.UTC(input.year, input.month, 1));
+      const start = new TZDate(input.year, input.month - 1, 1, ctx.timezone);
+      const end = new TZDate(input.year, input.month, 1, ctx.timezone);
       const limit = input.limit;
 
       const dateConditions = [
