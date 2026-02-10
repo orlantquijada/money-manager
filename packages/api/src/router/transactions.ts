@@ -539,8 +539,8 @@ export const transactionsRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const start = new Date(input.year, input.month - 1, 1);
-      const end = endOfMonth(start);
+      const start = new Date(Date.UTC(input.year, input.month - 1, 1));
+      const end = new Date(Date.UTC(input.year, input.month, 1));
       const limit = input.limit;
 
       const dateConditions = [
