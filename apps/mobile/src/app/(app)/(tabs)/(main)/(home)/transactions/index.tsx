@@ -35,8 +35,7 @@ export default function History() {
   const fabHeight = useFabHeight();
 
   // Month selection state
-  const [year, setYear] = useState(now.getFullYear());
-  const [month, setMonth] = useState(now.getMonth() + 1);
+  const [month, setMonth] = useState(now);
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,7 +51,7 @@ export default function History() {
     fetchNextPage,
     refetch,
     isRefreshing,
-  } = useTransactionList(year, month);
+  } = useTransactionList(month);
 
   // Filter transactions based on search query (store name + fund name)
   const filteredTransactions = useMemo(
@@ -60,13 +59,8 @@ export default function History() {
     [transactions, debouncedSearchQuery]
   );
 
-  const canGoNext =
-    year < now.getFullYear() ||
-    (year === now.getFullYear() && month < now.getMonth() + 1);
-
-  const handleMonthChange = useCallback((newYear: number, newMonth: number) => {
-    setYear(newYear);
-    setMonth(newMonth);
+  const handleMonthChange = useCallback((d: Date) => {
+    setMonth(d);
     setSearchQuery("");
   }, []);
 
@@ -95,7 +89,6 @@ export default function History() {
   return (
     <StyledLeanView className="flex-1 gap-4 bg-background">
       <HistoryHeader
-        canGoNext={canGoNext}
         isSearchExpanded={isSearchExpanded}
         month={month}
         onMonthChange={handleMonthChange}
@@ -103,7 +96,6 @@ export default function History() {
         onSearchClear={() => setSearchQuery("")}
         onSearchToggle={handleSearchToggle}
         searchQuery={searchQuery}
-        year={year}
       />
 
       <Animated.View className="flex-1 px-4" style={contentAnimatedStyle}>
