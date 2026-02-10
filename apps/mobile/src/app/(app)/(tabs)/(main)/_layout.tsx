@@ -16,7 +16,7 @@ export default function MainLayout() {
       >
         <Stack.Screen name="(home)" />
         <Stack.Screen
-          name="fund/[id]"
+          name="funds/[id]"
           options={{
             animation: Platform.OS === "ios" ? "default" : "slide_from_bottom",
           }}
