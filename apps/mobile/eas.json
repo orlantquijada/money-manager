@@ -7,7 +7,10 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "channel": "development"
+      "channel": "development",
+      "env": {
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_bm9ybWFsLWtyaWxsLTg3LmNsZXJrLmFjY291bnRzLmRldiQ"
+      }
     },
     "preview": {
       "distribution": "internal",
@@ -16,14 +19,16 @@
       },
       "channel": "preview",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://mm.orlan.dev"
+        "EXPO_PUBLIC_API_URL": "https://mm.orlan.dev",
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsub3JsYW4uZGV2JA"
       }
     },
     "production": {
       "autoIncrement": true,
       "channel": "production",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://mm.orlan.dev"
+        "EXPO_PUBLIC_API_URL": "https://mm.orlan.dev",
+        "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsub3JsYW4uZGV2JA"
       }
     }
   },
