@@ -25,7 +25,6 @@ The vision is to create the best, prettiest, most user/beginner-friendly budgeti
 - [Styling](docs/agents/styling.md) - Components, fonts, conventions
 - [Database](docs/agents/database.md) - Schema changes, Drizzle workflow
 - [Code Quality](docs/agents/code-quality.md) - Line limits, file size
-- [Progress Tracking](docs/agents/progress-tracking.md) - Status files, commits
 - [Feature Specs](docs/agents/feature-specs.md) - Ralph Loop workflow
 
 ## Plan Mode
