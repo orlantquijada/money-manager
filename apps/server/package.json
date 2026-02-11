@@ -16,7 +16,7 @@
     "@hono/trpc-server": "^0.4.0",
     "@t3-oss/env-core": "catalog:",
     "api": "workspace:*",
-    "hono": "^4.10.7",
+    "hono": "^4.11.7",
     "zod": "catalog:"
   },
   "devDependencies": {
