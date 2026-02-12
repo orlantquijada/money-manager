@@ -1,5 +1,5 @@
 {
   "root": false,
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["ultracite/core", "../../tooling/biome/common.json"]
+  "extends": ["ultracite/biome/core", "../../tooling/biome/common.json"]
 }

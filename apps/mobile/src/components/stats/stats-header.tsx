@@ -62,7 +62,7 @@ export default function StatsHeader({ data, period, isLoading }: Props) {
 
   useEffect(() => {
     animatedTotalSpent.set(withSpring(data?.totalSpent ?? 0, SPRING_CONFIG));
-  }, [data?.totalSpent, animatedTotalSpent.set]);
+  }, [data?.totalSpent, animatedTotalSpent.set, animatedTotalSpent]);
 
   const animatedTotalSpentText = useDerivedValue(() => {
     const _currencyFormatter = new Intl.NumberFormat(

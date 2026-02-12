@@ -8,8 +8,16 @@
     "design": "Detailed design notes, layouts, interactions (markdown supported)",
     "api": "API contracts, endpoints, input/output shapes",
     "files": [
-      { "action": "create", "path": "path/to/file.ts", "purpose": "What this file does" },
-      { "action": "modify", "path": "path/to/existing.ts", "purpose": "What changes" }
+      {
+        "action": "create",
+        "path": "path/to/file.ts",
+        "purpose": "What this file does"
+      },
+      {
+        "action": "modify",
+        "path": "path/to/existing.ts",
+        "purpose": "What changes"
+      }
     ]
   },
   "items": [

@@ -50,7 +50,7 @@ export function TopFundsRow({
         SPRING_CONFIG
       )
     );
-  }, [isSelected, hasSelection, offset.set, opacity.set]);
+  }, [isSelected, hasSelection, offset.set, opacity.set, offset, opacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: offset.get() }],

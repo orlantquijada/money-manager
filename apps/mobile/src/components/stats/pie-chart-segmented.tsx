@@ -161,7 +161,7 @@ function AnimatedSlice({
         ),
       })
     );
-  }, [anySelected, isFocused, opacity.set, offset.set]);
+  }, [anySelected, isFocused, opacity.set, offset.set, offset, opacity]);
 
   // Compute translation for radial pop-out
   const translateX = Math.cos(midAngle);
@@ -203,7 +203,7 @@ function CenterLabel({ displaySlice, selectedFundId }: CenterLabelProps) {
 
   useEffect(() => {
     animatedValue.set(withSpring(displaySlice?.value ?? 0, transitions.snappy));
-  }, [displaySlice?.value, animatedValue.set]);
+  }, [displaySlice?.value, animatedValue.set, animatedValue]);
 
   const animatedText = useDerivedValue(() => {
     return `${Math.round(animatedValue.get())}%`;
