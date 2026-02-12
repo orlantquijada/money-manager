@@ -1,20 +1,30 @@
-import { z } from "zod"
-import { publicProcedure, router } from "../trpc"
+import { stores } from "db/schema";
+import { asc, eq } from "drizzle-orm";
+import { protectedProcedure, router } from "../trpc";
+import type { StorePick } from "../utils/types";
 
 export const storesRouter = router({
-  listFromUserId: publicProcedure.input(z.string()).query(({ input, ctx }) => {
-    return ctx.prisma.store.findMany({
-      where: {
-        userId: input,
-      },
-      orderBy: {
-        name: "asc",
-      },
-      select: {
+  list: protectedProcedure.query(async ({ ctx }): Promise<StorePick[]> => {
+    const result = await ctx.db.query.stores.findMany({
+      where: eq(stores.userId, ctx.userId),
+      orderBy: asc(stores.name),
+      columns: {
         name: true,
         id: true,
         lastSelectedFundId: true,
       },
-    })
+      with: {
+        lastSelectedFund: {
+          columns: { name: true },
+        },
+      },
+    });
+
+    return result.map((store) => ({
+      id: store.id,
+      name: store.name,
+      lastSelectedFundId: store.lastSelectedFundId,
+      lastSelectedFundName: store.lastSelectedFund?.name ?? null,
+    }));
   }),
-})
+});

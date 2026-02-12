@@ -1,0 +1,34 @@
+import { Path } from "react-native-svg";
+import { StyledSvg } from "@/config/interop-svg";
+import type { IconProps } from "@/utils/types";
+
+export default function Icon({
+  className,
+  color = "currentColor",
+  size = 20,
+}: IconProps) {
+  return (
+    <StyledSvg
+      className={className}
+      fill="none"
+      height={size}
+      viewBox="0 0 20 20"
+      width={size}
+    >
+      <Path
+        clipRule="evenodd"
+        d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 14.1421 5.85786 17.5 10 17.5ZM10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z"
+        fill={color}
+        fillRule="evenodd"
+        opacity={0.12}
+      />
+      <Path
+        d="M17.5002 10C17.5002 14.1422 14.1423 17.5 10.0002 17.5M17.5002 10C17.5002 5.8579 14.1423 2.50004 10.0002 2.50004M17.5002 10H19.1668M10.0002 17.5C5.85803 17.5 2.50016 14.1422 2.50016 10M10.0002 17.5V19.1667M2.50016 10C2.50016 5.8579 5.85803 2.50004 10.0002 2.50004M2.50016 10H0.833496M10.0002 2.50004V0.833374M12.5002 10C12.5002 11.3808 11.3809 12.5 10.0002 12.5C8.61945 12.5 7.50016 11.3808 7.50016 10C7.50016 8.61933 8.61945 7.50004 10.0002 7.50004C11.3809 7.50004 12.5002 8.61933 12.5002 10Z"
+        stroke={color}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+      />
+    </StyledSvg>
+  );
+}

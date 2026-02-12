@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "createdAt": "2026-01-21T20:25:43.652Z",
+  "scope": "project",
+  "operation": "change-to-agents",
+  "entries": [
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.claude/commands",
+      "backupPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/backup/2026-01-21T20-25-31-564Z/Users/orlanquijada/Work/money-manager-2.0/.claude/commands",
+      "kind": "symlink",
+      "action": "backup"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.opencode/commands",
+      "backupPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/backup/2026-01-21T20-25-31-564Z/Users/orlanquijada/Work/money-manager-2.0/.opencode/commands",
+      "kind": "symlink",
+      "action": "backup"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.gemini/commands",
+      "kind": "symlink",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.claude/hooks",
+      "backupPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/backup/2026-01-21T20-25-31-564Z/Users/orlanquijada/Work/money-manager-2.0/.claude/hooks",
+      "kind": "symlink",
+      "action": "backup"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.claude/skills",
+      "backupPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/backup/2026-01-21T20-25-31-564Z/Users/orlanquijada/Work/money-manager-2.0/.claude/skills",
+      "kind": "symlink",
+      "action": "backup"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.opencode/skills",
+      "backupPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/backup/2026-01-21T20-25-31-564Z/Users/orlanquijada/Work/money-manager-2.0/.opencode/skills",
+      "kind": "symlink",
+      "action": "backup"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.gemini/skills",
+      "backupPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/backup/2026-01-21T20-25-31-564Z/Users/orlanquijada/Work/money-manager-2.0/.gemini/skills",
+      "kind": "dir",
+      "action": "backup"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1768453001984,
+      "tag": "0000_complete_hedge_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1769323656886,
+      "tag": "0001_reflective_moira_mactaggert",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770274042209,
+      "tag": "0002_chubby_deathbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1739180400000,
+      "tag": "0003_adjust_transaction_dates_pht",
+      "breakpoints": true
+    }
+  ]
+}

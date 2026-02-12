@@ -1,25 +1,40 @@
 {
   "name": "api",
   "version": "0.1.0",
-  "main": "./dist/index.js",
   "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./index.ts"
+    },
+    "./transformer": {
+      "default": "./transformer.ts"
+    }
+  },
   "scripts": {
     "clean": "rm -rf .turbo node_modules dist",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "biome check --write",
     "type-check": "tsc --noEmit",
-    "build": "tsup index.ts --format cjs"
+    "build": "tsup index.ts --format cjs --minify"
   },
   "dependencies": {
-    "@trpc/client": "^10.7.0",
-    "@trpc/server": "^10.7.0",
-    "date-fns": "^2.29.3",
+    "@clerk/backend": "^2.29.0",
+    "@date-fns/tz": "^1.4.1",
+    "@google/generative-ai": "^0.21.0",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "date-fns": "catalog:",
     "db": "workspace:*",
-    "superjson": "1.9.1",
-    "zod": "^3.20.0"
+    "drizzle-orm": "catalog:",
+    "superjson": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "eslint": "^8.29.0",
-    "tsup": "^7.1.0",
-    "typescript": "^4.9.4"
+    "@biomejs/biome": "catalog:",
+    "@types/pg": "catalog:",
+    "tsup": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "ultracite": "catalog:"
   }
 }

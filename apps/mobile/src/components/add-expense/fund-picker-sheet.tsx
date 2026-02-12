@@ -1,0 +1,421 @@
+import {
+  BottomSheetBackdrop,
+  type BottomSheetBackdropProps,
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetTextInput,
+  useBottomSheet,
+} from "@gorhom/bottom-sheet";
+import type { FundWithFolderAndBudget } from "api";
+import * as Haptics from "expo-haptics";
+import { useMemo, useState } from "react";
+import { useColorScheme } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ScalePressable } from "@/components/scale-pressable";
+import { useThemeColor } from "@/components/theme-provider";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { useFoldersWithFunds } from "@/hooks/use-folders-with-funds";
+import ClockRewind from "@/icons/clock-rewind";
+import FolderDuo from "@/icons/folder-duo";
+import { useAddExpenseStore } from "@/lib/add-expense";
+import { fundWithMeta } from "@/lib/fund";
+import { useRecentFundsStore } from "@/stores/recent-funds";
+import { cn } from "@/utils/cn";
+import {
+  amber,
+  amberDark,
+  lime,
+  limeDark,
+  mauve,
+  mauveA,
+  mauveDark,
+  red,
+  redDark,
+} from "@/utils/colors";
+import { exists } from "@/utils/fn";
+import { toCurrencyShort } from "@/utils/format";
+
+type FundPickerSheetProps = {
+  ref: React.Ref<BottomSheetModal>;
+};
+
+type ListItem =
+  | { type: "recents-header" }
+  | { type: "recent-fund"; fund: FundWithFolderAndBudget }
+  | { type: "folder-header"; folderName: string; folderId: number }
+  | { type: "fund"; fund: FundWithFolderAndBudget };
+
+function transformFoldersToFunds(
+  foldersWithFunds: ReturnType<typeof useFoldersWithFunds>["data"]
+): FundWithFolderAndBudget[] {
+  if (!foldersWithFunds) return [];
+  return foldersWithFunds.flatMap((folder) =>
+    folder.funds.map((fund) => {
+      const meta = fundWithMeta(fund);
+      return {
+        id: fund.id,
+        name: fund.name,
+        folderId: folder.id,
+        folderName: folder.name,
+        amountLeft: meta.amountLeft,
+        progress: meta.progress,
+        fundType: fund.fundType,
+        monthlyBudget: meta.monthlyBudget,
+        // NON_NEGOTIABLE only
+        amountSaved: "amountSaved" in meta ? meta.amountSaved : undefined,
+        isFunded: "isFunded" in meta ? meta.isFunded : undefined,
+      };
+    })
+  );
+}
+
+function groupFundsByFolder(funds: FundWithFolderAndBudget[]) {
+  const folderMap = new Map<
+    number,
+    { name: string; id: number; funds: FundWithFolderAndBudget[] }
+  >();
+  for (const fund of funds) {
+    const existing = folderMap.get(fund.folderId);
+    if (existing) {
+      existing.funds.push(fund);
+    } else {
+      folderMap.set(fund.folderId, {
+        name: fund.folderName,
+        id: fund.folderId,
+        funds: [fund],
+      });
+    }
+  }
+  return folderMap;
+}
+
+function buildListItems(
+  funds: FundWithFolderAndBudget[],
+  recentFunds?: FundWithFolderAndBudget[]
+): ListItem[] {
+  const listItems: ListItem[] = [];
+
+  if (recentFunds && recentFunds.length > 0) {
+    listItems.push({ type: "recents-header" });
+    listItems.push(
+      ...recentFunds.map((fund) => ({
+        type: "recent-fund" as const,
+        fund,
+      }))
+    );
+  }
+
+  const folderMap = groupFundsByFolder(funds);
+  for (const folder of folderMap.values()) {
+    listItems.push({
+      type: "folder-header",
+      folderName: folder.name,
+      folderId: folder.id,
+    });
+    listItems.push(
+      ...folder.funds.map((fund) => ({ type: "fund" as const, fund }))
+    );
+  }
+
+  return listItems;
+}
+
+export function FundPickerSheet({ ref }: FundPickerSheetProps) {
+  const insets = useSafeAreaInsets();
+  const handleIndicatorColor = useThemeColor("foreground-muted");
+  const backgroundColor = useThemeColor("background");
+  const iconColor = useThemeColor("foreground-muted");
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+
+  const { data: foldersWithFunds } = useFoldersWithFunds();
+  const recentFundIds = useRecentFundsStore((s) => s.recentFundIds);
+
+  const allFunds = useMemo(
+    () => transformFoldersToFunds(foldersWithFunds),
+    [foldersWithFunds]
+  );
+
+  const initialItems = useMemo(() => {
+    const recentFunds = recentFundIds
+      .map((id) => allFunds.find((f) => f.id === id))
+      .filter(exists);
+
+    return buildListItems(allFunds, recentFunds);
+  }, [allFunds, recentFundIds]);
+
+  return (
+    <BottomSheetModal
+      backdropComponent={Backdrop}
+      backgroundStyle={{ backgroundColor }}
+      enableDynamicSizing={false}
+      enablePanDownToClose
+      handleIndicatorStyle={{
+        backgroundColor: handleIndicatorColor,
+        width: 80,
+      }}
+      keyboardBehavior="interactive"
+      keyboardBlurBehavior="restore"
+      ref={ref}
+      snapPoints={["50%", "100%"]}
+      topInset={insets.top}
+    >
+      <Content
+        allFunds={allFunds}
+        iconColor={iconColor}
+        initialItems={initialItems}
+        isDark={isDark}
+      />
+    </BottomSheetModal>
+  );
+}
+
+function Backdrop(props: BottomSheetBackdropProps) {
+  return (
+    <BottomSheetBackdrop
+      {...props}
+      appearsOnIndex={0}
+      disappearsOnIndex={-1}
+      style={[{ backgroundColor: mauveA.mauveA12 }, props.style]}
+    />
+  );
+}
+
+type ContentProps = {
+  allFunds: FundWithFolderAndBudget[];
+  initialItems: ListItem[];
+  isDark: boolean;
+  iconColor: string;
+};
+
+function Content({ allFunds, initialItems, isDark, iconColor }: ContentProps) {
+  const [search, setSearch] = useState("");
+  const insets = useSafeAreaInsets();
+  const { close } = useBottomSheet();
+
+  const selectedFundId = useAddExpenseStore((s) => s.selectedFundId);
+  const setSelectedFundId = useAddExpenseStore((s) => s.setSelectedFundId);
+
+  const foregroundColor = useThemeColor("foreground");
+  const mutedColor = useThemeColor("foreground-muted");
+
+  const items = useMemo(() => {
+    const searchLower = search.toLowerCase().trim();
+
+    if (!searchLower) {
+      return initialItems;
+    }
+
+    const filteredFunds = allFunds.filter((f) =>
+      f.name.toLowerCase().includes(searchLower)
+    );
+
+    return buildListItems(filteredFunds);
+  }, [search, initialItems, allFunds]);
+
+  const handleSelect = (fund: FundWithFolderAndBudget) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedFundId(fund.id);
+    close();
+  };
+
+  const showEmptyState = items.length === 0 && search.trim();
+
+  return (
+    <StyledLeanView className="flex-1 bg-background">
+      <StyledLeanView className="px-6 pt-2 pb-4">
+        <BottomSheetTextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          cursorColor={foregroundColor}
+          onChangeText={setSearch}
+          placeholder="Search funds..."
+          placeholderTextColor={mutedColor}
+          selectionColor={foregroundColor}
+          style={{
+            fontFamily: "Satoshi-Medium",
+            fontSize: 16,
+            color: foregroundColor,
+            padding: 0,
+          }}
+          value={search}
+        />
+      </StyledLeanView>
+
+      {showEmptyState ? (
+        <StyledLeanView className="flex-1 items-center justify-center px-6">
+          <StyledLeanText
+            className="text-center font-satoshi-medium text-foreground-muted"
+            ellipsizeMode="tail"
+            numberOfLines={2}
+          >
+            No funds match "{search.trim()}"
+          </StyledLeanText>
+        </StyledLeanView>
+      ) : (
+        <BottomSheetScrollView
+          contentContainerStyle={{ paddingBottom: insets.bottom }}
+          scrollEventThrottle={16}
+        >
+          {items.map((item) => {
+            switch (item.type) {
+              case "recents-header":
+                return (
+                  <RecentsHeader iconColor={iconColor} key="recents-header" />
+                );
+              case "recent-fund":
+                return (
+                  <FundRow
+                    fund={item.fund}
+                    isDark={isDark}
+                    isSelected={item.fund.id === selectedFundId}
+                    key={`recent-${item.fund.id}`}
+                    onSelect={handleSelect}
+                  />
+                );
+              case "folder-header":
+                return (
+                  <FolderHeader
+                    iconColor={iconColor}
+                    key={`folder-${item.folderId}`}
+                    name={item.folderName}
+                  />
+                );
+              case "fund":
+                return (
+                  <FundRow
+                    fund={item.fund}
+                    isDark={isDark}
+                    isSelected={item.fund.id === selectedFundId}
+                    key={`fund-${item.fund.id}`}
+                    onSelect={handleSelect}
+                  />
+                );
+              default:
+                return null;
+            }
+          })}
+        </BottomSheetScrollView>
+      )}
+    </StyledLeanView>
+  );
+}
+
+function RecentsHeader({ iconColor }: { iconColor: string }) {
+  return (
+    <StyledLeanView className="mt-4 flex-row items-center gap-2 px-6 py-2">
+      <ClockRewind color={iconColor} size={16} />
+      <StyledLeanText
+        className="font-satoshi-medium text-foreground-muted text-sm"
+        ellipsizeMode="tail"
+        numberOfLines={1}
+      >
+        Recently Used
+      </StyledLeanText>
+    </StyledLeanView>
+  );
+}
+
+function FolderHeader({
+  name,
+  iconColor,
+}: {
+  name: string;
+  iconColor: string;
+}) {
+  return (
+    <StyledLeanView className="mt-6 flex-row items-center gap-2 px-6 py-2">
+      <FolderDuo color={iconColor} size={16} />
+      <StyledLeanText
+        className="font-satoshi-medium text-foreground-muted text-sm"
+        ellipsizeMode="tail"
+        numberOfLines={1}
+      >
+        {name}
+      </StyledLeanText>
+    </StyledLeanView>
+  );
+}
+
+// SPENDING funds: color based on spending depletion (lime → amber → red)
+function getBudgetStatusColor(progress: number, isDark: boolean) {
+  if (progress < 0.7) {
+    return isDark ? limeDark.lime9 : lime.lime9;
+  }
+  if (progress < 0.9) {
+    return isDark ? amberDark.amber9 : amber.amber9;
+  }
+  return isDark ? redDark.red9 : red.red9;
+}
+
+function getSavingsStatusColor(progress: number, isDark: boolean) {
+  if (progress >= 0.5) {
+    return isDark ? limeDark.lime9 : lime.lime9; // Good progress
+  }
+  return isDark ? mauveDark.mauve9 : mauve.mauve9; // Muted (starting out)
+}
+
+type FundRowProps = {
+  fund: FundWithFolderAndBudget;
+  isDark: boolean;
+  isSelected: boolean;
+  onSelect: (fund: FundWithFolderAndBudget) => void;
+};
+
+function FundRow({ fund, isDark, isSelected, onSelect }: FundRowProps) {
+  const isNonNegotiable = fund.fundType === "NON_NEGOTIABLE";
+  const statusColor = isNonNegotiable
+    ? getSavingsStatusColor(fund.progress, isDark)
+    : getBudgetStatusColor(fund.progress, isDark);
+
+  const handlePress = () => {
+    onSelect(fund);
+  };
+
+  // NON_NEGOTIABLE: "X / Y" format (savings toward target)
+  // SPENDING: "X" format (amount left to spend)
+  const amountText = isNonNegotiable
+    ? `${toCurrencyShort(fund.amountSaved ?? 0)} / ${toCurrencyShort(fund.monthlyBudget)}`
+    : toCurrencyShort(fund.amountLeft);
+
+  return (
+    <ScalePressable
+      className={cn(
+        "flex-row items-center justify-between px-6 py-3",
+        isSelected ? "bg-mauve-4" : "bg-background"
+      )}
+      onPress={handlePress}
+      opacityValue={0.7}
+      scaleValue={0.98}
+    >
+      <StyledLeanText
+        className="mr-3 flex-1 font-satoshi-medium text-base text-foreground"
+        ellipsizeMode="tail"
+        numberOfLines={1}
+      >
+        {fund.name}
+      </StyledLeanText>
+
+      <StyledLeanView className="flex-row items-center gap-2">
+        <StyledLeanView className="h-2 w-10 overflow-hidden rounded-full border border-mauve-6 bg-mauve-5">
+          <StyledLeanView
+            className="h-full rounded-full"
+            style={{
+              width: `${Math.min(fund.progress * 100, 100)}%`,
+              backgroundColor: statusColor,
+            }}
+          />
+        </StyledLeanView>
+
+        <StyledLeanText
+          className="font-nunito-bold text-xs"
+          ellipsizeMode="tail"
+          numberOfLines={1}
+          style={{ color: statusColor }}
+        >
+          {amountText}
+        </StyledLeanText>
+      </StyledLeanView>
+    </ScalePressable>
+  );
+}

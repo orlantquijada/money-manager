@@ -1,0 +1,156 @@
+import { useNavigation, usePreventRemove } from "@react-navigation/native";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { RouterOutputs } from "api";
+import { useRouter } from "expo-router";
+import { useMemo, useState } from "react";
+import { Alert, Platform, ScrollView } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import CreateFooter from "@/components/create-fund/footer";
+import GlassCloseButton from "@/components/glass-close-button";
+import Presence from "@/components/presence";
+import TextInput from "@/components/text-input";
+import { StyledLeanText, StyledLeanView } from "@/config/interop";
+import { FOLDER_NAME_PLACEHOLDERS } from "@/lib/create-fund";
+import { trpc } from "@/utils/api";
+import { choice } from "@/utils/random";
+
+export default function CreateFolder() {
+  const { name, setName, submit, isPending, isDirty } = useCreateFolderForm();
+  const placeholder = useMemo(() => choice(FOLDER_NAME_PLACEHOLDERS), []);
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+
+  usePreventRemove(isDirty, ({ data }) => {
+    Alert.alert(
+      "Discard changes?",
+      "You have unsaved changes. Are you sure you want to discard them?",
+      [
+        { text: "Don't leave", style: "cancel" },
+        {
+          text: "Discard",
+          style: "destructive",
+          onPress: () => navigation.dispatch(data.action),
+        },
+      ]
+    );
+  });
+
+  return (
+    <KeyboardAvoidingView
+      behavior="padding"
+      className="relative flex-1 bg-background"
+    >
+      <GlassCloseButton
+        className="absolute left-4 z-10"
+        style={{ top: Platform.OS === "android" ? insets.top + 16 : 16 }}
+      />
+
+      <ScrollView
+        contentContainerClassName="px-4 flex-1"
+        contentContainerStyle={{
+          paddingTop: Platform.OS === "android" ? insets.top + 110 : 80,
+          paddingBottom:
+            Platform.OS === "android" ? insets.bottom + 32 : insets.bottom + 16,
+        }}
+      >
+        <StyledLeanView className="flex gap-y-8">
+          <Presence delayMultiplier={3}>
+            <StyledLeanView className="gap-2.5">
+              <StyledLeanText className="font-satoshi-medium text-foreground text-lg">
+                What&apos;s the name of your folder?
+              </StyledLeanText>
+              <TextInput
+                onChangeText={setName}
+                placeholder={placeholder}
+                value={name}
+              />
+            </StyledLeanView>
+          </Presence>
+        </StyledLeanView>
+      </ScrollView>
+      <CreateFooter
+        disabled={!name.trim()}
+        hideBackButton
+        isFinalAction
+        loading={isPending}
+        onContinuePress={submit}
+        variant="text"
+      >
+        Save Folder
+      </CreateFooter>
+    </KeyboardAvoidingView>
+  );
+}
+
+type FolderWithFunds = RouterOutputs["folder"]["listWithFunds"][number];
+
+function useCreateFolderForm() {
+  const [name, setName] = useState("");
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(
+    trpc.folder.create.mutationOptions({
+      onMutate: async (newFolder) => {
+        await queryClient.cancelQueries(trpc.folder.listWithFunds.pathFilter());
+        const previousFolders = queryClient.getQueryData(
+          trpc.folder.listWithFunds.queryKey()
+        );
+        queryClient.setQueryData<FolderWithFunds[]>(
+          trpc.folder.listWithFunds.queryKey(),
+          (old) => {
+            const optimisticFolder: FolderWithFunds = {
+              id: -Date.now(),
+              name: newFolder.name,
+              userId: "",
+              createdAt: new Date(),
+              updatedAt: null,
+              funds: [],
+            };
+            return [optimisticFolder, ...(old ?? [])];
+          }
+        );
+
+        return { previousFolders };
+      },
+
+      onError: (_err, _newFolder, context) => {
+        if (context?.previousFolders) {
+          queryClient.setQueryData(
+            trpc.folder.listWithFunds.queryKey(),
+            context.previousFolders
+          );
+        }
+      },
+
+      onSettled: () => {
+        queryClient.invalidateQueries(trpc.folder.list.pathFilter());
+        queryClient.invalidateQueries(trpc.folder.listWithFunds.pathFilter());
+      },
+    })
+  );
+
+  const submit = () => {
+    if (!name.trim()) {
+      return;
+    }
+    mutation.mutate(
+      { name },
+      {
+        onSuccess: () => {
+          setName("");
+          router.replace("/");
+        },
+      }
+    );
+  };
+
+  return {
+    name,
+    setName,
+    submit,
+    isPending: mutation.isPending,
+    isDirty: name !== "",
+  };
+}

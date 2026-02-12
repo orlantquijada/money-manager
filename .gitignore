@@ -16,6 +16,9 @@ db.sqlite-journal
 .expo/
 dist/
 
+ios/
+android/
+
 # production
 build
 
@@ -41,3 +44,6 @@ yarn-error.log*
 
 # turbo
 .turbo
+
+# cache
+.cache/

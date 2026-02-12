@@ -1,0 +1,1 @@
+UPDATE "transactions" SET "date" = "date" + INTERVAL '8 hours';

@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "createdAt": "2026-01-19T06:40:14.279Z",
+  "scope": "project",
+  "operation": "change-to-agents",
+  "entries": [
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/commands/commit.md",
+      "kind": "file",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/commands/optimize.md",
+      "kind": "file",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/skills/building-ui",
+      "kind": "dir",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/skills/codemap-updater",
+      "kind": "dir",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/skills/data-fetching",
+      "kind": "dir",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/skills/dev-client",
+      "kind": "dir",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/skills/upgrading-expo",
+      "kind": "dir",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.claude/commands",
+      "backupPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/backup/2026-01-19T06-39-54-059Z/Users/orlanquijada/Work/money-manager-2.0/.claude/commands",
+      "kind": "dir",
+      "action": "backup"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.opencode/commands",
+      "kind": "symlink",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/hooks",
+      "kind": "dir",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.claude/hooks",
+      "kind": "symlink",
+      "action": "create"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.claude/skills",
+      "backupPath": "/Users/orlanquijada/Work/money-manager-2.0/.agents/backup/2026-01-19T06-39-54-059Z/Users/orlanquijada/Work/money-manager-2.0/.claude/skills",
+      "kind": "dir",
+      "action": "backup"
+    },
+    {
+      "originalPath": "/Users/orlanquijada/Work/money-manager-2.0/.opencode/skills",
+      "kind": "symlink",
+      "action": "create"
+    }
+  ]
+}

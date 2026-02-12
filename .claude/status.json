@@ -1,0 +1,48 @@
+{
+  "currentFocus": "Insights & History Tab Split",
+  "lastUpdated": "2026-01-17",
+  "phases": {
+    "phase1_core": {
+      "name": "Core Tracking",
+      "goal": "Basic budgeting works end-to-end",
+      "tasks": {
+        "authentication": "done",
+        "user_provisioning": "todo",
+        "add_expense_flow": "done",
+        "transactions_tab": "done",
+        "polish_bug_fixes": "todo"
+      }
+    },
+    "phase2_onboarding": {
+      "name": "Onboarding",
+      "goal": "New users set up in < 3 minutes",
+      "tasks": {
+        "welcome_flow": "todo",
+        "guided_setup_wizard": "todo",
+        "budget_templates": "todo",
+        "educational_content": "todo"
+      }
+    },
+    "phase3_insights": {
+      "name": "Insights",
+      "goal": "Users understand spending patterns through subtle guidance",
+      "tasks": {
+        "ai_foundation": "todo",
+        "contextual_whispers": "todo",
+        "spending_trends": "in_progress",
+        "category_breakdown": "todo",
+        "budget_alerts": "in_progress",
+        "streaks_habits": "todo"
+      }
+    },
+    "phase4_polish": {
+      "name": "Animation & Polish",
+      "goal": "Every interaction feels intentional",
+      "tasks": {
+        "screen_transitions": "todo",
+        "micro_interactions": "todo",
+        "gesture_driven_ux": "todo"
+      }
+    }
+  }
+}

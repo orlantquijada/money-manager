@@ -1,86 +1,94 @@
-import { Prisma } from "db"
-import { z } from "zod"
-import { publicProcedure, router } from "../trpc"
+import { endOfMonth, startOfMonth } from "date-fns";
+import { folders, transactions } from "db/schema";
+import { and, eq, gte, inArray, lte, sum } from "drizzle-orm";
+import { z } from "zod";
+import { protectedProcedure, router } from "../trpc";
 
 export const foldersRouter = router({
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         name: z.string(),
-        userId: z.string(),
-      }),
+      })
     )
-    .mutation(({ input, ctx }) => ctx.prisma.folder.create({ data: input })),
-  remove: publicProcedure
+    .mutation(({ input, ctx }) => {
+      return ctx.db.insert(folders).values({
+        ...input,
+        userId: ctx.userId,
+      });
+    }),
+
+  remove: protectedProcedure
     .input(z.number())
     .mutation(({ input, ctx }) =>
-      ctx.prisma.folder.delete({ where: { id: input } }),
+      ctx.db
+        .delete(folders)
+        .where(and(eq(folders.id, input), eq(folders.userId, ctx.userId)))
     ),
-  listWithFunds: publicProcedure
+
+  listWithFunds: protectedProcedure
     .input(
       z
         .object({
           startDate: z.date().optional(),
           endDate: z.date().optional(),
         })
-        .optional(),
+        .optional()
     )
     .query(async ({ ctx, input }) => {
-      // TODO: filter by date
+      const now = new Date();
+      const dateRange = {
+        start: input?.startDate ?? startOfMonth(now),
+        end: input?.endDate ?? endOfMonth(now),
+      };
 
-      const foldersWithFunds = await ctx.prisma.folder.findMany({
-        include: {
-          // TODO: order by new field: `order` when funds can now be reordered
-          funds: {
-            orderBy: {
-              createdAt: "asc",
-            },
-          },
+      const foldersWithFunds = await ctx.db.query.folders.findMany({
+        where: eq(folders.userId, ctx.userId),
+        with: {
+          funds: { orderBy: (funds, { asc }) => asc(funds.createdAt) },
         },
-        orderBy: {
-          createdAt: "desc",
-        },
-      })
+        orderBy: (folders, { desc }) => desc(folders.createdAt),
+      });
 
-      const fundIds = foldersWithFunds.flatMap((folder) =>
-        folder.funds.map((fund) => fund.id),
-      )
-      const totalSpentByFund = await ctx.prisma.transaction.groupBy({
-        by: ["fundId"],
-        where: {
-          fundId: { in: fundIds },
-          date:
-            input?.startDate || input?.endDate
-              ? ({
-                  gte: input.startDate,
-                  lte: input.endDate,
-                } as Prisma.DateTimeNullableFilter<"Transaction">)
-              : null,
-        },
-        _sum: {
-          amount: true,
-        },
-        orderBy: {
-          fundId: "desc",
-        },
-      })
+      const allFundIds = foldersWithFunds.flatMap((f) =>
+        f.funds.map((fund) => fund.id)
+      );
+
+      const spentByFund =
+        allFundIds.length > 0
+          ? await ctx.db
+              .select({
+                fundId: transactions.fundId,
+                amount: sum(transactions.amount).mapWith(Number),
+              })
+              .from(transactions)
+              .where(
+                and(
+                  inArray(transactions.fundId, allFundIds),
+                  gte(transactions.date, dateRange.start),
+                  lte(transactions.date, dateRange.end)
+                )
+              )
+              .groupBy(transactions.fundId)
+          : [];
+
+      const spentMap = new Map(
+        spentByFund.map((t) => [t.fundId, t.amount ?? 0])
+      );
 
       return foldersWithFunds.map((folder) => ({
         ...folder,
-        funds: folder.funds.map((fund) => {
-          const totalSpent =
-            totalSpentByFund
-              .find(({ fundId }) => fundId === fund.id)
-              ?._sum.amount?.toNumber() || 0
-
-          return {
-            ...fund,
-            totalSpent:
-              totalSpent *
-              (fund.fundType === "SPENDING" && totalSpent !== 0 ? -1 : 1),
-          }
-        }),
-      }))
+        funds: folder.funds.map((fund) => ({
+          ...fund,
+          budgetedAmount: Number(fund.budgetedAmount),
+          totalSpent: spentMap.get(fund.id) ?? 0,
+        })),
+      }));
     }),
-  list: publicProcedure.query(({ ctx }) => ctx.prisma.folder.findMany()),
-})
+
+  list: protectedProcedure.query(({ ctx }) =>
+    ctx.db.query.folders.findMany({
+      where: eq(folders.userId, ctx.userId),
+    })
+  ),
+});

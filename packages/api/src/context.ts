@@ -1,38 +1,33 @@
-import { prisma } from "db"
-import { type inferAsyncReturnType } from "@trpc/server"
+import { verifyToken } from "@clerk/backend";
+import { db } from "db/client";
 
-type Session = {
-  user?: { id: string }
+interface CreateContextOptions {
+  authToken?: string | null;
+  timezone?: string;
 }
 
-/**
- * Replace this with an object if you want to pass things to createContextInner
- */
-type CreateContextOptions = {
-  session: Session | null
-}
+export const createTRPCContext = async (opts: CreateContextOptions = {}) => {
+  let userId: string | null = null;
 
-/** Use this helper for:
- *  - testing, where we dont have to Mock Next.js' req/res
- *  - trpc's `createSSGHelpers` where we don't have req/res
- * @see https://beta.create.t3.gg/en/usage/trpc#-servertrpccontextts
- */
-export const createContextInner = async (opts: CreateContextOptions) => {
-  return {
-    session: opts.session,
-    prisma,
+  if (opts.authToken) {
+    try {
+      const secretKey = process.env.CLERK_SECRET_KEY;
+      if (secretKey) {
+        const verified = await verifyToken(opts.authToken, {
+          secretKey,
+        });
+        userId = verified.sub;
+      } else {
+        console.warn("CLERK_SECRET_KEY not set");
+      }
+    } catch (error) {
+      console.error("Token verification failed:", error);
+    }
   }
-}
 
-/**
- * This is the actual context you'll use in your router
- * @link https://trpc.io/docs/context
- **/
-export const createContext = async () => {
-  // TODO: auth
-  return await createContextInner({
-    session: {},
-  })
-}
-
-export type Context = inferAsyncReturnType<typeof createContext>
+  return {
+    db,
+    userId,
+    timezone: opts.timezone || "UTC",
+  };
+};
